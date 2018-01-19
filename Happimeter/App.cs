@@ -1,4 +1,5 @@
 ﻿using System;
+using Happimeter.DependencyInjection;
 
 namespace Happimeter
 {
@@ -13,6 +14,8 @@ namespace Happimeter
                 ServiceLocator.Instance.Register<IDataStore<Item>, MockDataStore>();
             else
                 ServiceLocator.Instance.Register<IDataStore<Item>, CloudDataStore>();
+
+            Container.RegisterElements();
         }
     }
 }

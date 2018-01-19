@@ -21,7 +21,6 @@ namespace Happimeter.iOS
             App.Initialize();
 
 
-
             return true;
         }
 

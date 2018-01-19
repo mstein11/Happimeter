@@ -435,17 +435,17 @@
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" id="4875" translatesAutoresizingMaskIntoConstraints="NO" spacing="20" distribution="equalSpacing">
                                 <rect key="frame" x="16" y="261" width="288" height="130"/>
                                 <subviews>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" text="Username" borderStyle="roundedRect" minimumFontSize="17" id="4916" translatesAutoresizingMaskIntoConstraints="NO">
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" id="4916" translatesAutoresizingMaskIntoConstraints="NO" placeholder="Username">
                                         <rect key="frame" x="0.0" y="0.0" width="288" height="30"/>
                                         <nil key="textColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                        <textInputTraits key="textInputTraits"/>
+                                        <textInputTraits key="textInputTraits" textContentType="username"/>
                                     </textField>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Password" borderStyle="roundedRect" minimumFontSize="17" id="4909" translatesAutoresizingMaskIntoConstraints="NO">
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" id="4909" translatesAutoresizingMaskIntoConstraints="NO" placeholder="Password">
                                         <rect key="frame" x="0.0" y="50" width="288" height="30"/>
                                         <nil key="textColor"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                        <textInputTraits key="textInputTraits"/>
+                                        <textInputTraits key="textInputTraits" textContentType="password" secureTextEntry="YES"/>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
                                     </textField>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="4921" translatesAutoresizingMaskIntoConstraints="NO">
                                         <rect key="frame" x="0.0" y="100" width="288" height="30"/>
@@ -456,6 +456,9 @@
                                                 <real key="value" value="4"/>
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="UIButton4921_TouchUpInside:" destination="3635" id="9236" eventType="touchUpInside"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <color key="tintColor" colorSpace="calibratedWhite" white="1" alpha="1"/>
@@ -484,6 +487,10 @@
                             <constraint id="5129" firstItem="4408" firstAttribute="top" secondItem="4875" secondAttribute="bottom" multiplier="1.1"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="Username" destination="4916" id="name-outlet-4916"/>
+                        <outlet property="Password" destination="4909" id="name-outlet-4909"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3637" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

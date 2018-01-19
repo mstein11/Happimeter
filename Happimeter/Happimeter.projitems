@@ -21,6 +21,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ItemsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)App.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\RestService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\HappymeterApiService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DependencyInjection\Container.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IRestService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\HappimeterApiService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IHappimeterApiService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Interfaces\" />
   </ItemGroup>
 </Project>

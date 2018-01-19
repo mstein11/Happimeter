@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Happimeter.Interfaces;
 using Newtonsoft.Json;
 
 namespace Happimeter.Services
 {
-    public class RestService
+    public class RestService : IRestService
     {
         private HttpClient _httpClient;
         public RestService()
