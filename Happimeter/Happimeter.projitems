@@ -25,9 +25,17 @@
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IRestService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\HappimeterApiService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IHappimeterApiService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\AccountStoreService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IAccountStoreService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ApiResultModels\AuthApiResponseModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\AuthResultModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\GetMeResultModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\HappimeterApiResultInformation.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />
     <Folder Include="$(MSBuildThisFileDirectory)Interfaces\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Models\ApiResultModels\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Models\ServiceModels\" />
   </ItemGroup>
 </Project>

@@ -1,9 +1,11 @@
 ﻿using System.Threading.Tasks;
+using Happimeter.Models.ServiceModels;
 
 namespace Happimeter.Interfaces
 {
     public interface IHappimeterApiService
     {
-        Task<object> Auth(string email, string password);
+        Task<AuthResultModel> Auth(string email, string password);
+        Task<GetMeResultModel> GetMe();
     }
 }

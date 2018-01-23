@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Happimeter.Interfaces;
+using Happimeter.Models.ServiceModels;
 
 namespace Happimeter.iOS.Services
 {
@@ -13,9 +14,9 @@ namespace Happimeter.iOS.Services
             _happimeterApiService = ServiceLocator.Instance.Get<IHappimeterApiService>();
         }
 
-        public async Task Login(string userName, string password) {
+        public async Task<AuthResultModel> Login(string userName, string password) {
             var result = await _happimeterApiService.Auth(userName, password);
-            Console.WriteLine(result.ToString());
+            return result;
         }
     }
 }
