@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Happimeter.iOS", "iOS\Happi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Happimeter.Droid", "Droid\Happimeter.Droid.csproj", "{A206867A-1792-4275-9C38-842623227972}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Happimeter.Watch.Droid", "Happimeter.Watch.Droid\Happimeter.Watch.Droid.csproj", "{DE8957FA-3B78-4B43-A5A2-C82830EF665B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|iPhoneSimulator = Debug|iPhoneSimulator
@@ -41,5 +43,17 @@ Global
 		{A206867A-1792-4275-9C38-842623227972}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A206867A-1792-4275-9C38-842623227972}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A206867A-1792-4275-9C38-842623227972}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE8957FA-3B78-4B43-A5A2-C82830EF665B}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{DE8957FA-3B78-4B43-A5A2-C82830EF665B}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{DE8957FA-3B78-4B43-A5A2-C82830EF665B}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{DE8957FA-3B78-4B43-A5A2-C82830EF665B}.Release|iPhone.Build.0 = Release|Any CPU
+		{DE8957FA-3B78-4B43-A5A2-C82830EF665B}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{DE8957FA-3B78-4B43-A5A2-C82830EF665B}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{DE8957FA-3B78-4B43-A5A2-C82830EF665B}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{DE8957FA-3B78-4B43-A5A2-C82830EF665B}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{DE8957FA-3B78-4B43-A5A2-C82830EF665B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE8957FA-3B78-4B43-A5A2-C82830EF665B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE8957FA-3B78-4B43-A5A2-C82830EF665B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE8957FA-3B78-4B43-A5A2-C82830EF665B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

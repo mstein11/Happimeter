@@ -2,22 +2,59 @@ using Foundation;
 using System;
 using UIKit;
 using Happimeter.iOS.Services;
+using Happimeter.Interfaces;
+using Happimeter.iOS.ViewControllers;
 
 namespace Happimeter.iOS
 {
-    public partial class LoginViewController : UIViewController
+    public partial class LoginViewController : AbstractViewController
     {
+        async partial void UIButton17630_TouchUpInside(UIButton sender)
+        {
+            if (Username.Text != null && Password.Text != null)
+            {
+                var loginResult = await _loginService.Login(Username.Text, Password.Text);
+                if (loginResult.IsSuccess)
+                {
+                    UIStoryboard board = UIStoryboard.FromName("Main", null);
+                    UIViewController ctrl = (UIViewController)board.InstantiateViewController("tabViewController");
+                    ctrl.ModalTransitionStyle = UIModalTransitionStyle.FlipHorizontal;
+                    this.PresentViewController(ctrl, true, null);
+                }
+                else
+                {
+                    ShowToast("Error while loggin in", View);
+                }
+
+            }
+        }
+      
+
+        partial void UIButton3278_TouchUpInside(UIButton sender)
+        {
+            var blService = ServiceLocator.Instance.Get<IBluetoothService>();
+            blService.StartScan();
+        }
 
         private LoginService _loginService;
 
 
+        public override bool HandlesKeyboardNotifications()
+        {
+            return true;
+        }
+
+        /*
         async partial void UIButton4921_TouchUpInside(UIButton sender)
         {
             if (Username.Text != null && Password.Text != null)
             {
                 var loginResult = await _loginService.Login(Username.Text, Password.Text);
                 if (loginResult.IsSuccess) {
-                    
+                    UIStoryboard board = UIStoryboard.FromName("MainStoryboard", null);
+                    UIViewController ctrl = (UIViewController)board.InstantiateViewController("tabViewController");
+                    ctrl.ModalTransitionStyle = UIModalTransitionStyle.FlipHorizontal;
+                    this.PresentViewController(ctrl, true, null);
                 } else {
                     ShowToast("Error while loggin in", View);
                 }
@@ -28,11 +65,29 @@ namespace Happimeter.iOS
         partial void UIButton4408_TouchUpInside(UIButton sender)
         {
 
-        }
 
+        }
+*/
         public LoginViewController (IntPtr handle) : base (handle)
         {
             _loginService = new LoginService();
+        }
+
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+
+            if (Username != null && Password != null) {
+                Username.ShouldReturn += (UITextField textField) => {
+                    textField.ResignFirstResponder();
+                    return true;
+                };    
+                Password.ShouldReturn += (UITextField textField) => {
+                    textField.ResignFirstResponder();
+                    return true;
+                };    
+            }
+
         }
 
         public void ShowToast(String message, UIView view)

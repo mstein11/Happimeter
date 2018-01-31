@@ -1,4 +1,7 @@
-﻿using Foundation;
+﻿using System;
+using CoreLocation;
+using Foundation;
+using Happimeter.Interfaces;
 using UIKit;
 
 namespace Happimeter.iOS
@@ -20,9 +23,30 @@ namespace Happimeter.iOS
         {
             App.Initialize();
 
+            var store = ServiceLocator.Instance.Get<IAccountStoreService>();
+            Window = new UIWindow(UIScreen.MainScreen.Bounds);
+            if (store.IsAuthenticated()) {
+                
+                UIStoryboard board = UIStoryboard.FromName("Main", null);
+                UIViewController ctrl = (UIViewController)board.InstantiateViewController("tabViewController");
+                ctrl.ModalTransitionStyle = UIModalTransitionStyle.FlipHorizontal;
+                Window.RootViewController = ctrl;
+                Window.MakeKeyAndVisible();
+            } else {
+                UIStoryboard board = UIStoryboard.FromName("Login", null);
+                UIViewController ctrl = (UIViewController)board.InstantiateViewController("tabViewController");
+                ctrl.ModalTransitionStyle = UIModalTransitionStyle.FlipHorizontal;
+                Window.RootViewController = ctrl;
+                Window.MakeKeyAndVisible();
+                //application.KeyWindow.RootViewController = ctrl;
+    
+            }
+
+
 
             return true;
         }
+
 
         public override void OnResignActivation(UIApplication application)
         {

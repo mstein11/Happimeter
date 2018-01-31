@@ -31,6 +31,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\AuthResultModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\GetMeResultModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\HappimeterApiResultInformation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\BluetoothService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IBluetoothService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\BluetoothDeviceListViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\BluetoothDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\MiBand2Device.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\AndroidWatch.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />

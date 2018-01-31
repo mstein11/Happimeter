@@ -22,13 +22,13 @@ namespace Happimeter.iOS
         [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UITextField Username { get; set; }
 
-        [Action ("UIButton4408_TouchUpInside:")]
+        [Action ("UIButton17630_TouchUpInside:")]
         [GeneratedCode ("iOS Designer", "1.0")]
-        partial void UIButton4408_TouchUpInside (UIKit.UIButton sender);
+        partial void UIButton17630_TouchUpInside (UIKit.UIButton sender);
 
-        [Action ("UIButton4921_TouchUpInside:")]
+        [Action ("UIButton3278_TouchUpInside:")]
         [GeneratedCode ("iOS Designer", "1.0")]
-        partial void UIButton4921_TouchUpInside (UIKit.UIButton sender);
+        partial void UIButton3278_TouchUpInside (UIKit.UIButton sender);
 
         void ReleaseDesignerOutlets ()
         {
