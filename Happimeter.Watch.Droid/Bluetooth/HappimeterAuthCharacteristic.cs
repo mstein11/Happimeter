@@ -8,7 +8,7 @@ namespace Happimeter.Watch.Droid.Bluetooth
     public class HappimeterAuthCharacteristic : BluetoothGattCharacteristic
     {
         public const string CharacteristicUuid = "68b13553-0c4d-43de-8c1c-2b10d77d2d90";
-        private const GattProperty GattProperties = GattProperty.Read | GattProperty.Write;
+        private const GattProperty GattProperties = GattProperty.Read | GattProperty.Write | GattProperty.Notify;
         private const GattPermission GattPermissions = GattPermission.Read | GattPermission.Write;
 
         public HappimeterAuthCharacteristic() : base(uuid: UUID.FromString(CharacteristicUuid), properties: GattProperties, permissions: GattPermissions)

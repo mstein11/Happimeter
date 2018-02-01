@@ -35,8 +35,30 @@ namespace Happimeter.Models
                     Device.WhenAnyCharacteristicDiscovered().Subscribe(characteristic =>
                     {
                         Debug.WriteLine(characteristic.Uuid);
-                        if (characteristic.Uuid == ServiceUuid)
+                        if (characteristic.Uuid == AuthCharacteristic)
                         {
+                                characteristic.EnableNotifications(false).Subscribe(result => {
+                                    Debug.WriteLine("Enable Notification: " + result);
+                                });
+                            var message = System.Text.Encoding.UTF8.GetBytes("Hallo");
+                                characteristic.Write(message).Subscribe(x => {
+                                    Debug.WriteLine(System.Text.Encoding.UTF8.GetString(x.Data));
+                                    characteristic.Read().Subscribe(result => {
+                                        Debug.WriteLine(System.Text.Encoding.UTF8.GetString(result.Data));
+                                    });
+                                });
+
+                                characteristic.WhenNotificationReceived().Subscribe(result => {
+                                    Debug.WriteLine("Got Notification: " + System.Text.Encoding.UTF8.GetString(result.Data));
+
+                                });
+                                /*
+                                characteristic.Read().Subscribe(result =>
+                            {
+                                Debug.WriteLine(System.Text.Encoding.UTF8.GetString(result.Data));
+                            });
+*/
+
                             Debug.WriteLine("Found our AuthCharacteristic");
                         }
                     });

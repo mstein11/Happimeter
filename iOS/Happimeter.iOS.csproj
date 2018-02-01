@@ -198,6 +198,7 @@
     <Compile Include="ViewControllers\DetailViewControllers\BtDeviceDetailViewController.designer.cs">
       <DependentUpon>BtDeviceDetailViewController.cs</DependentUpon>
     </Compile>
+    <Compile Include="Services\BeaconWakeupService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Entitlements.plist" />

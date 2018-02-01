@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
@@ -23,9 +24,10 @@ namespace Happimeter.Watch.Droid.Workers
         //private const string NotifyCharacteristic = "1b4dc745-1929-485a-93f6-a76109f02bd6";
 
         //also service uuid for all Gatt things
-        private const string BeaconUuid = "2f234454-cf6d-4a0f-adf2-f4911ba9ffa6";
-        private const string Major = "0";
-        private const string Minor = "1";
+        //private const string BeaconUuid = "00000001-0000-1000-1000-00911BA9FFA6";
+        public const string BeaconUuid = "F0000000-0000-1000-8000-00805F9B34FB";
+        public const string Major = "0";
+        public const string Minor = "1";
         //Code that represents apple
         private const byte ManufacturerCode = 0x004C;
         private const int TxPowerLevel = -56;
@@ -64,7 +66,7 @@ namespace Happimeter.Watch.Droid.Workers
             return Instance;
         }
 
-        private async Task RunBeacon() {
+        public async Task RunBeacon() {
             var uuid = Encoding.UTF8.GetBytes(BeaconUuid);
 
             var beacon = new Beacon.Builder()
@@ -105,9 +107,12 @@ namespace Happimeter.Watch.Droid.Workers
                 System.Diagnostics.Debug.WriteLine("Set Name");
             }
 
-            var data = new AdvertiseData.Builder().SetIncludeDeviceName(true)
+            var data = new AdvertiseData.Builder()
+                                        .SetIncludeDeviceName(true)
                                         .SetIncludeTxPowerLevel(true)
-                                        .AddServiceUuid(ParcelUuid.FromString(BeaconUuid))
+                                        //.AddServiceUuid(ParcelUuid.FromString(BeaconUuid))
+                                        //todo: add appropriate serviceId
+                                        .AddServiceUuid(ParcelUuid.FromString("F0000000-0000-1000-8000-00805F9B34FB"))
                                         .Build();
 
             BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser.StartAdvertising(settings, data, new CallbackAd());
@@ -132,6 +137,9 @@ namespace Happimeter.Watch.Droid.Workers
     public class CallbackGatt : BluetoothGattServerCallback
     {
         public BluetoothWorker Worker { get; set; }
+
+        private Dictionary<string, bool> AuthenticationDeviceDidGreat = new Dictionary<string, bool>();
+
         public CallbackGatt(BluetoothWorker worker)
         {
             Worker = worker;
@@ -141,16 +149,37 @@ namespace Happimeter.Watch.Droid.Workers
         {
             base.OnCharacteristicReadRequest(device, requestId, offset, characteristic);
 
-            Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, Encoding.ASCII.GetBytes("Hello"));
+            if (AuthenticationDeviceDidGreat.ContainsKey(device.Address) && AuthenticationDeviceDidGreat[device.Address]) {
+                //device did great first, lets tell him our beacon information
 
+                var jsonString = string.Format("{{'UuId':'{0}', 'Minor':{1}, 'Major':{2} }}", BluetoothWorker.BeaconUuid, BluetoothWorker.Minor, BluetoothWorker.Major );
+                var bytes = Encoding.UTF8.GetBytes(jsonString);
+                Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, bytes);
+                Worker.RunBeacon();
+            } else {
+                //we don't know this device
+                Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Failure, offset, Encoding.ASCII.GetBytes("H"));    
+            }
         }
 
         public override void OnCharacteristicWriteRequest(BluetoothDevice device, int requestId, BluetoothGattCharacteristic characteristic, bool preparedWrite, bool responseNeeded, int offset, byte[] value)
         {
             base.OnCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite, responseNeeded, offset, value);
 
-            System.Diagnostics.Debug.WriteLine("Write received");
-            Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, Encoding.ASCII.GetBytes("Hello"));
+            if (characteristic.Uuid.ToString() == UUID.FromString(HappimeterAuthCharacteristic.CharacteristicUuid).ToString()) {
+                System.Diagnostics.Debug.WriteLine("Write received");
+                AuthenticationDeviceDidGreat.Add(device.Address, true);
+
+
+            }
+
+
+            Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, Encoding.UTF8.GetBytes("ab"));
+            var devices = Worker.Manager.GetConnectedDevices(ProfileType.Gatt);
+
+            //does not work
+            characteristic.SetValue(Encoding.UTF8.GetBytes("Hello!!!"));
+            Worker.GattServer.NotifyCharacteristicChanged(device, characteristic, false);
         }
 
         public override void OnConnectionStateChange(BluetoothDevice device, ProfileState status, ProfileState newState)
@@ -162,7 +191,7 @@ namespace Happimeter.Watch.Droid.Workers
         {
             base.OnDescriptorReadRequest(device, requestId, offset, descriptor);
 
-            System.Diagnostics.Debug.WriteLine("Read received");
+            Worker.GattServer.SendResponse(device,requestId, Android.Bluetooth.GattStatus.Success, offset, null);
         }
 
         public override void OnServiceAdded(Android.Bluetooth.GattStatus status, BluetoothGattService service)
@@ -173,6 +202,8 @@ namespace Happimeter.Watch.Droid.Workers
         public override void OnDescriptorWriteRequest(BluetoothDevice device, int requestId, BluetoothGattDescriptor descriptor, bool preparedWrite, bool responseNeeded, int offset, byte[] value)
         {
             base.OnDescriptorWriteRequest(device, requestId, descriptor, preparedWrite, responseNeeded, offset, value);
+
+            Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
         }
 
         public override void OnMtuChanged(BluetoothDevice device, int mtu)

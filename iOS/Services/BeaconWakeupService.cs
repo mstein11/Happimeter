@@ -1,51 +1,41 @@
 ﻿using System;
 using CoreLocation;
 using Foundation;
-using UIKit;
 
-namespace Happimeter.iOS
+namespace Happimeter.iOS.Services
 {
-    public partial class AboutViewController : UIViewController
+    public class BeaconWakeupService
     {
-        public AboutViewModel ViewModel { get; set; }
-        public AboutViewController(IntPtr handle) : base(handle)
+        private CLBeaconRegion BeaconRegion;
+        private CLLocationManager LocationManager;
+        public BeaconWakeupService()
         {
-            ViewModel = new AboutViewModel();
         }
 
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
-
-            Title = ViewModel.Title;
-
-            AppNameLabel.Text = "Happimeter";
-            VersionLabel.Text = "1.0";
-            AboutTextView.Text = "This app is written in C# and native APIs using the Xamarin Platform. It shares code with its iOS, Android, & Windows versions.";
-
-
+        public void StartWakeupForBeacon(string uuid, int minor, int major) {
             string message = "";
             CLProximity previousProximity = CLProximity.Far;
-            var beaconRegion = new CLBeaconRegion(new NSUuid("2f234454-cf6d-4a0f-adf2-f4911ba9ffa6"), "com.example.company");
-            beaconRegion.NotifyEntryStateOnDisplay = true;
-            beaconRegion.NotifyOnExit = true;
-            beaconRegion.NotifyOnEntry = true;
-            var locationMgr = new CLLocationManager();
-            locationMgr.RequestAlwaysAuthorization();
+            BeaconRegion = new CLBeaconRegion(new NSUuid(uuid), (ushort) major, (ushort) minor, "com.example.company");
+            BeaconRegion.NotifyEntryStateOnDisplay = true;
+            BeaconRegion.NotifyOnExit = true;
+            BeaconRegion.NotifyOnEntry = true;
 
-            locationMgr.RegionEntered += (object sender, CLRegionEventArgs e) =>
+            LocationManager = new CLLocationManager();
+            LocationManager.RequestAlwaysAuthorization();
+
+            LocationManager.RegionEntered += (object sender, CLRegionEventArgs e) =>
             {
                 Console.WriteLine("Hello");
             };
 
-            locationMgr.RegionLeft += (object sender, CLRegionEventArgs e) =>
+            LocationManager.RegionLeft += (object sender, CLRegionEventArgs e) =>
             {
                 Console.WriteLine("Bye");
             };
 
 
 
-            locationMgr.DidDetermineState += (object sender, CLRegionStateDeterminedEventArgs e) => {
+            LocationManager.DidDetermineState += (object sender, CLRegionStateDeterminedEventArgs e) => {
 
                 switch (e.State)
                 {
@@ -63,12 +53,12 @@ namespace Happimeter.iOS
                         break;
                 }
             };
-            locationMgr.DidStartMonitoringForRegion += (object sender, CLRegionEventArgs e) => {
-                locationMgr.RequestState(e.Region);
+            LocationManager.DidStartMonitoringForRegion += (object sender, CLRegionEventArgs e) => {
+                LocationManager.RequestState(e.Region);
                 string t_region = e.Region.Identifier.ToString();
                 Console.WriteLine(t_region);
             };
-            locationMgr.DidRangeBeacons += (object sender, CLRegionBeaconsRangedEventArgs e) => {
+            LocationManager.DidRangeBeacons += (object sender, CLRegionBeaconsRangedEventArgs e) => {
                 if (e.Beacons.Length > 0)
                 {
                     CLBeacon beacon = e.Beacons[0];
@@ -100,10 +90,8 @@ namespace Happimeter.iOS
                     Console.WriteLine("nothing");
                 }
             };
-            locationMgr.StartMonitoring(beaconRegion);
-            locationMgr.StartRangingBeacons(beaconRegion);
+            LocationManager.StartMonitoring(BeaconRegion);
+            LocationManager.StartRangingBeacons(BeaconRegion);
         }
-
-        partial void ReadMoreButton_TouchUpInside(UIButton sender) => ViewModel.OpenWebCommand.Execute(null);
     }
 }
