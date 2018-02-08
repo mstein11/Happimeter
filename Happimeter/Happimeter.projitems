@@ -37,6 +37,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\BluetoothDevice.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\MiBand2Device.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\AndroidWatch.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IBeaconWakeupService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />

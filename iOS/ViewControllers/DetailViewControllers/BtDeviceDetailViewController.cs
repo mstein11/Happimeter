@@ -16,9 +16,8 @@ namespace Happimeter.iOS
         partial void Connect_TouchUpInside(UIButton sender)
         {
             var _btService = ServiceLocator.Instance.Get<IBluetoothService>();
-            //_btService.PairDevice(ViewModel.Device);
-
-            ViewModel.Connect();
+            _btService.PairDevice(ViewModel);
+            //ViewModel.Connect();
             ViewModel.WhenDeviceReady().Subscribe(x => {
                 InvokeOnMainThread(() => {
                     SendNotification.Hidden = false;

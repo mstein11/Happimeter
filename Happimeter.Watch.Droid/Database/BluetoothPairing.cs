@@ -12,7 +12,7 @@ namespace Happimeter.Watch.Droid.Database
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
-        public DateTime PairedAt { get; set; }
+        public DateTime? PairedAt { get; set; }
 
         public string PairedWithUserName { get; set; }
 
@@ -22,7 +22,7 @@ namespace Happimeter.Watch.Droid.Database
 
         public bool IsPairingActive { get; set; }
 
-        public DateTime LastDataSync { get; set; }
+        public DateTime? LastDataSync { get; set; }
 
         public override string ToString()
         {

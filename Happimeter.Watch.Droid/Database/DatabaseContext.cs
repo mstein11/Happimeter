@@ -24,6 +24,7 @@ namespace Happimeter.Watch.Droid.Database
             {
                 var connection = new SQLiteConnection(DatabasePath);
                 connection.CreateTable<MicrophoneMeasurement>();
+                connection.CreateTable<BluetoothPairing>();
             }
             catch (SQLiteException ex)
             {
@@ -91,6 +92,24 @@ namespace Happimeter.Watch.Droid.Database
                     }
                     connection.UpdateAll(bluetoothPairings);
                     connection.Insert(newPairing);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+            }
+        }
+
+        public void DeleteAllBluetoothPairings() {
+            try
+            {
+                if (!DatabaseIsCreated)
+                {
+                    CreateDatabase();
+                }
+                using (var connection = new SQLiteConnection(DatabasePath))
+                {
+                    connection.DeleteAll<BluetoothPairing>();
                 }
             }
             catch (Exception e)

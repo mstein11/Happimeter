@@ -14,12 +14,14 @@ namespace Happimeter.Watch.Droid.Bluetooth
         {
             Characteristics.Add(new HappimeterDataCharacteristic());
             Characteristics.Add(new HappimeterAuthCharacteristic());
+            Characteristics.Add(new ReadCharacteristic());
 
             var descriptorForNotifications = new BluetoothGattDescriptor(UUID.FromString("00002902-0000-1000-8000-00805F9B34FB"), GattDescriptorPermission.Read | GattDescriptorPermission.Write);
 
+            /*
             foreach(var characteristic in Characteristics)  {
                 characteristic.AddDescriptor(descriptorForNotifications);
-            }
+            }*/
         }
 
         public static HappimeterService Create() {

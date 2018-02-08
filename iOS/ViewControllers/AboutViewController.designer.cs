@@ -34,6 +34,10 @@ namespace Happimeter.iOS
         [GeneratedCode ("iOS Designer", "1.0")]
         partial void ReadMoreButton_TouchUpInside (UIKit.UIButton sender);
 
+        [Action ("UIButton58642_TouchUpInside:")]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        partial void UIButton58642_TouchUpInside (UIKit.UIButton sender);
+
         void ReleaseDesignerOutlets ()
         {
             if (AboutImageView != null) {

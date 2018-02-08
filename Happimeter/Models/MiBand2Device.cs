@@ -9,6 +9,7 @@ using Plugin.BluetoothLE;
 
 namespace Happimeter.Models
 {
+    //https://stackoverflow.com/questions/41417747/connection-to-mi-band-2?answertab=votes#tab-top
     public class MiBand2Device : BluetoothDevice
     {
 

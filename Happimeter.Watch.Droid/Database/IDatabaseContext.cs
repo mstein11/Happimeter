@@ -10,5 +10,6 @@ namespace Happimeter.Watch.Droid.Database
         IList<MicrophoneMeasurement> GetMicrophoneMeasurements();
         void AddNewPairing(BluetoothPairing newPairing);
         BluetoothPairing GetCurrentBluetoothPairing();
+        void DeleteAllBluetoothPairings();
     }
 }

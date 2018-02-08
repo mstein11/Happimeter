@@ -63,7 +63,7 @@ namespace Happimeter.iOS
         {
             var item = ViewModel.Items[indexPath.Row];
             _btService = ServiceLocator.Instance.Get<IBluetoothService>();
-            _btService.PairDevice(item.Device);
+            _btService.PairDevice(BluetoothDevice.Create(item.Device));
         }
 
         public override void PrepareForSegue(UIStoryboardSegue segue, NSObject sender)

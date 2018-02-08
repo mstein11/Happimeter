@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Happimeter.Interfaces;
 using Plugin.BluetoothLE;
 
 namespace Happimeter.Models
@@ -13,7 +14,7 @@ namespace Happimeter.Models
 
         public static readonly Guid ServiceUuid = Guid.Parse("2f234454-cf6d-4a0f-adf2-f4911ba9ffa6");//maybe instead : 00000009-0000-3512-2118-0009af100700
         public static readonly Guid AuthCharacteristic = Guid.Parse("68b13553-0c4d-43de-8c1c-2b10d77d2d90");
-        //public static readonly Guid ButtonTouch = Guid.Parse("1b4dc745-1929-485a-93f6-a76109f02bd6");
+        public static readonly Guid DataCharacterisic = Guid.Parse("7918ec07-2ba4-4542-aa13-0a10ff3826ba");
 
         public override IObservable<object> Connect()
         {
@@ -23,45 +24,46 @@ namespace Happimeter.Models
             {
                 if (success) {
                     try {
-                        
-                    
-                    Device.WhenServiceDiscovered().Subscribe(service => {
-                        Debug.WriteLine(service);
-                        if (service.Uuid == ServiceUuid)
+                        Device.WhenServiceDiscovered().Subscribe(service =>
                         {
-                            Debug.WriteLine("Found our HappimeterDataService");
-                        }
-                    });
-                    Device.WhenAnyCharacteristicDiscovered().Subscribe(characteristic =>
-                    {
-                        Debug.WriteLine(characteristic.Uuid);
-                        if (characteristic.Uuid == AuthCharacteristic)
+                            Debug.WriteLine(service);
+                            if (service.Uuid == ServiceUuid)
+                            {
+                                Debug.WriteLine("Found our HappimeterDataService");
+                            }
+                        });
+                        Device.WhenAnyCharacteristicDiscovered().Subscribe(characteristic =>
                         {
-                                characteristic.EnableNotifications(false).Subscribe(result => {
-                                    Debug.WriteLine("Enable Notification: " + result);
-                                });
-                            var message = System.Text.Encoding.UTF8.GetBytes("Hallo");
-                                characteristic.Write(message).Subscribe(x => {
-                                    Debug.WriteLine(System.Text.Encoding.UTF8.GetString(x.Data));
-                                    characteristic.Read().Subscribe(result => {
+                            Debug.WriteLine($"Found characteristic: {characteristic.Uuid}");
+  
+                            if (characteristic.Uuid == AuthCharacteristic)
+                            {
+                                var message = System.Text.Encoding.UTF8.GetBytes("Hallo");
+                                characteristic.Write(message).Subscribe(writeSuccess =>
+                                {
+                                    characteristic.Read().Subscribe(result =>
+                                    {
                                         Debug.WriteLine(System.Text.Encoding.UTF8.GetString(result.Data));
+                                        //Tell gatt server that we got his credentials
+                                        characteristic.Write(System.Text.Encoding.UTF8.GetBytes("Ok")).Subscribe((obj) =>
+                                        {
+                                            //Lets wait for his beacon signal
+                                            ServiceLocator.Instance.Get<IBeaconWakeupService>().StartWakeupForBeacon("F0000000-0000-1000-8000-00805F9B34FB", 0, 1);
+                                        });
                                     });
+                                }, writeError =>
+                                {
+                                    Debug.WriteLine($"Got error while writing to Auth characteristic, error message {writeError.Message}");
                                 });
 
-                                characteristic.WhenNotificationReceived().Subscribe(result => {
+                                characteristic.WhenNotificationReceived().Subscribe(result =>
+                                {
                                     Debug.WriteLine("Got Notification: " + System.Text.Encoding.UTF8.GetString(result.Data));
 
                                 });
-                                /*
-                                characteristic.Read().Subscribe(result =>
-                            {
-                                Debug.WriteLine(System.Text.Encoding.UTF8.GetString(result.Data));
-                            });
-*/
-
-                            Debug.WriteLine("Found our AuthCharacteristic");
-                        }
-                    });
+                                Debug.WriteLine("Found our AuthCharacteristic");
+                            }
+                        });
                     } catch (Exception e) {
                         Debug.WriteLine(e.Message);
                     }
@@ -69,6 +71,22 @@ namespace Happimeter.Models
             });
 
             return connection;
+        }
+
+        public void ExchangeData() {
+            Device.WhenAnyCharacteristicDiscovered().Subscribe(characteristic =>
+            {
+                if (characteristic.Uuid == DataCharacterisic)
+                {
+                    Debug.WriteLine("DataCharacteristic found");
+                    characteristic.Write(System.Text.Encoding.UTF8.GetBytes("pass")).Subscribe(writeResult => {
+                        characteristic.Read().Subscribe(readResult => {
+                            //readResult should hold the data
+                            Debug.WriteLine("Read data: " + string.Concat(readResult.Data));
+                        });
+                    });
+                }
+            });
         }
     }
 }

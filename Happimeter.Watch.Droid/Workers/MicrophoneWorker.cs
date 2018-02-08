@@ -77,7 +77,7 @@ namespace Happimeter.Watch.Droid.Workers
                         }
                     }
                     var volume = CalculateVolumeForData(bigAudioBuffer.ToArray());
-                    System.Diagnostics.Debug.WriteLine("Volume: " + volume);
+                    //System.Diagnostics.Debug.WriteLine("Volume: " + volume);
                     var measure = new MicrophoneMeasurement
                     {
                         Volumne = volume,

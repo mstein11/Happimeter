@@ -41,9 +41,6 @@ namespace Happimeter.Watch.Droid
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
-            //Button button = FindViewById<Button>(Resource.Id.Acc);
-
-
             var smm = (SensorManager)GetSystemService(Context.SensorService);
             var sensorsList = smm.GetSensorList(SensorType.All);
             var acc = smm.GetDefaultSensor(SensorType.Accelerometer);
@@ -64,43 +61,20 @@ namespace Happimeter.Watch.Droid
 
 
             var measurements = ServiceLocator.Instance.Get<IDatabaseContext>().GetMicrophoneMeasurements();
+            var pairing = ServiceLocator.Instance.Get<IDatabaseContext>().GetCurrentBluetoothPairing();
+            if (pairing != null) {
+                FindViewById<TextView>(Resource.Id.isPairedValue).Text = "yes";
+                FindViewById<TextView>(Resource.Id.ExchangeAtValue).Text = pairing.LastDataSync?.ToString() ?? "-";
+                FindViewById<TextView>(Resource.Id.PairedAtValue).Text = pairing.PairedAt?.ToString() ?? "-";
+                FindViewById<Button>(Resource.Id.removePairingButton).Click += delegate {
+                    ServiceLocator.Instance.Get<IDatabaseContext>().DeleteAllBluetoothPairings();
+                    Toast.MakeText(this, "Deleted, View will not update unless you restart app",ToastLength.Long);
+                };
+            } else {
+                FindViewById<Button>(Resource.Id.removePairingButton).Visibility = Android.Views.ViewStates.Invisible;
+            }
             System.Diagnostics.Debug.WriteLine(string.Concat(measurements));
 
-            /*
-            Task.Factory.StartNew(() => {
-
-                int bufferSize = AudioRecord.GetMinBufferSize(44100,
-                    ChannelIn.Mono,
-                    Encoding.Pcm16bit);
-
-                short[] audioBuffer = new short[bufferSize / 2];
-                if (bufferSize == 0) {
-                    bufferSize = 44100 * 2;    
-                }
-
-
-
-
-
-
-                AudioRecord record = new AudioRecord(AudioSource.Default,
-                        44100,
-                         ChannelIn.Mono,
-                         Encoding.Pcm16bit,
-                        bufferSize);
-                record.StartRecording();
-
-                while (true)
-                {
-                    int numberOfShort = record.Read(audioBuffer, 0, audioBuffer.Count());
-                    System.Diagnostics.Debug.WriteLine(string.Concat(audioBuffer));
-
-                    // Do something with the audioBuffer
-                }
-
-
-            });
-*/
             StartService(new Intent(this,typeof(BackgroundService)));
 
             var heartRate2 = smm.GetDefaultSensor(SensorType.HeartBeat);

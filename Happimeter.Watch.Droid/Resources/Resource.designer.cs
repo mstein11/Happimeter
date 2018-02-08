@@ -53,14 +53,44 @@ namespace Happimeter.Watch.Droid
 			// aapt resource value: 0x7f050003
 			public const int AccZ = 2131034115;
 			
+			// aapt resource value: 0x7f05000d
+			public const int ExchangeAtLabel = 2131034125;
+			
+			// aapt resource value: 0x7f05000e
+			public const int ExchangeAtValue = 2131034126;
+			
 			// aapt resource value: 0x7f050000
 			public const int LabelAccel = 2131034112;
 			
 			// aapt resource value: 0x7f050004
 			public const int NumberOfEntries = 2131034116;
 			
+			// aapt resource value: 0x7f05000b
+			public const int PairedAtLabel = 2131034123;
+			
+			// aapt resource value: 0x7f05000c
+			public const int PairedAtValue = 2131034124;
+			
 			// aapt resource value: 0x7f050005
 			public const int TimeStamp = 2131034117;
+			
+			// aapt resource value: 0x7f050009
+			public const int isPairedLabel = 2131034121;
+			
+			// aapt resource value: 0x7f05000a
+			public const int isPairedValue = 2131034122;
+			
+			// aapt resource value: 0x7f050006
+			public const int linearLayout1 = 2131034118;
+			
+			// aapt resource value: 0x7f050008
+			public const int linearLayout2 = 2131034120;
+			
+			// aapt resource value: 0x7f05000f
+			public const int removePairingButton = 2131034127;
+			
+			// aapt resource value: 0x7f050007
+			public const int textView1 = 2131034119;
 			
 			static Id()
 			{

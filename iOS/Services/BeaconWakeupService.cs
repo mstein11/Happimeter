@@ -1,10 +1,11 @@
 ﻿using System;
 using CoreLocation;
 using Foundation;
+using Happimeter.Interfaces;
 
 namespace Happimeter.iOS.Services
 {
-    public class BeaconWakeupService
+    public class BeaconWakeupService : IBeaconWakeupService
     {
         private CLBeaconRegion BeaconRegion;
         private CLLocationManager LocationManager;
@@ -12,7 +13,9 @@ namespace Happimeter.iOS.Services
         {
         }
 
-        public void StartWakeupForBeacon(string uuid, int minor, int major) {
+        private bool AlreadyFired = false;
+
+        public void StartWakeupForBeacon(string uuid, int major, int minor) {
             string message = "";
             CLProximity previousProximity = CLProximity.Far;
             BeaconRegion = new CLBeaconRegion(new NSUuid(uuid), (ushort) major, (ushort) minor, "com.example.company");
@@ -25,12 +28,16 @@ namespace Happimeter.iOS.Services
 
             LocationManager.RegionEntered += (object sender, CLRegionEventArgs e) =>
             {
-                Console.WriteLine("Hello");
+                Console.WriteLine("RegionEnteredFired hi");
+                AlreadyFired = false;
+
             };
 
             LocationManager.RegionLeft += (object sender, CLRegionEventArgs e) =>
             {
-                Console.WriteLine("Bye");
+                Console.WriteLine("RegionLeftFired Bye");
+                var btService = ServiceLocator.Instance.Get<IBluetoothService>();
+                btService.ExchangeData();
             };
 
 
@@ -91,6 +98,9 @@ namespace Happimeter.iOS.Services
                 }
             };
             LocationManager.StartMonitoring(BeaconRegion);
+            LocationManager.MonitoringFailed += (sender, e) => {
+                System.Diagnostics.Debug.WriteLine("Failed monitoring");
+            };
             LocationManager.StartRangingBeacons(BeaconRegion);
         }
     }
