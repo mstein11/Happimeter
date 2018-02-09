@@ -1,7 +1,7 @@
 ﻿using System;
 using SQLite;
 
-namespace Happimeter.Watch.Droid.Database
+namespace Happimeter.Core.Database
 {
     public class MicrophoneMeasurement
     {

@@ -58,7 +58,7 @@ namespace Happimeter.Services
                 //we got the token
                 if (apiResult.Status == 200) {
                     //IsSuccessStatusCode does not work properly because of server
-                    _accountStore.SaveAccount(email, apiResult.Token, apiResult.Expires);
+                    _accountStore.SaveAccount(email, apiResult.Token, apiResult.Id, apiResult.Expires);
                     var authenticated = _accountStore.IsAuthenticated();
                     if (authenticated) {
                         methodResult.ResultType = AuthResultTypes.Success;    

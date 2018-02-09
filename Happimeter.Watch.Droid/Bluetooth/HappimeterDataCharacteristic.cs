@@ -52,7 +52,6 @@ namespace Happimeter.Watch.Droid.Bluetooth
 
             var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(resultObj);
             //var jsonString = string.Format("{{'UuId':'{0}', 'Minor':{1}, 'Major':{2} }}", BluetoothWorker.BeaconUuid, BluetoothWorker.Minor, BluetoothWorker.Major);
-            Debug.WriteLine("Reading");
             var bytes = Encoding.UTF8.GetBytes(jsonString);
             var mtu = worker.DevicesMtu.ContainsKey(device.Address) ? worker.DevicesMtu[device.Address] : 20;
 
@@ -61,14 +60,17 @@ namespace Happimeter.Watch.Droid.Bluetooth
                 if (!ReadPosition.ContainsKey(device.Address)) {
                     ReadPosition.Add(device.Address, 0);
                 }
-                var readPos = mtu * ReadPosition[device.Address];
+                var readPos = ReadPosition[device.Address];
                 var bytesToSend = bytes.Skip(readPos).Take(mtu).ToList();
                 if (bytesToSend.Count() == 0) {
                     bytesToSend = bytesToSend.ToList();
+                    //if we send an empty response, the client will crash, so we add one byte to the response
                     bytesToSend.Add(0x00);
                 }
                 worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, bytesToSend.ToArray());
-                ReadPosition[device.Address]++;
+                ReadPosition[device.Address] += mtu;
+            } else {
+                worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, bytes.ToArray());
             }
 
         }

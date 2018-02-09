@@ -1,6 +1,7 @@
 ﻿using System;
 using CoreLocation;
 using Foundation;
+using Happimeter.DependencyInjection;
 using Happimeter.Interfaces;
 using Plugin.BluetoothLE;
 using UIKit;
@@ -23,6 +24,7 @@ namespace Happimeter.iOS
         public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
         {
             App.Initialize();
+            Container.RegisterElements();
             CrossBleAdapter.Init(BleAdapterConfiguration.DefaultBackgroudingConfig);
 
             var store = ServiceLocator.Instance.Get<IAccountStoreService>();

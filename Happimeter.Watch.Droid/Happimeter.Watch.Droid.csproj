@@ -91,7 +91,6 @@
     <Compile Include="SQLiteAsync.cs" />
     <Compile Include="SQLite.cs" />
     <Compile Include="Database\DatabaseContext.cs" />
-    <Compile Include="Database\MicrophoneMeasurement.cs" />
     <Compile Include="Database\IDatabaseContext.cs" />
     <Compile Include="ServiceLocatorConfig.cs" />
     <Compile Include="Workers\BluetoothWorker.cs" />
@@ -124,5 +123,6 @@
     <Folder Include="Database\" />
     <Folder Include="Bluetooth\" />
   </ItemGroup>
+  <Import Project="..\Happimeter.Core\Happimeter.Core.projitems" Label="Shared" Condition="Exists('..\Happimeter.Core\Happimeter.Core.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

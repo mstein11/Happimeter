@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Android.Bluetooth;
+using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Watch.Droid.Database;
 using Happimeter.Watch.Droid.Workers;
 using Java.Util;
@@ -49,7 +50,9 @@ namespace Happimeter.Watch.Droid.Bluetooth
 
         public void HandleWrite(BluetoothDevice device, int requestId, bool preparedWrite, bool responseNeeded, int offset, byte[] value, BluetoothWorker worker)
         {
-            if (!value.SequenceEqual(Encoding.UTF8.GetBytes("Hallo")) && !value.SequenceEqual(Encoding.UTF8.GetBytes("Ok")))
+            var message = Newtonsoft.Json.JsonConvert.DeserializeObject<BaseBluetoothMessage>(Encoding.UTF8.GetString(value));
+
+            if (message.MessageName != "AuthFirstMessage" && message.MessageName != "AuthSecondMessage")
             {
                 System.Diagnostics.Debug.WriteLine($"Device {device.Address} wrote something which I don't know how to handle to auth characteristic!");
                 worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Failure, offset, Encoding.UTF8.GetBytes("Did not greet probably!"));
@@ -57,7 +60,7 @@ namespace Happimeter.Watch.Droid.Bluetooth
             }
 
             //initiate auth process
-            if (value.SequenceEqual(Encoding.UTF8.GetBytes("Hallo"))) {
+            if (message.MessageName == "AuthFirstMessage") {
                 System.Diagnostics.Debug.WriteLine($"Device {device.Address} started authentication procedure");
                 if (!AuthenticationDeviceDidGreat.ContainsKey(device.Address))
                 {
@@ -68,19 +71,21 @@ namespace Happimeter.Watch.Droid.Bluetooth
             }
 
             //finalize auth process
-            if (value.SequenceEqual(Encoding.UTF8.GetBytes("Ok")))
+            if (message.MessageName == "AuthSecondMessage")
             {
+                var messageData = Newtonsoft.Json.JsonConvert.DeserializeObject<AuthSecondMessage>(Encoding.UTF8.GetString(value));
                 System.Diagnostics.Debug.WriteLine($"Device {device.Address} finalized authentication procedure");
-                //todo: save to database
                 worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
                 var pairedDevice = new BluetoothPairing
                 {
-                    IsIosPaired = true,
+                    PhoneOs = messageData.PhoneOs,
+                    Password = messageData.Password,
                     LastDataSync = null,
                     IsPairingActive = true,
                     PairedAt = DateTime.UtcNow,
                     PairedDeviceName = device.Name,
-                    PairedWithUserName = ""
+                    PairedWithUserName = messageData.HappimeterUsername,
+                    PairedWithUserId = messageData.HappimeterUserId
                 };
 
                 ServiceLocator.Instance.Get<IDatabaseContext>().AddNewPairing(pairedDevice);

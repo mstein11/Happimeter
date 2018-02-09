@@ -23,7 +23,6 @@ namespace Happimeter.Watch.Droid.Database
             try
             {
                 var connection = new SQLiteConnection(DatabasePath);
-                connection.CreateTable<MicrophoneMeasurement>();
                 connection.CreateTable<BluetoothPairing>();
             }
             catch (SQLiteException ex)

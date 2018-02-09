@@ -166,6 +166,11 @@
     <Compile Include="Helpers\RecyclerClickEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
+    <Compile Include="DependencyInjection\Container.cs" />
+    <Compile Include="Services\BeaconWakeupService.cs" />
+    <Compile Include="Services\DeviceInformationService.cs" />
+    <Compile Include="SQLiteAsync.cs" />
+    <Compile Include="SQLite.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\AboutAssets.txt" />
@@ -208,6 +213,11 @@
     <AndroidResource Include="Resources\values-v19\styles.xml" />
     <AndroidResource Include="Resources\values-v21\styles.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DependencyInjection\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+  <Import Project="..\Happimeter.Core\Happimeter.Core.projitems" Label="Shared" Condition="Exists('..\Happimeter.Core\Happimeter.Core.projitems')" />
   <Import Project="..\Happimeter\Happimeter.projitems" Label="Shared" Condition="Exists('..\Happimeter\Happimeter.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Import Project="..\packages\Xamarin.Android.Support.Compat.25.4.0.2\build\MonoAndroid70\Xamarin.Android.Support.Compat.targets" Condition="Exists('..\packages\Xamarin.Android.Support.Compat.25.4.0.2\build\MonoAndroid70\Xamarin.Android.Support.Compat.targets')" />

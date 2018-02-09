@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>{D803EA70-BB66-49C2-8465-6591E039DDE8}</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Happimeter.Core</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)MyClass.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Bluetooth\AuthFirstMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Bluetooth\BaseBluetoothMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Bluetooth\AuthSecondMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Database\SharedDatabaseContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Database\MicrophoneMeasurement.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Models\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Models\Bluetooth\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Database\" />
+  </ItemGroup>
+</Project>

@@ -12,6 +12,7 @@ namespace Happimeter.Services
 
         private const string TokenPropertyName = "Token";
         private const string ExpiresPropertyName = "Expires";
+        private const string UserIdPropertyName = "UserId";
         private const string AppName = "Happimeter";
 
         public AccountStoreService()
@@ -19,12 +20,13 @@ namespace Happimeter.Services
             _store = AccountStore.Create();
         }
 
-        public void SaveAccount(string userName, string token, DateTime expires) {
+        public void SaveAccount(string userName, string token,int userId, DateTime expires) {
 
             var account = new Account();
             account.Username = userName;
             account.Properties.Add(TokenPropertyName, token);
             account.Properties.Add(ExpiresPropertyName, expires.ToLongDateString());
+            account.Properties.Add(UserIdPropertyName, userId.ToString());
             _store.Save(account, AppName);   
         }
 
@@ -32,8 +34,16 @@ namespace Happimeter.Services
             return _store.FindAccountsForService(AppName).FirstOrDefault();
         }
 
+        public int GetAccountUserId() {
+            var account = GetAccount();
+            return int.Parse(account.Properties.FirstOrDefault(x => x.Key == UserIdPropertyName).Value);
+        }
+
         public bool IsAuthenticated() {
             var account = GetAccount();
+            if (account == null) {
+                return false;
+            }
             var expiresString = account.Properties.FirstOrDefault(x => x.Key == ExpiresPropertyName).Value;
             var expiresDatetime = DateTime.Parse(expiresString);
 

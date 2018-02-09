@@ -7,7 +7,8 @@ namespace Happimeter.Interfaces
     {
         Account GetAccount();
         string GetAccountToken();
-        void SaveAccount(string userName, string token, DateTime expires);
+        int GetAccountUserId();
+        void SaveAccount(string userName, string token, int Id, DateTime expires);
         bool IsAuthenticated();
         string GetToken();
     }

@@ -3,7 +3,7 @@
 using Android.App;
 using Android.OS;
 using Android.Runtime;
-
+using Happimeter.DependencyInjection;
 using Plugin.CurrentActivity;
 
 namespace Happimeter.Droid
@@ -22,6 +22,7 @@ namespace Happimeter.Droid
             base.OnCreate();
             RegisterActivityLifecycleCallbacks(this);
             App.Initialize();
+            Container.RegisterElements();
         }
 
         public override void OnTerminate()

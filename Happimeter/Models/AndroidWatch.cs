@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Interfaces;
 using Plugin.BluetoothLE;
 
@@ -38,17 +39,29 @@ namespace Happimeter.Models
   
                             if (characteristic.Uuid == AuthCharacteristic)
                             {
+                                
                                 var message = System.Text.Encoding.UTF8.GetBytes("Hallo");
                                 characteristic.Write(message).Subscribe(writeSuccess =>
                                 {
                                     characteristic.Read().Subscribe(result =>
                                     {
-                                        Debug.WriteLine(System.Text.Encoding.UTF8.GetString(result.Data));
-                                        //Tell gatt server that we got his credentials
-                                        characteristic.Write(System.Text.Encoding.UTF8.GetBytes("Ok")).Subscribe((obj) =>
+                                        //todo: validate data from gattservice
+
+                                        var dataToSend = new AuthSecondMessage
                                         {
+                                            //Service that the watch will later advertise
+                                            Password = Guid.NewGuid().ToString(),
+                                            PhoneOs = ServiceLocator.Instance.Get<IDeviceInformationService>().GetPhoneOs(),
+                                            HappimeterUsername = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccount().Username,
+                                            HappimeterUserId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId()
+                                        };
+                                        var jsonToSend = Newtonsoft.Json.JsonConvert.SerializeObject(dataToSend);
+                                        characteristic.Write(System.Text.Encoding.UTF8.GetBytes(jsonToSend)).Subscribe((obj) =>
+                                        {
+                                            //todo: savepairing information to db
+
                                             //Lets wait for his beacon signal
-                                            ServiceLocator.Instance.Get<IBeaconWakeupService>().StartWakeupForBeacon("F0000000-0000-1000-8000-00805F9B34FB", 0, 1);
+                                            ServiceLocator.Instance.Get<IBeaconWakeupService>().StartWakeupForBeacon("F0000000-0000-1000-8000-00805F9B34FB", 0, dataToSend.HappimeterUserId);
                                         });
                                     });
                                 }, writeError =>
