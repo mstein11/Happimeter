@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Android.App;
 using Android.Bluetooth;
 using Happimeter.Watch.Droid.Workers;
 using Java.Util;
@@ -36,7 +37,7 @@ namespace Happimeter.Watch.Droid.Bluetooth
                 return;
             }
 
-            var tmpData = new int[1000];
+            var tmpData = new int[10000];
             for (var i = 0; i < tmpData.Length; i++) {
                 tmpData[i] = 1;
             }
@@ -53,12 +54,19 @@ namespace Happimeter.Watch.Droid.Bluetooth
             //var jsonString = string.Format("{{'UuId':'{0}', 'Minor':{1}, 'Major':{2} }}", BluetoothWorker.BeaconUuid, BluetoothWorker.Minor, BluetoothWorker.Major);
             Debug.WriteLine("Reading");
             var bytes = Encoding.UTF8.GetBytes(jsonString);
-            if (bytes.Length > 20) {
+            var mtu = worker.DevicesMtu.ContainsKey(device.Address) ? worker.DevicesMtu[device.Address] : 20;
+
+
+            if (bytes.Length > mtu) {
                 if (!ReadPosition.ContainsKey(device.Address)) {
                     ReadPosition.Add(device.Address, 0);
                 }
-
-                var bytesToSend = bytes.Skip((20 * ReadPosition[device.Address])).Take(20);
+                var readPos = mtu * ReadPosition[device.Address];
+                var bytesToSend = bytes.Skip(readPos).Take(mtu).ToList();
+                if (bytesToSend.Count() == 0) {
+                    bytesToSend = bytesToSend.ToList();
+                    bytesToSend.Add(0x00);
+                }
                 worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, bytesToSend.ToArray());
                 ReadPosition[device.Address]++;
             }

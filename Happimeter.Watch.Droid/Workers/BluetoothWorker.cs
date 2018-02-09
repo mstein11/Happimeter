@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Text;
@@ -13,8 +12,6 @@ using Android.OS;
 using Happimeter.Watch.Droid.Bluetooth;
 using Happimeter.Watch.Droid.Database;
 using Java.Util;
-using Plugin.BluetoothLE;
-using Plugin.BluetoothLE.Server;
 
 namespace Happimeter.Watch.Droid.Workers
 {
@@ -31,8 +28,10 @@ namespace Happimeter.Watch.Droid.Workers
 
         public BluetoothManager Manager;
         public BluetoothGattServer GattServer;
+        public Dictionary<string, BluetoothGatt> GattClients = new Dictionary<string, BluetoothGatt>();
 
         public Dictionary<string, BluetoothDevice> SubscribedDevices = new Dictionary<string, BluetoothDevice>();
+        public Dictionary<string, int> DevicesMtu = new Dictionary<string, int>();
 
         public BluetoothWorker()
         {
@@ -65,7 +64,12 @@ namespace Happimeter.Watch.Droid.Workers
 
         public override void Stop()
         {
+            GattServer.Close();
+            GattServer.Dispose();
+            Manager.Adapter.BluetoothLeAdvertiser.StopAdvertising(new CallbackAd());
+
             IsRunning = false;
+
         }
 
         private static BluetoothWorker Instance { get; set; }
@@ -101,14 +105,14 @@ namespace Happimeter.Watch.Droid.Workers
             var trans = new BeaconTransmitter(Application.Context, beaconParser);
 
             while(IsRunning) {
-                
+                await Task.Delay(TimeSpan.FromMinutes(25));
                 System.Diagnostics.Debug.WriteLine("About to start beacon");
                 trans.StartAdvertising(beacon, new CallbackAd());
                 System.Diagnostics.Debug.WriteLine("Started Beacon");
                 await Task.Delay(TimeSpan.FromMinutes(25));
                 trans.StopAdvertising();
                 System.Diagnostics.Debug.WriteLine("Stopped Beacon");
-                await Task.Delay(TimeSpan.FromMinutes(25));
+
             }
         }
 
@@ -186,6 +190,19 @@ namespace Happimeter.Watch.Droid.Workers
         public CallbackGatt(BluetoothWorker worker)
         {
             Worker = worker;
+        }
+
+        public override void OnConnectionStateChange(BluetoothDevice device, ProfileState status, ProfileState newState)
+        {
+            base.OnConnectionStateChange(device, status, newState);
+
+            if (newState == ProfileState.Connected) {
+                Console.WriteLine("device is now connected: watch as server");
+                var client = device.ConnectGatt(Application.Context, true, new CallBackGattClient(Worker));
+                if (!Worker.GattClients.ContainsKey(device.Address)) {
+                    Worker.GattClients.Add(device.Address, client);
+                }
+            }
         }
 
         public override void OnCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset, BluetoothGattCharacteristic characteristic)
@@ -283,6 +300,52 @@ namespace Happimeter.Watch.Droid.Workers
                             0,
                             null);
                 }
+            }
+        }
+
+        public override void OnMtuChanged(BluetoothDevice device, int mtu)
+        {
+            base.OnMtuChanged(device, mtu);
+
+            if (!Worker.DevicesMtu.ContainsKey(device.Address))
+            {
+                Worker.DevicesMtu.Add(device.Address, mtu);
+            } else {
+                Worker.DevicesMtu[device.Address] = mtu;
+            }
+        }
+    }
+
+    public class CallBackGattClient : BluetoothGattCallback
+    {
+
+        public BluetoothWorker Worker { get; set; }
+
+        public CallBackGattClient(BluetoothWorker worker)
+        {
+            Worker = worker;
+        }
+
+        public override void OnConnectionStateChange(BluetoothGatt gatt, Android.Bluetooth.GattStatus status, ProfileState newState)
+        {
+            base.OnConnectionStateChange(gatt, status, newState);
+            Console.WriteLine("device is now connected: watch as client");
+            if (newState == ProfileState.Connected) {
+                var success = gatt.RequestMtu(512);
+            }
+        }
+
+        public override void OnMtuChanged(BluetoothGatt gatt, int mtu, Android.Bluetooth.GattStatus status)
+        {
+            base.OnMtuChanged(gatt, mtu, status);
+
+            if (!Worker.DevicesMtu.ContainsKey(gatt.Device.Address))
+            {
+                Worker.DevicesMtu.Add(gatt.Device.Address, mtu);
+            }
+            else
+            {
+                Worker.DevicesMtu[gatt.Device.Address] = mtu;
             }
         }
     }

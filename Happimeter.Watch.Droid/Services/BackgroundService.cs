@@ -18,11 +18,8 @@ namespace Happimeter.Watch.Droid.Services
         {
             base.OnDestroy();
 
-            var preferences = GetSharedPreferences("TEST", FileCreationMode.Append);
-            var editor = preferences.Edit();
-
-            editor.PutString("LastStopped", DateTime.UtcNow.ToString());
-            editor.Commit();
+            BluetoothWorker.GetInstance().Stop();
+            MicrophoneWorker.GetInstance().Stop();
         }
 
         public override void OnCreate()

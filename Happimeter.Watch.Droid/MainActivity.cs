@@ -78,6 +78,10 @@ namespace Happimeter.Watch.Droid
             StartService(new Intent(this,typeof(BackgroundService)));
 
             var heartRate2 = smm.GetDefaultSensor(SensorType.HeartBeat);
+            FindViewById<Button>(Resource.Id.restartWorker).Click += (sender, e) => {
+                StopService(new Intent(this, typeof(BackgroundService)));
+                StartService(new Intent(this, typeof(BackgroundService)));
+            };
             //RequestPermissions(Manifest.Permission.BodySensors, 0);
             //smm.RegisterListener(this, heartRate, SensorDelay.Fastest);
 

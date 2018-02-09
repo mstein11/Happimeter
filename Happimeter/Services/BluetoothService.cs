@@ -57,7 +57,7 @@ namespace Happimeter.Services
 
 
             scannerObs.TakeUntil(Observable.Timer(TimeSpan.FromSeconds(10))).Subscribe(scan => {
-                Console.WriteLine("Scan result: " + string.Concat(scan.AdvertisementData.ServiceUuids));
+                //Console.WriteLine("Scan result: " + string.Concat(scan.AdvertisementData.ServiceUuids ?? ""));
                 if (!FoundDevices.Select(x => x.Device.Uuid).Contains(scan.Device.Uuid)) {
                     FoundDevices.Add(scan);
                     ScanReplaySubject.OnNext(scan);
@@ -143,7 +143,7 @@ namespace Happimeter.Services
 
         private Dictionary<Guid, bool> IsBusy = new Dictionary<Guid, bool>();
 
-        private void CharacteristicDiscoveredForDataExchange(IGattCharacteristic characteristic) {
+        private async void CharacteristicDiscoveredForDataExchange(IGattCharacteristic characteristic) {
             Console.WriteLine("Characteristic discovered: " + characteristic.Uuid);
 
 
@@ -157,9 +157,13 @@ namespace Happimeter.Services
                 }
                 try
                 {
+                    //var mtuSize = await characteristic.Service.Device.RequestMtu(256);
+                    //mtuSize = await characteristic.Service.Device.RequestMtu(512);
+
                     //datacharacteristic
                     characteristic.Write(System.Text.Encoding.UTF8.GetBytes("pass")).Subscribe(async writeResult =>
                     {
+
                         Console.WriteLine("wrote successfully");
                         var listOfBytes = new List<byte>();
                         var totalBytesRead = 0;
@@ -168,13 +172,14 @@ namespace Happimeter.Services
                         while (true)
                         {
                             var result = await characteristic.Read();
-                            if (result == null || result.Data == null || result.Data.Length == 0)
+                            if (result == null || result.Data == null || result.Data.Length == 1)
                             {
                                 break;
                             }
+                            Console.WriteLine($"Got {result.Data.Length} bytes.");
                             listOfBytes.AddRange(result.Data);
                             totalBytesRead += result.Data.Length;
-                            if (result.Data.Length != 20)
+                            if (result.Data.Length == 1)
                             {
                                 break;
                             }

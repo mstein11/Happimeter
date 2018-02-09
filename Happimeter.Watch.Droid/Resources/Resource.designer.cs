@@ -89,6 +89,9 @@ namespace Happimeter.Watch.Droid
 			// aapt resource value: 0x7f05000f
 			public const int removePairingButton = 2131034127;
 			
+			// aapt resource value: 0x7f050010
+			public const int restartWorker = 2131034128;
+			
 			// aapt resource value: 0x7f050007
 			public const int textView1 = 2131034119;
 			
