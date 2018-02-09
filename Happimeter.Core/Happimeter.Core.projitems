@@ -15,6 +15,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\Bluetooth\AuthSecondMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Database\SharedDatabaseContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Database\MicrophoneMeasurement.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Database\ISharedDatabaseContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Database\SharedBluetoothDevicePairing.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Models\" />

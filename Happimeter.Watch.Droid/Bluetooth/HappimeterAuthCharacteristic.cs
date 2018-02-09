@@ -88,7 +88,7 @@ namespace Happimeter.Watch.Droid.Bluetooth
                     PairedWithUserId = messageData.HappimeterUserId
                 };
 
-                ServiceLocator.Instance.Get<IDatabaseContext>().AddNewPairing(pairedDevice);
+                ServiceLocator.Instance.Get<IDatabaseContext>().Add(pairedDevice);
 
                 worker.RunBeacon();
                 return;

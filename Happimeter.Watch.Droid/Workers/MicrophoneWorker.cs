@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Android.Media;
+using Happimeter.Core.Database;
 using Happimeter.Watch.Droid.Database;
 
 namespace Happimeter.Watch.Droid.Workers
@@ -83,13 +84,14 @@ namespace Happimeter.Watch.Droid.Workers
                         Volumne = volume,
                         TimeStamp = DateTime.UtcNow
                     };
-                    ServiceLocator.Instance.Get<IDatabaseContext>().AddMicrophoneMeasurement(measure);
+                    ServiceLocator.Instance.Get<IDatabaseContext>().Add(measure);
                     record.Stop();
                     await Task.Delay(TimeSpan.FromSeconds(RecordingDurationSec));
                 }
             }
             catch (Exception e)
             {
+                Console.WriteLine($"Error while Getting Microphone measurement. Stopping the worker. Error Message {e.Message}");
                 IsRunning = false;
             }
         }

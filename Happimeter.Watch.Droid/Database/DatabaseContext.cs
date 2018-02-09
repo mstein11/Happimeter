@@ -2,87 +2,47 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Happimeter.Core.Database;
 using SQLite;
 
 namespace Happimeter.Watch.Droid.Database
 {
-    public class DatabaseContext : IDatabaseContext
+    public class DatabaseContext : SharedDatabaseContext, IDatabaseContext
     {
-        private const string DatabaseName = "db_sqlnet.db";
-        private readonly string DatabasePath;
-
-        private bool DatabaseIsCreated = false;
-
-        public DatabaseContext()
+        protected override string GetDatabasePath()
         {
             var docsFolder = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
-            DatabasePath  = System.IO.Path.Combine(docsFolder, DatabaseName);
+            return System.IO.Path.Combine(docsFolder, DatabaseName);
+        }
+        protected override List<Type> BeforeCreateDatabase(List<Type> tables)
+        {
+            //here we have our own version of that model
+            tables.Remove(typeof(SharedBluetoothDevicePairing));
+            tables.Add(typeof(BluetoothPairing));
+
+            return tables;
         }
 
-        public void CreateDatabase() {
+        /// <summary>
+        ///     Here we can adjust the add logic for some of the types
+        /// </summary>
+        /// <returns>The add.</returns>
+        /// <param name="entity">Entity.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
+        public override void Add<T>(T entity) {
+            //we have some special logic for bluetooth pairings
+            if (typeof(T) == typeof(BluetoothPairing)) {
+                AddNewPairing(entity as BluetoothPairing);
+            } else {
+                base.Add(entity);
+            }
+        }
+
+        private void AddNewPairing(BluetoothPairing newPairing) {
             try
             {
-                var connection = new SQLiteConnection(DatabasePath);
-                connection.CreateTable<BluetoothPairing>();
-            }
-            catch (SQLiteException ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
-        }
-
-        public IList<MicrophoneMeasurement> GetMicrophoneMeasurements() {
-            if (!DatabaseIsCreated) {
-                CreateDatabase();
-            }
-            using (var connection = new SQLiteConnection(DatabasePath)) {
-                return connection.Table<MicrophoneMeasurement>().ToList(); 
-            }
-        }
-
-        public bool AddMicrophoneMeasurement(MicrophoneMeasurement measurement) {
-            try {
-                if (!DatabaseIsCreated)
-                {
-                    CreateDatabase();
-                }
-                using (var connection = new SQLiteConnection(DatabasePath))
-                {
-                    connection.Insert(measurement);
-                    return true;
-                }
-            } catch (Exception e) {
-                Debug.WriteLine(e.Message);
-                return false;
-            }
-        }
-
-        public void DeleteAllMicrophoneMeasurements() {
-            try
-            {
-                if (!DatabaseIsCreated)
-                {
-                    CreateDatabase();
-                }
-                using (var connection = new SQLiteConnection(DatabasePath))
-                {
-                    connection.DeleteAll<MicrophoneMeasurement>();
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.Message);
-            }
-        }
-
-        public void AddNewPairing(BluetoothPairing newPairing) {
-            try
-            {
-                if (!DatabaseIsCreated)
-                {
-                    CreateDatabase();
-                }
-                using (var connection = new SQLiteConnection(DatabasePath))
+                EnsureDatabaseCreated();
+                using (var connection = new SQLiteConnection(GetDatabasePath()))
                 {
                     var bluetoothPairings = connection.Table<BluetoothPairing>().Where(prop => prop.IsPairingActive).ToList();
                     for (int i = 0; i < bluetoothPairings.Count; i++)
@@ -99,36 +59,15 @@ namespace Happimeter.Watch.Droid.Database
             }
         }
 
-        public void DeleteAllBluetoothPairings() {
-            try
-            {
-                if (!DatabaseIsCreated)
-                {
-                    CreateDatabase();
-                }
-                using (var connection = new SQLiteConnection(DatabasePath))
-                {
-                    connection.DeleteAll<BluetoothPairing>();
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.Message);
-            }
-        }
 
+        /// <summary>
+        ///     Just for conviniece.
+        /// </summary>
+        /// <returns>The current bluetooth pairing.</returns>
         public BluetoothPairing GetCurrentBluetoothPairing() {
             try
             {
-                if (!DatabaseIsCreated)
-                {
-                    CreateDatabase();
-                }
-                using (var connection = new SQLiteConnection(DatabasePath))
-                {
-                    return connection.Table<BluetoothPairing>().Where(prop => prop.IsPairingActive).FirstOrDefault();
-
-                }
+                return base.Get<BluetoothPairing>(x => x.IsPairingActive == true);
             }
             catch (Exception e)
             {

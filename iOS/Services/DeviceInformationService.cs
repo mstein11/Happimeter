@@ -1,7 +1,7 @@
 ﻿using System;
 namespace Happimeter.iOS.Services
 {
-    public class DeviceInformationService
+    public class DeviceInformationService : IDeviceInformationService
     {
         public DeviceInformationService()
         {

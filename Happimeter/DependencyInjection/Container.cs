@@ -14,6 +14,7 @@ namespace Happimeter.DependencyInjection
             ServiceLocator.Instance.Register<IAccountStoreService, AccountStoreService>();
             ServiceLocator.Instance.Register<IBluetoothService, BluetoothService>();
             ServiceLocator.Instance.Register<IBeaconWakeupService, BeaconWakeupService>();
+
         }
     }
 }

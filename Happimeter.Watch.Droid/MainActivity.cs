@@ -1,27 +1,19 @@
 ﻿using Android.App;
 using Android.Widget;
 //using Android.OS;
-using System.Linq;
 using Android.Content;
 using Android.Hardware;
 using Android.Runtime;
-using System.Diagnostics;
 using Android.OS;
-using Android;
-using Android.Media;
-using System.Threading.Tasks;
-using System.IO;
-using System;
 using Happimeter.Watch.Droid.Services;
 using Happimeter.Watch.Droid.Database;
+using Happimeter.Core.Database;
 
 namespace Happimeter.Watch.Droid
 {
     [Activity(Label = "Happimeter.Watch.Droid", MainLauncher = true, Icon = "@mipmap/icon")]
     public class MainActivity : Activity, ISensorEventListener
     {
-        int count = 1;
-
         public void OnAccuracyChanged(Sensor sensor, [GeneratedEnum] SensorStatus accuracy)
         {
             System.Diagnostics.Debug.WriteLine(accuracy);
@@ -60,14 +52,14 @@ namespace Happimeter.Watch.Droid
             var start = preferences.GetString("StartEvent", "0");
 
 
-            var measurements = ServiceLocator.Instance.Get<IDatabaseContext>().GetMicrophoneMeasurements();
+            var measurements = ServiceLocator.Instance.Get<IDatabaseContext>().GetAll<MicrophoneMeasurement>();
             var pairing = ServiceLocator.Instance.Get<IDatabaseContext>().GetCurrentBluetoothPairing();
             if (pairing != null) {
                 FindViewById<TextView>(Resource.Id.isPairedValue).Text = "yes";
                 FindViewById<TextView>(Resource.Id.ExchangeAtValue).Text = pairing.LastDataSync?.ToString() ?? "-";
                 FindViewById<TextView>(Resource.Id.PairedAtValue).Text = pairing.PairedAt?.ToString() ?? "-";
                 FindViewById<Button>(Resource.Id.removePairingButton).Click += delegate {
-                    ServiceLocator.Instance.Get<IDatabaseContext>().DeleteAllBluetoothPairings();
+                    ServiceLocator.Instance.Get<IDatabaseContext>().DeleteAll<BluetoothPairing>();
                     Toast.MakeText(this, "Deleted, View will not update unless you restart app",ToastLength.Long);
                 };
             } else {
