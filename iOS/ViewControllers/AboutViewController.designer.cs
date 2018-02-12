@@ -20,23 +20,27 @@ namespace Happimeter.iOS
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UITextView AboutTextView { get; set; }
+        UIKit.UILabel DeviceNameValue { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UILabel AppNameLabel { get; set; }
+        UIKit.UILabel IsPairedValue { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UILabel VersionLabel { get; set; }
+        UIKit.UILabel LastDataExchangeValue { get; set; }
 
-        [Action ("ReadMoreButton_TouchUpInside:")]
+        [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        partial void ReadMoreButton_TouchUpInside (UIKit.UIButton sender);
+        UIKit.UILabel PairedAtValue { get; set; }
 
-        [Action ("UIButton58642_TouchUpInside:")]
+        [Action ("UIButton63292_TouchUpInside:")]
         [GeneratedCode ("iOS Designer", "1.0")]
-        partial void UIButton58642_TouchUpInside (UIKit.UIButton sender);
+        partial void UIButton63292_TouchUpInside (UIKit.UIButton sender);
+
+        [Action ("UIButton67110_TouchUpInside:")]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        partial void UIButton67110_TouchUpInside (UIKit.UIButton sender);
 
         void ReleaseDesignerOutlets ()
         {
@@ -45,19 +49,24 @@ namespace Happimeter.iOS
                 AboutImageView = null;
             }
 
-            if (AboutTextView != null) {
-                AboutTextView.Dispose ();
-                AboutTextView = null;
+            if (DeviceNameValue != null) {
+                DeviceNameValue.Dispose ();
+                DeviceNameValue = null;
             }
 
-            if (AppNameLabel != null) {
-                AppNameLabel.Dispose ();
-                AppNameLabel = null;
+            if (IsPairedValue != null) {
+                IsPairedValue.Dispose ();
+                IsPairedValue = null;
             }
 
-            if (VersionLabel != null) {
-                VersionLabel.Dispose ();
-                VersionLabel = null;
+            if (LastDataExchangeValue != null) {
+                LastDataExchangeValue.Dispose ();
+                LastDataExchangeValue = null;
+            }
+
+            if (PairedAtValue != null) {
+                PairedAtValue.Dispose ();
+                PairedAtValue = null;
             }
         }
     }

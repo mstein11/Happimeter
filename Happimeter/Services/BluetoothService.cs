@@ -7,6 +7,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using Happimeter.Core.Database;
 using Happimeter.Interfaces;
 using Happimeter.Models;
 using Plugin.BluetoothLE;
@@ -50,7 +51,10 @@ namespace Happimeter.Services
 
             IObservable<IScanResult> scannerObs;
             if (serviceGuid == null) {
-                scannerObs = CrossBleAdapter.Current.ScanWhenAdapterReady();    
+                scannerObs = CrossBleAdapter.Current.Scan();
+
+
+
             } else {
                 scannerObs = CrossBleAdapter.Current.Scan(new ScanConfig {ServiceUuids = new List<Guid> {Guid.Parse(serviceGuid)}});    
             }
@@ -113,7 +117,17 @@ namespace Happimeter.Services
                                 .WhenAnyCharacteristicDiscovered()
                                 .Where(characteristic => characteristic.Uuid == Guid.Parse("7918ec07-2ba4-4542-aa13-0a10ff3826ba"))
                                 .Take(1)
-                                .Subscribe(CharacteristicDiscoveredForDataExchange);
+                                .Timeout(TimeSpan.FromSeconds(10))
+                                .Subscribe(CharacteristicDiscoveredForDataExchange, err => {
+                    if (err is TimeoutException) {
+                        Console.WriteLine("Timeout while waiting for characteristic on already connected device!");
+                        var devicesToDisconnect = CrossBleAdapter.Current.GetConnectedDevices();
+                        foreach (var device in devicesToDisconnect) {
+                            device.CancelConnection();
+                            Console.WriteLine($"Cancelled Connection to device {device.Uuid}");
+                        }
+                    }
+                });
                 
             } else {
                 if (!CrossBleAdapter.Current.IsScanning) {
@@ -121,8 +135,11 @@ namespace Happimeter.Services
                     StartScan("0000F0F0-0000-1000-8000-00805F9B34FB");
                 }
 
-                //ScanReplaySubject.Select(result => result.Device).Where(x => x.Name?.Contains("Happimeter") ?? false).Take(1).Subscribe(result =>
-                ScanReplaySubject.Select(result => result.Device).Take(1).Subscribe(result =>
+                //todo: exchange hardcoded name in filter with advertised data
+                ScanReplaySubject.Where(scanRes => scanRes?.Device?.Name?.Contains("Happimeter") ?? false).Select(result => result.Device)
+                                 .Take(1)
+                                 .Timeout(TimeSpan.FromSeconds(10))
+                                 .Subscribe(result =>
                 {
                     Console.WriteLine("Subscribed to device");
                     result.Connect().Subscribe(conn =>
@@ -137,6 +154,12 @@ namespace Happimeter.Services
                         Console.WriteLine("Err");
                     });
 
+                }, err => {
+                    if (err is TimeoutException) {
+                        Console.WriteLine("No device found in 10 seconds");
+                        return;
+                    }
+                    Console.WriteLine($"Received unknown exception on exchange data attempt: {err.Message}");
                 });
             }
         }
@@ -157,9 +180,6 @@ namespace Happimeter.Services
                 }
                 try
                 {
-                    //var mtuSize = await characteristic.Service.Device.RequestMtu(256);
-                    //mtuSize = await characteristic.Service.Device.RequestMtu(512);
-
                     //datacharacteristic
                     characteristic.Write(System.Text.Encoding.UTF8.GetBytes("pass")).Subscribe(async writeResult =>
                     {
@@ -186,6 +206,9 @@ namespace Happimeter.Services
                         }
                         stopWatch.Stop();
                         Console.WriteLine($"Took {stopWatch.Elapsed.TotalSeconds} seconds to receive {totalBytesRead} bytes");
+                        var pairing = ServiceLocator.Instance.Get<ISharedDatabaseContext>().Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive);
+                        pairing.LastDataSync = DateTime.UtcNow;
+                        ServiceLocator.Instance.Get<ISharedDatabaseContext>().Update(pairing);
                         //characteristic.Service.Device.CancelConnection();
                         //Console.WriteLine("cancelled connection");
                     });

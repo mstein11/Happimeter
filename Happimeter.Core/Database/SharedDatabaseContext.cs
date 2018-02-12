@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using SQLite;
@@ -16,11 +17,11 @@ namespace Happimeter.Core.Database
         }
 
         protected virtual string GetDatabasePath() {
-            return DatabaseName;
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), DatabaseName);
         }
 
         protected virtual SQLiteConnection GetConnection() {
-            return new SQLiteConnection(DatabaseName);
+            return new SQLiteConnection(GetDatabasePath());
         }
 
         /// <summary>
@@ -85,9 +86,25 @@ namespace Happimeter.Core.Database
         }
 
         public virtual void Add<T>(T entity) where T : new() {
+            var btPairing = entity as SharedBluetoothDevicePairing;
+            if (btPairing != null) {
+                AddBluetoothPairing(btPairing);
+                return;
+            }
             EnsureDatabaseCreated();
             using(var connection = GetConnection()) {
                 connection.Insert(entity);
+                OnModelChanged(entity);
+            }
+        }
+
+        public virtual void Update<T>(T entity) where T : new()
+        {
+            EnsureDatabaseCreated();
+            using (var connection = GetConnection())
+            {
+                connection.Update(entity);
+                OnModelChanged(entity);
             }
         }
 
@@ -97,6 +114,25 @@ namespace Happimeter.Core.Database
             {
                 connection.DeleteAll<T>();
             }
+        }
+
+        public event EventHandler ModelChanged;
+        protected void OnModelChanged(object model) {
+            ModelChanged?.Invoke(model, new EventArgs());
+        }
+
+        protected void AddBluetoothPairing(SharedBluetoothDevicePairing pairing) {
+            EnsureDatabaseCreated();
+            var oldPairings = GetAll<SharedBluetoothDevicePairing>(x => x.IsPairingActive);
+            foreach (var oldPairing in oldPairings) {
+                oldPairing.IsPairingActive = false;
+                Update(oldPairing);
+            }
+            using (var connection = GetConnection())
+            {
+                connection.Insert(pairing);
+            }
+            OnModelChanged(pairing);
         }
     }
 }

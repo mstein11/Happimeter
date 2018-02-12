@@ -46,6 +46,11 @@ namespace Happimeter
 
             changed.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public event EventHandler ModelChanged;
+        protected void OnModelChanged() {
+            ModelChanged?.Invoke(this, new EventArgs());
+        }
         #endregion
     }
 }

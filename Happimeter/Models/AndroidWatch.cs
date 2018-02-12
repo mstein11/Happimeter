@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Happimeter.Core.Database;
 using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Interfaces;
 using Plugin.BluetoothLE;
@@ -40,7 +41,8 @@ namespace Happimeter.Models
                             if (characteristic.Uuid == AuthCharacteristic)
                             {
                                 
-                                var message = System.Text.Encoding.UTF8.GetBytes("Hallo");
+                                var jsonToSend = Newtonsoft.Json.JsonConvert.SerializeObject(new AuthFirstMessage());
+                                var message = System.Text.Encoding.UTF8.GetBytes(jsonToSend);
                                 characteristic.Write(message).Subscribe(writeSuccess =>
                                 {
                                     characteristic.Read().Subscribe(result =>
@@ -52,13 +54,22 @@ namespace Happimeter.Models
                                             //Service that the watch will later advertise
                                             Password = Guid.NewGuid().ToString(),
                                             PhoneOs = ServiceLocator.Instance.Get<IDeviceInformationService>().GetPhoneOs(),
-                                            HappimeterUsername = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccount().Username,
+                                            //HappimeterUsername = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccount().Username,
                                             HappimeterUserId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId()
                                         };
-                                        var jsonToSend = Newtonsoft.Json.JsonConvert.SerializeObject(dataToSend);
-                                        characteristic.Write(System.Text.Encoding.UTF8.GetBytes(jsonToSend)).Subscribe((obj) =>
+                                        var firstJsonToSend = Newtonsoft.Json.JsonConvert.SerializeObject(dataToSend);
+                                        characteristic.Write(System.Text.Encoding.UTF8.GetBytes(firstJsonToSend)).Subscribe((obj) =>
                                         {
                                             //todo: savepairing information to db
+                                            var paring = new SharedBluetoothDevicePairing
+                                            {
+                                                IsPairingActive = true,
+                                                PairedAt = DateTime.UtcNow,
+                                                PairedDeviceName = characteristic.Service.Device.Name,
+                                                Password = dataToSend.Password,
+                                                PhoneOs = "Android"
+                                            };
+                                            ServiceLocator.Instance.Get<ISharedDatabaseContext>().Add(paring);
 
                                             //Lets wait for his beacon signal
                                             ServiceLocator.Instance.Get<IBeaconWakeupService>().StartWakeupForBeacon("F0000000-0000-1000-8000-00805F9B34FB", 0, dataToSend.HappimeterUserId);

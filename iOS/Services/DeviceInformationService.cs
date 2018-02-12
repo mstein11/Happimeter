@@ -1,4 +1,6 @@
 ﻿using System;
+using Happimeter.Interfaces;
+
 namespace Happimeter.iOS.Services
 {
     public class DeviceInformationService : IDeviceInformationService

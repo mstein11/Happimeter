@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Android.Bluetooth;
@@ -25,7 +26,7 @@ namespace Happimeter.Watch.Droid.Bluetooth
         public void HandleRead(BluetoothDevice device, int requestId, int offset, BluetoothWorker worker) {
             if (!AuthenticationDeviceDidGreat.ContainsKey(device.Address)) {
                 System.Diagnostics.Debug.WriteLine($"Device {device.Address} read from auth characteristic without greeting first!");
-                worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Failure, offset, Encoding.UTF8.GetBytes("Did not greet probably!"));
+                worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, Encoding.UTF8.GetBytes("Did not greet probably!"));
                 return;
             }
             var resultObj = new
@@ -50,12 +51,13 @@ namespace Happimeter.Watch.Droid.Bluetooth
 
         public void HandleWrite(BluetoothDevice device, int requestId, bool preparedWrite, bool responseNeeded, int offset, byte[] value, BluetoothWorker worker)
         {
+            var messageRaw = Encoding.UTF8.GetString(value);
             var message = Newtonsoft.Json.JsonConvert.DeserializeObject<BaseBluetoothMessage>(Encoding.UTF8.GetString(value));
 
             if (message.MessageName != "AuthFirstMessage" && message.MessageName != "AuthSecondMessage")
             {
                 System.Diagnostics.Debug.WriteLine($"Device {device.Address} wrote something which I don't know how to handle to auth characteristic!");
-                worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Failure, offset, Encoding.UTF8.GetBytes("Did not greet probably!"));
+                worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, Encoding.UTF8.GetBytes("Did not greet probably!"));
                 return;
             }
 

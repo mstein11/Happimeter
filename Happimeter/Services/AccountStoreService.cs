@@ -34,6 +34,10 @@ namespace Happimeter.Services
             return _store.FindAccountsForService(AppName).FirstOrDefault();
         }
 
+        public void DeleteAccount() {
+            _store.Delete(GetAccount(), AppName);
+        }
+
         public int GetAccountUserId() {
             var account = GetAccount();
             return int.Parse(account.Properties.FirstOrDefault(x => x.Key == UserIdPropertyName).Value);

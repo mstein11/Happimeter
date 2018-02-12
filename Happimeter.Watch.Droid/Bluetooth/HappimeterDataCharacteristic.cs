@@ -33,7 +33,7 @@ namespace Happimeter.Watch.Droid.Bluetooth
             if (!DidSendPass.ContainsKey(device.Address))
             {
                 System.Diagnostics.Debug.WriteLine($"Device {device.Address} read from auth characteristic without authenticating first first!");
-                worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Failure, offset, Encoding.UTF8.GetBytes("Did not authenticated!"));
+                worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, Encoding.UTF8.GetBytes("Did not authenticated!"));
                 return;
             }
 
@@ -80,7 +80,7 @@ namespace Happimeter.Watch.Droid.Bluetooth
             if (!value.SequenceEqual(Encoding.UTF8.GetBytes("pass")))
             {
                 System.Diagnostics.Debug.WriteLine($"Device {device.Address} wrote something which I don't know how to handle to data characteristic!");
-                worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Failure, offset, Encoding.UTF8.GetBytes("wrong pass phrase!"));
+                worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, Encoding.UTF8.GetBytes("wrong pass phrase!"));
                 return;
             }
 

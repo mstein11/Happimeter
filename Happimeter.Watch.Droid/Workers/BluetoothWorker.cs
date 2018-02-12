@@ -57,6 +57,10 @@ namespace Happimeter.Watch.Droid.Workers
             if (GattServer != null) {
                 GattServer.Close();
             }
+
+            var osOffloadFlitering = Manager.Adapter.IsOffloadedFilteringSupported;
+            var isMultiAdvertisement = Manager.Adapter.IsMultipleAdvertisementSupported;
+            var IsEnAbled = Manager.Adapter.IsEnabled;
             GattServer = Manager.OpenGattServer(Application.Context, new CallbackGatt(this));
             GattServer.AddService(HappimeterService.Create());
             System.Diagnostics.Debug.WriteLine("Gatt initialized");
