@@ -131,13 +131,16 @@ namespace Happimeter.Watch.Droid.Workers
                                                 .SetConnectable(true)
                                                 .Build();
 
+            var userId = ServiceLocator.Instance.Get<IDatabaseContext>().Get<BluetoothPairing>(x => x.IsPairingActive)?.PairedWithUserId ?? 0;
+
             var tmpr = BluetoothAdapter.DefaultAdapter.SetName("Happimeter AAAA");
             var data = new AdvertiseData.Builder()
                                         .SetIncludeDeviceName(true)
-                                        .SetIncludeTxPowerLevel(true)
+                                        //.SetIncludeTxPowerLevel(true)
                                         //.AddServiceUuid(ParcelUuid.FromString(BeaconUuid))
                                         //todo: add appropriate serviceId
                                         .AddServiceUuid(ParcelUuid.FromString("0000F0F0-0000-1000-8000-00805F9B34FB"))
+                                        .AddServiceData(ParcelUuid.FromString("0000F0F0-0000-1000-8000-00805F9B34FB"), Encoding.UTF8.GetBytes(userId.ToString()))
                                         .Build();
 
             BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser.StartAdvertising(settings, data, new CallbackAd());
@@ -155,13 +158,14 @@ namespace Happimeter.Watch.Droid.Workers
                                                 .Build();
 
             var tmpr = BluetoothAdapter.DefaultAdapter.SetName("Happimeter AAAA");
+            var userId = ServiceLocator.Instance.Get<IDatabaseContext>().Get<BluetoothPairing>(x => x.IsPairingActive)?.PairedWithUserId ?? 0;
             var data = new AdvertiseData.Builder()
                                         .SetIncludeDeviceName(true)
-                                        .SetIncludeTxPowerLevel(true)
+                                        //.SetIncludeTxPowerLevel(true)
                                         //.AddServiceUuid(ParcelUuid.FromString(BeaconUuid))
                                         //todo: add appropriate serviceId
                                         .AddServiceUuid(ParcelUuid.FromString("0000F0F0-0000-1000-8000-00805F9B34FB"))
-                                        //.AddServiceData(ParcelUuid.FromString("00000000-0000-1000-8000-00805F9B34FB"), Encoding.UTF8.GetBytes("Hallo"))
+                                        .AddServiceData(ParcelUuid.FromString("0000F0F0-0000-1000-8000-00805F9B34FB"), Encoding.UTF8.GetBytes(userId.ToString()))
                                         .Build();
 
             BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser.StartAdvertising(settings, data, new CallbackAd());
@@ -216,7 +220,8 @@ namespace Happimeter.Watch.Droid.Workers
 
             var authCharac = characteristic as HappimeterAuthCharacteristic;
             if (authCharac != null) {
-                authCharac.HandleRead(device,requestId,offset,Worker);
+                authCharac.HandleRead(device, requestId, offset, Worker);
+                return;
             }
 
 
@@ -224,7 +229,10 @@ namespace Happimeter.Watch.Droid.Workers
             if (dataCharac != null)
             {
                 dataCharac.HandleRead(device, requestId, offset, Worker);
+                return;
             }
+
+            Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, Encoding.UTF8.GetBytes("Unknwon characteristic!"));
         }
 
         public override void OnCharacteristicWriteRequest(BluetoothDevice device, int requestId, BluetoothGattCharacteristic characteristic, bool preparedWrite, bool responseNeeded, int offset, byte[] value)
@@ -235,13 +243,17 @@ namespace Happimeter.Watch.Droid.Workers
             if (authCharac != null)
             {
                 authCharac.HandleWrite(device, requestId, preparedWrite, responseNeeded, offset, value, Worker);
+                return;
             }
 
             var dataCharac = characteristic as HappimeterDataCharacteristic;
             if (dataCharac != null)
             {
                 dataCharac.HandleWriteAsync(device, requestId, preparedWrite, responseNeeded, offset, value, Worker);
+                return;
             }
+
+            Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, Encoding.UTF8.GetBytes("Unknwon characteristic!"));
         }
 
         public override void OnDescriptorReadRequest(BluetoothDevice device, int requestId, int offset, BluetoothGattDescriptor descriptor)
@@ -258,10 +270,16 @@ namespace Happimeter.Watch.Droid.Workers
                 }
                 Worker.GattServer.SendResponse(device,
                     requestId,
-                                               Android.Bluetooth.GattStatus.Failure,
+                                               Android.Bluetooth.GattStatus.Success,
                     0,
                     valueToReturn.ToArray());
             }
+
+            Worker.GattServer.SendResponse(device,
+                            requestId,
+                            Android.Bluetooth.GattStatus.Success,
+                            0,
+                            null);
         }
 
 

@@ -62,6 +62,7 @@ namespace Happimeter.Services
 
             scannerObs.TakeUntil(Observable.Timer(TimeSpan.FromSeconds(10))).Subscribe(scan => {
                 //Console.WriteLine("Scan result: " + string.Concat(scan.AdvertisementData.ServiceUuids ?? ""));
+                Debug.WriteLine(System.Text.Encoding.UTF8.GetString(scan.AdvertisementData?.ServiceData?.FirstOrDefault()?.ToArray() ?? new byte[0]));
                 if (!FoundDevices.Select(x => x.Device.Uuid).Contains(scan.Device.Uuid)) {
                     FoundDevices.Add(scan);
                     ScanReplaySubject.OnNext(scan);
