@@ -29,11 +29,10 @@ namespace Happimeter.Watch.Droid.Bluetooth
                 worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, Encoding.UTF8.GetBytes("Did not greet probably!"));
                 return;
             }
+
+            //todo: we don't really need this anymore
             var resultObj = new
             {
-                Uuid = BluetoothWorker.BeaconUuid,
-                Minor = 1,
-                Major = 0,
                 Password = "pass"
             };
 

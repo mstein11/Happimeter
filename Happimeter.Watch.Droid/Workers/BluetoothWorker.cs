@@ -9,6 +9,7 @@ using Android.App;
 using Android.Bluetooth;
 using Android.Bluetooth.LE;
 using Android.OS;
+using Happimeter.Core.Helper;
 using Happimeter.Watch.Droid.Bluetooth;
 using Happimeter.Watch.Droid.Database;
 using Java.Util;
@@ -17,7 +18,6 @@ namespace Happimeter.Watch.Droid.Workers
 {
     public class BluetoothWorker : AbstractWorker
     {
-        public const string BeaconUuid = "F0000000-0000-1000-8000-00805F9B34FB";
         public const string Major = "0";
         public const string Minor = "1";
         //Code that represents apple
@@ -94,13 +94,14 @@ namespace Happimeter.Watch.Droid.Workers
         /// <returns>The beacon.</returns>
         public async Task RunBeacon()
         {
-
             ConnectableAdvertisement();
-            var uuid = Encoding.UTF8.GetBytes(BeaconUuid);
+            var userId = ServiceLocator.Instance.Get<IDatabaseContext>().Get<BluetoothPairing>(x => x.IsPairingActive).PairedWithUserId;
+            (var major, var minor) = UtilHelper.GetMajorMinorFromUserId(userId);
+            var beaconUuid = UuidHelper.BeaconUuidString;
             var beacon = new Beacon.Builder()
-                                   .SetId1(BeaconUuid)
-                                   .SetId2(Major)
-                                   .SetId3(Minor)
+                                   .SetId1(beaconUuid)
+                                   .SetId2(major.ToString())
+                                   .SetId3(minor.ToString())
                                    .SetManufacturer(ManufacturerCode) // Radius Networks.0x0118  Change this for other beacon layouts//0x004C for iPhone
                                    .SetTxPower(TxPowerLevel) // Power in dB
                                                              //.SetBluetoothName("Happimeter AAAA")
@@ -109,12 +110,12 @@ namespace Happimeter.Watch.Droid.Workers
             var trans = new BeaconTransmitter(Application.Context, beaconParser);
 
             while(IsRunning) {
-                await Task.Delay(TimeSpan.FromMinutes(25));
                 System.Diagnostics.Debug.WriteLine("About to start beacon");
                 trans.StartAdvertising(beacon, new CallbackAd());
                 System.Diagnostics.Debug.WriteLine("Started Beacon");
-                await Task.Delay(TimeSpan.FromMinutes(25));
+                await Task.Delay(TimeSpan.FromMinutes(1));
                 trans.StopAdvertising();
+                await Task.Delay(TimeSpan.FromMinutes(1));
                 System.Diagnostics.Debug.WriteLine("Stopped Beacon");
 
             }

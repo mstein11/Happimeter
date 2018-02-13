@@ -17,10 +17,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Database\MicrophoneMeasurement.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Database\ISharedDatabaseContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Database\SharedBluetoothDevicePairing.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helper\UtilHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helper\UuidHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Models\" />
     <Folder Include="$(MSBuildThisFileDirectory)Models\Bluetooth\" />
     <Folder Include="$(MSBuildThisFileDirectory)Database\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Helper\" />
   </ItemGroup>
 </Project>

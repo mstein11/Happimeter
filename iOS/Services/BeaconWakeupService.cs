@@ -1,6 +1,7 @@
 ﻿using System;
 using CoreLocation;
 using Foundation;
+using Happimeter.Core.Helper;
 using Happimeter.Interfaces;
 
 namespace Happimeter.iOS.Services
@@ -15,10 +16,13 @@ namespace Happimeter.iOS.Services
 
         private bool AlreadyFired = false;
 
-        public void StartWakeupForBeacon(string uuid, int major, int minor) {
+        public void StartWakeupForBeacon() {
             string message = "";
             CLProximity previousProximity = CLProximity.Far;
-            BeaconRegion = new CLBeaconRegion(new NSUuid(uuid), (ushort) major, (ushort) minor, "com.example.company");
+            var userId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId();
+            (var major, var minor) = UtilHelper.GetMajorMinorFromUserId(userId);
+            var beaconUuid = UuidHelper.BeaconUuidString;
+            BeaconRegion = new CLBeaconRegion(new NSUuid(beaconUuid), (ushort)major, (ushort)minor, "com.example.company");
             BeaconRegion.NotifyEntryStateOnDisplay = true;
             BeaconRegion.NotifyOnExit = true;
             BeaconRegion.NotifyOnEntry = true;

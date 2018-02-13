@@ -58,8 +58,15 @@ namespace Happimeter.Services
                 //we got the token
                 if (apiResult.Status == 200) {
                     //IsSuccessStatusCode does not work properly because of server
-                    _accountStore.SaveAccount(email, apiResult.Token, apiResult.Id, apiResult.Expires);
+                    _restService.AddAuthorizationTokenToInstance(apiResult.Token);
+                    var me = await GetMe();
+
+                    _accountStore.SaveAccount(email, apiResult.Token, me.Id, apiResult.Expires);
                     var authenticated = _accountStore.IsAuthenticated();
+
+
+
+
                     if (authenticated) {
                         methodResult.ResultType = AuthResultTypes.Success;    
                     } else {
@@ -93,11 +100,10 @@ namespace Happimeter.Services
             }
             var stringResult = await result.Content.ReadAsStringAsync();
             var jObjectResult = JObject.Parse(stringResult);
-
-            var status = jObjectResult["status"].FirstOrDefault().ToObject<int>();
+            var status = jObjectResult["status"].ToObject<int>();
             if (status == 200)
             {
-                var apiResults = jObjectResult["auth"].FirstOrDefault().ToObject<GetMeResultModel>();
+                var apiResults = jObjectResult["auth"].ToObject<GetMeResultModel>();
                 methodResult = apiResults;
                 methodResult.ResultType = HappimeterApiResultInformation.Success;
             } else if (status == 510) {

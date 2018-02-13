@@ -40,7 +40,7 @@ namespace Happimeter.iOS
             };
          
 
-            ServiceLocator.Instance.Get<IBeaconWakeupService>().StartWakeupForBeacon("F0000000-0000-1000-8000-00805F9B34FB", 0, 1);
+            ServiceLocator.Instance.Get<IBeaconWakeupService>().StartWakeupForBeacon();
         }
 
         private void UpdateValuesInView() {
