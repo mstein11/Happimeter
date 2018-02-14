@@ -8,6 +8,7 @@ using Android.OS;
 using Happimeter.Watch.Droid.Services;
 using Happimeter.Watch.Droid.Database;
 using Happimeter.Core.Database;
+using Happimeter.Watch.Droid.Activities;
 
 namespace Happimeter.Watch.Droid
 {
@@ -21,9 +22,7 @@ namespace Happimeter.Watch.Droid
 
         public void OnSensorChanged(SensorEvent e)
         {
-            FindViewById<TextView>(Resource.Id.AccX).Text = e.Values[0].ToString();
-            FindViewById<TextView>(Resource.Id.AccY).Text = e.Values[1].ToString();
-            FindViewById<TextView>(Resource.Id.AccZ).Text = e.Values[2].ToString();
+
         }
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -39,19 +38,6 @@ namespace Happimeter.Watch.Droid
             smm.RegisterListener(this, acc, SensorDelay.Normal);
 
 
-            var preferences = GetSharedPreferences("TEST", FileCreationMode.Append);
-
-            var numberOfEntries = FindViewById<TextView>(Resource.Id.NumberOfEntries);
-            var timeStamp = FindViewById<TextView>(Resource.Id.TimeStamp);
-
-            numberOfEntries.Text = preferences.GetInt("NumberOfEntries", 0).ToString();
-            timeStamp.Text = preferences.GetString("LastTime", "0");
-
-            var lastStopped = preferences.GetString("LastStopped", "0");
-            var lastStarted = preferences.GetString("LastStarted", "0");
-            var start = preferences.GetString("StartEvent", "0");
-
-
             var measurements = ServiceLocator.Instance.Get<IDatabaseContext>().GetAll<MicrophoneMeasurement>();
             var pairing = ServiceLocator.Instance.Get<IDatabaseContext>().GetCurrentBluetoothPairing();
             if (pairing != null) {
@@ -65,7 +51,10 @@ namespace Happimeter.Watch.Droid
             } else {
                 FindViewById<Button>(Resource.Id.removePairingButton).Visibility = Android.Views.ViewStates.Invisible;
             }
-            System.Diagnostics.Debug.WriteLine(string.Concat(measurements));
+            FindViewById<Button>(Resource.Id.surveyButton).Click += (sender, e) => {
+                var intent = new Intent(this, typeof(SurveyActivity));
+                StartActivity(intent);
+            };
 
             StartService(new Intent(this,typeof(BackgroundService)));
 

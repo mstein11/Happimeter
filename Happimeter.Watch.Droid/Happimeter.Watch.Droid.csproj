@@ -80,6 +80,27 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\netstandard1.3\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="SQLitePCLRaw.core">
+      <HintPath>..\packages\SQLitePCLRaw.core.1.1.5\lib\MonoAndroid\SQLitePCLRaw.core.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCLRaw.lib.e_sqlite3">
+      <HintPath>..\packages\SQLitePCLRaw.lib.e_sqlite3.android.1.1.5\lib\MonoAndroid\SQLitePCLRaw.lib.e_sqlite3.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCLRaw.provider.e_sqlite3">
+      <HintPath>..\packages\SQLitePCLRaw.provider.e_sqlite3.android.1.1.5\lib\MonoAndroid\SQLitePCLRaw.provider.e_sqlite3.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCLRaw.batteries_green">
+      <HintPath>..\packages\SQLitePCLRaw.bundle_green.1.1.5\lib\MonoAndroid\SQLitePCLRaw.batteries_green.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCLRaw.batteries_v2">
+      <HintPath>..\packages\SQLitePCLRaw.bundle_green.1.1.5\lib\MonoAndroid\SQLitePCLRaw.batteries_v2.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLite-net">
+      <HintPath>..\packages\sqlite-net-pcl.1.4.118\lib\netstandard1.1\SQLite-net.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLiteNetExtensions">
+      <HintPath>..\packages\SQLiteNetExtensions.2.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\SQLiteNetExtensions.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
@@ -88,8 +109,6 @@
     <Compile Include="Services\BackgroundService.cs" />
     <Compile Include="AutoStartBroadcastReceiver.cs" />
     <Compile Include="Workers\MicrophoneWorker.cs" />
-    <Compile Include="SQLiteAsync.cs" />
-    <Compile Include="SQLite.cs" />
     <Compile Include="Database\DatabaseContext.cs" />
     <Compile Include="Database\IDatabaseContext.cs" />
     <Compile Include="ServiceLocatorConfig.cs" />
@@ -100,6 +119,14 @@
     <Compile Include="Bluetooth\HappimeterAuthCharacteristic.cs" />
     <Compile Include="Database\BluetoothPairing.cs" />
     <Compile Include="Bluetooth\ReadCharacteristic.cs" />
+    <Compile Include="Activities\SurveyActivity.cs" />
+    <Compile Include="ViewModels\SurveyViewModel.cs" />
+    <Compile Include="ViewModels\SurveyFragmentViewModel.cs" />
+    <Compile Include="Fragments\SurveyItemFragment.cs" />
+    <Compile Include="Activities\FinishSurveyActivity.cs" />
+    <Compile Include="ViewModels\BaseViewModel.cs" />
+    <Compile Include="ServicesBusinessLogic\MeasurementService.cs" />
+    <Compile Include="ServicesBusinessLogic\IMeasurementService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -115,6 +142,9 @@
     <AndroidResource Include="Resources\mipmap-xhdpi\Icon.png" />
     <AndroidResource Include="Resources\mipmap-xxhdpi\Icon.png" />
     <AndroidResource Include="Resources\mipmap-xxxhdpi\Icon.png" />
+    <AndroidResource Include="Resources\layout\Survey.axml" />
+    <AndroidResource Include="Resources\layout\Fragment_SurveyItem.axml" />
+    <AndroidResource Include="Resources\layout\FinishedSurvey.axml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />
@@ -122,6 +152,10 @@
     <Folder Include="Workers\" />
     <Folder Include="Database\" />
     <Folder Include="Bluetooth\" />
+    <Folder Include="Activities\" />
+    <Folder Include="ViewModels\" />
+    <Folder Include="Fragments\" />
+    <Folder Include="ServicesBusinessLogic\" />
   </ItemGroup>
   <Import Project="..\Happimeter.Core\Happimeter.Core.projitems" Label="Shared" Condition="Exists('..\Happimeter.Core\Happimeter.Core.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

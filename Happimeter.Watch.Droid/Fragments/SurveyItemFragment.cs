@@ -1,0 +1,81 @@
+﻿using System;
+using Android.App;
+using Android.OS;
+using Android.Views;
+using Android.Widget;
+using Happimeter.Watch.Droid.Activities;
+using Happimeter.Watch.Droid.ViewModels;
+
+namespace Happimeter.Watch.Droid.Fragments
+{
+    public class SurveyItemFragment : Fragment
+    {
+        private const string ViewModelIdentifier = "SurveyItemFragmentViewModel";
+
+        public static SurveyItemFragment NewInstance(int modelPosition)
+        {
+            var bundle = new Bundle();
+            bundle.PutInt(ViewModelIdentifier, modelPosition);
+            return new SurveyItemFragment { Arguments = bundle };
+        }
+
+        public SurveyFragmentViewModel ViewModel => ((SurveyActivity)Activity).ViewModel.Questions[ViewModelPosition];
+        public int ViewModelPosition = 0;
+
+        public override void OnCreate(Bundle savedInstanceState)
+        {
+            base.OnCreate(savedInstanceState);
+
+            var bundleToWorkWith = savedInstanceState != null ? savedInstanceState : Arguments;
+
+            var viewModelPosition = bundleToWorkWith.GetInt(ViewModelIdentifier);
+            ViewModelPosition = viewModelPosition;
+        }
+
+
+
+        public void PopulateView()
+        {
+            View.FindViewById<TextView>(Resource.Id.surveyQuestion).Text = ViewModel.Question;
+            View.FindViewById<TextView>(Resource.Id.surveyAnserIndicator).Text = ViewModel.AnswerDisplay.ToString();
+            View.FindViewById<SeekBar>(Resource.Id.surveyAnswerSeekbar).Progress = ViewModel.Answer ?? 0;
+            View.FindViewById<SeekBar>(Resource.Id.surveyAnswerSeekbar).ProgressChanged += (sender, e) => ViewModel.Answer = e.Progress;
+            ViewModel.PropertyChanged += (sender, e) => {
+                if (e.PropertyName == nameof(ViewModel.AnswerDisplay)) {
+                    View.FindViewById<TextView>(Resource.Id.surveyAnserIndicator).Text = (sender as SurveyFragmentViewModel)?.AnswerDisplay.ToString();
+                }
+            };
+
+        }
+
+
+        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        {
+            var view = inflater.Inflate(Resource.Layout.Fragment_SurveyItem, container, false);
+            return view;
+        }
+
+        public override void OnStart()
+        {
+            base.OnStart();
+            PopulateView();
+            //learnMoreButton.Click += LearnMoreButton_Click;
+        }
+
+        public override void OnStop()
+        {
+            base.OnStop();
+            //learnMoreButton.Click -= LearnMoreButton_Click;
+        }
+
+        public void BecameVisible()
+        {
+
+        }
+
+        void LearnMoreButton_Click(object sender, System.EventArgs e)
+        {
+            //ViewModel.OpenWebCommand.Execute(null);
+        }
+    }
+}

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Happimeter.Watch.Droid.Database;
+using Happimeter.Watch.Droid.ServicesBusinessLogic;
 
 namespace Happimeter.Watch.Droid
 {
@@ -35,6 +36,7 @@ namespace Happimeter.Watch.Droid
 
         public void Configure() {
             Register<IDatabaseContext, DatabaseContext>();
+            Register<IMeasurementService, MeasurementService>();
             IsInitialized = true;
         }
     }

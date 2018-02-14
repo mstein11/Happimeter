@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using SQLite;
+using SQLiteNetExtensions.Extensions;
 
 namespace Happimeter.Core.Database
 {
@@ -47,6 +48,8 @@ namespace Happimeter.Core.Database
                 var databaseTables = new List<Type>();
                 databaseTables.Add(typeof(MicrophoneMeasurement));
                 databaseTables.Add(typeof(SharedBluetoothDevicePairing));
+                databaseTables.Add(typeof(SurveyMeasurement));
+                databaseTables.Add(typeof(SurveyItemMeasurement));
 
                 //here we give the possibility to alter the list of tables created by subprojects (e.g. different devices)
                 databaseTables = BeforeCreateDatabase(databaseTables);
@@ -76,12 +79,30 @@ namespace Happimeter.Core.Database
             }
         }
 
+        public virtual List<T> GetAllWithChildren<T>(Expression<Func<T, bool>> whereClause = null) where T : new()
+        {
+            EnsureDatabaseCreated();
+            using (var connection = GetConnection())
+            {
+                return connection.GetAllWithChildren<T>(whereClause, true).ToList();
+            }
+        }
+
         public virtual T Get<T>(Expression<Func<T,bool>> whereClause) where T : new()
         {
             EnsureDatabaseCreated();
             using (var connection = GetConnection())
             {
                 return connection.Table<T>().Where(whereClause).FirstOrDefault();
+            }
+        }
+
+        public virtual T GetWithChildren<T>(Expression<Func<T, bool>> whereClause) where T : new()
+        {
+            EnsureDatabaseCreated();
+            using (var connection = GetConnection())
+            {
+                return connection.GetWithChildren<T>(whereClause, true);
             }
         }
 
@@ -94,6 +115,22 @@ namespace Happimeter.Core.Database
             EnsureDatabaseCreated();
             using(var connection = GetConnection()) {
                 connection.Insert(entity);
+                OnModelChanged(entity);
+            }
+        }
+
+        public virtual void AddGraph<T>(T entity) where T : new()
+        {
+            var btPairing = entity as SharedBluetoothDevicePairing;
+            if (btPairing != null)
+            {
+                AddBluetoothPairing(btPairing);
+                return;
+            }
+            EnsureDatabaseCreated();
+            using (var connection = GetConnection())
+            {
+                connection.InsertWithChildren(entity, true);
                 OnModelChanged(entity);
             }
         }

@@ -52,17 +52,14 @@ namespace Happimeter.Services
             IObservable<IScanResult> scannerObs;
             if (serviceGuid == null) {
                 scannerObs = CrossBleAdapter.Current.Scan();
-
-
-
             } else {
                 scannerObs = CrossBleAdapter.Current.Scan(new ScanConfig {ServiceUuids = new List<Guid> {Guid.Parse(serviceGuid)}});    
             }
-
+            ScanReplaySubject = new ReplaySubject<IScanResult>();
 
             scannerObs.TakeUntil(Observable.Timer(TimeSpan.FromSeconds(10))).Subscribe(scan => {
                 //Console.WriteLine("Scan result: " + string.Concat(scan.AdvertisementData.ServiceUuids ?? ""));
-                Debug.WriteLine(System.Text.Encoding.UTF8.GetString(scan.AdvertisementData?.ServiceData?.FirstOrDefault()?.ToArray() ?? new byte[0]));
+                //Debug.WriteLine(System.Text.Encoding.UTF8.GetString(scan.AdvertisementData?.ServiceData?.FirstOrDefault()?.ToArray() ?? new byte[0]));
                 if (!FoundDevices.Select(x => x.Device.Uuid).Contains(scan.Device.Uuid)) {
                     FoundDevices.Add(scan);
                     ScanReplaySubject.OnNext(scan);
@@ -207,6 +204,7 @@ namespace Happimeter.Services
                         }
                         stopWatch.Stop();
                         Console.WriteLine($"Took {stopWatch.Elapsed.TotalSeconds} seconds to receive {totalBytesRead} bytes");
+                        Console.WriteLine($"Received Message: {System.Text.Encoding.UTF8.GetString(listOfBytes.ToArray())}");
                         var pairing = ServiceLocator.Instance.Get<ISharedDatabaseContext>().Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive);
                         pairing.LastDataSync = DateTime.UtcNow;
                         ServiceLocator.Instance.Get<ISharedDatabaseContext>().Update(pairing);
