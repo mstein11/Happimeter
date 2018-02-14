@@ -153,6 +153,14 @@ namespace Happimeter.Core.Database
             }
         }
 
+        public virtual void Delete<T>(T entity) where T : new() {
+            EnsureDatabaseCreated();
+            using (var connection = GetConnection())
+            {
+                connection.Delete(entity);
+            }
+        }
+
         public event EventHandler ModelChanged;
         protected void OnModelChanged(object model) {
             ModelChanged?.Invoke(model, new EventArgs());

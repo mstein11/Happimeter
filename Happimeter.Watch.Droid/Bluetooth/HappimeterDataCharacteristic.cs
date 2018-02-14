@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Bluetooth;
+using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Watch.Droid.Database;
 using Happimeter.Watch.Droid.ServicesBusinessLogic;
 using Happimeter.Watch.Droid.Workers;
@@ -55,28 +56,32 @@ namespace Happimeter.Watch.Droid.Bluetooth
             var mtu = worker.DevicesMtu.ContainsKey(device.Address) ? worker.DevicesMtu[device.Address] : 20;
 
 
-            if (bytes.Length > mtu) {
-                if (!ReadPosition.ContainsKey(device.Address)) {
-                    ReadPosition.Add(device.Address, 0);
-                }
-                var readPos = ReadPosition[device.Address];
-                var bytesToSend = bytes.Skip(readPos).Take(mtu).ToList();
-                if (bytesToSend.Count() == 0) {
-                    bytesToSend = bytesToSend.ToList();
-                    //if we send an empty response, the client will crash, so we add one byte to the response
-                    bytesToSend.Add(0x00);
-                }
-                worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, bytesToSend.ToArray());
-                ReadPosition[device.Address] += mtu;
-            } else {
-                worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, bytes.ToArray());
+/*            if (bytes.Length > mtu) {*/
+
+            if (!ReadPosition.ContainsKey(device.Address)) {
+                ReadPosition.Add(device.Address, 0);
             }
+            var readPos = ReadPosition[device.Address];
+            var bytesToSend = bytes.Skip(readPos).Take(mtu).ToList();
+            if (bytesToSend.Count() == 0) {
+                bytesToSend = bytesToSend.ToList();
+                //if we send an empty response, the client will crash, so we add one byte to the response
+                bytesToSend.Add(0x00);
+            }
+            worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, bytesToSend.ToArray());
+            ReadPosition[device.Address] += mtu;
+/*            } else {
+                worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, bytes.ToArray());
+            }*/
 
         }
 
         public async Task HandleWriteAsync(BluetoothDevice device, int requestId, bool preparedWrite, bool responseNeeded, int offset, byte[] value, BluetoothWorker worker)
         {
-            if (!value.SequenceEqual(Encoding.UTF8.GetBytes("pass")))
+            var messageRaw = Encoding.UTF8.GetString(value);
+            var message = Newtonsoft.Json.JsonConvert.DeserializeObject<BaseBluetoothMessage>(Encoding.UTF8.GetString(value));
+
+            if (message.MessageName != nameof(DataExchangeFirstMessage) && message.MessageName != nameof(DataExchangeConfirmationMessage))
             {
                 System.Diagnostics.Debug.WriteLine($"Device {device.Address} wrote something which I don't know how to handle to data characteristic!");
                 worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, Encoding.UTF8.GetBytes("wrong pass phrase!"));
@@ -84,23 +89,36 @@ namespace Happimeter.Watch.Droid.Bluetooth
             }
 
             //initiate auth process
-            if (value.SequenceEqual(Encoding.UTF8.GetBytes("pass")))
+            if (message.MessageName == nameof(DataExchangeFirstMessage))
             {
                 System.Diagnostics.Debug.WriteLine($"Device {device.Address} authenticated with passphrase");
                 if (!DidSendPass.ContainsKey(device.Address))
                 {
                     DidSendPass.Add(device.Address, true);
                 }
-                if (ReadPosition.ContainsKey(device.Address))
-                {
-                    //reset previous read attempts
-                    ReadPosition[device.Address] = 0;
-                }
-                if (JsonForDevice.ContainsKey(device.Address)) {
-                    JsonForDevice.Remove(device.Address);
-                }
+                ResetStateForDevice(device.Address);
+            }
 
+            if (message.MessageName == nameof(DataExchangeConfirmationMessage) && JsonForDevice.ContainsKey(device.Address)) {
+                var messageToDelete = Newtonsoft.Json.JsonConvert.DeserializeObject<DataExchangeMessage>(JsonForDevice[device.Address]);
+                ServiceLocator.Instance.Get<IMeasurementService>().DeleteSurveyMeasurement(messageToDelete);
+                ResetStateForDevice(device.Address);
+            }
+
+            if (responseNeeded) {
                 worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
+            }
+        }
+
+        private void ResetStateForDevice(string address) {
+            if (ReadPosition.ContainsKey(address))
+            {
+                //reset previous read attempts
+                ReadPosition[address] = 0;
+            }
+            if (JsonForDevice.ContainsKey(address))
+            {
+                JsonForDevice.Remove(address);
             }
         }
     }

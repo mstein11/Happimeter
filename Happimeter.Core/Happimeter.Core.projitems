@@ -22,6 +22,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Database\SurveyMeasurement.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Database\SurveyItemMeasurement.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Bluetooth\DataExchangeMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Bluetooth\DataExchangeConfirmationMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Bluetooth\DataExchangeFirstMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Models\" />

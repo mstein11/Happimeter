@@ -180,7 +180,7 @@ namespace Happimeter.Services
                 try
                 {
                     //datacharacteristic
-                    characteristic.Write(System.Text.Encoding.UTF8.GetBytes("pass")).Subscribe(async writeResult =>
+                    characteristic.Write(new DataExchangeFirstMessage().GetAsBytes()).Subscribe(async writeResult =>
                     {
 
                         Console.WriteLine("wrote successfully");
@@ -207,13 +207,17 @@ namespace Happimeter.Services
                         var json = System.Text.Encoding.UTF8.GetString(listOfBytes.ToArray());
                         Console.WriteLine($"Took {stopWatch.Elapsed.TotalSeconds} seconds to receive {totalBytesRead} bytes");
                         Console.WriteLine($"Received Message: {json}");
-                        var pairing = ServiceLocator.Instance.Get<ISharedDatabaseContext>().Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive);
-                        var data = Newtonsoft.Json.JsonConvert.DeserializeObject<DataExchangeMessage>(json);
 
+                        var data = Newtonsoft.Json.JsonConvert.DeserializeObject<DataExchangeMessage>(json);
                         ServiceLocator.Instance.Get<IMeasurementService>().AddMeasurements(data);
+
+                        var pairing = ServiceLocator.Instance.Get<ISharedDatabaseContext>().Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive);
                         pairing.LastDataSync = DateTime.UtcNow;
                         ServiceLocator.Instance.Get<ISharedDatabaseContext>().Update(pairing);
-                       
+
+                        await characteristic.Write(new DataExchangeConfirmationMessage().GetAsBytes());
+                        Console.WriteLine("Succesfully finished data exchange");
+
                     });
                 } catch (Exception e) {
                     Console.WriteLine("Error during data exchange");

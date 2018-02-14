@@ -33,7 +33,7 @@ namespace Happimeter
             {
                 Items.Clear();
                 var items = await DataStore.GetItemsAsync(true);
-                var measurements = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyMeasurements();
+                var measurements = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyMeasurements().OrderByDescending(x => x.Timestamp);
                 var newItems = new List<Item>();
                 foreach (var measurement in measurements) {
                     var item = new Item

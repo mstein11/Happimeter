@@ -6,11 +6,14 @@ namespace Happimeter.Core.Database
 {
     public interface ISharedDatabaseContext
     {
+        void CreateDatabase();
+
         void Add<T>(T entity) where T : new();
         void AddGraph<T>(T entity)where T : new();
         void Update<T>(T entity) where T : new();
-        void CreateDatabase();
+        void Delete<T>(T entity) where T : new();
         void DeleteAll<T>() where T : new();
+
         T GetWithChildren<T>(Expression<Func<T, bool>> whereClause) where T : new();
         T Get<T>(Expression<Func<T, bool>> whereClause) where T : new();
         List<T> GetAll<T>(Expression<Func<T, bool>> whereClause = null) where T : new();

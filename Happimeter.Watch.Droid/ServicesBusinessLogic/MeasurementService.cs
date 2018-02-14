@@ -52,5 +52,12 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
 
             return new DataExchangeMessage { SurveyMeasurements = moods };
         }
+
+        public void DeleteSurveyMeasurement(DataExchangeMessage message) {
+            var context = ServiceLocator.Instance.Get<IDatabaseContext>();
+            foreach (var measruement in message.SurveyMeasurements) {
+                context.Delete(measruement);
+            }
+        }
     }
 }
