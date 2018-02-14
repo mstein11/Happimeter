@@ -8,6 +8,7 @@ using System.Reactive.Subjects;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Happimeter.Core.Database;
+using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Interfaces;
 using Happimeter.Models;
 using Plugin.BluetoothLE;
@@ -203,13 +204,16 @@ namespace Happimeter.Services
                             }
                         }
                         stopWatch.Stop();
+                        var json = System.Text.Encoding.UTF8.GetString(listOfBytes.ToArray());
                         Console.WriteLine($"Took {stopWatch.Elapsed.TotalSeconds} seconds to receive {totalBytesRead} bytes");
-                        Console.WriteLine($"Received Message: {System.Text.Encoding.UTF8.GetString(listOfBytes.ToArray())}");
+                        Console.WriteLine($"Received Message: {json}");
                         var pairing = ServiceLocator.Instance.Get<ISharedDatabaseContext>().Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive);
+                        var data = Newtonsoft.Json.JsonConvert.DeserializeObject<DataExchangeMessage>(json);
+
+                        ServiceLocator.Instance.Get<IMeasurementService>().AddMeasurements(data);
                         pairing.LastDataSync = DateTime.UtcNow;
                         ServiceLocator.Instance.Get<ISharedDatabaseContext>().Update(pairing);
-                        //characteristic.Service.Device.CancelConnection();
-                        //Console.WriteLine("cancelled connection");
+                       
                     });
                 } catch (Exception e) {
                     Console.WriteLine("Error during data exchange");

@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
+using Happimeter.Interfaces;
 
 namespace Happimeter
 {
@@ -30,7 +33,17 @@ namespace Happimeter
             {
                 Items.Clear();
                 var items = await DataStore.GetItemsAsync(true);
-                foreach (var item in items)
+                var measurements = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyMeasurements();
+                var newItems = new List<Item>();
+                foreach (var measurement in measurements) {
+                    var item = new Item
+                    {
+                        Text = measurement.Timestamp.ToString(),
+                        Description = string.Concat(measurement.SurveyItemMeasurement.Select((x, index) => $"{index}: {x.Answer}. "))
+                    };
+                    newItems.Add(item);
+                }
+                foreach (var item in newItems)
                 {
                     Items.Add(item);
                 }

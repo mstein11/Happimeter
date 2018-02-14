@@ -39,6 +39,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\AndroidWatch.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IBeaconWakeupService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IDeviceInformationService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\MeasurementService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IMeasurementService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />
