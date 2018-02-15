@@ -127,6 +127,8 @@
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ServicesBusinessLogic\MeasurementService.cs" />
     <Compile Include="ServicesBusinessLogic\IMeasurementService.cs" />
+    <Compile Include="Services\BeaconService.cs" />
+    <Compile Include="Workers\BeaconWorker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

@@ -18,14 +18,6 @@ namespace Happimeter.Watch.Droid.Workers
 {
     public class BluetoothWorker : AbstractWorker
     {
-        public const string Major = "0";
-        public const string Minor = "1";
-        //Code that represents apple
-        private const byte ManufacturerCode = 0x004C;
-        private const int TxPowerLevel = -56;
-        //Layout for iBeacon
-        private const string BeaconLayout = "m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24";
-
         public BluetoothManager Manager;
         public BluetoothGattServer GattServer;
         public Dictionary<string, BluetoothGatt> GattClients = new Dictionary<string, BluetoothGatt>();
@@ -102,14 +94,14 @@ namespace Happimeter.Watch.Droid.Workers
                                    .SetId1(beaconUuid)
                                    .SetId2(major.ToString())
                                    .SetId3(minor.ToString())
-                                   .SetManufacturer(ManufacturerCode) // Radius Networks.0x0118  Change this for other beacon layouts//0x004C for iPhone
-                                   .SetTxPower(TxPowerLevel) // Power in dB
+                                   .SetManufacturer(UuidHelper.BeaconManufacturerId) // Radius Networks.0x0118  Change this for other beacon layouts//0x004C for iPhone
+                                   .SetTxPower(UuidHelper.TxPowerLevel) // Power in dB
                                                              //.SetBluetoothName("Happimeter AAAA")
                                    .Build();
-            var beaconParser = new BeaconParser().SetBeaconLayout(BeaconLayout);
+            var beaconParser = new BeaconParser().SetBeaconLayout(UuidHelper.BeaconLayout);
             var trans = new BeaconTransmitter(Application.Context, beaconParser);
 
-            while(IsRunning) {
+            while(IsRunning && false) {
                 System.Diagnostics.Debug.WriteLine("About to start beacon");
                 trans.StartAdvertising(beacon, new CallbackAd());
                 System.Diagnostics.Debug.WriteLine("Started Beacon");

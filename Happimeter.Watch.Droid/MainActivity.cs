@@ -57,6 +57,7 @@ namespace Happimeter.Watch.Droid
             };
 
             StartService(new Intent(this,typeof(BackgroundService)));
+            StartService(new Intent(this, typeof(BeaconService)));
 
             var heartRate2 = smm.GetDefaultSensor(SensorType.HeartBeat);
             FindViewById<Button>(Resource.Id.restartWorker).Click += (sender, e) => {
