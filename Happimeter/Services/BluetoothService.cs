@@ -51,7 +51,10 @@ namespace Happimeter.Services
 
         public IObservable<IScanResult> StartScan(string serviceGuid = null) {
 
-            if (CrossBleAdapter.Current.IsScanning) {
+            if (CrossBleAdapter.Current.IsScanning || CrossBleAdapter.Current.Status != AdapterStatus.PoweredOn) {
+                if (CrossBleAdapter.Current.Status == AdapterStatus.PoweredOff && CrossBleAdapter.Current.CanOpenSettings()) {
+                    //todo: open settings
+                }
                 return ScanReplaySubject;
             }
 
