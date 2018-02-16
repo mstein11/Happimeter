@@ -14,8 +14,6 @@ namespace Happimeter.iOS.Services
         {
         }
 
-        private bool AlreadyFired = false;
-
         public void StartWakeupForBeacon() {
             string message = "";
             CLProximity previousProximity = CLProximity.Far;
@@ -33,15 +31,13 @@ namespace Happimeter.iOS.Services
             LocationManager.RegionEntered += (object sender, CLRegionEventArgs e) =>
             {
                 Console.WriteLine("RegionEnteredFired hi");
-                AlreadyFired = false;
-
+                var btService = ServiceLocator.Instance.Get<IBluetoothService>();
+                btService.ExchangeData();
             };
 
             LocationManager.RegionLeft += (object sender, CLRegionEventArgs e) =>
             {
                 Console.WriteLine("RegionLeftFired Bye");
-                var btService = ServiceLocator.Instance.Get<IBluetoothService>();
-                btService.ExchangeData();
             };
 
 

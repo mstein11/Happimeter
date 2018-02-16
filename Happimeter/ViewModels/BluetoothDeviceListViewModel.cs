@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Happimeter.Interfaces;
 using Happimeter.Models;
 
 namespace Happimeter.ViewModels
@@ -17,8 +18,25 @@ namespace Happimeter.ViewModels
         {
             Title = "BL Devices";
             Items = new System.Collections.ObjectModel.ObservableCollection<BluetoothDevice>();
-            //LoadItemsCommand = new Command(async () => await ExecuteLoadItemsCommand());
+            LoadItemsCommand = new Command(() => StartScan());
             AddItemCommand = new Command<BluetoothDevice>(async (BluetoothDevice item) => await AddItem(item));
+        }
+
+        private void StartScan()
+        {
+            
+            var btService = ServiceLocator.Instance.Get<IBluetoothService>();
+            btService.StartScan().Subscribe(x => {
+                var vm = BluetoothDevice.Create(x.Device);
+                vm.Name = x.Device.Name;
+                vm.Description = x.AdvertisementData.IsConnectable.ToString();
+                vm.Device = x.Device;
+                AddDevice(vm);
+            });
+        }
+
+        public void ResetCollection() {
+            Items.Clear();
         }
 
         public void AddDevice(BluetoothDevice device) {

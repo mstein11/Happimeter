@@ -23,8 +23,8 @@ namespace Happimeter.iOS
 
         public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
         {
-            App.Initialize();
             Happimeter.iOS.DependencyInjection.Container.RegisterElements();
+            App.Initialize();
             CrossBleAdapter.Init(BleAdapterConfiguration.DefaultBackgroudingConfig);
 
             var store = ServiceLocator.Instance.Get<IAccountStoreService>();

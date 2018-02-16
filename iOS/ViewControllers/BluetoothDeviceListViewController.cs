@@ -44,20 +44,11 @@ namespace Happimeter.iOS
         {
             base.ViewDidAppear(animated);
 
-            if (_btService == null) {
-                _btService = ServiceLocator.Instance.Get<IBluetoothService>();
-                _btService.StartScan().Subscribe(x => {
-                    var vm = BluetoothDevice.Create(x.Device);
-                    //var vm = new BluetoothDevice();
-                    vm.Name = x.Device.Name;
-                    vm.Description = x.AdvertisementData.IsConnectable.ToString();
-                    vm.Device = x.Device;
-                    this.ViewModel.AddDevice(vm);
-
-                });
-            }
+            ViewModel.LoadItemsCommand.Execute(null);
                 
         }
+
+       
 
         public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
         {
@@ -80,6 +71,7 @@ namespace Happimeter.iOS
         void RefreshControl_ValueChanged(object sender, EventArgs e)
         {
             if (!ViewModel.IsBusy && refreshControl.Refreshing)
+                ViewModel.ResetCollection();
                 ViewModel.LoadItemsCommand.Execute(null);
         }
 

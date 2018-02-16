@@ -61,9 +61,9 @@ namespace Happimeter.Watch.Droid.Workers
                     BeaconTransmitter.StartAdvertising(beacon, new CallbackAd());
                     System.Diagnostics.Debug.WriteLine("Started Beacon");
 
-                    await Task.Delay(TimeSpan.FromMinutes(3));
+                    await Task.Delay(TimeSpan.FromMinutes(60));
                     BeaconTransmitter.StopAdvertising();
-                    await Task.Delay(TimeSpan.FromMinutes(3));
+                    await Task.Delay(TimeSpan.FromMinutes(60));
 
                     System.Diagnostics.Debug.WriteLine("Stopped Beacon");
                 }

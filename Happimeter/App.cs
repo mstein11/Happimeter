@@ -1,5 +1,7 @@
 ﻿using System;
+using Happimeter.Core.Database;
 using Happimeter.DependencyInjection;
+using Happimeter.Interfaces;
 
 namespace Happimeter
 {
@@ -16,6 +18,11 @@ namespace Happimeter
                 ServiceLocator.Instance.Register<IDataStore<Item>, CloudDataStore>();
 
             Container.RegisterElements();
+            var sharedDb = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
+            var pairing = sharedDb.Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive);
+            if (pairing != null) {
+                ServiceLocator.Instance.Get<IBeaconWakeupService>().StartWakeupForBeacon();
+            }
         }
     }
 }

@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Security.Cryptography;
-using System.Threading.Tasks;
 using Happimeter.Core.Database;
 using Happimeter.Core.Helper;
 using Happimeter.Core.Models.Bluetooth;
@@ -18,6 +15,9 @@ namespace Happimeter.Services
 {
     public class BluetoothService : IBluetoothService
     {
+
+        private const int _messageTimeoutSeconds = 5;
+        private const int _scanTimeoutSeconds = 10;
 
         private ReplaySubject<IScanResult> ScanReplaySubject = new ReplaySubject<IScanResult>();
 
@@ -67,8 +67,8 @@ namespace Happimeter.Services
                 scannerObs = CrossBleAdapter.Current.Scan(new ScanConfig {ServiceUuids = new List<Guid> {Guid.Parse(serviceGuid)}});    
             }
             ScanReplaySubject = new ReplaySubject<IScanResult>();
-
-            scannerObs.TakeUntil(Observable.Timer(TimeSpan.FromSeconds(10))).Subscribe(scan => {
+            FoundDevices = new List<IScanResult>();
+            scannerObs.TakeUntil(Observable.Timer(TimeSpan.FromSeconds(_scanTimeoutSeconds))).Subscribe(scan => {
                 if (!FoundDevices.Select(x => x.Device.Uuid).Contains(scan.Device.Uuid)) {
                     Console.WriteLine($"Found device. Name: {scan.Device.Name}, Uuid: {scan.Device.Uuid}, data: {System.Text.Encoding.UTF8.GetString(scan.AdvertisementData.ServiceData?.FirstOrDefault() ?? new byte[0])}");
                     FoundDevices.Add(scan);
@@ -130,7 +130,7 @@ namespace Happimeter.Services
                                 .WhenAnyCharacteristicDiscovered()
                                 .Where(characteristic => characteristic.Uuid == UuidHelper.DataExchangeCharacteristicUuid)
                                 .Take(1)
-                                .Timeout(TimeSpan.FromSeconds(10))
+                                .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
                                 .Subscribe(CharacteristicDiscoveredForDataExchange, CancelConnectionOnTimeoutError);
                 
             } else {
@@ -142,19 +142,19 @@ namespace Happimeter.Services
                 //we skip 2 because the first two bytes are not relevant to us. the actual advertisement data start at position 3
                 ScanReplaySubject.Where(scanRes => scanRes?.AdvertisementData?.ServiceData?.FirstOrDefault()?.Skip(2)?.SequenceEqual(userIdBytes) ?? false).Select(result => result.Device)
                                  .Take(1)
-                                 .Timeout(TimeSpan.FromSeconds(10))
+                                 .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
                                  .Subscribe(result =>
                 {
                     Console.WriteLine("Found matching device");
                     result.Connect()
-                          .Timeout(TimeSpan.FromSeconds(10))
+                          .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
                           .Subscribe(conn =>
                     {
                         Console.WriteLine("Connected");
                         result.WhenAnyCharacteristicDiscovered()
                               .Where(characteristic => characteristic.Uuid == UuidHelper.DataExchangeCharacteristicUuid)
                                 .Take(1)
-                                .Timeout(TimeSpan.FromSeconds(10)) 
+                              .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds)) 
                                 .Subscribe(CharacteristicDiscoveredForDataExchange, CancelConnectionOnTimeoutError);
                     }, err => //Error from connecting to device
                     {
@@ -163,7 +163,7 @@ namespace Happimeter.Services
 
                 }, err => {//Error from Replaysubject (scan)
                     if (err is TimeoutException) {
-                        Console.WriteLine("No device found in 10 seconds");
+                        Console.WriteLine($"No device found in {_messageTimeoutSeconds} seconds");
                         return;
                     }
                     Console.WriteLine($"Received unknown exception on exchange data attempt: {err.Message}");
@@ -181,6 +181,8 @@ namespace Happimeter.Services
                     device.CancelConnection();
                     Console.WriteLine($"Cancelled Connection to device {device.Uuid}");
                 }
+                //restart!
+                ExchangeData();
             }
         }
 
