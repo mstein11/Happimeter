@@ -101,9 +101,9 @@ namespace Happimeter.Watch.Droid.Workers
             var userId = ServiceLocator.Instance.Get<IDatabaseContext>().Get<BluetoothPairing>(x => x.IsPairingActive)?.PairedWithUserId ?? 0;
             var data = new AdvertiseData.Builder()
                                         .SetIncludeDeviceName(true)
-                                        .AddServiceUuid(ParcelUuid.FromString(UuidHelper.DataExchangeCharacteristicUuidString))
+                                        .AddServiceUuid(ParcelUuid.FromString(UuidHelper.AndroidWatchServiceUuidString))
                                         //advertise the userId, so that phone can connect to right watch
-                                        .AddServiceData(ParcelUuid.FromString(UuidHelper.DataExchangeCharacteristicUuidString), Encoding.UTF8.GetBytes(userId.ToString()))
+                                        .AddServiceData(ParcelUuid.FromString(UuidHelper.AndroidWatchServiceUuidString), Encoding.UTF8.GetBytes(userId.ToString()))
                                         .Build();
 
             BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser.StartAdvertising(settings, data, new CallbackAd());

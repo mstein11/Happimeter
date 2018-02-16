@@ -52,7 +52,9 @@ namespace Happimeter.Services
         public IObservable<IScanResult> StartScan(string serviceGuid = null) {
 
             if (CrossBleAdapter.Current.IsScanning || CrossBleAdapter.Current.Status != AdapterStatus.PoweredOn) {
-                if (CrossBleAdapter.Current.Status == AdapterStatus.PoweredOff && CrossBleAdapter.Current.CanOpenSettings()) {
+                if (CrossBleAdapter.Current.Status == AdapterStatus.PoweredOff) {
+                    //reset the replaysubject
+                    ScanReplaySubject = new ReplaySubject<IScanResult>();
                     //todo: open settings
                 }
                 return ScanReplaySubject;
@@ -68,6 +70,7 @@ namespace Happimeter.Services
 
             scannerObs.TakeUntil(Observable.Timer(TimeSpan.FromSeconds(10))).Subscribe(scan => {
                 if (!FoundDevices.Select(x => x.Device.Uuid).Contains(scan.Device.Uuid)) {
+                    Console.WriteLine($"Found device. Name: {scan.Device.Name}, Uuid: {scan.Device.Uuid}, data: {System.Text.Encoding.UTF8.GetString(scan.AdvertisementData.ServiceData?.FirstOrDefault() ?? new byte[0])}");
                     FoundDevices.Add(scan);
                     ScanReplaySubject.OnNext(scan);
                 }
@@ -109,6 +112,8 @@ namespace Happimeter.Services
 
             return obs;
         }
+        //is busy with data exchange?
+        private Dictionary<Guid, bool> IsBusy = new Dictionary<Guid, bool>();
 
         public void ExchangeData() {
             Console.WriteLine("Starting ExchangeData");
@@ -123,46 +128,40 @@ namespace Happimeter.Services
                 Console.WriteLine("Device already connected");
                 connectedDevices.FirstOrDefault(x => x.Name.Contains("Happimeter"))
                                 .WhenAnyCharacteristicDiscovered()
-                                .Where(characteristic => characteristic.Uuid == Guid.Parse("7918ec07-2ba4-4542-aa13-0a10ff3826ba"))
+                                .Where(characteristic => characteristic.Uuid == UuidHelper.DataExchangeCharacteristicUuid)
                                 .Take(1)
                                 .Timeout(TimeSpan.FromSeconds(10))
-                                .Subscribe(CharacteristicDiscoveredForDataExchange, err => {
-                    if (err is TimeoutException) {
-                        Console.WriteLine("Timeout while waiting for characteristic on already connected device!");
-                        var devicesToDisconnect = CrossBleAdapter.Current.GetConnectedDevices();
-                        foreach (var device in devicesToDisconnect) {
-                            device.CancelConnection();
-                            Console.WriteLine($"Cancelled Connection to device {device.Uuid}");
-                        }
-                    }
-                });
+                                .Subscribe(CharacteristicDiscoveredForDataExchange, CancelConnectionOnTimeoutError);
                 
             } else {
                 if (!CrossBleAdapter.Current.IsScanning) {
                     Console.WriteLine("Not connected, not scanning, starting scanning");
-                    StartScan(UuidHelper.DataExchangeCharacteristicUuidString);
+                    StartScan(UuidHelper.AndroidWatchServiceUuidString);
                 }
 
-                //todo: exchange hardcoded name in filter with advertised data
+                //we skip 2 because the first two bytes are not relevant to us. the actual advertisement data start at position 3
                 ScanReplaySubject.Where(scanRes => scanRes?.AdvertisementData?.ServiceData?.FirstOrDefault()?.Skip(2)?.SequenceEqual(userIdBytes) ?? false).Select(result => result.Device)
                                  .Take(1)
                                  .Timeout(TimeSpan.FromSeconds(10))
                                  .Subscribe(result =>
                 {
-                    Console.WriteLine("Subscribed to device");
-                    result.Connect().Subscribe(conn =>
+                    Console.WriteLine("Found matching device");
+                    result.Connect()
+                          .Timeout(TimeSpan.FromSeconds(10))
+                          .Subscribe(conn =>
                     {
                         Console.WriteLine("Connected");
                         result.WhenAnyCharacteristicDiscovered()
-                                                .Where(characteristic => characteristic.Uuid == Guid.Parse("7918ec07-2ba4-4542-aa13-0a10ff3826ba"))
-                                                .Take(1)
-                                                .Subscribe(CharacteristicDiscoveredForDataExchange);
-                    }, err =>
+                              .Where(characteristic => characteristic.Uuid == UuidHelper.DataExchangeCharacteristicUuid)
+                                .Take(1)
+                                .Timeout(TimeSpan.FromSeconds(10)) 
+                                .Subscribe(CharacteristicDiscoveredForDataExchange, CancelConnectionOnTimeoutError);
+                    }, err => //Error from connecting to device
                     {
-                        Console.WriteLine("Err");
+                        Console.WriteLine($"Failed to connect to device: {result.Uuid}");
                     });
 
-                }, err => {
+                }, err => {//Error from Replaysubject (scan)
                     if (err is TimeoutException) {
                         Console.WriteLine("No device found in 10 seconds");
                         return;
@@ -172,26 +171,37 @@ namespace Happimeter.Services
             }
         }
 
-        private Dictionary<Guid, bool> IsBusy = new Dictionary<Guid, bool>();
+        private void CancelConnectionOnTimeoutError(Exception e) {
+            if (e is TimeoutException)
+            {
+                Console.WriteLine("Timeout while waiting for characteristic on already connected device!");
+                var devicesToDisconnect = CrossBleAdapter.Current.GetConnectedDevices();
+                foreach (var device in devicesToDisconnect)
+                {
+                    device.CancelConnection();
+                    Console.WriteLine($"Cancelled Connection to device {device.Uuid}");
+                }
+            }
+        }
 
-        private async void CharacteristicDiscoveredForDataExchange(IGattCharacteristic characteristic) {
+        private void CharacteristicDiscoveredForDataExchange(IGattCharacteristic characteristic) {
             Console.WriteLine("Characteristic discovered: " + characteristic.Uuid);
 
-
-            if (characteristic.Uuid == Guid.Parse("7918ec07-2ba4-4542-aa13-0a10ff3826ba"))
+            if (characteristic.Uuid == UuidHelper.DataExchangeCharacteristicUuid)
             {
                 if (!IsBusy.ContainsKey(characteristic.Service.Device.Uuid)) {
-                    IsBusy.Add(characteristic.Service.Device.Uuid, true);
+                    IsBusy.Add(characteristic.Service.Device.Uuid, true);//check wheter we are locked
                 } else {
                     Console.WriteLine("We are still busy with an previous data exchnage, lets abourt the current one.");
                     return;
                 }
-                try
-                {
-                    //datacharacteristic
-                    characteristic.Write(new DataExchangeFirstMessage().GetAsBytes()).Subscribe(async writeResult =>
-                    {
 
+                //datacharacteristic
+                characteristic.Write(new DataExchangeFirstMessage().GetAsBytes())
+                              .Timeout(TimeSpan.FromSeconds(5))
+                              .Subscribe(async writeResult =>
+                {
+                    try {
                         Console.WriteLine("wrote successfully");
                         var listOfBytes = new List<byte>();
                         var totalBytesRead = 0;
@@ -226,13 +236,16 @@ namespace Happimeter.Services
 
                         await characteristic.Write(new DataExchangeConfirmationMessage().GetAsBytes());
                         Console.WriteLine("Succesfully finished data exchange");
+                        IsBusy.Remove(characteristic.Service.Device.Uuid);
 
-                    });
-                } catch (Exception e) {
-                    Console.WriteLine("Error during data exchange");
-                } finally {
+                    } catch (Exception e) {
+                        Console.WriteLine($"Exception on Dataexchange after starting the exchange: {e.Message}");
+                        IsBusy.Remove(characteristic.Service.Device.Uuid);    
+                    }
+                }, (Exception e) => {
+                    CancelConnectionOnTimeoutError(e);
                     IsBusy.Remove(characteristic.Service.Device.Uuid);
-                }
+                });
             }
         }
     }

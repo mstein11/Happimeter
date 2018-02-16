@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Happimeter.Core.Database;
+using Happimeter.Core.Helper;
 using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Interfaces;
 using Plugin.BluetoothLE;
@@ -16,7 +17,6 @@ namespace Happimeter.Models
 
         public static readonly Guid ServiceUuid = Guid.Parse("2f234454-cf6d-4a0f-adf2-f4911ba9ffa6");//maybe instead : 00000009-0000-3512-2118-0009af100700
         public static readonly Guid AuthCharacteristic = Guid.Parse("68b13553-0c4d-43de-8c1c-2b10d77d2d90");
-        public static readonly Guid DataCharacterisic = Guid.Parse("7918ec07-2ba4-4542-aa13-0a10ff3826ba");
 
         public override IObservable<object> Connect()
         {
@@ -100,7 +100,7 @@ namespace Happimeter.Models
         public void ExchangeData() {
             Device.WhenAnyCharacteristicDiscovered().Subscribe(characteristic =>
             {
-                if (characteristic.Uuid == DataCharacterisic)
+                if (characteristic.Uuid == UuidHelper.DataExchangeCharacteristicUuid)
                 {
                     Debug.WriteLine("DataCharacteristic found");
                     characteristic.Write(System.Text.Encoding.UTF8.GetBytes("pass")).Subscribe(writeResult => {

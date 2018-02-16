@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Bluetooth;
+using Happimeter.Core.Helper;
 using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Watch.Droid.Database;
 using Happimeter.Watch.Droid.ServicesBusinessLogic;
@@ -16,7 +17,6 @@ namespace Happimeter.Watch.Droid.Bluetooth
 {
     public class HappimeterDataCharacteristic : BluetoothGattCharacteristic
     {
-        public const string CharacteristicUuid = "7918ec07-2ba4-4542-aa13-0a10ff3826ba";
         private const GattProperty GattProperties = GattProperty.Read | GattProperty.Write | GattProperty.Notify;
         private const GattPermission GattPermissions = GattPermission.Read | GattPermission.Write;
 
@@ -24,7 +24,7 @@ namespace Happimeter.Watch.Droid.Bluetooth
         private Dictionary<string, int> ReadPosition = new Dictionary<string, int>();
         private Dictionary<string, string> JsonForDevice = new Dictionary<string, string>();
 
-        public HappimeterDataCharacteristic() : base(uuid: UUID.FromString(CharacteristicUuid), properties: GattProperties, permissions: GattPermissions)
+        public HappimeterDataCharacteristic() : base(uuid: UUID.FromString(UuidHelper.DataExchangeCharacteristicUuidString), properties: GattProperties, permissions: GattPermissions)
         {
             var uuid = UUID.FromString("00002902-0000-1000-8000-00805f9b34fb");
             this.WriteType = GattWriteType.Default;
