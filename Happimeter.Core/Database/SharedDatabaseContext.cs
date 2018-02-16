@@ -11,6 +11,7 @@ namespace Happimeter.Core.Database
     public class SharedDatabaseContext : ISharedDatabaseContext
     {
         protected string DatabaseName = "db_sqlnet.db";
+        protected object SyncLock = new object();
         private bool DatabaseCreated = false;
 
         public SharedDatabaseContext()
@@ -54,9 +55,14 @@ namespace Happimeter.Core.Database
                 //here we give the possibility to alter the list of tables created by subprojects (e.g. different devices)
                 databaseTables = BeforeCreateDatabase(databaseTables);
 
-                using (var connection = GetConnection()) {
-                    foreach (var table in databaseTables) {
-                        connection.CreateTable(table);
+                lock (SyncLock)
+                {
+                    using (var connection = GetConnection())
+                    {
+                        foreach (var table in databaseTables)
+                        {
+                            connection.CreateTable(table);
+                        }
                     }
                 }
                 //connection.CreateTable<MicrophoneMeasurement>();
@@ -70,39 +76,53 @@ namespace Happimeter.Core.Database
 
         public virtual List<T> GetAll<T>(Expression<Func<T, bool>> whereClause = null) where T: new() {
             EnsureDatabaseCreated();
-            using (var connection = GetConnection()) {
-                if (whereClause == null) {
-                    return connection.Table<T>().ToList(); 
-                }
+            lock (SyncLock)
+            {
+                using (var connection = GetConnection())
+                {
+                    if (whereClause == null)
+                    {
+                        return connection.Table<T>().ToList();
+                    }
 
-                return connection.Table<T>().Where(whereClause).ToList();
+                    return connection.Table<T>().Where(whereClause).ToList();
+                }
             }
         }
 
         public virtual List<T> GetAllWithChildren<T>(Expression<Func<T, bool>> whereClause = null) where T : new()
         {
             EnsureDatabaseCreated();
-            using (var connection = GetConnection())
+            lock (SyncLock)
             {
-                return connection.GetAllWithChildren<T>(whereClause, true).ToList();
+                using (var connection = GetConnection())
+                {
+                    return connection.GetAllWithChildren<T>(whereClause, true).ToList();
+                }
             }
         }
 
         public virtual T Get<T>(Expression<Func<T,bool>> whereClause) where T : new()
         {
             EnsureDatabaseCreated();
-            using (var connection = GetConnection())
+            lock (SyncLock)
             {
-                return connection.Table<T>().Where(whereClause).FirstOrDefault();
+                using (var connection = GetConnection())
+                {
+                    return connection.Table<T>().Where(whereClause).FirstOrDefault();
+                }
             }
         }
 
         public virtual T GetWithChildren<T>(Expression<Func<T, bool>> whereClause) where T : new()
         {
             EnsureDatabaseCreated();
-            using (var connection = GetConnection())
+            lock (SyncLock)
             {
-                return connection.GetWithChildren<T>(whereClause, true);
+                using (var connection = GetConnection())
+                {
+                    return connection.GetWithChildren<T>(whereClause, true);
+                }
             }
         }
 
@@ -113,9 +133,13 @@ namespace Happimeter.Core.Database
                 return;
             }
             EnsureDatabaseCreated();
-            using(var connection = GetConnection()) {
-                connection.Insert(entity);
-                OnModelChanged(entity);
+            lock (SyncLock)
+            {
+                using (var connection = GetConnection())
+                {
+                    connection.Insert(entity);
+                    OnModelChanged(entity);
+                }
             }
         }
 
@@ -128,28 +152,37 @@ namespace Happimeter.Core.Database
                 return;
             }
             EnsureDatabaseCreated();
-            using (var connection = GetConnection())
+            lock (SyncLock)
             {
-                connection.InsertWithChildren(entity, true);
-                OnModelChanged(entity);
+                using (var connection = GetConnection())
+                {
+                    connection.InsertWithChildren(entity, true);
+                    OnModelChanged(entity);
+                }
             }
         }
 
         public virtual void Update<T>(T entity) where T : new()
         {
             EnsureDatabaseCreated();
-            using (var connection = GetConnection())
+            lock (SyncLock)
             {
-                connection.Update(entity);
-                OnModelChanged(entity);
+                using (var connection = GetConnection())
+                {
+                    connection.Update(entity);
+                    OnModelChanged(entity);
+                }
             }
         }
 
         public virtual void DeleteAll<T>() where T : new() {
             EnsureDatabaseCreated();
-            using (var connection = GetConnection())
+            lock (SyncLock)
             {
-                connection.DeleteAll<T>();
+                using (var connection = GetConnection())
+                {
+                    connection.DeleteAll<T>();
+                }
             }
         }
 
@@ -173,9 +206,12 @@ namespace Happimeter.Core.Database
                 oldPairing.IsPairingActive = false;
                 Update(oldPairing);
             }
-            using (var connection = GetConnection())
+            lock (SyncLock)
             {
-                connection.Insert(pairing);
+                using (var connection = GetConnection())
+                {
+                    connection.Insert(pairing);
+                }
             }
             OnModelChanged(pairing);
         }

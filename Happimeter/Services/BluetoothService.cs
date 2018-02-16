@@ -108,6 +108,9 @@ namespace Happimeter.Services
             Console.WriteLine("Starting ExchangeData");
             var connectedDevices = CrossBleAdapter.Current.GetConnectedDevices();
             var pairedDevices = CrossBleAdapter.Current.GetPairedDevices();
+            var userId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId();
+            var userIdBytes = System.Text.Encoding.UTF8.GetBytes(userId.ToString());
+
 
             if (connectedDevices.Any(x => x.Name?.Contains("Happimeter") ?? false))
             {
@@ -135,7 +138,7 @@ namespace Happimeter.Services
                 }
 
                 //todo: exchange hardcoded name in filter with advertised data
-                ScanReplaySubject.Where(scanRes => scanRes?.Device?.Name?.Contains("Happimeter") ?? false).Select(result => result.Device)
+                ScanReplaySubject.Where(scanRes => scanRes?.AdvertisementData?.ServiceData?.FirstOrDefault()?.Skip(2)?.SequenceEqual(userIdBytes) ?? false).Select(result => result.Device)
                                  .Take(1)
                                  .Timeout(TimeSpan.FromSeconds(10))
                                  .Subscribe(result =>

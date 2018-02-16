@@ -107,7 +107,6 @@
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\BackgroundService.cs" />
-    <Compile Include="AutoStartBroadcastReceiver.cs" />
     <Compile Include="Workers\MicrophoneWorker.cs" />
     <Compile Include="Database\DatabaseContext.cs" />
     <Compile Include="Database\IDatabaseContext.cs" />
@@ -129,6 +128,8 @@
     <Compile Include="ServicesBusinessLogic\IMeasurementService.cs" />
     <Compile Include="Services\BeaconService.cs" />
     <Compile Include="Workers\BeaconWorker.cs" />
+    <Compile Include="BroadcastReceiver\AutoStartBroadcastReceiver.cs" />
+    <Compile Include="BroadcastReceiver\BluetoothBroadcastReceiver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -158,6 +159,7 @@
     <Folder Include="ViewModels\" />
     <Folder Include="Fragments\" />
     <Folder Include="ServicesBusinessLogic\" />
+    <Folder Include="BroadcastReceiver\" />
   </ItemGroup>
   <Import Project="..\Happimeter.Core\Happimeter.Core.projitems" Label="Shared" Condition="Exists('..\Happimeter.Core\Happimeter.Core.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

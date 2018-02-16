@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using AltBeaconOrg.BoundBeacon;
 using Android.App;
@@ -25,6 +26,8 @@ namespace Happimeter.Watch.Droid.Workers
         public Dictionary<string, BluetoothDevice> SubscribedDevices = new Dictionary<string, BluetoothDevice>();
         public Dictionary<string, int> DevicesMtu = new Dictionary<string, int>();
 
+        private CancellationTokenSource TokenSource { get; set; }
+
         public BluetoothWorker()
         {
             Manager = (BluetoothManager)Application.Context.GetSystemService(Android.Content.Context.BluetoothService);
@@ -32,27 +35,31 @@ namespace Happimeter.Watch.Droid.Workers
 
         public override void Start()
         {
-            IsRunning = true;
-            InitializeGatt();
-            System.Diagnostics.Debug.WriteLine("Started Bluetooth Worker");
+            TokenSource = new CancellationTokenSource();
+            if (!BluetoothAdapter.DefaultAdapter.IsEnabled)
+            {
+                return;
+            }
+            Task.Factory.StartNew(() => {
+                IsRunning = true;
+                InitializeGatt();
+                ConnectableAdvertisement();
+            }, TokenSource.Token);
+
+            /*System.Diagnostics.Debug.WriteLine("Started Bluetooth Worker");
             var pairing = ServiceLocator.Instance.Get<IDatabaseContext>().GetCurrentBluetoothPairing();
             if (pairing == null) {
                 System.Diagnostics.Debug.WriteLine("No pairing found, we start in Auth mode");
-                RunAuthAdvertiser();
+                //RunAuthAdvertiser();
+                ConnectableAdvertisement();
             } else {
                 System.Diagnostics.Debug.WriteLine("Found pairing, we start in beacon mode");
-                RunBeacon();
+                ConnectableAdvertisement();
             }
+            */
         }
 
         private void InitializeGatt() {
-            if (GattServer != null) {
-                GattServer.Close();
-            }
-
-            var osOffloadFlitering = Manager.Adapter.IsOffloadedFilteringSupported;
-            var isMultiAdvertisement = Manager.Adapter.IsMultipleAdvertisementSupported;
-            var IsEnAbled = Manager.Adapter.IsEnabled;
             GattServer = Manager.OpenGattServer(Application.Context, new CallbackGatt(this));
             GattServer.AddService(HappimeterService.Create());
             System.Diagnostics.Debug.WriteLine("Gatt initialized");
@@ -60,9 +67,13 @@ namespace Happimeter.Watch.Droid.Workers
 
         public override void Stop()
         {
-            GattServer.Close();
-            GattServer.Dispose();
-            Manager.Adapter.BluetoothLeAdvertiser.StopAdvertising(new CallbackAd());
+            TokenSource.Cancel(false);
+            if (GattServer != null) {
+                GattServer.Close();
+                GattServer.Dispose();                
+            }
+            Manager.Adapter.BluetoothLeAdvertiser?.StopAdvertising(new CallbackAd());
+            Manager.Adapter.BluetoothLeAdvertiser?.Dispose();
 
             IsRunning = false;
 
@@ -87,7 +98,8 @@ namespace Happimeter.Watch.Droid.Workers
         public async Task RunBeacon()
         {
             ConnectableAdvertisement();
-            var userId = ServiceLocator.Instance.Get<IDatabaseContext>().Get<BluetoothPairing>(x => x.IsPairingActive).PairedWithUserId;
+
+            /*
             (var major, var minor) = UtilHelper.GetMajorMinorFromUserId(userId);
             var beaconUuid = UuidHelper.BeaconUuidString;
             var beacon = new Beacon.Builder()
@@ -111,6 +123,7 @@ namespace Happimeter.Watch.Droid.Workers
                 System.Diagnostics.Debug.WriteLine("Stopped Beacon");
 
             }
+            */
         }
 
         private async Task RunAuthAdvertiser()

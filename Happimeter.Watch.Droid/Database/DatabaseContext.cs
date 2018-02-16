@@ -42,15 +42,18 @@ namespace Happimeter.Watch.Droid.Database
             try
             {
                 EnsureDatabaseCreated();
-                using (var connection = new SQLiteConnection(GetDatabasePath()))
+                lock (SyncLock)
                 {
-                    var bluetoothPairings = connection.Table<BluetoothPairing>().Where(prop => prop.IsPairingActive).ToList();
-                    for (int i = 0; i < bluetoothPairings.Count; i++)
+                    using (var connection = new SQLiteConnection(GetDatabasePath()))
                     {
-                        bluetoothPairings[i].IsPairingActive = false;
+                        var bluetoothPairings = connection.Table<BluetoothPairing>().Where(prop => prop.IsPairingActive).ToList();
+                        for (int i = 0; i < bluetoothPairings.Count; i++)
+                        {
+                            bluetoothPairings[i].IsPairingActive = false;
+                        }
+                        connection.UpdateAll(bluetoothPairings);
+                        connection.Insert(newPairing);
                     }
-                    connection.UpdateAll(bluetoothPairings);
-                    connection.Insert(newPairing);
                 }
             }
             catch (Exception e)

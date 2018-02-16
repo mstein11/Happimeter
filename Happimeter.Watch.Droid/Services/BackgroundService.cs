@@ -2,6 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using Android.App;
+using Android.Bluetooth;
 using Android.Content;
 using Android.OS;
 using Android.Widget;
@@ -39,12 +40,13 @@ namespace Happimeter.Watch.Droid.Services
             {
                 MicrophoneWorker.GetInstance().Start();
             });
-
-            Task.Factory.StartNew(() =>
-            {
-                BluetoothWorker.GetInstance().Start();
-            });
-
+            if (BluetoothAdapter.DefaultAdapter.IsEnabled)
+            {                
+                Task.Factory.StartNew(() =>
+                {
+                    BluetoothWorker.GetInstance().Start();
+                });
+            }
             // start your service logic here
             Task.Factory.StartNew(async () =>
             {

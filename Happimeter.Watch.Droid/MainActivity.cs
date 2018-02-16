@@ -9,6 +9,8 @@ using Happimeter.Watch.Droid.Services;
 using Happimeter.Watch.Droid.Database;
 using Happimeter.Core.Database;
 using Happimeter.Watch.Droid.Activities;
+using System;
+using System.Linq;
 
 namespace Happimeter.Watch.Droid
 {
@@ -22,7 +24,7 @@ namespace Happimeter.Watch.Droid
 
         public void OnSensorChanged(SensorEvent e)
         {
-
+            Console.WriteLine(e.Values.FirstOrDefault());
         }
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -35,10 +37,14 @@ namespace Happimeter.Watch.Droid
             var smm = (SensorManager)GetSystemService(Context.SensorService);
             var sensorsList = smm.GetSensorList(SensorType.All);
             var acc = smm.GetDefaultSensor(SensorType.Accelerometer);
-            smm.RegisterListener(this, acc, SensorDelay.Normal);
+            //smm.RegisterListener(this, acc, SensorDelay.Normal);
+
 
 
             var measurements = ServiceLocator.Instance.Get<IDatabaseContext>().GetAll<MicrophoneMeasurement>();
+            Console.WriteLine(measurements.Last().TimeStamp);
+            Console.WriteLine(DateTime.UtcNow);
+            Console.WriteLine(measurements.Last().TimeStamp - DateTime.UtcNow);
             var pairing = ServiceLocator.Instance.Get<IDatabaseContext>().GetCurrentBluetoothPairing();
             if (pairing != null) {
                 FindViewById<TextView>(Resource.Id.isPairedValue).Text = "yes";
@@ -58,8 +64,11 @@ namespace Happimeter.Watch.Droid
 
             StartService(new Intent(this,typeof(BackgroundService)));
             StartService(new Intent(this, typeof(BeaconService)));
-
+            var tmp1 = smm.GetDefaultSensor(SensorType.HeartRate);
+            smm.RegisterListener(this, tmp1, SensorDelay.Ui);
+            var tmp2 = smm.GetDefaultSensor(SensorType.HeartRate);
             var heartRate2 = smm.GetDefaultSensor(SensorType.HeartBeat);
+
             FindViewById<Button>(Resource.Id.restartWorker).Click += (sender, e) => {
                 StopService(new Intent(this, typeof(BackgroundService)));
                 StartService(new Intent(this, typeof(BackgroundService)));
