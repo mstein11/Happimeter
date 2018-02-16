@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Android.Bluetooth;
 using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Watch.Droid.Database;
@@ -89,9 +90,13 @@ namespace Happimeter.Watch.Droid.Bluetooth
                     PairedWithUserId = messageData.HappimeterUserId
                 };
 
-                ServiceLocator.Instance.Get<IDatabaseContext>().Add(pairedDevice);
+                //start beacon
+                Task.Factory.StartNew(() =>
+                {
+                    BeaconWorker.GetInstance().Start();
+                });
 
-                worker.RunBeacon();
+
                 return;
             }
         }
