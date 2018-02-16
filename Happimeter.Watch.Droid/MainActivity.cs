@@ -40,11 +40,6 @@ namespace Happimeter.Watch.Droid
             //smm.RegisterListener(this, acc, SensorDelay.Normal);
 
 
-
-            var measurements = ServiceLocator.Instance.Get<IDatabaseContext>().GetAll<MicrophoneMeasurement>();
-            Console.WriteLine(measurements.Last().TimeStamp);
-            Console.WriteLine(DateTime.UtcNow);
-            Console.WriteLine(measurements.Last().TimeStamp - DateTime.UtcNow);
             var pairing = ServiceLocator.Instance.Get<IDatabaseContext>().GetCurrentBluetoothPairing();
             if (pairing != null) {
                 FindViewById<TextView>(Resource.Id.isPairedValue).Text = "yes";

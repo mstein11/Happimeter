@@ -51,6 +51,10 @@ namespace Happimeter.Services
 
         public IObservable<IScanResult> StartScan(string serviceGuid = null) {
 
+            if (CrossBleAdapter.Current.IsScanning) {
+                return ScanReplaySubject;
+            }
+
             IObservable<IScanResult> scannerObs;
             if (serviceGuid == null) {
                 scannerObs = CrossBleAdapter.Current.Scan();
@@ -60,8 +64,6 @@ namespace Happimeter.Services
             ScanReplaySubject = new ReplaySubject<IScanResult>();
 
             scannerObs.TakeUntil(Observable.Timer(TimeSpan.FromSeconds(10))).Subscribe(scan => {
-                //Console.WriteLine("Scan result: " + string.Concat(scan.AdvertisementData.ServiceUuids ?? ""));
-                //Debug.WriteLine(System.Text.Encoding.UTF8.GetString(scan.AdvertisementData?.ServiceData?.FirstOrDefault()?.ToArray() ?? new byte[0]));
                 if (!FoundDevices.Select(x => x.Device.Uuid).Contains(scan.Device.Uuid)) {
                     FoundDevices.Add(scan);
                     ScanReplaySubject.OnNext(scan);
