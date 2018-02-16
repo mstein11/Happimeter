@@ -5,6 +5,7 @@ using Android.Bluetooth;
 using Android.Content;
 using Android.OS;
 using Android.Widget;
+using Happimeter.Watch.Droid.Database;
 using Happimeter.Watch.Droid.Workers;
 
 namespace Happimeter.Watch.Droid.Services
@@ -21,10 +22,16 @@ namespace Happimeter.Watch.Droid.Services
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
+            var user = ServiceLocator.Instance.Get<IDatabaseContext>().Get<BluetoothPairing>(x => x.IsPairingActive == true);
             if (!BluetoothAdapter.DefaultAdapter.IsEnabled)
             {
                 Toast.MakeText(Application.Context, "Bluetooth is not activated", ToastLength.Long).Show();
                 return base.OnStartCommand(intent, flags, startId);;
+            }
+            if (user == null)
+            {
+                //we don't want to start the beacon if not paired
+                return base.OnStartCommand(intent, flags, startId);
             }
             Task.Factory.StartNew(() =>
             {

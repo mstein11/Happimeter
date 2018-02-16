@@ -8,6 +8,7 @@ using System.Reactive.Subjects;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Happimeter.Core.Database;
+using Happimeter.Core.Helper;
 using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Interfaces;
 using Happimeter.Models;
@@ -134,7 +135,7 @@ namespace Happimeter.Services
             } else {
                 if (!CrossBleAdapter.Current.IsScanning) {
                     Console.WriteLine("Not connected, not scanning, starting scanning");
-                    StartScan("0000F0F0-0000-1000-8000-00805F9B34FB");
+                    StartScan(UuidHelper.DataExchangeCharacteristicUuidString);
                 }
 
                 //todo: exchange hardcoded name in filter with advertised data

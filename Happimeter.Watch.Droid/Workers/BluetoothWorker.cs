@@ -21,42 +21,49 @@ namespace Happimeter.Watch.Droid.Workers
     {
         public BluetoothManager Manager;
         public BluetoothGattServer GattServer;
-        public Dictionary<string, BluetoothGatt> GattClients = new Dictionary<string, BluetoothGatt>();
+        //public Dictionary<string, BluetoothGatt> GattClients = new Dictionary<string, BluetoothGatt>();
 
+        /// <summary>
+        ///  For notifying the devices. Probably is not working right now
+        /// </summary>
         public Dictionary<string, BluetoothDevice> SubscribedDevices = new Dictionary<string, BluetoothDevice>();
+
+        /// <summary>
+        ///     To know, how many bytes we can send in one instance.
+        /// </summary>
         public Dictionary<string, int> DevicesMtu = new Dictionary<string, int>();
 
+        /// <summary>
+        ///     To be able to cancel when the stop command is hit. e.g. bluetooth gets deactivated
+        /// </summary>
+        /// <value>The token source.</value>
         private CancellationTokenSource TokenSource { get; set; }
 
-        public BluetoothWorker()
+        #region Singleton instanciation
+        private static BluetoothWorker Instance { get; set; }
+        public static BluetoothWorker GetInstance()
+        {
+            if (Instance == null)
+            {
+                Instance = new BluetoothWorker();
+            }
+            return Instance;
+        }
+        private BluetoothWorker()
         {
             Manager = (BluetoothManager)Application.Context.GetSystemService(Android.Content.Context.BluetoothService);
         }
+        #endregion
 
         public override void Start()
         {
+            //we don't need to test for bt, its done before calling this method
             TokenSource = new CancellationTokenSource();
-            if (!BluetoothAdapter.DefaultAdapter.IsEnabled)
-            {
-                return;
-            }
             Task.Factory.StartNew(() => {
                 IsRunning = true;
                 InitializeGatt();
                 ConnectableAdvertisement();
             }, TokenSource.Token);
-
-            /*System.Diagnostics.Debug.WriteLine("Started Bluetooth Worker");
-            var pairing = ServiceLocator.Instance.Get<IDatabaseContext>().GetCurrentBluetoothPairing();
-            if (pairing == null) {
-                System.Diagnostics.Debug.WriteLine("No pairing found, we start in Auth mode");
-                //RunAuthAdvertiser();
-                ConnectableAdvertisement();
-            } else {
-                System.Diagnostics.Debug.WriteLine("Found pairing, we start in beacon mode");
-                ConnectableAdvertisement();
-            }
-            */
         }
 
         private void InitializeGatt() {
@@ -79,82 +86,10 @@ namespace Happimeter.Watch.Droid.Workers
 
         }
 
-        private static BluetoothWorker Instance { get; set; }
-
-        public static BluetoothWorker GetInstance()
-        {
-            if (Instance == null)
-            {
-                Instance = new BluetoothWorker();
-            }
-
-            return Instance;
-        }
-
-        /// <summary>
-        ///     Every minute run for a minute a beacon that wakes up ios phones
-        /// </summary>
-        /// <returns>The beacon.</returns>
-        public async Task RunBeacon()
-        {
-            ConnectableAdvertisement();
-
-            /*
-            (var major, var minor) = UtilHelper.GetMajorMinorFromUserId(userId);
-            var beaconUuid = UuidHelper.BeaconUuidString;
-            var beacon = new Beacon.Builder()
-                                   .SetId1(beaconUuid)
-                                   .SetId2(major.ToString())
-                                   .SetId3(minor.ToString())
-                                   .SetManufacturer(UuidHelper.BeaconManufacturerId) // Radius Networks.0x0118  Change this for other beacon layouts//0x004C for iPhone
-                                   .SetTxPower(UuidHelper.TxPowerLevel) // Power in dB
-                                                             //.SetBluetoothName("Happimeter AAAA")
-                                   .Build();
-            var beaconParser = new BeaconParser().SetBeaconLayout(UuidHelper.BeaconLayout);
-            var trans = new BeaconTransmitter(Application.Context, beaconParser);
-
-            while(IsRunning && false) {
-                System.Diagnostics.Debug.WriteLine("About to start beacon");
-                trans.StartAdvertising(beacon, new CallbackAd());
-                System.Diagnostics.Debug.WriteLine("Started Beacon");
-                await Task.Delay(TimeSpan.FromMinutes(1));
-                trans.StopAdvertising();
-                await Task.Delay(TimeSpan.FromMinutes(1));
-                System.Diagnostics.Debug.WriteLine("Stopped Beacon");
-
-            }
-            */
-        }
-
-        private async Task RunAuthAdvertiser()
-        {
-            System.Diagnostics.Debug.WriteLine("About to start auth advertiser");
-            BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser.StopAdvertising(new CallbackAd());
-            var settings = new AdvertiseSettings.Builder()
-                                                .SetAdvertiseMode(AdvertiseMode.LowLatency)
-                                                .SetTxPowerLevel(AdvertiseTx.PowerHigh)
-                                                .SetConnectable(true)
-                                                .Build();
-
-            var userId = ServiceLocator.Instance.Get<IDatabaseContext>().Get<BluetoothPairing>(x => x.IsPairingActive)?.PairedWithUserId ?? 0;
-
-            var tmpr = BluetoothAdapter.DefaultAdapter.SetName("Happimeter AAAA");
-            var data = new AdvertiseData.Builder()
-                                        .SetIncludeDeviceName(true)
-                                        //.SetIncludeTxPowerLevel(true)
-                                        //.AddServiceUuid(ParcelUuid.FromString(BeaconUuid))
-                                        //todo: add appropriate serviceId
-                                        .AddServiceUuid(ParcelUuid.FromString("0000F0F0-0000-1000-8000-00805F9B34FB"))
-                                        .AddServiceData(ParcelUuid.FromString("0000F0F0-0000-1000-8000-00805F9B34FB"), Encoding.UTF8.GetBytes(userId.ToString()))
-                                        .Build();
-
-            BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser.StartAdvertising(settings, data, new CallbackAd());
-            System.Diagnostics.Debug.WriteLine("stopped auth advertiser");
-        }
-
         private void ConnectableAdvertisement()
         {
             System.Diagnostics.Debug.WriteLine("About to start auth advertiser");
+            //make sure no previous ad is running
             BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser.StopAdvertising(new CallbackAd());
             var settings = new AdvertiseSettings.Builder()
                                                 .SetAdvertiseMode(AdvertiseMode.LowLatency)
@@ -166,11 +101,9 @@ namespace Happimeter.Watch.Droid.Workers
             var userId = ServiceLocator.Instance.Get<IDatabaseContext>().Get<BluetoothPairing>(x => x.IsPairingActive)?.PairedWithUserId ?? 0;
             var data = new AdvertiseData.Builder()
                                         .SetIncludeDeviceName(true)
-                                        //.SetIncludeTxPowerLevel(true)
-                                        //.AddServiceUuid(ParcelUuid.FromString(BeaconUuid))
-                                        //todo: add appropriate serviceId
-                                        .AddServiceUuid(ParcelUuid.FromString("0000F0F0-0000-1000-8000-00805F9B34FB"))
-                                        .AddServiceData(ParcelUuid.FromString("0000F0F0-0000-1000-8000-00805F9B34FB"), Encoding.UTF8.GetBytes(userId.ToString()))
+                                        .AddServiceUuid(ParcelUuid.FromString(UuidHelper.DataExchangeCharacteristicUuidString))
+                                        //advertise the userId, so that phone can connect to right watch
+                                        .AddServiceData(ParcelUuid.FromString(UuidHelper.DataExchangeCharacteristicUuidString), Encoding.UTF8.GetBytes(userId.ToString()))
                                         .Build();
 
             BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser.StartAdvertising(settings, data, new CallbackAd());
@@ -212,10 +145,12 @@ namespace Happimeter.Watch.Droid.Workers
 
             if (newState == ProfileState.Connected) {
                 Console.WriteLine("device is now connected: watch as server");
-                var client = device.ConnectGatt(Application.Context, true, new CallBackGattClient(Worker));
+
+                /*var client = device.ConnectGatt(Application.Context, true, new CallBackGattClient(Worker));
                 if (!Worker.GattClients.ContainsKey(device.Address)) {
                     Worker.GattClients.Add(device.Address, client);
                 }
+                */
             }
         }
 
