@@ -9,11 +9,11 @@ namespace Happimeter.Core.Helper
         /// </summary>
         /// <returns>The major minor from user identifier.</returns>
         /// <param name="userId">User identifier.</param>
-        public static (int, int) GetMajorMinorFromUserId(int userId) {
+        public static Tuple<int, int> GetMajorMinorFromUserId(int userId) {
             int major = userId / 65535;
             int minor = userId % 65535;
 
-            return (major, minor);
+            return new Tuple<int, int>(major, minor);
         }
     }
 }

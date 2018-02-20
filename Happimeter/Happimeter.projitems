@@ -41,11 +41,38 @@
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IDeviceInformationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\MeasurementService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IMeasurementService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\SurveyPage.cs">
+      <DependentUpon>SurveyPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\SurveyItemViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\SurveyViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\SurveyItemView.xaml.cs">
+      <DependentUpon>SurveyItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\InitializeSurveyView.xaml.cs">
+      <DependentUpon>InitializeSurveyView.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />
     <Folder Include="$(MSBuildThisFileDirectory)Interfaces\" />
     <Folder Include="$(MSBuildThisFileDirectory)Models\ApiResultModels\" />
     <Folder Include="$(MSBuildThisFileDirectory)Models\ServiceModels\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Views\" />
+    <Folder Include="$(MSBuildThisFileDirectory)ViewModels\Forms\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\SurveyPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\SurveyItemView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\InitializeSurveyView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

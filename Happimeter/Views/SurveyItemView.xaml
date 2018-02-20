@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Happimeter.Views.SurveyItemView">
+	<ContentView.Content>
+        <StackLayout x:Name="Container" Padding="5, 20, 5, 20" Spacing="20" BackgroundColor="White">
+            <Label Text="{Binding Question}"  HorizontalOptions="Center"></Label>
+            <Label HorizontalOptions="Center" Text="{Binding AnswerDisplay}" FontSize="40"></Label>
+            <Slider Value="{Binding Answer}"></Slider>
+        </StackLayout>
+	</ContentView.Content>
+</ContentView>

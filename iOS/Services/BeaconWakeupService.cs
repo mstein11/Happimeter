@@ -18,7 +18,10 @@ namespace Happimeter.iOS.Services
             string message = "";
             CLProximity previousProximity = CLProximity.Far;
             var userId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId();
-            (var major, var minor) = UtilHelper.GetMajorMinorFromUserId(userId);
+            var tupple = UtilHelper.GetMajorMinorFromUserId(userId);
+            var major = tupple.Item1;
+            var minor = tupple.Item2;
+
             var beaconUuid = UuidHelper.BeaconUuidString;
             BeaconRegion = new CLBeaconRegion(new NSUuid(beaconUuid), (ushort)major, (ushort)minor, "com.example.company");
             BeaconRegion.NotifyEntryStateOnDisplay = true;

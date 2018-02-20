@@ -5,6 +5,7 @@ using Happimeter.DependencyInjection;
 using Happimeter.Interfaces;
 using Plugin.BluetoothLE;
 using UIKit;
+using Xamarin.Forms;
 
 namespace Happimeter.iOS
 {
@@ -24,6 +25,7 @@ namespace Happimeter.iOS
         public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
         {
             Happimeter.iOS.DependencyInjection.Container.RegisterElements();
+            Forms.Init();
             App.Initialize();
             CrossBleAdapter.Init(BleAdapterConfiguration.DefaultBackgroudingConfig);
 

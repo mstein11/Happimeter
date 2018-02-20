@@ -51,6 +51,8 @@ namespace Happimeter.Core.Database
                 databaseTables.Add(typeof(SharedBluetoothDevicePairing));
                 databaseTables.Add(typeof(SurveyMeasurement));
                 databaseTables.Add(typeof(SurveyItemMeasurement));
+                databaseTables.Add(typeof(SensorMeasurement));
+                databaseTables.Add(typeof(SensorItemMeasurement));
 
                 //here we give the possibility to alter the list of tables created by subprojects (e.g. different devices)
                 databaseTables = BeforeCreateDatabase(databaseTables);

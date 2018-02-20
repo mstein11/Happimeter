@@ -40,6 +40,11 @@ namespace Happimeter.Watch.Droid.Services
             {
                 MicrophoneWorker.GetInstance().Start();
             });
+            Task.Factory.StartNew(() =>
+            {
+                MeasurementWorker.GetInstance().Start();
+            });
+
             if (BluetoothAdapter.DefaultAdapter.IsEnabled)
             {                
                 Task.Factory.StartNew(() =>

@@ -130,6 +130,7 @@
     <Compile Include="Workers\BeaconWorker.cs" />
     <Compile Include="BroadcastReceiver\AutoStartBroadcastReceiver.cs" />
     <Compile Include="BroadcastReceiver\BluetoothBroadcastReceiver.cs" />
+    <Compile Include="Workers\MeasurementWorker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

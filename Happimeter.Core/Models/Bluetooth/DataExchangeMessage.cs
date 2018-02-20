@@ -11,5 +11,6 @@ namespace Happimeter.Core.Models.Bluetooth
         }
 
         public List<SurveyMeasurement> SurveyMeasurements { get; set; }
+        public List<SensorMeasurement> SensorMeasurements { get; set; }
     }
 }

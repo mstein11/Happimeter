@@ -5,14 +5,19 @@ using SQLiteNetExtensions.Attributes;
 
 namespace Happimeter.Core.Database
 {
-    public class SurveyMeasurement
+    public class SensorMeasurement
     {
+        public SensorMeasurement()
+        {
+        }
+
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         public DateTime Timestamp { get; set; }
+
         public int IdFromWatch { get; set; }
 
         [OneToMany(CascadeOperations = CascadeOperation.All)]
-        public List<SurveyItemMeasurement> SurveyItemMeasurement { get; set; }
+        public List<SensorItemMeasurement> SensorItemMeasures { get; set; }
     }
 }

@@ -38,7 +38,11 @@ namespace Happimeter.iOS
             ViewModel.ModelChanged += (sender, e) => {
                 UpdateValuesInView();
             };
-         
+            var tmp = ServiceLocator.Instance.Get<ISharedDatabaseContext>().GetAllWithChildren<SensorMeasurement>();
+            foreach (var measure in tmp) {
+                Console.WriteLine(measure.Timestamp);
+            }
+
 
             ServiceLocator.Instance.Get<IBeaconWakeupService>().StartWakeupForBeacon();
         }

@@ -24,11 +24,15 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\Bluetooth\DataExchangeMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Bluetooth\DataExchangeConfirmationMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Bluetooth\DataExchangeFirstMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Database\SensorMeasurement.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Database\SensorItemMeasurement.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExtensionMethods\EnumerableExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Models\" />
     <Folder Include="$(MSBuildThisFileDirectory)Models\Bluetooth\" />
     <Folder Include="$(MSBuildThisFileDirectory)Database\" />
     <Folder Include="$(MSBuildThisFileDirectory)Helper\" />
+    <Folder Include="$(MSBuildThisFileDirectory)ExtensionMethods\" />
   </ItemGroup>
 </Project>

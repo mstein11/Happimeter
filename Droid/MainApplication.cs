@@ -21,6 +21,7 @@ namespace Happimeter.Droid
         {
             base.OnCreate();
             RegisterActivityLifecycleCallbacks(this);
+
             App.Initialize();
             Container.RegisterElements();
         }
@@ -33,6 +34,7 @@ namespace Happimeter.Droid
 
         public void OnActivityCreated(Activity activity, Bundle savedInstanceState)
         {
+            Xamarin.Forms.Forms.Init(this, savedInstanceState);
             CrossCurrentActivity.Current.Activity = activity;
         }
 
