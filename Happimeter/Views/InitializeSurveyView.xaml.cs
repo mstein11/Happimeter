@@ -12,5 +12,11 @@ namespace Happimeter.Views
 
             Title = "Survey";
         }
+
+        void Handle_Clicked(object sender, System.EventArgs e)
+        {
+            StartSurveyClickedEvent?.Invoke(this, null);
+        }
+        public event EventHandler StartSurveyClickedEvent;
     }
 }

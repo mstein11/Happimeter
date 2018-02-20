@@ -29,6 +29,9 @@ namespace Happimeter.Views
         {
             var measurementService = ServiceLocator.Instance.Get<IMeasurementService>();
             measurementService.AddSurveyData(ViewModel);
+            FinishedSurvey?.Invoke(this, null);
         }
+
+        public event EventHandler FinishedSurvey;
     }
 }

@@ -11,7 +11,7 @@
             <Label>Please click the button below to start the survey. Once you finished the survey you can keep track of past surveys in the overview tab.</Label>
             <Label> All survey responses will be transferred to our server where they are safely stored.</Label>
             <Label FontAttributes="Bold"> By partaking in this survey, you agree that your survey responses may be used for scientific purposes.</Label>
-            <Button Text="Start Survey"></Button>
+            <Button Text="Start Survey" Clicked="Handle_Clicked"></Button>
         </StackLayout>
 	</ContentPage.Content>
 </ContentPage>

@@ -10,9 +10,9 @@ namespace Happimeter.ViewModels.Forms
             set 
             {
                 SetProperty(ref _answer, value);
-                var answerDisplay = (int)(value * 100 / (100 / 3)) + 1;
-                if (answerDisplay == 4) {
-                    answerDisplay = 3;
+                var answerDisplay = (int)(value * 100 / (100 / 10)) + 1;
+                if (answerDisplay == 11) {
+                    answerDisplay = 10;
                 }
                 AnswerDisplay = answerDisplay;
             }
