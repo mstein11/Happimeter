@@ -26,6 +26,7 @@ namespace Happimeter.Droid
 		
 		public static void UpdateIdValues()
 		{
+			global::Microcharts.Droid.Resource.String.library_name = global::Happimeter.Droid.Resource.String.library_name;
 			global::PCLCrypto.Resource.String.ApplicationName = global::Happimeter.Droid.Resource.String.ApplicationName;
 			global::PCLCrypto.Resource.String.Hello = global::Happimeter.Droid.Resource.String.Hello;
 			global::Xamarin.Auth.Resource.Animation.slide_in_right = global::Happimeter.Droid.Resource.Animation.slide_in_right;
@@ -35,6 +36,7 @@ namespace Happimeter.Droid
 			global::Xamarin.Auth.Resource.Layout.activity_webview = global::Happimeter.Droid.Resource.Layout.activity_webview;
 			global::Xamarin.Auth.Resource.String.ApplicationName = global::Happimeter.Droid.Resource.String.ApplicationName;
 			global::Xamarin.Auth.Resource.String.Hello = global::Happimeter.Droid.Resource.String.Hello;
+			global::Xamarin.Auth.Resource.String.library_name = global::Happimeter.Droid.Resource.String.library_name;
 			global::Xamarin.Auth.Resource.String.title_activity_webview = global::Happimeter.Droid.Resource.String.title_activity_webview;
 			global::Xamarin.Forms.Platform.Android.Resource.Attribute.actionBarSize = global::Happimeter.Droid.Resource.Attribute.actionBarSize;
 		}
@@ -3917,11 +3919,11 @@ namespace Happimeter.Droid
 			// aapt resource value: 0x7f080028
 			public const int abc_toolbar_collapse_description = 2131230760;
 			
-			// aapt resource value: 0x7f080052
-			public const int app_description = 2131230802;
+			// aapt resource value: 0x7f080053
+			public const int app_description = 2131230803;
 			
-			// aapt resource value: 0x7f080042
-			public const int app_name = 2131230786;
+			// aapt resource value: 0x7f080043
+			public const int app_name = 2131230787;
 			
 			// aapt resource value: 0x7f080037
 			public const int appbar_scrolling_view_behavior = 2131230775;
@@ -3932,26 +3934,29 @@ namespace Happimeter.Droid
 			// aapt resource value: 0x7f080039
 			public const int character_counter_pattern = 2131230777;
 			
-			// aapt resource value: 0x7f08004b
-			public const int description = 2131230795;
+			// aapt resource value: 0x7f08004c
+			public const int description = 2131230796;
 			
-			// aapt resource value: 0x7f080041
-			public const int hello = 2131230785;
+			// aapt resource value: 0x7f080042
+			public const int hello = 2131230786;
 			
-			// aapt resource value: 0x7f080051
-			public const int hint_description = 2131230801;
-			
-			// aapt resource value: 0x7f08004f
-			public const int hint_name = 2131230799;
+			// aapt resource value: 0x7f080052
+			public const int hint_description = 2131230802;
 			
 			// aapt resource value: 0x7f080050
-			public const int info = 2131230800;
+			public const int hint_name = 2131230800;
+			
+			// aapt resource value: 0x7f080051
+			public const int info = 2131230801;
+			
+			// aapt resource value: 0x7f08004b
+			public const int learn_more = 2131230795;
+			
+			// aapt resource value: 0x7f080041
+			public const int library_name = 2131230785;
 			
 			// aapt resource value: 0x7f08004a
-			public const int learn_more = 2131230794;
-			
-			// aapt resource value: 0x7f080049
-			public const int login = 2131230793;
+			public const int login = 2131230794;
 			
 			// aapt resource value: 0x7f080001
 			public const int mr_button_content_description = 2131230721;
@@ -4016,8 +4021,8 @@ namespace Happimeter.Droid
 			// aapt resource value: 0x7f080014
 			public const int mr_user_route_category_name = 2131230740;
 			
-			// aapt resource value: 0x7f080046
-			public const int notnow = 2131230790;
+			// aapt resource value: 0x7f080047
+			public const int notnow = 2131230791;
 			
 			// aapt resource value: 0x7f08003a
 			public const int password_toggle_content_description = 2131230778;
@@ -4034,41 +4039,41 @@ namespace Happimeter.Droid
 			// aapt resource value: 0x7f08003e
 			public const int path_password_strike_through = 2131230782;
 			
-			// aapt resource value: 0x7f08004e
-			public const int quantity = 2131230798;
+			// aapt resource value: 0x7f08004f
+			public const int quantity = 2131230799;
 			
 			// aapt resource value: 0x7f080029
 			public const int search_menu_title = 2131230761;
 			
-			// aapt resource value: 0x7f080053
-			public const int sign_in_text = 2131230803;
+			// aapt resource value: 0x7f080054
+			public const int sign_in_text = 2131230804;
 			
-			// aapt resource value: 0x7f080045
-			public const int signin = 2131230789;
+			// aapt resource value: 0x7f080046
+			public const int signin = 2131230790;
 			
-			// aapt resource value: 0x7f080047
-			public const int signing_in = 2131230791;
+			// aapt resource value: 0x7f080048
+			public const int signing_in = 2131230792;
 			
 			// aapt resource value: 0x7f08002a
 			public const int status_bar_notification_info_overflow = 2131230762;
 			
-			// aapt resource value: 0x7f080043
-			public const int tab1 = 2131230787;
-			
 			// aapt resource value: 0x7f080044
-			public const int tab2 = 2131230788;
+			public const int tab1 = 2131230788;
+			
+			// aapt resource value: 0x7f080045
+			public const int tab2 = 2131230789;
+			
+			// aapt resource value: 0x7f08004e
+			public const int text = 2131230798;
 			
 			// aapt resource value: 0x7f08004d
-			public const int text = 2131230797;
-			
-			// aapt resource value: 0x7f08004c
-			public const int title = 2131230796;
+			public const int title = 2131230797;
 			
 			// aapt resource value: 0x7f080000
 			public const int title_activity_webview = 2131230720;
 			
-			// aapt resource value: 0x7f080048
-			public const int version_number = 2131230792;
+			// aapt resource value: 0x7f080049
+			public const int version_number = 2131230793;
 			
 			static String()
 			{

@@ -8,25 +8,23 @@
 	<ContentPage.Content>
         <ListView RowHeight="150" ItemsSource="{Binding Items}">
         <ListView.Header>
-        <StackLayout Spacing="0" BackgroundColor="Blue">
-            <StackLayout Padding="10">
-                <Label Text="{Binding OverallAverageMood}" FontSize="14" FontAttributes="Bold" />
+        <StackLayout Spacing="25" Padding="20" BackgroundColor="#307AEA">
+            <Label TextColor="White" HorizontalOptions="CenterAndExpand" FontSize="22">Overall</Label>
+            <StackLayout Orientation="Horizontal">
+                <StackLayout Spacing="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                    <Label FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding NumberOfResponses}"/>
+                    <Label TextColor="White" HorizontalTextAlignment="Center">Responses</Label>
+                </StackLayout>
+                <StackLayout Spacing="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                    <Label FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding OverallAverageMood, StringFormat='{0:0.00}'}"/>
+                    <Label TextColor="White" HorizontalTextAlignment="Center">Avg. Response</Label>
+                </StackLayout>
             </StackLayout>
-            <StackLayout Padding="10">
-                <Label Text="{Binding OverallAverageActivation}" FontSize="14" FontAttributes="Bold" />
-               
+            <StackLayout Spacing="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                <Label FontSize="12" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding LastResponse, StringFormat='{0:MMMM dd, yyyy}'}" />
+                <Label FontSize="12" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding LastResponse, StringFormat='{0:HH:mm}'}" />
+                <Label TextColor="White" HorizontalTextAlignment="Center">Last Response</Label>
             </StackLayout>
-            <StackLayout Padding="10">
-                <Label Text="{Binding NumberOfResponses}" FontSize="14" FontAttributes="Bold" />
-
-            </StackLayout>
-            <StackLayout Padding="10">
-                <Label Text="{Binding LastResponse}" FontSize="14" FontAttributes="Bold" />
-
-            </StackLayout>
-
-            <Label Text="Points" Margin="10" FontSize="14" FontAttributes="Bold" />
-                    
         </StackLayout>
        </ListView.Header>
         <ListView.ItemTemplate>
@@ -43,7 +41,7 @@
                             <StackLayout Grid.Row="1" Orientation="Horizontal" HorizontalOptions="StartAndExpand">
                                 <Label FontSize="12" Text="{Binding MinMood, StringFormat='Min: {0}'}"/>
                                 <Label FontSize="12" Text="{Binding MaxMood, StringFormat='Max: {0}'}"/>
-                                <Label FontSize="12" Text="{Binding AvgMood, StringFormat='Avg: {0}'}"/> 
+                                <Label FontSize="12" Text="{Binding AvgMood, StringFormat='Avg: {0:0.00}'}"/> 
                             </StackLayout>
                             <StackLayout VerticalOptions="FillAndExpand" Padding="5" Grid.Row="2">
                                 <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Chart="{Binding MoodChart}" />
