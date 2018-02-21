@@ -16,5 +16,17 @@ namespace Happimeter.Views.MoodOverview
             var surveyData = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyData();
             BindingContext = new SurveyOverviewViewModel(surveyData);
         }
+
+        void Handle_Pleasance_Clicked(object sender, System.EventArgs e)
+        {
+            var vm = (SurveyOverviewViewModel)BindingContext;
+            vm.Initialize(Helpers.SurveyHardcodedEnumeration.Pleasance);
+        }
+
+        void Handle_Activation_Clicked(object sender, System.EventArgs e)
+        {
+            var vm = (SurveyOverviewViewModel)BindingContext;
+            vm.Initialize(Helpers.SurveyHardcodedEnumeration.Activation);
+        }
     }
 }

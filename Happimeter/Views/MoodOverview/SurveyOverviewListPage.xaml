@@ -7,26 +7,42 @@
     Title="Overview">
 	<ContentPage.Content>
         <ListView RowHeight="150" ItemsSource="{Binding Items}">
-        <ListView.Header>
-        <StackLayout Spacing="25" Padding="20" BackgroundColor="#307AEA">
-            <Label TextColor="White" HorizontalOptions="CenterAndExpand" FontSize="22">Overall</Label>
-            <StackLayout Orientation="Horizontal">
-                <StackLayout Spacing="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
-                    <Label FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding NumberOfResponses}"/>
-                    <Label TextColor="White" HorizontalTextAlignment="Center">Responses</Label>
-                </StackLayout>
-                <StackLayout Spacing="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
-                    <Label FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding OverallAverageMood, StringFormat='{0:0.00}'}"/>
-                    <Label TextColor="White" HorizontalTextAlignment="Center">Avg. Response</Label>
-                </StackLayout>
-            </StackLayout>
-            <StackLayout Spacing="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
-                <Label FontSize="12" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding LastResponse, StringFormat='{0:MMMM dd, yyyy}'}" />
-                <Label FontSize="12" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding LastResponse, StringFormat='{0:HH:mm}'}" />
-                <Label TextColor="White" HorizontalTextAlignment="Center">Last Response</Label>
-            </StackLayout>
-        </StackLayout>
-       </ListView.Header>
+            <ListView.Header>
+                <Grid HeightRequest="280" RowSpacing="0" ColumnSpacing="0" BackgroundColor="#307AEA">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackLayout Grid.ColumnSpan="2" Spacing="25" Padding="20">
+                        <Label TextColor="White" HorizontalOptions="CenterAndExpand" FontSize="22">Overall</Label>
+                        <StackLayout Orientation="Horizontal">
+                            <StackLayout Spacing="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                                <Label FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding NumberOfResponses}"/>
+                                <Label TextColor="White" HorizontalTextAlignment="Center">Responses</Label>
+                            </StackLayout>
+                            <StackLayout Spacing="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                                <Label FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding OverallAverageResponse, StringFormat='{0:0.00}'}"/>
+                                <Label TextColor="White" HorizontalTextAlignment="Center">Avg. Response</Label>
+                            </StackLayout>
+                        </StackLayout>
+                        <StackLayout Spacing="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                            <Label FontSize="12" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding LastResponse, StringFormat='{0:MMMM dd, yyyy}'}" />
+                            <Label FontSize="12" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding LastResponse, StringFormat='{0:HH:mm}'}" />
+                            <Label TextColor="White" HorizontalTextAlignment="Center">Last Response</Label>
+                        </StackLayout>
+                    </StackLayout>
+                    <Button Grid.Row="1" Grid.Column="0" TextColor="White" Text="Pleasance" Clicked="Handle_Pleasance_Clicked">
+                    </Button>
+                    <BoxView Grid.Row="1" Grid.Column="0" VerticalOptions="End" BackgroundColor="White" HeightRequest="3" IsVisible="{Binding PleasanceIsActive}" />
+                    <Button Grid.Row="1" Grid.Column="1" TextColor="White" Text="Activation" Clicked="Handle_Activation_Clicked">
+                    </Button>
+                    <BoxView Grid.Row="1" Grid.Column="1" VerticalOptions="End" BackgroundColor="White" HeightRequest="3" IsVisible="{Binding ActivationIsActive}" />
+                </Grid>
+            </ListView.Header>
         <ListView.ItemTemplate>
             <DataTemplate>
                 <ViewCell>

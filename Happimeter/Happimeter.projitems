@@ -61,6 +61,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\SurveyOverviewViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\SurveyOverviewItemViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\ColorHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\SurveyHardcodedEnumeration.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />

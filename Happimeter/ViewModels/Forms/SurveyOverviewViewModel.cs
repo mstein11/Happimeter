@@ -3,50 +3,42 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Happimeter.Core.Database;
+using Happimeter.Helpers;
 
 namespace Happimeter.ViewModels.Forms
 {
     public class SurveyOverviewViewModel : BaseViewModel
     {
-        public SurveyOverviewViewModel()
+        private List<SurveyMeasurement> _measurements;
+
+        public SurveyHardcodedEnumeration CurrentType = SurveyHardcodedEnumeration.Pleasance;
+
+        private bool _pleasanceIsActive;
+        public bool PleasanceIsActive 
         {
+            get => _pleasanceIsActive;
+            set => SetProperty(ref _pleasanceIsActive, value);
         }
 
-        public SurveyOverviewViewModel(List<SurveyMeasurement> measurement) 
+        private bool _activationIsActive;
+        public bool ActivationIsActive
         {
-            OverallAverageMood = measurement.Where(x => x.SurveyItemMeasurement.Any(y => y.HardcodedQuestionId == 1)).Average(measurements => measurements.SurveyItemMeasurement.FirstOrDefault(item => item.HardcodedQuestionId == 1)?.Answer ?? 0);   
-            OverallAverageActivation = measurement.Where(x => x.SurveyItemMeasurement.Any(y => y.HardcodedQuestionId == 2)).Average(measurements => measurements.SurveyItemMeasurement.FirstOrDefault(item => item.HardcodedQuestionId == 2)?.Answer ?? 0);
-            NumberOfResponses = measurement.Count;
-            LastResponse = measurement.OrderByDescending(x => x.Timestamp).FirstOrDefault()?.Timestamp ?? new DateTime();
-
-            var groupedByDate = measurement.GroupBy(x => x.Timestamp.Date);
-            var items = new ObservableCollection<SurveyOverviewItemViewModel>();
-            foreach (var group in groupedByDate) {
-                items.Add(new SurveyOverviewItemViewModel(group));
-            }
-
-            Items = items;
+            get => _activationIsActive;
+            set => SetProperty(ref _activationIsActive, value);
         }
 
         private int _numberOfResponses;
-        public int NumberOfResponses 
+        public int NumberOfResponses
         {
             get => _numberOfResponses;
             set => SetProperty(ref _numberOfResponses, value);
         }
 
-        private double _overallAverageMood;
-        public double OverallAverageMood
+        private double _overallAverageResponse;
+        public double OverallAverageResponse
         {
-            get => _overallAverageMood;
-            set => SetProperty(ref _overallAverageMood, value);
-        }
-
-        private double _overallAverageActivation;
-        public double OverallAverageActivation
-        {
-            get => _overallAverageActivation;
-            set => SetProperty(ref _overallAverageActivation, value);
+            get => _overallAverageResponse;
+            set => SetProperty(ref _overallAverageResponse, value);
         }
 
         private DateTime _lastResponse;
@@ -56,7 +48,55 @@ namespace Happimeter.ViewModels.Forms
             set => SetProperty(ref _lastResponse, value);
         }
 
-        public ObservableCollection<SurveyOverviewItemViewModel> Items { get; set; }
+        private ObservableCollection<SurveyOverviewItemViewModel> _items;
+        public ObservableCollection<SurveyOverviewItemViewModel> Items 
+        { 
+            get => _items;
+            set => SetProperty(ref _items, value);
+        }
+
+
+        public SurveyOverviewViewModel()
+        {
+            Items = new ObservableCollection<SurveyOverviewItemViewModel>();
+        }
+
+        public SurveyOverviewViewModel(List<SurveyMeasurement> measurement) 
+        {
+            Items = new ObservableCollection<SurveyOverviewItemViewModel>();
+            _measurements = measurement;
+            Initialize(CurrentType);
+        }
+
+        public void Initialize(SurveyHardcodedEnumeration type) {
+            SetActiveType(type);
+            OverallAverageResponse = _measurements.Where(x => x.SurveyItemMeasurement.Any(y => y.HardcodedQuestionId == (int)type))
+                                              .Average(measurements => measurements.SurveyItemMeasurement
+                                                       .FirstOrDefault(item => item.HardcodedQuestionId == (int)type)?.Answer ?? 0);
+
+            NumberOfResponses = _measurements.Count;
+            LastResponse = _measurements.OrderByDescending(x => x.Timestamp).FirstOrDefault()?.Timestamp.ToLocalTime() ?? new DateTime();
+
+            var groupedByDate = _measurements.GroupBy(x => x.Timestamp.Date).OrderByDescending(x => x.Key);
+
+            Items.Clear();
+            foreach (var group in groupedByDate)
+            {
+                Items.Add(new SurveyOverviewItemViewModel(group, type));
+            }
+        }
+
+        private void SetActiveType(SurveyHardcodedEnumeration type) {
+            if (type == SurveyHardcodedEnumeration.Activation) {
+                ActivationIsActive = true;
+                PleasanceIsActive = false;
+            } else {
+                ActivationIsActive = false;
+                PleasanceIsActive = true;
+            }
+
+            CurrentType = type;
+        }
     }
 }
 

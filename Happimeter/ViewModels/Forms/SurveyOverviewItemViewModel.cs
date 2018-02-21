@@ -14,15 +14,15 @@ namespace Happimeter.ViewModels.Forms
         {
         }
 
-        public SurveyOverviewItemViewModel(IGrouping<DateTime, SurveyMeasurement> data)
+        public SurveyOverviewItemViewModel(IGrouping<DateTime, SurveyMeasurement> data, SurveyHardcodedEnumeration type)
         {
 
             MoodChart = new LineChart
             {
-                Entries = data.SelectMany(x => x.SurveyItemMeasurement.Where(y => y.HardcodedQuestionId == 1).Select(y => new Entry((float)y.Answer)
+                Entries = data.SelectMany(x => x.SurveyItemMeasurement.Where(y => y.HardcodedQuestionId == (int)type).Select(y => new Entry((float)y.Answer)
                 {
                     Color = ColorHelper.GetColorRelatingToScale(y.Answer, 100,  SKColors.OrangeRed, SKColors.LimeGreen),
-                    Label = y.SurveyMeasurement.Timestamp.ToString("HH:mm"),
+                    Label = y.SurveyMeasurement.Timestamp.ToLocalTime().ToString("HH:mm"),
                     ValueLabel = y.AnswerDisplay.ToString()
                 })),
                 LineMode = LineMode.Straight,
