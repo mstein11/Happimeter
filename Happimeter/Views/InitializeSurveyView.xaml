@@ -5,13 +5,19 @@
     x:Class="Happimeter.Views.InitializeSurveyView"
     Title="Survey">
 	<ContentPage.Content>
-        <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Spacing="20" Padding="20">
-            <Label FontSize="28" >Survey</Label>
-            <Image HeightRequest="100" Source="HappimeterLogo"></Image>
-            <Label>Please click the button below to start the survey. Once you finished the survey you can keep track of past surveys in the overview tab.</Label>
-            <Label> All survey responses will be transferred to our server where they are safely stored.</Label>
-            <Label FontAttributes="Bold"> By partaking in this survey, you agree that your survey responses may be used for scientific purposes.</Label>
-            <Button Text="Start Survey" Clicked="Handle_Clicked"></Button>
+        <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
+            <Grid HeightRequest="280" RowSpacing="0" Padding="20" ColumnSpacing="0" BackgroundColor="#307AEA">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Label FontSize="24" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="0" TextColor="White" Text="Please click the button below to start the survey. " />
+                <Label  HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="1" TextColor="White" Text="All survey responses will be transferred to our server where they are safely stored." />
+            </Grid>
+            <StackLayout Spacing="20" Padding="20" VerticalOptions="FillAndExpand">
+                <Label FontAttributes="Bold" HorizontalTextAlignment="Center"> By partaking in this survey, you agree that your survey responses may be used for scientific purposes.</Label>
+                <Button FontSize="24" Text="Start Survey" Clicked="Handle_Clicked"></Button>
+            </StackLayout>
         </StackLayout>
 	</ContentPage.Content>
 </ContentPage>
