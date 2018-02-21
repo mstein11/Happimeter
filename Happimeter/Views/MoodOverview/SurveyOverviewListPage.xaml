@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage
+    xmlns:microcharts="clr-namespace:Microcharts.Forms;assembly=Microcharts.Forms"
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    x:Class="Happimeter.Views.MoodOverview.SurveyOverviewListPage"
+    Title="Overview">
+	<ContentPage.Content>
+        <ListView RowHeight="150" ItemsSource="{Binding Items}">
+        <ListView.Header>
+        <StackLayout Spacing="0" BackgroundColor="Blue">
+            <StackLayout Padding="10">
+                <Label Text="{Binding OverallAverageMood}" FontSize="14" FontAttributes="Bold" />
+            </StackLayout>
+            <StackLayout Padding="10">
+                <Label Text="{Binding OverallAverageActivation}" FontSize="14" FontAttributes="Bold" />
+               
+            </StackLayout>
+            <StackLayout Padding="10">
+                <Label Text="{Binding NumberOfResponses}" FontSize="14" FontAttributes="Bold" />
+
+            </StackLayout>
+            <StackLayout Padding="10">
+                <Label Text="{Binding LastResponse}" FontSize="14" FontAttributes="Bold" />
+
+            </StackLayout>
+
+            <Label Text="Points" Margin="10" FontSize="14" FontAttributes="Bold" />
+                    
+        </StackLayout>
+       </ListView.Header>
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <ViewCell>
+                    <Grid RowSpacing="2" Margin="10, 5, 10, 5" Padding="10,10,10,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                            <Label Grid.Row="0" Text="{Binding Date, StringFormat='{0:MMMM dd, yyyy}'}" TextColor="Black" FontSize="18" />
+                            <StackLayout Grid.Row="1" Orientation="Horizontal" HorizontalOptions="StartAndExpand">
+                                <Label FontSize="12" Text="{Binding MinMood, StringFormat='Min: {0}'}"/>
+                                <Label FontSize="12" Text="{Binding MaxMood, StringFormat='Max: {0}'}"/>
+                                <Label FontSize="12" Text="{Binding AvgMood, StringFormat='Avg: {0}'}"/> 
+                            </StackLayout>
+                            <StackLayout VerticalOptions="FillAndExpand" Padding="5" Grid.Row="2">
+                                <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Chart="{Binding MoodChart}" />
+                            </StackLayout>
+                        
+                    </Grid> 
+                </ViewCell>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
+	</ContentPage.Content>
+</ContentPage>

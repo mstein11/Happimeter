@@ -10,6 +10,7 @@ namespace Happimeter.Interfaces
         SurveyViewModel GetSurveyQuestions();
         void AddMeasurements(DataExchangeMessage message);
         void AddSurveyData(SurveyViewModel model);
+        List<SurveyMeasurement> GetSurveyData();
         List<SurveyMeasurement> GetSurveyMeasurements();
     }
 }

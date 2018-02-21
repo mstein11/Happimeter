@@ -10,9 +10,9 @@ namespace Happimeter.ViewModels.Forms
             set 
             {
                 SetProperty(ref _answer, value);
-                var answerDisplay = (int)(value * 100 / (100 / 10)) + 1;
-                if (answerDisplay == 11) {
-                    answerDisplay = 10;
+                var answerDisplay = (int)(value * 100 / (100 / 9)) + 1;
+                if (answerDisplay == 10) {
+                    answerDisplay = 9;
                 }
                 AnswerDisplay = answerDisplay;
             }
@@ -30,6 +30,13 @@ namespace Happimeter.ViewModels.Forms
         {
             get => _question;
             set => SetProperty(ref _question, value);
+        }
+
+        private int _hardcodedId;
+        public int HardcodedId 
+        {
+            get => _hardcodedId;
+            set => SetProperty(ref _hardcodedId, value);
         }
     }
 }

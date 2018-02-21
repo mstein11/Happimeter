@@ -24,6 +24,9 @@ namespace Happimeter.iOS
 
         public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
         {
+            //we need this or our chartview are not working. Probably an issue with the linker
+            var ignore_chartView = new Microcharts.Forms.ChartView();
+
             Happimeter.iOS.DependencyInjection.Container.RegisterElements();
             Forms.Init();
             App.Initialize();

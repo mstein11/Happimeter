@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Happimeter.Core.Database;
 using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Interfaces;
@@ -19,11 +20,13 @@ namespace Happimeter.Services
             var question1 = new SurveyItemViewModel
             {
                 Question = "How Pleasant do you feel?",
+                HardcodedId = 1,
                 Answer = .5
             };
             var question2 = new SurveyItemViewModel
             {
                 Question = "How Active do you feel?",
+                HardcodedId = 2,
                 Answer = .5
             };
             var question3 = new SurveyItemViewModel
@@ -71,6 +74,7 @@ namespace Happimeter.Services
                 surveyMeasurement.SurveyItemMeasurement.Add(new SurveyItemMeasurement
                 {
                     Answer = (int)(item.Answer * 100),
+                    HardcodedQuestionId = item.HardcodedId,
                     Question = item.Question,
                     AnswerDisplay = item.AnswerDisplay,
                 });  
@@ -78,6 +82,12 @@ namespace Happimeter.Services
 
             context.AddGraph(surveyMeasurement);
         }
+
+        public List<SurveyMeasurement> GetSurveyData() {
+            var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
+            return context.GetAllWithChildren<SurveyMeasurement>().ToList();
+        }
+
 
         public List<SurveyMeasurement> GetSurveyMeasurements() {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
