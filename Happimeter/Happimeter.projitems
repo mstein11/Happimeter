@@ -62,6 +62,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\SurveyOverviewItemViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\ColorHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\SurveyHardcodedEnumeration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\SettingsPage.xaml.cs">
+      <DependentUpon>SettingsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\SettingsPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ConfigService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IConfigService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\INativeNavigationService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />
@@ -90,6 +97,10 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\MoodOverview\SurveyOverviewListPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\SettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>

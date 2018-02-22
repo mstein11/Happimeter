@@ -258,6 +258,11 @@
     <Compile Include="ViewControllers\MoodOverviewViewController.designer.cs">
       <DependentUpon>MoodOverviewViewController.cs</DependentUpon>
     </Compile>
+    <Compile Include="ViewControllers\SettingsPageViewController.cs" />
+    <Compile Include="ViewControllers\SettingsPageViewController.designer.cs">
+      <DependentUpon>SettingsPageViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Services\NativeNavigationService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Entitlements.plist" />

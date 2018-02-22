@@ -35,7 +35,6 @@ namespace Happimeter.iOS
             var store = ServiceLocator.Instance.Get<IAccountStoreService>();
             Window = new UIWindow(UIScreen.MainScreen.Bounds);
             if (store.IsAuthenticated()) {
-                
                 UIStoryboard board = UIStoryboard.FromName("Main", null);
                 UIViewController ctrl = (UIViewController)board.InstantiateViewController("tabViewController");
                 ctrl.ModalTransitionStyle = UIModalTransitionStyle.FlipHorizontal;

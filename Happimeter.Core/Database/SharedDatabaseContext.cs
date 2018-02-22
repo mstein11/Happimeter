@@ -41,21 +41,28 @@ namespace Happimeter.Core.Database
             }
         }
 
+        private List<Type> GetDatabaseTables() {
+            var databaseTables = new List<Type>();
+            databaseTables.Add(typeof(MicrophoneMeasurement));
+            databaseTables.Add(typeof(SharedBluetoothDevicePairing));
+            databaseTables.Add(typeof(SurveyMeasurement));
+            databaseTables.Add(typeof(SurveyItemMeasurement));
+            databaseTables.Add(typeof(SensorMeasurement));
+            databaseTables.Add(typeof(SensorItemMeasurement));
+            databaseTables.Add(typeof(ConfigEntry));
+
+            //here we give the possibility to alter the list of tables created by subprojects (e.g. different devices)
+            databaseTables = BeforeCreateDatabase(databaseTables);
+
+            return databaseTables;
+        }
+
         public virtual void CreateDatabase() {
             var databasePath = GetDatabasePath();
             try
             {
                 //here we add all the tables that all projects share
-                var databaseTables = new List<Type>();
-                databaseTables.Add(typeof(MicrophoneMeasurement));
-                databaseTables.Add(typeof(SharedBluetoothDevicePairing));
-                databaseTables.Add(typeof(SurveyMeasurement));
-                databaseTables.Add(typeof(SurveyItemMeasurement));
-                databaseTables.Add(typeof(SensorMeasurement));
-                databaseTables.Add(typeof(SensorItemMeasurement));
-
-                //here we give the possibility to alter the list of tables created by subprojects (e.g. different devices)
-                databaseTables = BeforeCreateDatabase(databaseTables);
+                var databaseTables = GetDatabaseTables();
 
                 lock (SyncLock)
                 {
@@ -73,6 +80,23 @@ namespace Happimeter.Core.Database
             catch (SQLiteException ex)
             {
                 Console.WriteLine(ex.Message);
+            }
+        }
+
+        public virtual void ResetDatabase()
+        {
+            EnsureDatabaseCreated();
+            lock (SyncLock)
+            {
+                using (var connection = GetConnection())
+                {
+                    //todo: fix it! doesnt work. And also warn user before deleting if he has pending measurements
+                    var databaseTables = connection.TableMappings;
+                    foreach (var table in databaseTables)
+                    {
+                        connection.DeleteAll(table);
+                    }
+                }
             }
         }
 

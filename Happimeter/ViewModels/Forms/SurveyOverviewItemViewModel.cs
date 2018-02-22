@@ -35,9 +35,9 @@ namespace Happimeter.ViewModels.Forms
             Date = data.Key;
             NumberOfResponses = data.Count();
 
-            MinMood = data.SelectMany(x => x.SurveyItemMeasurement.Where(y => y.HardcodedQuestionId == 1).Select(y => y.AnswerDisplay)).DefaultIfEmpty(0).Min();
-            MaxMood = data.SelectMany(x => x.SurveyItemMeasurement.Where(y => y.HardcodedQuestionId == 1).Select(y => y.AnswerDisplay)).DefaultIfEmpty(0).Max();
-            AvgMood = data.SelectMany(x => x.SurveyItemMeasurement.Where(y => y.HardcodedQuestionId == 1).Select(y => y.AnswerDisplay)).DefaultIfEmpty(0).Average();
+            MinMood = data.SelectMany(x => x.SurveyItemMeasurement.Where(y => y.HardcodedQuestionId == (int)type).Select(y => y.AnswerDisplay)).DefaultIfEmpty(0).Min();
+            MaxMood = data.SelectMany(x => x.SurveyItemMeasurement.Where(y => y.HardcodedQuestionId == (int)type).Select(y => y.AnswerDisplay)).DefaultIfEmpty(0).Max();
+            AvgMood = data.SelectMany(x => x.SurveyItemMeasurement.Where(y => y.HardcodedQuestionId == (int)type).Select(y => y.AnswerDisplay)).DefaultIfEmpty(0).Average();
         }
 
         private DateTime _date;

@@ -10,6 +10,7 @@ namespace Happimeter.iOS.DependencyInjection
         {
             ServiceLocator.Instance.Register<IBeaconWakeupService, BeaconWakeupService>();
             ServiceLocator.Instance.Register<IDeviceInformationService, DeviceInformationService>();
+            ServiceLocator.Instance.Register<INativeNavigationService, NativeNavigationService>();
         }
     }
 }

@@ -11,11 +11,8 @@ using UIKit;
 
 namespace Happimeter.iOS
 {
-    [Register ("MoodOverviewViewController")]
-    partial class MoodOverviewViewController
+    [Register ("SettingsPageViewController")]
+    partial class SettingsPageViewController
     {
-        void ReleaseDesignerOutlets ()
-        {
-        }
     }
 }

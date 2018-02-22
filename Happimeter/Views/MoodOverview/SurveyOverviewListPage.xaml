@@ -6,7 +6,7 @@
     x:Class="Happimeter.Views.MoodOverview.SurveyOverviewListPage"
     Title="Overview">
 	<ContentPage.Content>
-        <ListView RowHeight="150" ItemsSource="{Binding Items}">
+        <ListView x:Name="SurveyListView" RowHeight="150" ItemsSource="{Binding Items}" IsPullToRefreshEnabled="True" Refreshing="ListItems_Refreshing">
             <ListView.Header>
                 <Grid HeightRequest="280" RowSpacing="0" ColumnSpacing="0" BackgroundColor="#307AEA">
                     <Grid.RowDefinitions>

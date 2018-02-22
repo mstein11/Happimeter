@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Happimeter.Core.Database;
 using Happimeter.Helpers;
+using Happimeter.Interfaces;
 
 namespace Happimeter.ViewModels.Forms
 {
@@ -25,6 +26,13 @@ namespace Happimeter.ViewModels.Forms
         {
             get => _activationIsActive;
             set => SetProperty(ref _activationIsActive, value);
+        }
+
+        private bool _hasData;
+        public bool HasData
+        {
+            get => _hasData;
+            set => SetProperty(ref _hasData, value);
         }
 
         private int _numberOfResponses;
@@ -58,18 +66,22 @@ namespace Happimeter.ViewModels.Forms
 
         public SurveyOverviewViewModel()
         {
-            Items = new ObservableCollection<SurveyOverviewItemViewModel>();
+            RefreshData();
         }
 
-        public SurveyOverviewViewModel(List<SurveyMeasurement> measurement) 
-        {
+        public void RefreshData() {
+            _measurements = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyData();
             Items = new ObservableCollection<SurveyOverviewItemViewModel>();
-            _measurements = measurement;
             Initialize(CurrentType);
         }
 
         public void Initialize(SurveyHardcodedEnumeration type) {
             SetActiveType(type);
+            if (!_measurements.Any()) {
+                HasData = false;
+                return;
+            }
+            HasData = true;
             OverallAverageResponse = _measurements.Where(x => x.SurveyItemMeasurement.Any(y => y.HardcodedQuestionId == (int)type))
                                               .Average(measurements => measurements.SurveyItemMeasurement
                                                        .FirstOrDefault(item => item.HardcodedQuestionId == (int)type)?.Answer ?? 0);

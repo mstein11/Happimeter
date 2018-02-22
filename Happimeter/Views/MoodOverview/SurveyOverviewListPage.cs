@@ -12,9 +12,7 @@ namespace Happimeter.Views.MoodOverview
         public SurveyOverviewListPage()
         {
             InitializeComponent();
-
-            var surveyData = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyData();
-            BindingContext = new SurveyOverviewViewModel(surveyData);
+            BindingContext = new SurveyOverviewViewModel();
         }
 
         void Handle_Pleasance_Clicked(object sender, System.EventArgs e)
@@ -27,6 +25,12 @@ namespace Happimeter.Views.MoodOverview
         {
             var vm = (SurveyOverviewViewModel)BindingContext;
             vm.Initialize(Helpers.SurveyHardcodedEnumeration.Activation);
+        }
+
+        void ListItems_Refreshing(object sender, EventArgs e) {
+            var vm = (SurveyOverviewViewModel)BindingContext;
+            vm.RefreshData();
+            SurveyListView.EndRefresh();
         }
     }
 }
