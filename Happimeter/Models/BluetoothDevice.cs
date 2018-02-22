@@ -19,6 +19,8 @@ namespace Happimeter.Models
         public BluetoothDevice(IDevice device)
         {
             Device = device;
+            Name = Device.Name ?? "No Name";
+            Description = Device.Uuid.ToString();
         }
 
         public string Name { get; set; }
