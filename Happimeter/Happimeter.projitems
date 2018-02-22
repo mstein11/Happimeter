@@ -69,6 +69,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\ConfigService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IConfigService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\INativeNavigationService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\BluetoothMainPage.xaml.cs">
+      <DependentUpon>BluetoothMainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\BluetoothMainPageViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />
@@ -101,6 +105,10 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\SettingsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\BluetoothMainPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>

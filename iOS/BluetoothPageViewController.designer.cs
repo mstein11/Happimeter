@@ -11,11 +11,8 @@ using UIKit;
 
 namespace Happimeter.iOS
 {
-    [Register ("SettingsPageViewController")]
-    partial class SettingsPageViewController
+    [Register ("BluetoothPageViewController")]
+    partial class BluetoothPageViewController
     {
-        void ReleaseDesignerOutlets ()
-        {
-        }
     }
 }
