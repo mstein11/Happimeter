@@ -20,6 +20,7 @@ namespace Happimeter.Services
         //private const string ApiUrl = "http://localhost:4711";
 
         private const string ApiPathAuth = "/v1/auth";
+        private const string ApiPathRegister = "/v1/users";
         private const string ApiPathGetMe = "/v1/me";
 
 
@@ -31,6 +32,59 @@ namespace Happimeter.Services
         {
             _restService = ServiceLocator.Instance.Get<IRestService>();
             _accountStore = ServiceLocator.Instance.Get<IAccountStoreService>();
+        }
+
+        public async Task<RegisterUserResultModel> CreateAccount(string email, string password) {
+
+            var methodResult = new RegisterUserResultModel();
+
+            var url = GetUrlForPath(ApiPathRegister);
+            var data = new { mail = email, password };
+
+            HttpResponseMessage result = null;
+            try
+            {
+                result = await _restService.Post(url, data);
+            }
+            catch (WebException e)
+            {
+                methodResult.ResultType = RegisterUserResultTypes.ErrorNoInternet;
+                return methodResult;
+            }
+            catch (Exception e)
+            {
+                methodResult.ResultType = RegisterUserResultTypes.ErrorUnknown;
+                return methodResult;
+            }
+
+            if (result.IsSuccessStatusCode)
+            {
+                var responseString = await result.Content.ReadAsStringAsync();
+                var apiResult = Newtonsoft.Json.JsonConvert.DeserializeObject<AuthApiResponseModel>(responseString);
+
+                //we got the token
+                if (apiResult.Status == 200)
+                {
+                    methodResult.ResultType = RegisterUserResultTypes.Success;
+                }
+                else if (apiResult.Status == 400)
+                {
+                    methodResult.ResultType = RegisterUserResultTypes.ErrorPasswordInsufficient;
+                }
+                else if (apiResult.Status == 409)
+                {
+                    methodResult.ResultType = RegisterUserResultTypes.ErrorUserAlreadyTaken;
+                }
+                else if (apiResult.Status == 410) {
+                    methodResult.ResultType = RegisterUserResultTypes.ErrorInvalidEmail;
+                }
+                else
+                {
+                    methodResult.ResultType = RegisterUserResultTypes.ErrorUnknown;   
+                }
+            }
+
+            return methodResult;
         }
 
         public async Task<AuthResultModel> Auth(string email, string password)

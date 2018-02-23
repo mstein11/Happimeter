@@ -13,6 +13,5 @@ namespace Happimeter.Models.ServiceModels
         ErrorWrongCredentials,
         ErrorNoInternet,
         ErrorUnknown
-        
     }
 }

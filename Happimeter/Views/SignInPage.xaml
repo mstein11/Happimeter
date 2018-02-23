@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    x:Class="Happimeter.Views.SignInPage"
+    Title="Sigin up / Login">
+	<ContentPage.Content>
+        <ScrollView>
+            <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
+                <Grid HeightRequest="280" RowSpacing="0" Padding="20" ColumnSpacing="0" BackgroundColor="#307AEA">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Label FontSize="24" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="0" TextColor="White" Text="Please use the form below to login or sign up " />
+                </Grid>
+                <StackLayout Spacing="20" Padding="20" VerticalOptions="FillAndExpand">
+                    <Entry Placeholder="Username" Text="{Binding UserName}"></Entry>
+                    <Entry Placeholder="Password" Text="{Binding Password}" IsPassword="true"></Entry>
+                    <Label FontSize="12" Text="{Binding ErrorText}" IsVisible="{Binding ErrorTextVisible}" />
+                    <Button IsEnabled="{Binding IsBusy}" Text="Login / Sign up" Command="{Binding LoginCommand}"></Button>
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
+	</ContentPage.Content>
+</ContentPage>

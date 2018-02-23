@@ -267,6 +267,10 @@
     <Compile Include="ViewControllers\BluetoothPageViewController.designer.cs">
       <DependentUpon>BluetoothPageViewController.cs</DependentUpon>
     </Compile>
+    <Compile Include="ViewControllers\SignInViewController.cs" />
+    <Compile Include="ViewControllers\SignInViewController.designer.cs">
+      <DependentUpon>SignInViewController.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Entitlements.plist" />

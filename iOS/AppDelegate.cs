@@ -41,8 +41,8 @@ namespace Happimeter.iOS
                 Window.RootViewController = ctrl;
                 Window.MakeKeyAndVisible();
             } else {
-                UIStoryboard board = UIStoryboard.FromName("Login", null);
-                UIViewController ctrl = (UIViewController)board.InstantiateViewController("LoginViewController");
+                UIStoryboard board = UIStoryboard.FromName("Main", null);
+                UIViewController ctrl = (UIViewController)board.InstantiateViewController("SignInViewController");
                 ctrl.ModalTransitionStyle = UIModalTransitionStyle.FlipHorizontal;
                 Window.RootViewController = ctrl;
                 Window.MakeKeyAndVisible();

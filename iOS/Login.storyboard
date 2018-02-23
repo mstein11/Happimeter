@@ -200,6 +200,25 @@
             <point key="canvasLocation" x="783" y="2303"/>
         </scene>
         <!--View Controller-->
+        <scene sceneID="18574">
+            <objects>
+                <navigationController id="18575" sceneMemberID="viewController" customClass="MoodOverviewViewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="18577" translucent="NO">
+                        <rect key="frame" x="0.0" y="20" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" colorSpace="calibratedRGB" red="0.18823529411764706" green="0.47843137254901963" blue="0.91764705882352937" alpha="1"/>
+                        <textAttributes key="titleTextAttributes">
+                            <color key="textColor" colorSpace="calibratedWhite" white="1" alpha="1"/>
+                        </textAttributes>
+                    </navigationBar>
+                    <connections/>
+                    <tabBarItem key="tabBarItem" title="Item" id="18576"/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="18578" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="726" y="-1558"/>
+        </scene>
     </scenes>
     <resources>
         <image name="First" width="32" height="30"/>

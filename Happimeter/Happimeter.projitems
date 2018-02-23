@@ -78,6 +78,11 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\BluetoothPairingPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\BluetoothPairingItemViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\SignInPage.xaml.cs">
+      <DependentUpon>SignInPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\SignInViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\RegisterUserResultModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />
@@ -118,6 +123,10 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\BluetoothPairingPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\SignInPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>

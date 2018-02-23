@@ -493,6 +493,25 @@
             </objects>
             <point key="canvasLocation" x="1350" y="-809"/>
         </scene>
+        <scene sceneID="97944">
+            <objects>
+                <navigationController id="97945" sceneMemberID="viewController" customClass="SignInViewController" storyboardIdentifier="SignInViewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="97947" translucent="NO">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" colorSpace="calibratedRGB" red="0.18823529411764706" green="0.47843137254901963" blue="0.91764705882352937" alpha="1"/>
+                        <textAttributes key="titleTextAttributes">
+                            <color key="textColor" colorSpace="calibratedWhite" white="1" alpha="1"/>
+                        </textAttributes>
+                    </navigationBar>
+                    <connections/>
+                    <tabBarItem key="tabBarItem" title="Item" id="97946"/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="97948" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2905" y="-16"/>
+        </scene>
     </scenes>
     <resources>
         <image name="First" width="32" height="30"/>
