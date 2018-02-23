@@ -37,10 +37,11 @@ namespace Happimeter.Models
         }
 
         public virtual IObservable<object> Connect() {
-
             var connection = Device.Connect();
             connection.Subscribe(res => {
                 InitializedReplaySubject.OnNext(true);
+            }, error => {
+                InitializedReplaySubject.OnError(new Exception("Exception while establishing connection to device"));
             });
             return connection;
         }

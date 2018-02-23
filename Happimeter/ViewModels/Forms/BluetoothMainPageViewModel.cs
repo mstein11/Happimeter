@@ -31,6 +31,7 @@ namespace Happimeter.ViewModels.Forms
                 if (innerPairing != null) {
                     context.Delete(innerPairing);    
                 }
+                OnRemovedPairing?.Invoke(this, null);
             });
 
             ExchangeDataCommand = new Command(() =>
@@ -73,5 +74,7 @@ namespace Happimeter.ViewModels.Forms
 
         public Command ExchangeDataCommand { get; set; }
 
+
+        public event EventHandler OnRemovedPairing;
     }
 }

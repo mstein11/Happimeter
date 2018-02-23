@@ -12,5 +12,13 @@ namespace Happimeter.Views
             InitializeComponent();
             BindingContext = new BluetoothPairingPageViewModel();
         }
+
+        void Handle_ItemSelected(object sender, Xamarin.Forms.SelectedItemChangedEventArgs e)
+        {
+            var vm = BindingContext as BluetoothPairingPageViewModel;
+            if (vm != null) {
+                vm.OnItemSelected(sender, e);
+            }
+        }
     }
 }

@@ -263,8 +263,8 @@
       <DependentUpon>SettingsPageViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="Services\NativeNavigationService.cs" />
-    <Compile Include="BluetoothPageViewController.cs" />
-    <Compile Include="BluetoothPageViewController.designer.cs">
+    <Compile Include="ViewControllers\BluetoothPageViewController.cs" />
+    <Compile Include="ViewControllers\BluetoothPageViewController.designer.cs">
       <DependentUpon>BluetoothPageViewController.cs</DependentUpon>
     </Compile>
   </ItemGroup>
