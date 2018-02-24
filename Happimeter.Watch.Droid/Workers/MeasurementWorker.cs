@@ -8,6 +8,7 @@ using Android.Hardware;
 using Android.Runtime;
 using Happimeter.Core.Database;
 using Happimeter.Core.ExtensionMethods;
+using Happimeter.Core.Helper;
 using Happimeter.Watch.Droid.Database;
 
 namespace Happimeter.Watch.Droid.Workers
@@ -45,7 +46,7 @@ namespace Happimeter.Watch.Droid.Workers
             var sensorsList = _sensorManager.GetSensorList(SensorType.All);
             var acc = _sensorManager.GetDefaultSensor(SensorType.Accelerometer);
             var heartRate = _sensorManager.GetDefaultSensor(SensorType.HeartRate);
-            var stepCounter = _sensorManager.GetDefaultSensor(SensorType.StepCounter);
+            var stepCounter = _sensorManager.GetDefaultSensor(SensorType.StepDetector);
 
             _accelerometerListener = new SensorListener(this);
             _heartRateListener = new SensorListener(this);
@@ -70,7 +71,7 @@ namespace Happimeter.Watch.Droid.Workers
                 if (accMeasuresToSave.Any()) {
                     sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
                     {
-                        Type = "AccelerometerX",
+                        Type = MeasurementItemTypes.AccelerometerX,
                         NumberOfMeasures = accMeasuresToSave.Count,
                         Average = accMeasuresToSave.Select(x => x.Item1).Average(),
                         StdDev = accMeasuresToSave.Select(x => x.Item1).StdDev(),
@@ -78,7 +79,7 @@ namespace Happimeter.Watch.Droid.Workers
                     });    
                     sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
                     {
-                        Type = "AccelerometerY",
+                        Type = MeasurementItemTypes.AccelerometerY,
                         NumberOfMeasures = accMeasuresToSave.Count,
                         Average = accMeasuresToSave.Select(x => x.Item2).Average(),
                         StdDev = accMeasuresToSave.Select(x => x.Item2).StdDev(),
@@ -86,7 +87,7 @@ namespace Happimeter.Watch.Droid.Workers
                     });    
                     sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
                     {
-                        Type = "AccelerometerZ",
+                        Type = MeasurementItemTypes.AccelerometerZ,
                         NumberOfMeasures = accMeasuresToSave.Count,
                         Average = accMeasuresToSave.Select(x => x.Item3).Average(),
                         StdDev = accMeasuresToSave.Select(x => x.Item3).StdDev(),
@@ -96,12 +97,12 @@ namespace Happimeter.Watch.Droid.Workers
 
 
                 var hearRateMeasuresToSave = HeartRateMeasures.ToList();
-                hearRateMeasuresToSave.Clear();
+                HeartRateMeasures.Clear();
 
                 if (hearRateMeasuresToSave.Any()) {
                     sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
                     {
-                        Type = "Heartrate",
+                        Type = MeasurementItemTypes.HeartRate,
                         NumberOfMeasures = hearRateMeasuresToSave.Count(),
                         Average = hearRateMeasuresToSave.Average(),
                         StdDev = hearRateMeasuresToSave.StdDev(),
@@ -116,11 +117,26 @@ namespace Happimeter.Watch.Droid.Workers
                 {
                     sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
                     {
-                        Type = "Step",
+                        Type = MeasurementItemTypes.Step,
                         NumberOfMeasures = stepMeasuresToSave.Count(),
                         Average = stepMeasuresToSave.Average(),
                         StdDev = stepMeasuresToSave.StdDev(),
                         Magnitude = stepMeasuresToSave.Sum()
+                    });
+                }
+
+                var microphoneMeasures = MicrophoneWorker.GetInstance().MicrophoneMeasures.ToList();
+                MicrophoneWorker.GetInstance().MicrophoneMeasures.Clear();
+
+                if (microphoneMeasures.Any())
+                {
+                    sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+                    {
+                        Type = MeasurementItemTypes.Microphone,
+                        NumberOfMeasures = microphoneMeasures.Count(),
+                        Average = microphoneMeasures.Average(),
+                        StdDev = microphoneMeasures.StdDev(),
+                        Magnitude = microphoneMeasures.Sum()
                     });
                 }
 
@@ -165,7 +181,7 @@ namespace Happimeter.Watch.Droid.Workers
                     _worker.HeartRateMeasures.Add(measure);
                 }
             }
-            else if (e.Sensor.Type == SensorType.StepCounter) {
+            else if (e.Sensor.Type == SensorType.StepDetector) {
                 foreach (var measure in e.Values)
                 {
                     _worker.StepMeasures.Add(measure);

@@ -28,6 +28,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Database\SensorItemMeasurement.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExtensionMethods\EnumerableExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Database\ConfigEntry.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helper\MeasurementItemTypes.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Models\" />

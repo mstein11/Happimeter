@@ -22,10 +22,10 @@
                     <Label FontSize="24" Grid.ColumnSpan="2" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="0" TextColor="White" Text="Bluetooth Pairing" />
 
                     <Label FontAttributes="Bold" VerticalOptions="CenterAndExpand" TextColor="White" HorizontalTextAlignment="End" Grid.Row="1" Grid.Column="0">Paired At:</Label>
-                    <Label VerticalOptions="CenterAndExpand" TextColor="White" Grid.Row="1" Grid.Column="1" Text="{Binding SynchronizedAt, StringFormat='{0:MMMM dd, yyyy HH:ss}'}"/>
+                    <Label VerticalOptions="CenterAndExpand" TextColor="White" Grid.Row="1" Grid.Column="1" Text="{Binding PairedAt, StringFormat='{0:MMMM dd, yyyy HH:mm}'}"/>
 
                     <Label FontAttributes="Bold" VerticalOptions="CenterAndExpand" TextColor="White" HorizontalTextAlignment="End" Grid.Row="2" Grid.Column="0" Text="Sync. At:"></Label>
-                    <Label VerticalOptions="CenterAndExpand" TextColor="White" Grid.Row="2" Grid.Column="1" Text="{Binding PairedAt, StringFormat='{0:MMMM dd, yyyy HH:ss}'}"/>
+                    <Label VerticalOptions="CenterAndExpand" TextColor="White" Grid.Row="2" Grid.Column="1" Text="{Binding SynchronizedAt, StringFormat='{0:MMMM dd, yyyy HH:mm}'}"/>
 
                     <Button TextColor="White" Grid.Row="3" Grid.Column="0" Text="Exchange Data" Command="{Binding ExchangeDataCommand}"></Button>
                     <Button TextColor="White" Grid.Row="3" Grid.Column="1" Text="Remove Pairing" Command="{Binding RemovePairingCommand}"></Button>
@@ -33,15 +33,17 @@
                     <Label Grid.Row="4" IsVisible="false" Grid.ColumnSpan="2" FontSize="12" TextColor="White" HorizontalTextAlignment="Center" Text="Currently Exchanging data: "></Label>
                     <Label Grid.Row="5" IsVisible="false" Grid.ColumnSpan="2" FontSize="12" TextColor="White" HorizontalTextAlignment="Center" Text="500000 out of 1000000 Bytes transfered "></Label>
                 </Grid>
-            <ListView>
+            <ListView ItemsSource="{Binding Items}" Refreshing="ListItems_Refreshing" IsPullToRefreshEnabled="true" x:Name="ListView">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
                             <StackLayout>
-                                <Label Text="Hallo" TextColor="Black" FontSize="18" />
-                                <Label>Steps Taken: 5</Label>
-                                <Label>Avg. Speech: 0.9</Label>
-                                <Label>Avg. Heartbeat: 0.9</Label>
+                                <Label Text="{Binding TimeStamp, StringFormat='{0:MMMM dd, yyyy HH:mm}'}" />
+                                <StackLayout Orientation="Horizontal">
+                                    <Label FontSize="12" Text="{Binding StepCount, StringFormat='Steps: {0:0}'}" /> 
+                                    <Label FontSize="12" Text="{Binding AvgHeartrate, StringFormat='Heartrate: {0:0.0}'}" />
+                                    <Label FontSize="12" Text="{Binding AvgMicrophone, StringFormat='Microphone: {0:0.00000}'}" />
+                                </StackLayout>
                             </StackLayout>
                         </ViewCell>
                     </DataTemplate>

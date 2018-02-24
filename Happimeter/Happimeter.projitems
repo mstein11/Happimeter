@@ -83,6 +83,7 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\SignInViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\RegisterUserResultModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\BluetoothMainItemViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />

@@ -12,6 +12,8 @@ using Happimeter.Watch.Droid.Database;
 using Happimeter.Watch.Droid.ServicesBusinessLogic;
 using Happimeter.Watch.Droid.Workers;
 using Java.Util;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Happimeter.Watch.Droid.Bluetooth
 {
@@ -43,7 +45,10 @@ namespace Happimeter.Watch.Droid.Bluetooth
 
             if (!JsonForDevice.ContainsKey(device.Address)) {
                 var toTransfer = ServiceLocator.Instance.Get<IMeasurementService>().GetMeasurementsForDataTransfer();
-                var jsonStringToTransfer = Newtonsoft.Json.JsonConvert.SerializeObject(toTransfer);
+                var jsonStringToTransfer = JObject.FromObject(toTransfer, 
+                                                              new JsonSerializer { NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Ignore })
+                                                  .ToString(Formatting.None);
+                //var jsonStringToTransfer = Newtonsoft.Json.JsonConvert.SerializeObject(toTransfer);
                 JsonForDevice.Add(device.Address, jsonStringToTransfer);
             }
 

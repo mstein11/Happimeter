@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,6 +11,8 @@ namespace Happimeter.Watch.Droid.Workers
 {
     public class MicrophoneWorker : AbstractWorker
     {
+        public ConcurrentBag<double> MicrophoneMeasures = new ConcurrentBag<double>();
+
         private const int SampleRate = 8000;
         private const ChannelIn Channel = ChannelIn.Mono;
         private const Encoding AudioEncoding = Encoding.Pcm16bit;
@@ -84,7 +87,8 @@ namespace Happimeter.Watch.Droid.Workers
                         Volumne = volume,
                         TimeStamp = DateTime.UtcNow
                     };
-                    ServiceLocator.Instance.Get<IDatabaseContext>().Add(measure);
+                    //ServiceLocator.Instance.Get<IDatabaseContext>().Add(measure);
+                    MicrophoneMeasures.Add(volume);
                     record.Stop();
                     await Task.Delay(TimeSpan.FromSeconds(RecordingDurationSec));
                 }

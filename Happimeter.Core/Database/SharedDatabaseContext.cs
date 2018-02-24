@@ -89,13 +89,14 @@ namespace Happimeter.Core.Database
             lock (SyncLock)
             {
                 using (var connection = GetConnection())
-                {
-                    //todo: fix it! doesnt work. And also warn user before deleting if he has pending measurements
-                    var databaseTables = connection.TableMappings;
-                    foreach (var table in databaseTables)
-                    {
-                        connection.DeleteAll(table);
-                    }
+                {                    
+                    DeleteAll<ConfigEntry>();
+                    DeleteAll<MicrophoneMeasurement>();
+                    DeleteAll<SensorItemMeasurement>();
+                    DeleteAll<SensorMeasurement>();
+                    DeleteAll<SharedBluetoothDevicePairing>();
+                    DeleteAll<SurveyItemMeasurement>();
+                    DeleteAll<SurveyMeasurement>();
                 }
             }
         }

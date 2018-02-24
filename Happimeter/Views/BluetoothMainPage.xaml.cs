@@ -12,5 +12,12 @@ namespace Happimeter.Views
             InitializeComponent();
             BindingContext = new BluetoothMainPageViewModel();
         }
+
+        void ListItems_Refreshing(object sender, EventArgs e)
+        {
+            var vm = (BluetoothMainPageViewModel)BindingContext;
+            vm.RefreshData();
+            ListView.EndRefresh();
+        }
     }
 }
