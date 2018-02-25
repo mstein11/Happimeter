@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using Happimeter.Core.Database;
 using Happimeter.Interfaces;
 
@@ -46,31 +47,42 @@ namespace Happimeter.ViewModels.Forms
 
             RefreshData();
 
-        }
+            var btServiceForUpdate = ServiceLocator.Instance.Get<IBluetoothService>();
+            btServiceForUpdate.DataExchangeStatusUpdate += (sender, e) => {
+                switch (e.EventType) {
+                    case Events.AndroidWatchExchangeDataStates.SearchingForDevice:
+                        DisplayIndication("Searching for device");
+                        break;
+                    case Events.AndroidWatchExchangeDataStates.DeviceConnected:
+                        DisplayIndication("Device Connected");
+                        break;
+                    case Events.AndroidWatchExchangeDataStates.CharacteristicDiscovered:
+                        DisplayIndication("Characteristic discovered");
+                        break;
+                    case Events.AndroidWatchExchangeDataStates.DidWrite:
+                        DisplayIndication("Did Write.");
+                        break;
+                    case Events.AndroidWatchExchangeDataStates.ReadUpdate:
+                        DisplayIndication("Exchanging Data...", e.BytesRead);
+                        break;
+                    case Events.AndroidWatchExchangeDataStates.Complete:
+                        DisplayIndication("Data Exchange Complete", e.BytesRead, 2000);
+                        break;
+                    case Events.AndroidWatchExchangeDataStates.DeviceNotFound:
+                        DisplayIndication("Device could not be found", null, 2000);
+                        break;
+                    case Events.AndroidWatchExchangeDataStates.CouldNotConnect:
+                        DisplayIndication("Could not connect to device", null, 2000);
+                        break;
+                    case Events.AndroidWatchExchangeDataStates.CouldNotDiscoverCharacteristic:
+                        DisplayIndication("Could not discover characteristic", null, 2000);
+                        break;
+                    case Events.AndroidWatchExchangeDataStates.ErrorOnExchange:
+                        DisplayIndication("Error while exchanging data", null, 2000);
+                        break;
+                }
+            };
 
-        public void RefreshData() {
-            var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
-            var measurements = context.GetAllWithChildren<SensorMeasurement>().OrderByDescending(x => x.Timestamp);
-            Items.Clear();
-            foreach (var measurement in measurements)
-            {
-                Items.Add(new BluetoothMainItemViewModel(measurement));
-            }
-        }
-
-        private void SetValuesInViewModel(SharedBluetoothDevicePairing pairing) 
-        {
-            var lastExchange = pairing?.LastDataSync;
-            if (lastExchange != null)
-            {
-                SynchronizedAt = lastExchange.Value.ToLocalTime();
-            }
-
-            var pairingTime = pairing?.PairedAt;
-            if (pairingTime != null)
-            {
-                PairedAt = pairingTime.Value.ToLocalTime();
-            }
         }
 
         private DateTime _synchronizedAt;
@@ -87,6 +99,34 @@ namespace Happimeter.ViewModels.Forms
             set => SetProperty(ref _pairedAt, value);
         }
 
+        private bool _dataExchangeStatusIsVisible;
+        public bool DataExchangeStatusIsVisible
+        {
+            get => _dataExchangeStatusIsVisible;
+            set => SetProperty(ref _dataExchangeStatusIsVisible, value);
+        }
+
+        private string _dataExchangeStatus;
+        public string DataExchangeStatus
+        {
+            get => _dataExchangeStatus;
+            set => SetProperty(ref _dataExchangeStatus, value);
+        }
+
+        private bool _dataExchangeProgressIsVisible;
+        public bool DataExchangeProgressIsVisible
+        {
+            get => _dataExchangeProgressIsVisible;
+            set => SetProperty(ref _dataExchangeProgressIsVisible, value);
+        }
+
+        private int _dataExchangeProgress;
+        public int DataExchangeProgress
+        {
+            get => _dataExchangeProgress;
+            set => SetProperty(ref _dataExchangeProgress, value);
+        }
+
         public ObservableCollection<BluetoothMainItemViewModel> Items { get; set; }
 
         public Command RemovePairingCommand { get; set; }
@@ -95,5 +135,68 @@ namespace Happimeter.ViewModels.Forms
 
 
         public event EventHandler OnRemovedPairing;
+
+
+        public void RefreshData()
+        {
+            var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
+            var measurements = context.GetAllWithChildren<SensorMeasurement>().OrderByDescending(x => x.Timestamp).Take(100);
+            Items.Clear();
+            foreach (var measurement in measurements)
+            {
+                Items.Add(new BluetoothMainItemViewModel(measurement));
+            }
+        }
+
+        public void LoadMoreData() {
+            var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
+            var measurements = context.GetAllWithChildren<SensorMeasurement>().OrderByDescending(x => x.Timestamp).Skip(Items.Count()).Take(100);
+            foreach (var measurement in measurements)
+            {
+                Items.Add(new BluetoothMainItemViewModel(measurement));
+            }
+        }
+
+        private void SetValuesInViewModel(SharedBluetoothDevicePairing pairing)
+        {
+            var lastExchange = pairing?.LastDataSync;
+            if (lastExchange != null)
+            {
+                SynchronizedAt = lastExchange.Value.ToLocalTime();
+            }
+
+            var pairingTime = pairing?.PairedAt;
+            if (pairingTime != null)
+            {
+                PairedAt = pairingTime.Value.ToLocalTime();
+            }
+        }
+
+        private void DisplayIndication(string text, int? progress = null, int? milliseconds = null)
+        {
+            DataExchangeStatusIsVisible = true;
+            DataExchangeStatus = text;
+            Timer timer = null;
+
+            if (progress != null) {
+                DataExchangeProgressIsVisible = true;
+                DataExchangeProgress = progress.Value;
+            }
+
+            if (milliseconds != null)
+            {
+                timer = new Timer((obj) =>
+                {
+                    DataExchangeStatus = null;
+                    DataExchangeStatusIsVisible = false;
+                    if (progress != null)
+                    {
+                        DataExchangeProgressIsVisible = false;
+                        DataExchangeProgress = 0;
+                    }
+                    timer.Dispose();
+                }, null, milliseconds.Value, System.Threading.Timeout.Infinite);
+            }
+        }
     }
 }

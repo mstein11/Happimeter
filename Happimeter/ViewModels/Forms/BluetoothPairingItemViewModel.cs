@@ -103,9 +103,6 @@ namespace Happimeter.ViewModels.Forms
                     timer.Dispose();
                 }, null, milliseconds.Value, System.Threading.Timeout.Infinite);    
             }
-
-
-            
         }
     }
 }

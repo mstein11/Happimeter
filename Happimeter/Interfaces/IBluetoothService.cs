@@ -1,4 +1,5 @@
 ﻿using System;
+using Happimeter.Events;
 using Happimeter.Models;
 using Plugin.BluetoothLE;
 
@@ -10,5 +11,6 @@ namespace Happimeter.Interfaces
         IObservable<IScanResult> StartScan(string serviceGuid = null);
         void ExchangeData();
         IObservable<bool> PairDevice(BluetoothDevice device);
+        event EventHandler<AndroidWatchExchangeDataEventArgs> DataExchangeStatusUpdate;
     }
 }

@@ -7,6 +7,7 @@ using System.Reactive.Subjects;
 using Happimeter.Core.Database;
 using Happimeter.Core.Helper;
 using Happimeter.Core.Models.Bluetooth;
+using Happimeter.Events;
 using Happimeter.Interfaces;
 using Happimeter.Models;
 using Plugin.BluetoothLE;
@@ -112,6 +113,9 @@ namespace Happimeter.Services
 
             return obs;
         }
+
+        public event EventHandler<AndroidWatchExchangeDataEventArgs> DataExchangeStatusUpdate;
+
         //is busy with data exchange?
         private Dictionary<Guid, bool> IsBusy = new Dictionary<Guid, bool>();
 
@@ -122,9 +126,19 @@ namespace Happimeter.Services
             var userId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId();
             var userIdBytes = System.Text.Encoding.UTF8.GetBytes(userId.ToString());
 
+            DataExchangeStatusUpdate?.Invoke(this,
+                                             new AndroidWatchExchangeDataEventArgs
+                                             {
+                                                 EventType = AndroidWatchExchangeDataStates.SearchingForDevice
+                                             });
 
             if (connectedDevices.Any(x => x.Name?.Contains("Happimeter") ?? false))
             {
+                DataExchangeStatusUpdate?.Invoke(this,
+                                 new AndroidWatchExchangeDataEventArgs
+                                 {
+                                     EventType = AndroidWatchExchangeDataStates.DeviceConnected
+                                 });
                 Console.WriteLine("Device already connected");
                 connectedDevices.FirstOrDefault(x => x.Name.Contains("Happimeter"))
                                 .WhenAnyCharacteristicDiscovered()
@@ -150,6 +164,12 @@ namespace Happimeter.Services
                           .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
                           .Subscribe(conn =>
                     {
+                        DataExchangeStatusUpdate?.Invoke(this,
+                                 new AndroidWatchExchangeDataEventArgs
+                                 {
+                                     EventType = AndroidWatchExchangeDataStates.DeviceConnected
+                                 });
+
                         Console.WriteLine("Connected");
                         result.WhenAnyCharacteristicDiscovered()
                               .Where(characteristic => characteristic.Uuid == UuidHelper.DataExchangeCharacteristicUuid)
@@ -158,6 +178,11 @@ namespace Happimeter.Services
                                 .Subscribe(CharacteristicDiscoveredForDataExchange, CancelConnectionOnTimeoutError);
                     }, err => //Error from connecting to device
                     {
+                        DataExchangeStatusUpdate?.Invoke(this,
+                                 new AndroidWatchExchangeDataEventArgs
+                                 {
+                                     EventType = AndroidWatchExchangeDataStates.DeviceNotFound
+                                 });
                         Console.WriteLine($"Failed to connect to device: {result.Uuid}");
                     });
 
@@ -166,12 +191,22 @@ namespace Happimeter.Services
                         Console.WriteLine($"No device found in {_messageTimeoutSeconds} seconds");
                         return;
                     }
+                    DataExchangeStatusUpdate?.Invoke(this,
+                                 new AndroidWatchExchangeDataEventArgs
+                                 {
+                                     EventType = AndroidWatchExchangeDataStates.CouldNotConnect
+                                 });
                     Console.WriteLine($"Received unknown exception on exchange data attempt: {err.Message}");
                 });
             }
         }
 
         private void CancelConnectionOnTimeoutError(Exception e) {
+            DataExchangeStatusUpdate?.Invoke(this,
+             new AndroidWatchExchangeDataEventArgs
+             {
+                 EventType = AndroidWatchExchangeDataStates.CouldNotDiscoverCharacteristic
+             });
             if (e is TimeoutException)
             {
                 Console.WriteLine("Timeout while waiting for characteristic on already connected device!");
@@ -191,10 +226,16 @@ namespace Happimeter.Services
 
             if (characteristic.Uuid == UuidHelper.DataExchangeCharacteristicUuid)
             {
+                DataExchangeStatusUpdate?.Invoke(this,
+                                 new AndroidWatchExchangeDataEventArgs
+                                 {
+                                     EventType = AndroidWatchExchangeDataStates.CharacteristicDiscovered
+                                 });
+
                 if (!IsBusy.ContainsKey(characteristic.Service.Device.Uuid)) {
                     IsBusy.Add(characteristic.Service.Device.Uuid, true);//check wheter we are locked
                 } else {
-                    Console.WriteLine("We are still busy with an previous data exchnage, lets abourt the current one.");
+                    Console.WriteLine("We are still busy with an previous data exchnage, lets abort the current one.");
                     return;
                 }
 
@@ -203,6 +244,11 @@ namespace Happimeter.Services
                               .Timeout(TimeSpan.FromSeconds(5))
                               .Subscribe(async writeResult =>
                 {
+                    DataExchangeStatusUpdate?.Invoke(this,
+                                 new AndroidWatchExchangeDataEventArgs
+                                 {
+                                     EventType = AndroidWatchExchangeDataStates.DidWrite
+                                 });
                     try {
                         Console.WriteLine("wrote successfully");
                         var listOfBytes = new List<byte>();
@@ -219,6 +265,13 @@ namespace Happimeter.Services
                             Console.WriteLine($"Got {result.Data.Length} bytes.");
                             listOfBytes.AddRange(result.Data);
                             totalBytesRead += result.Data.Length;
+                            DataExchangeStatusUpdate?.Invoke(this,
+                                 new AndroidWatchExchangeDataEventArgs
+                                 {
+                                     EventType = AndroidWatchExchangeDataStates.ReadUpdate,
+                                     BytesRead = totalBytesRead,
+                                     TotalBytes = 100
+                                 });
                             if (result.Data.Length == 1)
                             {
                                 break;
@@ -239,8 +292,20 @@ namespace Happimeter.Services
                         await characteristic.Write(new DataExchangeConfirmationMessage().GetAsBytes());
                         Console.WriteLine("Succesfully finished data exchange");
                         IsBusy.Remove(characteristic.Service.Device.Uuid);
+                        DataExchangeStatusUpdate?.Invoke(this,
+                                 new AndroidWatchExchangeDataEventArgs
+                                 {
+                                     EventType = AndroidWatchExchangeDataStates.Complete,
+                                     BytesRead = totalBytesRead,
+                                     TotalBytes = 100
+                                 });
 
                     } catch (Exception e) {
+                        DataExchangeStatusUpdate?.Invoke(this,
+                             new AndroidWatchExchangeDataEventArgs
+                             {
+                                 EventType = AndroidWatchExchangeDataStates.ErrorOnExchange,
+                             });
                         Console.WriteLine($"Exception on Dataexchange after starting the exchange: {e.Message}");
                         IsBusy.Remove(characteristic.Service.Device.Uuid);    
                     }
