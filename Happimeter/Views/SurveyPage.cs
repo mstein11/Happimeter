@@ -28,6 +28,7 @@ namespace Happimeter.Views
         void Handle_Confirm_Clicked(object sender, System.EventArgs e)
         {
             var measurementService = ServiceLocator.Instance.Get<IMeasurementService>();
+            var apiService = ServiceLocator.Instance.Get<IHappimeterApiService>();
             measurementService.AddSurveyData(ViewModel);
             FinishedSurvey?.Invoke(this, null);
         }

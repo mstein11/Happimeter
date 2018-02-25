@@ -23,6 +23,8 @@ namespace Happimeter.Services
         private const string ApiPathRegister = "/v1/users";
         private const string ApiPathGetMe = "/v1/me";
 
+        private const string ApiPathPostMood = "/v1/moods";
+
 
         private static string GetUrlForPath(string path) {
             return ApiUrl + path;
@@ -32,6 +34,9 @@ namespace Happimeter.Services
         {
             _restService = ServiceLocator.Instance.Get<IRestService>();
             _accountStore = ServiceLocator.Instance.Get<IAccountStoreService>();
+            if (_accountStore.IsAuthenticated()) {
+                _restService.AddAuthorizationTokenToInstance(_accountStore.GetAccountToken());
+            }
         }
 
         public async Task<RegisterUserResultModel> CreateAccount(string email, string password) {
@@ -167,6 +172,38 @@ namespace Happimeter.Services
             }
 
             return methodResult;
+        }
+
+        public async Task<HappimeterApiResultInformation> UploadMoad()
+        {
+            var measurementService = ServiceLocator.Instance.Get<IMeasurementService>();
+            var toSend = measurementService.GetSurveyModelForServer();
+
+            var url = GetUrlForPath(ApiPathPostMood);
+
+            HttpResponseMessage result = null;
+            try
+            {
+                foreach (var moodEntry in toSend) {
+                    result = await _restService.Post(url, moodEntry);
+                    if (result.IsSuccessStatusCode)
+                    {
+                        measurementService.SetIsUploadedToServerForSurveys(toSend);
+                    } else {
+                        return HappimeterApiResultInformation.UnknownError;
+                    }
+                }
+
+                return HappimeterApiResultInformation.Success;
+            }
+            catch (WebException e)
+            {
+                return HappimeterApiResultInformation.NoInternet;
+            }
+            catch (Exception e)
+            {
+                return HappimeterApiResultInformation.UnknownError;
+            }
         }
     }
 }

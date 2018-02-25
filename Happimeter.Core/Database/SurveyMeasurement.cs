@@ -12,6 +12,8 @@ namespace Happimeter.Core.Database
         public DateTime Timestamp { get; set; }
         public int IdFromWatch { get; set; }
 
+        public bool IsUploadedToServer { get; set; }
+
         [OneToMany(CascadeOperations = CascadeOperation.All)]
         public List<SurveyItemMeasurement> SurveyItemMeasurement { get; set; }
     }

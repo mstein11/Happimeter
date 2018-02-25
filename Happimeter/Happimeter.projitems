@@ -85,6 +85,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\RegisterUserResultModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\BluetoothMainItemViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\AndroidWatchExchangeDataEvents.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\PostMoodServiceModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />

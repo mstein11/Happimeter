@@ -31,6 +31,8 @@ namespace Happimeter.Services
 
         public async Task<HttpResponseMessage> Post(string url, object data)
         {
+            var json = JsonConvert.SerializeObject(data);
+            System.Diagnostics.Debug.WriteLine(json);
             var content = new StringContent(JsonConvert.SerializeObject(data), System.Text.Encoding.UTF8, "application/json");
             return await _httpClient.PostAsync(url, content);
         }
