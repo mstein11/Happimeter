@@ -29,6 +29,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)ExtensionMethods\EnumerableExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Database\ConfigEntry.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helper\MeasurementItemTypes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helper\BluetoothHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Bluetooth\WriteReceiverContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Bluetooth\ReadHostContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExtensionMethods\CompressExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Models\" />

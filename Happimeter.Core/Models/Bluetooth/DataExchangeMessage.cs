@@ -6,7 +6,8 @@ namespace Happimeter.Core.Models.Bluetooth
 {
     public class DataExchangeMessage : BaseBluetoothMessage
     {
-        public DataExchangeMessage() : base(nameof(DataExchangeMessage))
+        public const string MessageNameConstant = "DEMain";
+        public DataExchangeMessage() : base(MessageNameConstant)
         {
         }
 

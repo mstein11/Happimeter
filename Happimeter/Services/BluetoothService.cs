@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Threading.Tasks;
 using Happimeter.Core.Database;
 using Happimeter.Core.Helper;
 using Happimeter.Core.Models.Bluetooth;
@@ -221,7 +222,7 @@ namespace Happimeter.Services
             }
         }
 
-        private void CharacteristicDiscoveredForDataExchange(IGattCharacteristic characteristic) {
+        private async void CharacteristicDiscoveredForDataExchange(IGattCharacteristic characteristic) {
             Console.WriteLine("Characteristic discovered: " + characteristic.Uuid);
 
             if (characteristic.Uuid == UuidHelper.DataExchangeCharacteristicUuid)
@@ -239,81 +240,103 @@ namespace Happimeter.Services
                     return;
                 }
 
-                //datacharacteristic
-                characteristic.Write(new DataExchangeFirstMessage().GetAsBytes())
-                              .Timeout(TimeSpan.FromSeconds(5))
-                              .Subscribe(async writeResult =>
-                {
-                    DataExchangeStatusUpdate?.Invoke(this,
+
+                await WriteAsync(characteristic, new DataExchangeFirstMessage());
+                DataExchangeStatusUpdate?.Invoke(this,
                                  new AndroidWatchExchangeDataEventArgs
                                  {
                                      EventType = AndroidWatchExchangeDataStates.DidWrite
                                  });
-                    try {
-                        Console.WriteLine("wrote successfully");
-                        var listOfBytes = new List<byte>();
-                        var totalBytesRead = 0;
-                        var stopWatch = new Stopwatch();
-                        stopWatch.Start();
-                        while (true)
-                        {
-                            var result = await characteristic.Read();
-                            if (result == null || result.Data == null || result.Data.Length == 1)
-                            {
-                                break;
-                            }
-                            Console.WriteLine($"Got {result.Data.Length} bytes.");
-                            listOfBytes.AddRange(result.Data);
-                            totalBytesRead += result.Data.Length;
-                            DataExchangeStatusUpdate?.Invoke(this,
-                                 new AndroidWatchExchangeDataEventArgs
-                                 {
-                                     EventType = AndroidWatchExchangeDataStates.ReadUpdate,
-                                     BytesRead = totalBytesRead,
-                                     TotalBytes = 100
-                                 });
-                            if (result.Data.Length == 1)
-                            {
-                                break;
-                            }
-                        }
-                        stopWatch.Stop();
-                        var json = System.Text.Encoding.UTF8.GetString(listOfBytes.ToArray());
-                        Console.WriteLine($"Took {stopWatch.Elapsed.TotalSeconds} seconds to receive {totalBytesRead} bytes");
-                        Console.WriteLine($"Received Message: {json}");
-
-                        var data = Newtonsoft.Json.JsonConvert.DeserializeObject<DataExchangeMessage>(json);
-                        ServiceLocator.Instance.Get<IMeasurementService>().AddMeasurements(data);
-
-                        var pairing = ServiceLocator.Instance.Get<ISharedDatabaseContext>().Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive);
-                        pairing.LastDataSync = DateTime.UtcNow;
-                        ServiceLocator.Instance.Get<ISharedDatabaseContext>().Update(pairing);
-
-                        await characteristic.Write(new DataExchangeConfirmationMessage().GetAsBytes());
-                        Console.WriteLine("Succesfully finished data exchange");
-                        IsBusy.Remove(characteristic.Service.Device.Uuid);
-                        DataExchangeStatusUpdate?.Invoke(this,
-                                 new AndroidWatchExchangeDataEventArgs
-                                 {
-                                     EventType = AndroidWatchExchangeDataStates.Complete,
-                                     BytesRead = totalBytesRead,
-                                     TotalBytes = 100
-                                 });
-
-                    } catch (Exception e) {
+                try
+                {
+                    Console.WriteLine("wrote successfully");
+                    var stopWatch = new Stopwatch();
+                    stopWatch.Start();
+                    var result = await ReadAsync(characteristic, (read, total) =>
+                    {
                         DataExchangeStatusUpdate?.Invoke(this,
                              new AndroidWatchExchangeDataEventArgs
                              {
-                                 EventType = AndroidWatchExchangeDataStates.ErrorOnExchange,
+                                 EventType = AndroidWatchExchangeDataStates.ReadUpdate,
+                                 BytesRead = read,
+                                 TotalBytes = total
                              });
-                        Console.WriteLine($"Exception on Dataexchange after starting the exchange: {e.Message}");
-                        IsBusy.Remove(characteristic.Service.Device.Uuid);    
-                    }
-                }, (Exception e) => {
-                    CancelConnectionOnTimeoutError(e);
+                    });
+                    stopWatch.Stop();
+                    Console.WriteLine($"Took {stopWatch.Elapsed.TotalSeconds} seconds to receive {result.Count()} bytes");
+                    Console.WriteLine($"Received Message: {result}");
+
+                    var data = Newtonsoft.Json.JsonConvert.DeserializeObject<DataExchangeMessage>(result);
+                    ServiceLocator.Instance.Get<IMeasurementService>().AddMeasurements(data);
+
+                    var pairing = ServiceLocator.Instance.Get<ISharedDatabaseContext>().Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive);
+                    pairing.LastDataSync = DateTime.UtcNow;
+                    ServiceLocator.Instance.Get<ISharedDatabaseContext>().Update(pairing);
+
+                    await WriteAsync(characteristic, new DataExchangeConfirmationMessage());
+                    Console.WriteLine("Succesfully finished data exchange");
                     IsBusy.Remove(characteristic.Service.Device.Uuid);
-                });
+                    DataExchangeStatusUpdate?.Invoke(this,
+                             new AndroidWatchExchangeDataEventArgs
+                             {
+                                 EventType = AndroidWatchExchangeDataStates.Complete,
+                             });
+
+                }
+                catch (Exception e)
+                {
+                    DataExchangeStatusUpdate?.Invoke(this,
+                         new AndroidWatchExchangeDataEventArgs
+                         {
+                             EventType = AndroidWatchExchangeDataStates.ErrorOnExchange,
+                         });
+                    Console.WriteLine($"Exception on Dataexchange after starting the exchange: {e.Message}");
+                    IsBusy.Remove(characteristic.Service.Device.Uuid);
+                }
             }
+        }
+
+
+        public async System.Threading.Tasks.Task WriteAsync(IGattCharacteristic characteristic, BaseBluetoothMessage message)
+        {
+
+            var nullByteSeq = new byte[3] { 0x00, 0x00, 0x00 };
+            var reseted = await characteristic.Write(nullByteSeq);
+            var messageJson = BluetoothHelper.GetMessageJson(message);
+            var header = BluetoothHelper.GetMessageHeader(message);
+
+            //sending header
+            var written = await characteristic.Write(header);
+            //var mtu = await characteristic.Service.Device.RequestMtu(180);
+            var  mtu = 20;
+
+            var bytesSentCounter = 0;
+            while (bytesSentCounter < messageJson.Count()) {
+                var toSend = messageJson.Skip(bytesSentCounter).Take(mtu).ToArray();
+                var sent = await characteristic.Write(toSend);
+                bytesSentCounter += toSend.Count();
+            }
+        }
+
+        public async Task<string> ReadAsync(IGattCharacteristic characteristic, Action<int, int> statusUpdateAction = null) {
+            var headerResult = await characteristic.Read();
+            var context = new WriteReceiverContext(headerResult.Data);
+
+            while (!context.ReadComplete) {
+                var nextBytes = await characteristic.Read();
+                if (nextBytes.Data.Length == 3 && nextBytes.Data.All(x => x == 0x00))
+                {
+                    return "";
+                }
+
+                context.AddMessagePart(nextBytes.Data);
+
+                if (statusUpdateAction != null) {
+                    statusUpdateAction(context.Cursor, context.MessageSize);
+                }
+            }
+            var returnJson = context.GetMessageAsJson();
+            return returnJson;
         }
     }
 }

@@ -13,5 +13,10 @@ namespace Happimeter.Droid.Services
         {
             throw new NotImplementedException();
         }
+
+        public void StartWakeupForBeacon()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
