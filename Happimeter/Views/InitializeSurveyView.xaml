@@ -6,7 +6,7 @@
     Title="Survey">
 	<ContentPage.Content>
         <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
-            <Grid HeightRequest="280" RowSpacing="0" Padding="20" ColumnSpacing="0" BackgroundColor="#307AEA">
+            <Grid HeightRequest="260" RowSpacing="0" Padding="20" ColumnSpacing="0" BackgroundColor="#307AEA">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
@@ -16,7 +16,7 @@
             </Grid>
             <StackLayout Spacing="20" Padding="20" VerticalOptions="FillAndExpand">
                 <Label FontAttributes="Bold" HorizontalTextAlignment="Center"> By partaking in this survey, you agree that your survey responses may be used for scientific purposes.</Label>
-                <Button FontSize="24" Text="Start Survey" Clicked="Handle_Clicked"></Button>
+                <Button Text="Start Survey" Clicked="Handle_Clicked"></Button>
             </StackLayout>
         </StackLayout>
 	</ContentPage.Content>

@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using Happimeter.Events;
 using Happimeter.Models.ServiceModels;
 
 namespace Happimeter.Interfaces
@@ -8,7 +10,9 @@ namespace Happimeter.Interfaces
         Task<AuthResultModel> Auth(string email, string password);
         Task<RegisterUserResultModel> CreateAccount(string email, string password);
         Task<GetMeResultModel> GetMe();
-        Task<HappimeterApiResultInformation> UploadMoad();
+        Task<HappimeterApiResultInformation> UploadMood();
+        event EventHandler<SynchronizeDataEventArgs> UploadMoodStatusUpdate;
         Task<HappimeterApiResultInformation> UploadSensor();
+        event EventHandler<SynchronizeDataEventArgs> UploadSensorStatusUpdate;
     }
 }

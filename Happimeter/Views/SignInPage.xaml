@@ -7,7 +7,7 @@
 	<ContentPage.Content>
         <ScrollView>
             <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
-                <Grid HeightRequest="280" RowSpacing="0" Padding="20" ColumnSpacing="0" BackgroundColor="#307AEA">
+                <Grid HeightRequest="260" RowSpacing="0" Padding="20" ColumnSpacing="0" BackgroundColor="#307AEA">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"></RowDefinition>
                     </Grid.RowDefinitions>

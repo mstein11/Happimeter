@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Happimeter.Events;
 using Happimeter.Interfaces;
 using Happimeter.Models.ApiResultModels;
 using Happimeter.Models.ServiceModels;
@@ -124,9 +123,6 @@ namespace Happimeter.Services
                     _accountStore.SaveAccount(email, apiResult.Token, me.Id, apiResult.Expires);
                     var authenticated = _accountStore.IsAuthenticated();
 
-
-
-
                     if (authenticated) {
                         methodResult.ResultType = AuthResultTypes.Success;    
                     } else {
@@ -175,7 +171,7 @@ namespace Happimeter.Services
             return methodResult;
         }
 
-        public async Task<HappimeterApiResultInformation> UploadMoad()
+        public async Task<HappimeterApiResultInformation> UploadMood()
         {
             var measurementService = ServiceLocator.Instance.Get<IMeasurementService>();
             var toSend = measurementService.GetSurveyModelForServer();
@@ -185,27 +181,58 @@ namespace Happimeter.Services
             HttpResponseMessage result = null;
             try
             {
+                var counter = 0;
                 foreach (var moodEntry in toSend) {
+                    UploadMoodStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
+                    {
+                        EntriesSent = counter,
+                        TotalEntries = toSend.Count,
+                        EventType = SyncronizeDataStates.UploadingMood
+                    });
                     result = await _restService.Post(url, moodEntry);
                     if (result.IsSuccessStatusCode)
                     {
                         measurementService.SetIsUploadedToServerForSurveys(moodEntry);
                     } else {
+                        UploadMoodStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
+                        {
+                            EntriesSent = counter,
+                            TotalEntries = toSend.Count,
+                            EventType = SyncronizeDataStates.UploadingError
+                        });
                         return HappimeterApiResultInformation.UnknownError;
                     }
+                    counter++;
                 }
+
+                UploadMoodStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
+                {
+                    EntriesSent = counter,
+                    TotalEntries = toSend.Count,
+                    EventType = SyncronizeDataStates.UploadingSuccessful
+                });
 
                 return HappimeterApiResultInformation.Success;
             }
             catch (WebException e)
             {
+                UploadMoodStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
+                {
+                    EventType = SyncronizeDataStates.UploadingError
+                });
                 return HappimeterApiResultInformation.NoInternet;
             }
             catch (Exception e)
             {
+                UploadMoodStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
+                {
+                    EventType = SyncronizeDataStates.UploadingError
+                });
                 return HappimeterApiResultInformation.UnknownError;
             }
         }
+
+        public event EventHandler<SynchronizeDataEventArgs> UploadMoodStatusUpdate;
 
         public async Task<HappimeterApiResultInformation> UploadSensor() {
             var measurementService = ServiceLocator.Instance.Get<IMeasurementService>();
@@ -216,8 +243,15 @@ namespace Happimeter.Services
             HttpResponseMessage result = null;
             try
             {
+                var counter = 0;
                 foreach (var sensorEntry in toSend)
                 {
+                    UploadSensorStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
+                    {
+                        EntriesSent = counter,
+                        TotalEntries = toSend.Count,
+                        EventType = SyncronizeDataStates.UploadingSensor
+                    });
                     result = await _restService.Post(url, sensorEntry);
                     if (result.IsSuccessStatusCode)
                     {
@@ -225,20 +259,42 @@ namespace Happimeter.Services
                     }
                     else
                     {
+                        UploadSensorStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
+                        {
+                            EntriesSent = counter,
+                            TotalEntries = toSend.Count,
+                            EventType = SyncronizeDataStates.UploadingError
+                        });
                         return HappimeterApiResultInformation.UnknownError;
                     }
+                    counter++;
                 }
-
+                UploadSensorStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
+                {
+                    EntriesSent = counter,
+                    TotalEntries = toSend.Count,
+                    EventType = SyncronizeDataStates.UploadingSuccessful
+                });
                 return HappimeterApiResultInformation.Success;
             }
             catch (WebException e)
             {
+                UploadSensorStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
+                {
+                    EventType = SyncronizeDataStates.UploadingError
+                });
                 return HappimeterApiResultInformation.NoInternet;
             }
             catch (Exception e)
             {
+                UploadSensorStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
+                {
+                    EventType = SyncronizeDataStates.UploadingError
+                });
                 return HappimeterApiResultInformation.UnknownError;
             }
         }
+
+        public event EventHandler<SynchronizeDataEventArgs> UploadSensorStatusUpdate;
     }
 }

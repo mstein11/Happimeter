@@ -6,7 +6,7 @@
     Title="Bluetooth">
 	<ContentPage.Content>
         <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-            <Grid HeightRequest="280" RowSpacing="10" Padding="20" ColumnSpacing="10" BackgroundColor="#307AEA">
+            <Grid HeightRequest="260" RowSpacing="10" Padding="20" ColumnSpacing="10" BackgroundColor="#307AEA">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>

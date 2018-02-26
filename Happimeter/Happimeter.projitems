@@ -87,6 +87,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Events\AndroidWatchExchangeDataEvents.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\PostMoodServiceModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\PostSensorDataServiceModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\SynchronizeDataEvent.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />

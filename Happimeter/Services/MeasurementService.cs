@@ -59,7 +59,7 @@ namespace Happimeter.Services
             }
 
             if (message.SurveyMeasurements.Any()) {
-                apiService.UploadMoad();
+                apiService.UploadMood();
             }
 
             foreach (var measurement in message.SensorMeasurements)
@@ -94,7 +94,15 @@ namespace Happimeter.Services
 
             context.AddGraph(surveyMeasurement);
             var apiService = ServiceLocator.Instance.Get<IHappimeterApiService>();
-            apiService.UploadMoad();
+            apiService.UploadMood();
+        }
+
+        public bool HasUnsynchronizedChanges() {
+            var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
+            var needsMoodUpload = context.Get<SurveyMeasurement>(x => !x.IsUploadedToServer) != null;
+            var needsSensorUpload = context.Get<SensorMeasurement>(x => !x.IsUploadedToServer) != null;
+
+            return needsMoodUpload || needsSensorUpload;
         }
 
         public List<SurveyMeasurement> GetSurveyData() {
