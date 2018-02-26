@@ -34,9 +34,6 @@ namespace Happimeter.Watch.Droid
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
-            var smm = (SensorManager)GetSystemService(Context.SensorService);
-            var sensorsList = smm.GetSensorList(SensorType.All);
-            var acc = smm.GetDefaultSensor(SensorType.Accelerometer);
             //smm.RegisterListener(this, acc, SensorDelay.Normal);
 
 
@@ -59,10 +56,6 @@ namespace Happimeter.Watch.Droid
 
             StartService(new Intent(this,typeof(BackgroundService)));
             StartService(new Intent(this, typeof(BeaconService)));
-            var tmp1 = smm.GetDefaultSensor(SensorType.HeartRate);
-            smm.RegisterListener(this, tmp1, SensorDelay.Ui);
-            var tmp2 = smm.GetDefaultSensor(SensorType.HeartRate);
-            var heartRate2 = smm.GetDefaultSensor(SensorType.HeartBeat);
 
             FindViewById<Button>(Resource.Id.restartWorker).Click += (sender, e) => {
                 StopService(new Intent(this, typeof(BackgroundService)));

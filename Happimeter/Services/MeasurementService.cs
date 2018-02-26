@@ -110,7 +110,13 @@ namespace Happimeter.Services
             return context.GetAllWithChildren<SurveyMeasurement>().ToList();
         }
 
-        public List<PostMoodServiceModel> GetSurveyModelForServer() {
+
+        /// <summary>
+        ///     The first return list contains the data in a format compatible with happimeter api v1. However, in this format we can not save all the data
+        ///     The second reutnr list contains the data in a format compatible with happimeter api v2. Here we can send all the data, but the api might not be available at this point.
+        /// </summary>
+        /// <returns>The survey model for server.</returns>
+        public (List<PostMoodServiceModel>, List<SurveyMeasurement>) GetSurveyModelForServer() {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             var entries = context.GetAllWithChildren<SurveyMeasurement>(x => !x.IsUploadedToServer);
 
@@ -132,7 +138,10 @@ namespace Happimeter.Services
                 });
             }
 
-            return result;
+            //remove circular references so that we can jsonify
+            entries.ForEach(e => e.SurveyItemMeasurement.ForEach(i => i.SurveyMeasurement = null));
+
+            return (result, entries);
         }
 
         public void SetIsUploadedToServerForSurveys(PostMoodServiceModel survey) {
@@ -149,7 +158,12 @@ namespace Happimeter.Services
             context.Update(toUpdate);
         }
 
-        public List<PostSensorDataServiceModel> GetSensorDataForServer() {
+        /// <summary>
+        ///     The first return list contains the data in a format compatible with happimeter api v1. However, in this format we can not save all the data
+        ///     The second reutnr list contains the data in a format compatible with happimeter api v2. Here we can send all the data, but the api might not be available at this point.
+        /// </summary>
+        /// <returns>The survey model for server.</returns>
+        public (List<PostSensorDataServiceModel>, List<SensorMeasurement>) GetSensorDataForServer() {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             var entries = context.GetAllWithChildren<SensorMeasurement>(x => !x.IsUploadedToServer);
 
@@ -175,7 +189,10 @@ namespace Happimeter.Services
                 });
             }
 
-            return result;
+            //remove circular references so that we can jsonify
+            entries.ForEach(e => e.SensorItemMeasures.ForEach(i => i.SensorMeasurement = null));
+
+            return (result, entries);
         }
 
         private int GetOldSurveyScaleValue(int newScaleValue) {

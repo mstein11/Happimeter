@@ -21,6 +21,8 @@ namespace Happimeter.Watch.Droid.Workers
         public ConcurrentBag<double> StepMeasures = new ConcurrentBag<double>();
         public ConcurrentBag<double> LightMeasures = new ConcurrentBag<double>();
 
+        public int StepsFromLastMeasurement = 0;
+
         private SensorManager _sensorManager { get; set; }
         private SensorListener _accelerometerListener { get; set; }
         private SensorListener _heartRateListener { get; set; }
@@ -45,40 +47,14 @@ namespace Happimeter.Watch.Droid.Workers
 
         public async override void Start()
         {
-            _sensorManager = (SensorManager) Application.Context.GetSystemService(Android.Content.Context.SensorService);
-
-            var light = _sensorManager.GetDefaultSensor(SensorType.Light);
-            if (light != null)
-            {
-                _lightListener = new SensorListener(this);
-                _sensorManager.RegisterListener(_lightListener, light, SensorDelay.Ui);
-            }
-
-            var acc = _sensorManager.GetDefaultSensor(SensorType.Accelerometer);
-            if (acc != null)
-            {
-                _accelerometerListener = new SensorListener(this);
-                _sensorManager.RegisterListener(_accelerometerListener, acc, SensorDelay.Ui);
-            }
-
-            var heartRate = _sensorManager.GetDefaultSensor(SensorType.HeartRate);
-            if (heartRate != null)
-            {
-                _sensorManager.RegisterListener(_heartRateListener, heartRate, SensorDelay.Ui);
-                _sensorManager.RegisterListener(_accelerometerListener, acc, SensorDelay.Ui);
-            }
-
-            var stepCounter = _sensorManager.GetDefaultSensor(SensorType.StepDetector);
-            if (stepCounter != null)
-            {
-                _stepListener = new SensorListener(this);
-                _sensorManager.RegisterListener(_stepListener, stepCounter, SensorDelay.Ui);
-            }
+            
 
             IsRunning = true;
 
             while(IsRunning) {
-                await Task.Delay(TimeSpan.FromSeconds(60));
+                StartSensors();
+                await Task.Delay(TimeSpan.FromSeconds(45));
+                StopSensors();
                 var sensorMeasurement = new SensorMeasurement
                 {
                     Timestamp = DateTime.UtcNow,
@@ -175,24 +151,65 @@ namespace Happimeter.Watch.Droid.Workers
                 }
 
                 ServiceLocator.Instance.Get<IDatabaseContext>().AddGraph(sensorMeasurement);
+                await Task.Delay(TimeSpan.FromSeconds(45));
                 Console.WriteLine("Saved new Sensormeasurement");
             }
         }
 
         public override void Stop()
         {
-            if (_accelerometerListener != null) {
-                _sensorManager.UnregisterListener(_accelerometerListener);    
+            IsRunning = false;
+            StopSensors();
+        }
+
+        private void StopSensors() {
+            if (_accelerometerListener != null)
+            {
+                _sensorManager.UnregisterListener(_accelerometerListener);
             }
-            if(_heartRateListener != null) {
-                _sensorManager.UnregisterListener(_heartRateListener);    
+            if (_heartRateListener != null)
+            {
+                _sensorManager.UnregisterListener(_heartRateListener);
             }
             if (_stepListener != null)
             {
                 _sensorManager.UnregisterListener(_stepListener);
             }
-            if (_lightListener != null) {
+            if (_lightListener != null)
+            {
                 _sensorManager.UnregisterListener(_lightListener);
+            }
+        }
+
+        private void StartSensors() {
+            _sensorManager = (SensorManager)Application.Context.GetSystemService(Android.Content.Context.SensorService);
+
+            var light = _sensorManager.GetDefaultSensor(SensorType.Light);
+            if (light != null)
+            {
+                _lightListener = new SensorListener(this);
+                _sensorManager.RegisterListener(_lightListener, light, SensorDelay.Ui);
+            }
+
+            var acc = _sensorManager.GetDefaultSensor(SensorType.Accelerometer);
+            if (acc != null)
+            {
+                _accelerometerListener = new SensorListener(this);
+                _sensorManager.RegisterListener(_accelerometerListener, acc, SensorDelay.Ui);
+            }
+
+            var heartRate = _sensorManager.GetDefaultSensor(SensorType.HeartRate);
+            if (heartRate != null)
+            {
+                _heartRateListener = new SensorListener(this);
+                _sensorManager.RegisterListener(_heartRateListener, heartRate, SensorDelay.Ui);
+            }
+
+            var stepCounter = _sensorManager.GetDefaultSensor(SensorType.StepCounter);
+            if (stepCounter != null)
+            {
+                _stepListener = new SensorListener(this);
+                _sensorManager.RegisterListener(_stepListener, stepCounter, SensorDelay.Ui);
             }
         }
     }
@@ -225,10 +242,15 @@ namespace Happimeter.Watch.Droid.Workers
                     _worker.HeartRateMeasures.Add(measure);
                 }
             }
-            else if (e.Sensor.Type == SensorType.StepDetector) {
+            else if (e.Sensor.Type == SensorType.StepCounter) {
                 foreach (var measure in e.Values)
                 {
-                    _worker.StepMeasures.Add(measure);
+                    if (_worker.StepsFromLastMeasurement == 0) {
+                        _worker.StepsFromLastMeasurement = (int) measure;
+                    } else {
+                        _worker.StepMeasures.Add(measure - _worker.StepsFromLastMeasurement);    
+                        _worker.StepsFromLastMeasurement = (int)measure;
+                    }
                 }
             }
             else if (e.Sensor.Type == SensorType.Light)
