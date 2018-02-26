@@ -14,6 +14,8 @@ namespace Happimeter.Interfaces
         List<SurveyMeasurement> GetSurveyData();
         List<SurveyMeasurement> GetSurveyMeasurements();
         List<PostMoodServiceModel> GetSurveyModelForServer();
-        void SetIsUploadedToServerForSurveys(List<PostMoodServiceModel> surveys);
+        void SetIsUploadedToServerForSurveys(PostMoodServiceModel survey);
+        List<PostSensorDataServiceModel> GetSensorDataForServer();
+        void SetIsUploadedToServerForSensorData(PostSensorDataServiceModel sensor);
     }
 }

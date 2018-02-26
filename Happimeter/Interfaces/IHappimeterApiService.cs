@@ -9,5 +9,6 @@ namespace Happimeter.Interfaces
         Task<RegisterUserResultModel> CreateAccount(string email, string password);
         Task<GetMeResultModel> GetMe();
         Task<HappimeterApiResultInformation> UploadMoad();
+        Task<HappimeterApiResultInformation> UploadSensor();
     }
 }

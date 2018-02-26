@@ -14,6 +14,7 @@ namespace Happimeter.Core.Database
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         public DateTime Timestamp { get; set; }
+        public bool IsUploadedToServer { get; set; }
 
         public int IdFromWatch { get; set; }
 

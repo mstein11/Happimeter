@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Happimeter.Core.Database;
+using Happimeter.Core.Helper;
 using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Helpers;
 using Happimeter.Interfaces;
@@ -15,6 +16,8 @@ namespace Happimeter.Services
         public MeasurementService()
         {
         }
+
+        private const double MeterPerSqaureSecondToMilliGForce = 101.93679918451;
 
         public SurveyViewModel GetSurveyQuestions()
         {
@@ -64,6 +67,9 @@ namespace Happimeter.Services
                 measurement.IdFromWatch = measurement.Id;
                 measurement.Id = 0;
                 context.AddGraph(measurement);
+            }
+            if (message.SensorMeasurements.Any()) {
+                apiService.UploadSensor();
             }
         }
 
@@ -121,13 +127,47 @@ namespace Happimeter.Services
             return result;
         }
 
-        public void SetIsUploadedToServerForSurveys(List<PostMoodServiceModel> surveys) {
+        public void SetIsUploadedToServerForSurveys(PostMoodServiceModel survey) {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
-            foreach (var item in surveys) {
-                var toUpdate = context.Get<SurveyMeasurement>(x => x.Id == item.Id);
-                toUpdate.IsUploadedToServer = true;
-                context.Update(toUpdate);
-            } 
+            var toUpdate = context.Get<SurveyMeasurement>(x => x.Id == survey.Id);
+            toUpdate.IsUploadedToServer = true;
+            context.Update(toUpdate);
+        }
+
+        public void SetIsUploadedToServerForSensorData(PostSensorDataServiceModel sensor) {
+            var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
+            var toUpdate = context.Get<SensorMeasurement>(x => x.Id == sensor.Id);
+            toUpdate.IsUploadedToServer = true;
+            context.Update(toUpdate);
+        }
+
+        public List<PostSensorDataServiceModel> GetSensorDataForServer() {
+            var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
+            var entries = context.GetAllWithChildren<SensorMeasurement>(x => !x.IsUploadedToServer);
+
+            var result = new List<PostSensorDataServiceModel>();
+            foreach(var entry in entries) {
+                result.Add(new PostSensorDataServiceModel
+                {
+                    Id = entry.Id,
+                    AvgHeartrate = entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.HeartRate)?.Average ?? 0,
+                    LocalTimestamp = new DateTimeOffset(entry.Timestamp.ToLocalTime()).ToUnixTimeSeconds(),
+                    Timestamp = new DateTimeOffset(entry.Timestamp).ToUnixTimeSeconds(),
+                    Accelerometer = new AccelerometerModel
+                    {
+                        AvgX = GetOldAccelerometerScaleValue(entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.AccelerometerX)?.Average ?? 0),
+                        AvgY = GetOldAccelerometerScaleValue(entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.AccelerometerY)?.Average ?? 0),
+                        AvgZ = GetOldAccelerometerScaleValue(entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.AccelerometerZ)?.Average ?? 0),
+                        VarX = Math.Pow(GetOldAccelerometerScaleValue(entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.AccelerometerX)?.StdDev ?? 0), 2),
+                        VarY = Math.Pow(GetOldAccelerometerScaleValue(entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.AccelerometerY)?.StdDev ?? 0), 2),
+                        VarZ = Math.Pow(GetOldAccelerometerScaleValue(entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.AccelerometerZ)?.StdDev ?? 0), 2)
+                    },
+                    Position = new PositionModel {
+                    }
+                });
+            }
+
+            return result;
         }
 
         private int GetOldSurveyScaleValue(int newScaleValue) {
@@ -139,6 +179,16 @@ namespace Happimeter.Services
                 return 1;
             }
             return 2;
+        }
+
+        /// <summary>
+        ///     Pebble measure acceleration in micro G. Android watches do the same in meters per square second.
+        ///     This method takes a value in meters per square second and converts it to microG.
+        /// </summary>
+        /// <returns>The old accelerometer scale value.</returns>
+        /// <param name="newScaleValue">New scale value.</param>
+        private int GetOldAccelerometerScaleValue(double newScaleValue) {
+            return (int) (newScaleValue * MeterPerSqaureSecondToMilliGForce);
         }
 
         public List<SurveyMeasurement> GetSurveyMeasurements() {

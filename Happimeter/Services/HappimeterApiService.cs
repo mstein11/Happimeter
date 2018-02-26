@@ -24,6 +24,7 @@ namespace Happimeter.Services
         private const string ApiPathGetMe = "/v1/me";
 
         private const string ApiPathPostMood = "/v1/moods";
+        private const string ApiPathPostSensor = "/v1/sensors";
 
 
         private static string GetUrlForPath(string path) {
@@ -188,8 +189,42 @@ namespace Happimeter.Services
                     result = await _restService.Post(url, moodEntry);
                     if (result.IsSuccessStatusCode)
                     {
-                        measurementService.SetIsUploadedToServerForSurveys(toSend);
+                        measurementService.SetIsUploadedToServerForSurveys(moodEntry);
                     } else {
+                        return HappimeterApiResultInformation.UnknownError;
+                    }
+                }
+
+                return HappimeterApiResultInformation.Success;
+            }
+            catch (WebException e)
+            {
+                return HappimeterApiResultInformation.NoInternet;
+            }
+            catch (Exception e)
+            {
+                return HappimeterApiResultInformation.UnknownError;
+            }
+        }
+
+        public async Task<HappimeterApiResultInformation> UploadSensor() {
+            var measurementService = ServiceLocator.Instance.Get<IMeasurementService>();
+            var toSend = measurementService.GetSensorDataForServer();
+
+            var url = GetUrlForPath(ApiPathPostSensor);
+
+            HttpResponseMessage result = null;
+            try
+            {
+                foreach (var sensorEntry in toSend)
+                {
+                    result = await _restService.Post(url, sensorEntry);
+                    if (result.IsSuccessStatusCode)
+                    {
+                        measurementService.SetIsUploadedToServerForSensorData(sensorEntry);
+                    }
+                    else
+                    {
                         return HappimeterApiResultInformation.UnknownError;
                     }
                 }

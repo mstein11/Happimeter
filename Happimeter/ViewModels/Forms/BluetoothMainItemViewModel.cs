@@ -13,6 +13,7 @@ namespace Happimeter.ViewModels.Forms
             AvgHeartrate = measurement?.SensorItemMeasures.FirstOrDefault(x => x.Type == MeasurementItemTypes.HeartRate)?.Average ?? 0;
             StepCount = measurement?.SensorItemMeasures.FirstOrDefault(x => x.Type == MeasurementItemTypes.Step)?.Magnitude ?? 0;
             AvgMicrophone = measurement?.SensorItemMeasures.FirstOrDefault(x => x.Type == MeasurementItemTypes.Microphone)?.Average ?? 0;
+            SynchronizedWithServer = measurement?.IsUploadedToServer ?? false;
         }
 
         private DateTime _timestamp;
@@ -41,6 +42,13 @@ namespace Happimeter.ViewModels.Forms
         {
             get => _avgMicrophone;
             set => SetProperty(ref _avgMicrophone, value);
+        }
+
+        private bool _synchronizedWithServer;
+        public bool SynchronizedWithServer
+        {
+            get => _synchronizedWithServer;
+            set => SetProperty(ref _synchronizedWithServer, value);
         }
     }
 }
