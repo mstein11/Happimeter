@@ -29,6 +29,8 @@ namespace Happimeter.ViewModels.Forms
 
             RemovePairingCommand = new Command(() =>
             {
+                var btService = ServiceLocator.Instance.Get<IBluetoothService>();
+                btService.RemoveAllConnections();
                 var innerContext = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
                 var innerPairing = context
                               .Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive);

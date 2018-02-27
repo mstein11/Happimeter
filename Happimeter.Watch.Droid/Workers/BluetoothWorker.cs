@@ -135,6 +135,7 @@ namespace Happimeter.Watch.Droid.Workers
 
         private Dictionary<string, bool> AuthenticationDeviceDidGreat = new Dictionary<string, bool>();
         private Dictionary<string, WriteReceiverContext> WriteReceiverContextForDevice = new Dictionary<string, WriteReceiverContext>();
+
         public CallbackGatt(BluetoothWorker worker)
         {
             Worker = worker;
@@ -158,22 +159,50 @@ namespace Happimeter.Watch.Droid.Workers
         public override void OnCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset, BluetoothGattCharacteristic characteristic)
         {
             base.OnCharacteristicReadRequest(device, requestId, offset, characteristic);
-
+            ReadHostContext context = null;
             var authCharac = characteristic as HappimeterAuthCharacteristic;
-            if (authCharac != null) {
-                authCharac.HandleRead(device, requestId, offset, Worker);
-                return;
+            if (authCharac != null)
+            {
+                context = authCharac.GetReadHostContext(device.Address);
             }
-
 
             var dataCharac = characteristic as HappimeterDataCharacteristic;
             if (dataCharac != null)
             {
-                dataCharac.HandleRead(device, requestId, offset, Worker);
+                context = dataCharac.GetReadHostContext(device.Address);
+            }
+
+            if (context == null) {
+                Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, new byte[] { 0x00, 0x00, 0x00 });
+                return;
+            }
+            if (!context.DidSendHeader) {
+                Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, context.Header);
+                context.DidSendHeader = true;
                 return;
             }
 
-            Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, Encoding.UTF8.GetBytes("Unknwon characteristic!"));
+            var mtu = Worker.DevicesMtu.ContainsKey(device.Address) ? Worker.DevicesMtu[device.Address] : 20;
+            var bytesToSend = context.GetNextBytes(mtu);
+
+            if (context.Complete) {
+                if (authCharac != null)
+                {
+                    authCharac.DoneReading(device.Address);
+                }
+
+                if (dataCharac != null)
+                { 
+                    dataCharac.DoneReading(device.Address);
+                }
+            }
+
+            if (!bytesToSend.Any()) {
+                bytesToSend = new byte[] { 0x00, 0x00, 0x00 };
+            }
+
+            Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, bytesToSend);
+            return; 
         }
 
         public override void OnCharacteristicWriteRequest(BluetoothDevice device, int requestId, BluetoothGattCharacteristic characteristic, bool preparedWrite, bool responseNeeded, int offset, byte[] value)
@@ -193,7 +222,14 @@ namespace Happimeter.Watch.Droid.Workers
             if (!WriteReceiverContextForDevice.ContainsKey(device.Address))
             {
                 isInitialMessage = true;
-                WriteReceiverContextForDevice.Add(device.Address, new WriteReceiverContext(value));
+
+                //if the header is maleformated we need to catch that!
+                try {
+                    WriteReceiverContextForDevice.Add(device.Address, new WriteReceiverContext(value));    
+                } catch (Exception e) {
+                    Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Failure, offset, value);
+                }
+
             }
             var context = WriteReceiverContextForDevice[device.Address];
             var messageName = WriteReceiverContextForDevice[device.Address].MessageName;
@@ -212,6 +248,10 @@ namespace Happimeter.Watch.Droid.Workers
 
             if (!isInitialMessage)
             {
+                if (!context.CanAddMessagePart(value)) {
+                    Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Failure, offset, Encoding.UTF8.GetBytes("wrong pass phrase!"));
+                    return;
+                }
                 context.AddMessagePart(value);
             }
 
@@ -227,6 +267,11 @@ namespace Happimeter.Watch.Droid.Workers
             var messageJson = WriteReceiverContextForDevice[device.Address].GetMessageAsJson();
             //let's be open for new write requests
             WriteReceiverContextForDevice.Remove(device.Address);
+
+            if (messageJson == null) {
+                Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Failure, offset, Encoding.UTF8.GetBytes("malformated gzip"));
+                return;
+            }
 
             //todo: handle message
 

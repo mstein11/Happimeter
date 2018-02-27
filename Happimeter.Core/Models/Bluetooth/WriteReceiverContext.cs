@@ -27,6 +27,13 @@ namespace Happimeter.Core.Models.Bluetooth
 
         public byte[] ReceivedMessageContent { get; set; }
 
+        public bool CanAddMessagePart(byte[] messagePart) {
+            if (Cursor + messagePart.Count() > MessageSize) {
+                return false;
+            }
+            return true;
+        }
+
         public void AddMessagePart(byte[] messagePart) {
             foreach (var contentByte in messagePart) {
                 ReceivedMessageContent[Cursor] = contentByte;
@@ -39,7 +46,13 @@ namespace Happimeter.Core.Models.Bluetooth
         }
 
         public string GetMessageAsJson() {
-            return BluetoothHelper.GetMessageJsonFromBytes(ReceivedMessageContent);
+            try {
+                return BluetoothHelper.GetMessageJsonFromBytes(ReceivedMessageContent);    
+            } catch(Exception e) {
+                //if we have maleformated gzip we need to catch that!
+                return null;
+            }
+
         }
     }
 }

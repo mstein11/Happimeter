@@ -10,11 +10,13 @@ namespace Happimeter.Interfaces
     public interface IBluetoothService
     {
         bool IsConnected(IDevice device);
+        void RemoveAllConnections();
         IObservable<IScanResult> StartScan(string serviceGuid = null);
         void ExchangeData();
         IObservable<bool> PairDevice(BluetoothDevice device);
         event EventHandler<AndroidWatchExchangeDataEventArgs> DataExchangeStatusUpdate;
 
         Task<bool> WriteAsync(IGattCharacteristic characteristic, BaseBluetoothMessage message);
+        Task<string> ReadAsync(IGattCharacteristic characteristic, Action<int, int> statusUpdateAction = null);
     }
 }

@@ -46,63 +46,70 @@ namespace Happimeter.Models
                 OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.BtConnected, null);
                 if (success) {
                     try {
-                        Device.WhenAnyCharacteristicDiscovered().Subscribe(async characteristic =>
+                        Device.WhenAnyCharacteristicDiscovered().Where(x => x.Uuid == AuthCharacteristic).Take(1).Subscribe(async characteristic =>
                         {
-                            Debug.WriteLine($"Found characteristic: {characteristic.Uuid}");
-  
-                            if (characteristic.Uuid == AuthCharacteristic)
-                            {
-                                Debug.WriteLine("Found our AuthCharacteristic");
-                                OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.AuthCharacteristicDiscovered, null);
+                            Debug.WriteLine("Found our AuthCharacteristic");
+                            OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.AuthCharacteristicDiscovered, null);
 
-                                var btService = ServiceLocator.Instance.Get<IBluetoothService>();
-                                var writeResult = await btService.WriteAsync(characteristic, new AuthFirstMessage());
-                                OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.FirstWriteSuccessfull, null);
-
-                                characteristic.Read().Subscribe(async result =>
-                                {
-                                    OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.ReadSuccessfull, null);
-                                    //todo: validate data from gattservice
-
-                                    var dataToSend = new AuthSecondMessage
-                                    {
-                                        //Service that the watch will later advertise
-                                        Password = Guid.NewGuid().ToString(),
-                                        PhoneOs = ServiceLocator.Instance.Get<IDeviceInformationService>().GetPhoneOs(),
-                                        HappimeterUserId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId()
-                                    };
-
-
-                                    var writeResult2 = await btService.WriteAsync(result.Characteristic, dataToSend);
-                                    OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.SecondWriteSuccessfull, null);
-                                    //todo: savepairing information to db
-                                    var paring = new SharedBluetoothDevicePairing
-                                    {
-                                        IsPairingActive = true,
-                                        PairedAt = DateTime.UtcNow,
-                                        PairedDeviceName = characteristic.Service.Device.Name,
-                                        Password = dataToSend.Password,
-                                        PhoneOs = "Android"
-                                    };
-                                    ServiceLocator.Instance.Get<ISharedDatabaseContext>().Add(paring);
-
-                                    //Lets wait for his beacon signal
-                                    ServiceLocator.Instance.Get<IBeaconWakeupService>().StartWakeupForBeacon();
-                                    OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.Complete, null);
-
-                                }, readError => {
-                                    OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.ErrorOnRead, null);
-                                });
-
-                                characteristic.WhenNotificationReceived().Subscribe(result =>
-                                {
-                                    Debug.WriteLine("Got Notification: " + System.Text.Encoding.UTF8.GetString(result.Data));
-
-                                });
+                            var btService = ServiceLocator.Instance.Get<IBluetoothService>();
+                            var writeResult = await btService.WriteAsync(characteristic, new AuthFirstMessage());
+                            if (!writeResult) {
+                                //we got an error here
+                                OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.ErrorOnFirstWrite, null);
+                                return;
                             }
+                            OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.FirstWriteSuccessfull, null);
+
+                            var readResult = await btService.ReadAsync(characteristic);
+                            if (readResult == null) {
+                                //we got an error here!
+                                OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.ErrorOnRead, null);
+                                return;
+                            }
+
+                            OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.ReadSuccessfull, null);
+                            //todo: validate data from gattservice
+
+                            var dataToSend = new AuthSecondMessage
+                            {
+                                //Service that the watch will later advertise
+                                Password = Guid.NewGuid().ToString(),
+                                PhoneOs = ServiceLocator.Instance.Get<IDeviceInformationService>().GetPhoneOs(),
+                                HappimeterUserId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId()
+                            };
+
+
+                            var writeResult2 = await btService.WriteAsync(characteristic, dataToSend);
+                            if (!writeResult2) {
+                                //we got an error here!
+                                OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.ErrorOnSecondWrite, null);
+                                return;
+                            }
+
+                            OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.SecondWriteSuccessfull, null);
+                            var paring = new SharedBluetoothDevicePairing
+                            {
+                                IsPairingActive = true,
+                                PairedAt = DateTime.UtcNow,
+                                PairedDeviceName = characteristic.Service.Device.Name,
+                                Password = dataToSend.Password,
+                                PhoneOs = "Android"
+                            };
+                            ServiceLocator.Instance.Get<ISharedDatabaseContext>().Add(paring);
+
+                            //Lets wait for his beacon signal
+                            ServiceLocator.Instance.Get<IBeaconWakeupService>().StartWakeupForBeacon();
+                            OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.Complete, null);
+
+                            //not really needed but we leave it here incase we want to implement notifications
+                            characteristic.WhenNotificationReceived().Take(1).Subscribe(result =>
+                            {
+                                Debug.WriteLine("Got Notification: " + System.Text.Encoding.UTF8.GetString(result.Data));
+                            });
                         });
                     } catch (Exception e) {
-                        Debug.WriteLine(e.Message);
+                        Console.WriteLine("Something went wrong during authentication. Error: " + e.Message);
+                        OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.ErrorBeforeComplete, null);
                     }
                 }
             }, error => {

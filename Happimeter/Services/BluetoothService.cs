@@ -86,9 +86,16 @@ namespace Happimeter.Services
             return CrossBleAdapter.Current.GetConnectedDevices().Select(dev => dev.Uuid).Contains(device.Uuid);
         }
 
+        public void RemoveAllConnections() {
+            var devices = CrossBleAdapter.Current.GetConnectedDevices();
+            foreach (var device in devices) {
+                device.CancelConnection();
+            }
+        }
+
         public IObservable<bool> PairDevice(BluetoothDevice device) {
             device.Connect();
-            var obs = device.WhenDeviceReady();
+            var obs = device.WhenDeviceReady().Take(1);
             obs.Subscribe(success => {
                 PairedDevice = device;
                 if(PairedDevice.Device.IsPairingAvailable()) {
@@ -174,9 +181,9 @@ namespace Happimeter.Services
                         Console.WriteLine("Connected");
                         result.WhenAnyCharacteristicDiscovered()
                               .Where(characteristic => characteristic.Uuid == UuidHelper.DataExchangeCharacteristicUuid)
-                                .Take(1)
+                              .Take(1)
                               .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds)) 
-                                .Subscribe(CharacteristicDiscoveredForDataExchange, CancelConnectionOnTimeoutError);
+                              .Subscribe(CharacteristicDiscoveredForDataExchange, CancelConnectionOnTimeoutError);
                     }, err => //Error from connecting to device
                     {
                         DataExchangeStatusUpdate?.Invoke(this,
@@ -190,14 +197,14 @@ namespace Happimeter.Services
                 }, err => {//Error from Replaysubject (scan)
                     if (err is TimeoutException) {
                         Console.WriteLine($"No device found in {_messageTimeoutSeconds} seconds");
-                        return;
+                    } else {
+                        Console.WriteLine($"Received unknown exception on exchange data attempt: {err.Message}");
                     }
                     DataExchangeStatusUpdate?.Invoke(this,
-                                 new AndroidWatchExchangeDataEventArgs
-                                 {
-                                     EventType = AndroidWatchExchangeDataStates.CouldNotConnect
-                                 });
-                    Console.WriteLine($"Received unknown exception on exchange data attempt: {err.Message}");
+                        new AndroidWatchExchangeDataEventArgs
+                        {
+                            EventType = AndroidWatchExchangeDataStates.CouldNotConnect
+                        });
                 });
             }
         }
@@ -228,10 +235,10 @@ namespace Happimeter.Services
             if (characteristic.Uuid == UuidHelper.DataExchangeCharacteristicUuid)
             {
                 DataExchangeStatusUpdate?.Invoke(this,
-                                 new AndroidWatchExchangeDataEventArgs
-                                 {
-                                     EventType = AndroidWatchExchangeDataStates.CharacteristicDiscovered
-                                 });
+                    new AndroidWatchExchangeDataEventArgs
+                    {
+                        EventType = AndroidWatchExchangeDataStates.CharacteristicDiscovered
+                    });
 
                 if (!IsBusy.ContainsKey(characteristic.Service.Device.Uuid)) {
                     IsBusy.Add(characteristic.Service.Device.Uuid, true);//check wheter we are locked
@@ -241,7 +248,18 @@ namespace Happimeter.Services
                 }
 
 
-                await WriteAsync(characteristic, new DataExchangeFirstMessage());
+                var success = await WriteAsync(characteristic, new DataExchangeFirstMessage());
+                if (!success) {
+                    //writing was not successful
+                    DataExchangeStatusUpdate?.Invoke(this,
+                                 new AndroidWatchExchangeDataEventArgs
+                                 {
+                                     EventType = AndroidWatchExchangeDataStates.ErrorOnExchange
+                                 });
+                    IsBusy.Remove(characteristic.Service.Device.Uuid);
+                    return;
+                }
+
                 DataExchangeStatusUpdate?.Invoke(this,
                                  new AndroidWatchExchangeDataEventArgs
                                  {
@@ -262,73 +280,178 @@ namespace Happimeter.Services
                                  TotalBytes = total
                              });
                     });
+                    if (result == null) {
+                        //we throw an exception and let the catch block handle it
+                        throw new ArgumentException("Error during read process");
+                    }
                     stopWatch.Stop();
                     Console.WriteLine($"Took {stopWatch.Elapsed.TotalSeconds} seconds to receive {result.Count()} bytes");
-                    Console.WriteLine($"Received Message: {result}");
 
+                    //get the read data and save it to db
                     var data = Newtonsoft.Json.JsonConvert.DeserializeObject<DataExchangeMessage>(result);
                     ServiceLocator.Instance.Get<IMeasurementService>().AddMeasurements(data);
 
+                    //update timestamp for last pairing
                     var pairing = ServiceLocator.Instance.Get<ISharedDatabaseContext>().Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive);
                     pairing.LastDataSync = DateTime.UtcNow;
                     ServiceLocator.Instance.Get<ISharedDatabaseContext>().Update(pairing);
 
+                    //inform watch that we stored his data. In turin it will delete the data on the watch.
                     await WriteAsync(characteristic, new DataExchangeConfirmationMessage());
                     Console.WriteLine("Succesfully finished data exchange");
                     IsBusy.Remove(characteristic.Service.Device.Uuid);
                     DataExchangeStatusUpdate?.Invoke(this,
-                             new AndroidWatchExchangeDataEventArgs
-                             {
-                                 EventType = AndroidWatchExchangeDataStates.Complete,
-                             });
+                        new AndroidWatchExchangeDataEventArgs
+                        {
+                            EventType = AndroidWatchExchangeDataStates.Complete,
+                        });
 
                 }
                 catch (Exception e)
                 {
                     DataExchangeStatusUpdate?.Invoke(this,
-                         new AndroidWatchExchangeDataEventArgs
-                         {
-                             EventType = AndroidWatchExchangeDataStates.ErrorOnExchange,
-                         });
+                        new AndroidWatchExchangeDataEventArgs
+                        {
+                            EventType = AndroidWatchExchangeDataStates.ErrorOnExchange,
+                        });
                     Console.WriteLine($"Exception on Dataexchange after starting the exchange: {e.Message}");
                     IsBusy.Remove(characteristic.Service.Device.Uuid);
                 }
             }
         }
 
-
+        /// <summary>
+        ///     We return false if there is an error during the write process.
+        ///     We return true if the write process succeds.
+        /// </summary>
+        /// <returns>The async.</returns>
+        /// <param name="characteristic">Characteristic.</param>
+        /// <param name="message">Message.</param>
         public async Task<bool> WriteAsync(IGattCharacteristic characteristic, BaseBluetoothMessage message)
         {
-
+            //send reset bytes, to ensure, that the other side knows we are starting a new connection
+            //Otherwise the other side wouldn't know, that the next message is the header.
             var nullByteSeq = new byte[3] { 0x00, 0x00, 0x00 };
-            var reseted = await characteristic.Write(nullByteSeq);
+            var reseted = await characteristic.Write(nullByteSeq)
+                .Timeout(TimeSpan.FromSeconds(5))
+                .Catch<CharacteristicResult, Exception>((arg) =>
+                {
+                    if (arg is TimeoutException)
+                    {
+                        Console.WriteLine("Writing took longer than 5 seconds. Abort!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Got error while writing reset!");
+                    }
+                    return Observable.Return<CharacteristicResult>(null);
+                });
+            if (reseted == null) {
+                return false;
+            }
+
+            //creating and sending header.
             var messageJson = BluetoothHelper.GetMessageJson(message);
             var header = BluetoothHelper.GetMessageHeader(message);
+            var written = await characteristic.Write(header)
+                .Timeout(TimeSpan.FromSeconds(5))
+                .Catch<CharacteristicResult, Exception>((arg) => {
+                if (arg is TimeoutException)
+                {
+                    Console.WriteLine("Writing took longer than 5 seconds. Abort!");
+                }
+                else
+                {
+                    Console.WriteLine("Got error on write, while writing header");
+                }
+                return Observable.Return<CharacteristicResult>(null);
+            });
+            if (written == null)
+            {
+                return false;
+            };
 
-            //sending header
-            var written = await characteristic.Write(header);
-            //var mtu = await characteristic.Service.Device.RequestMtu(180);
+            //negotiating higher mtu would increase the transfer speed, however it makes it very instable at the moment we stick with 20 bytes which is the default
             var  mtu = 20;
 
             var bytesSentCounter = 0;
             while (bytesSentCounter < messageJson.Count()) {
                 var toSend = messageJson.Skip(bytesSentCounter).Take(mtu).ToArray();
-                var sent = await characteristic.Write(toSend);
+                var sent = await characteristic.Write(toSend)
+                   .Timeout(TimeSpan.FromSeconds(5))
+                   .Catch<CharacteristicResult, Exception>((arg) =>
+                   {
+                       if (arg is TimeoutException)
+                       {
+                           Console.WriteLine("Writing took longer than 5 seconds. Abort!");
+                       }
+                       else
+                       {
+                           Console.WriteLine("Got error on write, while transfering data");
+                       }
+                       return Observable.Return<CharacteristicResult>(null);
+                   });
+                if (sent == null)
+                {
+                    return false;
+                };
+
                 bytesSentCounter += toSend.Count();
             }
             return true;
         }
 
+        /// <summary>
+        ///     In case there is something wrong with the read, we return null.
+        ///     If the read succeeds, string is the json representation of the received data.
+        /// </summary>
+        /// <returns>The async.</returns>
+        /// <param name="characteristic">Characteristic.</param>
+        /// <param name="statusUpdateAction">Status update action.</param>
         public async Task<string> ReadAsync(IGattCharacteristic characteristic, Action<int, int> statusUpdateAction = null) {
-            var headerResult = await characteristic.Read();
+
+            //from the first read request we assume to get an header, which contains information what and how much is sent
+            var headerResult = await characteristic.Read()
+                    .Timeout(TimeSpan.FromSeconds(5))
+                    .Catch<CharacteristicResult, Exception>((arg) =>
+                    {
+                        if (arg is TimeoutException)
+                        {
+                            Console.WriteLine("Reading took longer than 5 seconds. Abort!");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Got error while reading header!");
+                        }
+                        return Observable.Return<CharacteristicResult>(null);
+                    });
+            if (headerResult == null) {
+                return null;
+            }
             var context = new WriteReceiverContext(headerResult.Data);
 
             while (!context.ReadComplete)
             {
-                var nextBytes = await characteristic.Read();
-                if (nextBytes.Data.Length == 3 && nextBytes.Data.All(x => x == 0x00))
+                //here we receive the actual data until we got the complete message
+                var nextBytes = await characteristic.Read()
+                    .Timeout(TimeSpan.FromSeconds(5))
+                    .Catch<CharacteristicResult, Exception>((arg) =>
+                    {
+                        if (arg is TimeoutException)
+                        {
+                            Console.WriteLine("Reading took longer than 5 seconds. Abort!");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Got error on reading data!");
+                        }
+                        return Observable.Return<CharacteristicResult>(null);
+                    });
+                if (nextBytes == null || nextBytes.Data.Length == 3 && nextBytes.Data.All(x => x == 0x00))
                 {
-                    return "";
+                    //if next bytes are null, the read process throw an exception
+                    //if we receive three zero bytes. the other side got an error
+                    return null;
                 }
 
                 context.AddMessagePart(nextBytes.Data);

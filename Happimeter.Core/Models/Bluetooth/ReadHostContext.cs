@@ -34,5 +34,6 @@ namespace Happimeter.Core.Models.Bluetooth
         }
 
         public bool Complete { get; set; }
+        public bool DidSendHeader { get; set; }
     }
 }
