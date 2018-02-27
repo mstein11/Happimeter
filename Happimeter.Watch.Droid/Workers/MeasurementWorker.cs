@@ -50,11 +50,11 @@ namespace Happimeter.Watch.Droid.Workers
             
 
             IsRunning = true;
-
+            StartSensors();
             while(IsRunning) {
-                StartSensors();
+                //StartSensors();
                 await Task.Delay(TimeSpan.FromSeconds(45));
-                StopSensors();
+                //StopSensors();
                 var sensorMeasurement = new SensorMeasurement
                 {
                     Timestamp = DateTime.UtcNow,
