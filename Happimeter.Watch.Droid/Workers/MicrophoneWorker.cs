@@ -16,7 +16,7 @@ namespace Happimeter.Watch.Droid.Workers
         private const int SampleRate = 8000;
         private const ChannelIn Channel = ChannelIn.Mono;
         private const Encoding AudioEncoding = Encoding.Pcm16bit;
-        private const int RecordingDurationSec = 45;
+        private const int RecordingDurationSec = 1;
 
         private static MicrophoneWorker Instance;
 

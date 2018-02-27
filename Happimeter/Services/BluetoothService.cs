@@ -297,7 +297,7 @@ namespace Happimeter.Services
         }
 
 
-        public async System.Threading.Tasks.Task WriteAsync(IGattCharacteristic characteristic, BaseBluetoothMessage message)
+        public async Task<bool> WriteAsync(IGattCharacteristic characteristic, BaseBluetoothMessage message)
         {
 
             var nullByteSeq = new byte[3] { 0x00, 0x00, 0x00 };
@@ -316,13 +316,15 @@ namespace Happimeter.Services
                 var sent = await characteristic.Write(toSend);
                 bytesSentCounter += toSend.Count();
             }
+            return true;
         }
 
         public async Task<string> ReadAsync(IGattCharacteristic characteristic, Action<int, int> statusUpdateAction = null) {
             var headerResult = await characteristic.Read();
             var context = new WriteReceiverContext(headerResult.Data);
 
-            while (!context.ReadComplete) {
+            while (!context.ReadComplete)
+            {
                 var nextBytes = await characteristic.Read();
                 if (nextBytes.Data.Length == 3 && nextBytes.Data.All(x => x == 0x00))
                 {
@@ -331,7 +333,8 @@ namespace Happimeter.Services
 
                 context.AddMessagePart(nextBytes.Data);
 
-                if (statusUpdateAction != null) {
+                if (statusUpdateAction != null)
+                {
                     statusUpdateAction(context.Cursor, context.MessageSize);
                 }
             }

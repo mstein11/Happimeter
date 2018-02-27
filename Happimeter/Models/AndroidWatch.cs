@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Reactive.Linq;
 using Happimeter.Core.Database;
 using Happimeter.Core.Helper;
 using Happimeter.Core.Models.Bluetooth;
@@ -40,64 +41,57 @@ namespace Happimeter.Models
         {
             var connection = base.Connect();
 
-            WhenDeviceReady().Subscribe(success =>
+            WhenDeviceReady().Take(1).Subscribe(success =>
             {
                 OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.BtConnected, null);
                 if (success) {
                     try {
-                        Device.WhenAnyCharacteristicDiscovered().Subscribe(characteristic =>
+                        Device.WhenAnyCharacteristicDiscovered().Subscribe(async characteristic =>
                         {
                             Debug.WriteLine($"Found characteristic: {characteristic.Uuid}");
   
                             if (characteristic.Uuid == AuthCharacteristic)
                             {
+                                Debug.WriteLine("Found our AuthCharacteristic");
                                 OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.AuthCharacteristicDiscovered, null);
-                                
-                                var jsonToSend = Newtonsoft.Json.JsonConvert.SerializeObject(new AuthFirstMessage());
-                                var message = System.Text.Encoding.UTF8.GetBytes(jsonToSend);
-                                characteristic.Write(message).Subscribe(writeSuccess =>
+
+                                var btService = ServiceLocator.Instance.Get<IBluetoothService>();
+                                var writeResult = await btService.WriteAsync(characteristic, new AuthFirstMessage());
+                                OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.FirstWriteSuccessfull, null);
+
+                                characteristic.Read().Subscribe(async result =>
                                 {
-                                    OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.FirstWriteSuccessfull, null);
-                                    characteristic.Read().Subscribe(result =>
+                                    OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.ReadSuccessfull, null);
+                                    //todo: validate data from gattservice
+
+                                    var dataToSend = new AuthSecondMessage
                                     {
-                                        OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.ReadSuccessfull, null);
-                                        //todo: validate data from gattservice
+                                        //Service that the watch will later advertise
+                                        Password = Guid.NewGuid().ToString(),
+                                        PhoneOs = ServiceLocator.Instance.Get<IDeviceInformationService>().GetPhoneOs(),
+                                        HappimeterUserId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId()
+                                    };
 
-                                        var dataToSend = new AuthSecondMessage
-                                        {
-                                            //Service that the watch will later advertise
-                                            Password = Guid.NewGuid().ToString(),
-                                            PhoneOs = ServiceLocator.Instance.Get<IDeviceInformationService>().GetPhoneOs(),
-                                            HappimeterUserId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId()
-                                        };
-                                        var firstJsonToSend = Newtonsoft.Json.JsonConvert.SerializeObject(dataToSend);
-                                        characteristic.Write(System.Text.Encoding.UTF8.GetBytes(firstJsonToSend)).Subscribe((obj) =>
-                                        {
-                                            OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.SecondWriteSuccessfull, null);
-                                            //todo: savepairing information to db
-                                            var paring = new SharedBluetoothDevicePairing
-                                            {
-                                                IsPairingActive = true,
-                                                PairedAt = DateTime.UtcNow,
-                                                PairedDeviceName = characteristic.Service.Device.Name,
-                                                Password = dataToSend.Password,
-                                                PhoneOs = "Android"
-                                            };
-                                            ServiceLocator.Instance.Get<ISharedDatabaseContext>().Add(paring);
 
-                                            //Lets wait for his beacon signal
-                                            ServiceLocator.Instance.Get<IBeaconWakeupService>().StartWakeupForBeacon();
-                                            OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.Complete, null);
-                                        }, writeError => {
-                                            OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.ErrorOnSecondWrite, null);
-                                        });
-                                    }, readError => {
-                                        OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.ErrorOnRead, null);
-                                    });
-                                }, writeError =>
-                                {
-                                    OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.ErrorOnFirstWrite, null);
-                                    Debug.WriteLine($"Got error while writing to Auth characteristic, error message {writeError.Message}");
+                                    var writeResult2 = await btService.WriteAsync(result.Characteristic, dataToSend);
+                                    OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.SecondWriteSuccessfull, null);
+                                    //todo: savepairing information to db
+                                    var paring = new SharedBluetoothDevicePairing
+                                    {
+                                        IsPairingActive = true,
+                                        PairedAt = DateTime.UtcNow,
+                                        PairedDeviceName = characteristic.Service.Device.Name,
+                                        Password = dataToSend.Password,
+                                        PhoneOs = "Android"
+                                    };
+                                    ServiceLocator.Instance.Get<ISharedDatabaseContext>().Add(paring);
+
+                                    //Lets wait for his beacon signal
+                                    ServiceLocator.Instance.Get<IBeaconWakeupService>().StartWakeupForBeacon();
+                                    OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.Complete, null);
+
+                                }, readError => {
+                                    OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.ErrorOnRead, null);
                                 });
 
                                 characteristic.WhenNotificationReceived().Subscribe(result =>
@@ -105,7 +99,6 @@ namespace Happimeter.Models
                                     Debug.WriteLine("Got Notification: " + System.Text.Encoding.UTF8.GetString(result.Data));
 
                                 });
-                                Debug.WriteLine("Found our AuthCharacteristic");
                             }
                         });
                     } catch (Exception e) {

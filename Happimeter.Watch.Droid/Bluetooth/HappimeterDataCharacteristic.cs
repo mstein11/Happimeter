@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Android.App;
 using Android.Bluetooth;
 using Happimeter.Core.Helper;
 using Happimeter.Core.Models.Bluetooth;
-using Happimeter.Watch.Droid.Database;
 using Happimeter.Watch.Droid.ServicesBusinessLogic;
 using Happimeter.Watch.Droid.Workers;
 using Java.Util;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Happimeter.Watch.Droid.Bluetooth
 {
@@ -73,6 +65,33 @@ namespace Happimeter.Watch.Droid.Bluetooth
             return; 
         }
 
+        public void HandleWriteJson(string json, string deviceAddress) {
+            var message = Newtonsoft.Json.JsonConvert.DeserializeObject<BaseBluetoothMessage>(json);
+
+
+            //initiate auth process
+            if (message.MessageName == DataExchangeFirstMessage.MessageNameConstant)
+            {
+                System.Diagnostics.Debug.WriteLine($"Device {deviceAddress} authenticated with passphrase");
+                if (!DidSendPass.ContainsKey(deviceAddress))
+                {
+                    DidSendPass.Add(deviceAddress, true);
+                }
+                ResetStateForDevice(deviceAddress);
+            }
+
+            if (message.MessageName == DataExchangeConfirmationMessage.MessageNameConstant && ReadHostContextForDevice.ContainsKey(deviceAddress))
+            {
+                var messageToDelete = ReadHostContextForDevice[deviceAddress].Message as DataExchangeMessage;
+                ServiceLocator.Instance.Get<IMeasurementService>().DeleteSurveyMeasurement(messageToDelete);
+                ResetStateForDevice(deviceAddress);
+                if (DidSendPass.ContainsKey(deviceAddress))
+                {
+                    DidSendPass.Remove(deviceAddress);
+                }
+            }
+        }
+        /*
         public async Task HandleWriteAsync(BluetoothDevice device, int requestId, bool preparedWrite, bool responseNeeded, int offset, byte[] value, BluetoothWorker worker)
         {
             if (value.Count() == 3 && value.All(x => x == 0x00)) {
@@ -128,7 +147,8 @@ namespace Happimeter.Watch.Droid.Bluetooth
                 ResetStateForDevice(device.Address);
             }
 
-            if (message.MessageName == DataExchangeConfirmationMessage.MessageNameConstant && ReadHostContextForDevice.ContainsKey(device.Address)) {
+            if (message.MessageName == DataExchangeConfirmationMessage.MessageNameConstant && ReadHostContextForDevice.ContainsKey(device.Address))
+            {
                 var messageToDelete = ReadHostContextForDevice[device.Address].Message as DataExchangeMessage;
                 ServiceLocator.Instance.Get<IMeasurementService>().DeleteSurveyMeasurement(messageToDelete);
                 ResetStateForDevice(device.Address);
@@ -142,7 +162,7 @@ namespace Happimeter.Watch.Droid.Bluetooth
                 worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
             }
         }
-
+        */
         private void ResetStateForDevice(string address) {
 
             if (ReadHostContextForDevice.ContainsKey(address)) {

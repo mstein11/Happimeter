@@ -11,6 +11,7 @@ using Android.Bluetooth;
 using Android.Bluetooth.LE;
 using Android.OS;
 using Happimeter.Core.Helper;
+using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Watch.Droid.Bluetooth;
 using Happimeter.Watch.Droid.Database;
 using Java.Util;
@@ -133,7 +134,7 @@ namespace Happimeter.Watch.Droid.Workers
         public BluetoothWorker Worker { get; set; }
 
         private Dictionary<string, bool> AuthenticationDeviceDidGreat = new Dictionary<string, bool>();
-
+        private Dictionary<string, WriteReceiverContext> WriteReceiverContextForDevice = new Dictionary<string, WriteReceiverContext>();
         public CallbackGatt(BluetoothWorker worker)
         {
             Worker = worker;
@@ -179,17 +180,76 @@ namespace Happimeter.Watch.Droid.Workers
         {
             base.OnCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite, responseNeeded, offset, value);
 
+            if (value.Count() == 3 && value.All(x => x == 0x00))
+            {
+                WriteReceiverContextForDevice.Remove(device.Address);
+                if (responseNeeded)
+                {
+                    Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
+                }
+                return;
+            }
+            var isInitialMessage = false;
+            if (!WriteReceiverContextForDevice.ContainsKey(device.Address))
+            {
+                isInitialMessage = true;
+                WriteReceiverContextForDevice.Add(device.Address, new WriteReceiverContext(value));
+            }
+            var context = WriteReceiverContextForDevice[device.Address];
+            var messageName = WriteReceiverContextForDevice[device.Address].MessageName;
+
+            if (messageName != DataExchangeFirstMessage.MessageNameConstant 
+                && messageName != DataExchangeConfirmationMessage.MessageNameConstant
+                && messageName != AuthFirstMessage.MessageNameConstant
+                && messageName != AuthSecondMessage.MessageNameConstant)
+            {
+                //Error we can't handle message
+                System.Diagnostics.Debug.WriteLine($"Device {device.Address} wrote something which I don't know how to handle to data characteristic!");
+                Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, Encoding.UTF8.GetBytes("wrong pass phrase!"));
+                WriteReceiverContextForDevice.Remove(device.Address);
+                return;
+            }
+
+            if (!isInitialMessage)
+            {
+                context.AddMessagePart(value);
+            }
+
+            if (!context.ReadComplete)
+            {
+                if (responseNeeded)
+                {
+                    Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
+                }
+                return;
+            }
+
+            var messageJson = WriteReceiverContextForDevice[device.Address].GetMessageAsJson();
+            //let's be open for new write requests
+            WriteReceiverContextForDevice.Remove(device.Address);
+
+            //todo: handle message
+
             var authCharac = characteristic as HappimeterAuthCharacteristic;
             if (authCharac != null)
             {
-                authCharac.HandleWrite(device, requestId, preparedWrite, responseNeeded, offset, value, Worker);
+                authCharac.HandleWriteJson(messageJson, device.Address);
+                if (responseNeeded)
+                {
+                    Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
+                }
                 return;
             }
 
             var dataCharac = characteristic as HappimeterDataCharacteristic;
             if (dataCharac != null)
             {
-                dataCharac.HandleWriteAsync(device, requestId, preparedWrite, responseNeeded, offset, value, Worker);
+                //dataCharac.HandleWriteAsync(device, requestId, preparedWrite, responseNeeded, offset, value, Worker);
+                dataCharac.HandleWriteJson(messageJson, device.Address);
+                if (responseNeeded)
+                {
+                    Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
+                }
                 return;
             }
 

@@ -49,35 +49,34 @@ namespace Happimeter.Watch.Droid.Bluetooth
             worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, bytes);
         }
 
-        public void HandleWrite(BluetoothDevice device, int requestId, bool preparedWrite, bool responseNeeded, int offset, byte[] value, BluetoothWorker worker)
+        public void HandleWriteJson(string json, string address)
         {
-            var messageRaw = Encoding.UTF8.GetString(value);
-            var message = Newtonsoft.Json.JsonConvert.DeserializeObject<BaseBluetoothMessage>(Encoding.UTF8.GetString(value));
+            var message = Newtonsoft.Json.JsonConvert.DeserializeObject<BaseBluetoothMessage>(json);
 
-            if (message.MessageName != "AuthFirstMessage" && message.MessageName != "AuthSecondMessage")
+            if (message.MessageName != AuthFirstMessage.MessageNameConstant && message.MessageName != AuthSecondMessage.MessageNameConstant)
             {
-                System.Diagnostics.Debug.WriteLine($"Device {device.Address} wrote something which I don't know how to handle to auth characteristic!");
-                worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, Encoding.UTF8.GetBytes("Did not greet probably!"));
+                System.Diagnostics.Debug.WriteLine($"Device {address} wrote something which I don't know how to handle to auth characteristic!");
+                //worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, Encoding.UTF8.GetBytes("Did not greet probably!"));
                 return;
             }
 
             //initiate auth process
-            if (message.MessageName == "AuthFirstMessage") {
-                System.Diagnostics.Debug.WriteLine($"Device {device.Address} started authentication procedure");
-                if (!AuthenticationDeviceDidGreat.ContainsKey(device.Address))
+            if (message.MessageName == AuthFirstMessage.MessageNameConstant) {
+                System.Diagnostics.Debug.WriteLine($"Device {address} started authentication procedure");
+                if (!AuthenticationDeviceDidGreat.ContainsKey(address))
                 {
-                    AuthenticationDeviceDidGreat.Add(device.Address, true);
+                    AuthenticationDeviceDidGreat.Add(address, true);
                 }
-                worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
+                //worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
                 return;
             }
 
             //finalize auth process
-            if (message.MessageName == "AuthSecondMessage")
+            if (message.MessageName == AuthSecondMessage.MessageNameConstant)
             {
-                var messageData = Newtonsoft.Json.JsonConvert.DeserializeObject<AuthSecondMessage>(Encoding.UTF8.GetString(value));
-                System.Diagnostics.Debug.WriteLine($"Device {device.Address} finalized authentication procedure");
-                worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
+                var messageData = Newtonsoft.Json.JsonConvert.DeserializeObject<AuthSecondMessage>(json);
+                System.Diagnostics.Debug.WriteLine($"Device {address} finalized authentication procedure");
+                //worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
                 var pairedDevice = new BluetoothPairing
                 {
                     PhoneOs = messageData.PhoneOs,
@@ -85,7 +84,7 @@ namespace Happimeter.Watch.Droid.Bluetooth
                     LastDataSync = null,
                     IsPairingActive = true,
                     PairedAt = DateTime.UtcNow,
-                    PairedDeviceName = device.Name,
+                    PairedDeviceName = address,
                     PairedWithUserName = messageData.HappimeterUsername,
                     PairedWithUserId = messageData.HappimeterUserId
                 };

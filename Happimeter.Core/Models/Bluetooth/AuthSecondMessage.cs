@@ -3,7 +3,8 @@ namespace Happimeter.Core.Models.Bluetooth
 {
     public class AuthSecondMessage : BaseBluetoothMessage
     {
-        public AuthSecondMessage() : base("AuthSecondMessage")
+        public const string MessageNameConstant = "AUSecond";
+        public AuthSecondMessage() : base(MessageNameConstant)
         {
         }
 
