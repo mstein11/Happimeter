@@ -230,8 +230,6 @@
     <Compile Include="DependencyInjection\Container.cs" />
     <Compile Include="Services\BeaconWakeupService.cs" />
     <Compile Include="Services\DeviceInformationService.cs" />
-    <Compile Include="SQLiteAsync.cs" />
-    <Compile Include="SQLite.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\AboutAssets.txt" />
