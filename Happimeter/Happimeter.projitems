@@ -89,6 +89,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\PostSensorDataServiceModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\SynchronizeDataEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\GetGenericQuestionApiResult.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\LoggingService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\ILoggingService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />

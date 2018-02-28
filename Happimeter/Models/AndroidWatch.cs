@@ -5,6 +5,7 @@ using Happimeter.Core.Database;
 using Happimeter.Core.Helper;
 using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Interfaces;
+using Happimeter.Services;
 using Plugin.BluetoothLE;
 
 namespace Happimeter.Models
@@ -100,6 +101,7 @@ namespace Happimeter.Models
                             //Lets wait for his beacon signal
                             ServiceLocator.Instance.Get<IBeaconWakeupService>().StartWakeupForBeacon();
                             OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.Complete, null);
+                            ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.PairEvent);
 
                             //not really needed but we leave it here incase we want to implement notifications
                             characteristic.WhenNotificationReceived().Take(1).Subscribe(result =>
@@ -109,6 +111,7 @@ namespace Happimeter.Models
                         });
                     } catch (Exception e) {
                         Console.WriteLine("Something went wrong during authentication. Error: " + e.Message);
+                        ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.PairFailureEvent);
                         OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.ErrorBeforeComplete, null);
                     }
                 }
