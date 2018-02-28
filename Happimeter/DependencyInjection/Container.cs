@@ -13,12 +13,10 @@ namespace Happimeter.DependencyInjection
             ServiceLocator.Instance.Register<IHappimeterApiService, HappimeterApiService>();
             ServiceLocator.Instance.Register<IAccountStoreService, AccountStoreService>();
             ServiceLocator.Instance.Register<IBluetoothService, BluetoothService>();
-            //ServiceLocator.Instance.Register<IBeaconWakeupService, BeaconWakeupService>();
             ServiceLocator.Instance.Register<ISharedDatabaseContext, SharedDatabaseContext>();
             ServiceLocator.Instance.Register<IMeasurementService, MeasurementService>();
             ServiceLocator.Instance.Register<IConfigService, ConfigService>();
-            //ServiceLocator.Instance.Register<IDeviceInformationService, DeviceInformationService>();
-
+            ServiceLocator.Instance.Register<ILoggingService, LoggingService>();
         }
     }
 }

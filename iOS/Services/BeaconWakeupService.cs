@@ -3,6 +3,7 @@ using CoreLocation;
 using Foundation;
 using Happimeter.Core.Helper;
 using Happimeter.Interfaces;
+using Happimeter.Services;
 
 namespace Happimeter.iOS.Services
 {
@@ -35,12 +36,14 @@ namespace Happimeter.iOS.Services
             {
                 Console.WriteLine("RegionEnteredFired hi");
                 var btService = ServiceLocator.Instance.Get<IBluetoothService>();
+                ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.BeaconRegionEnteredEvent);
                 btService.ExchangeData();
             };
 
             LocationManager.RegionLeft += (object sender, CLRegionEventArgs e) =>
             {
                 Console.WriteLine("RegionLeftFired Bye");
+                ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.BeaconRegionLeftEvent);
             };
 
 

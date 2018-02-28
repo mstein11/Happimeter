@@ -28,6 +28,7 @@ namespace Happimeter.Services
             account.Properties.Add(ExpiresPropertyName, expires.ToLongDateString());
             account.Properties.Add(UserIdPropertyName, userId.ToString());
             _store.Save(account, AppName);   
+            ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.LoginEvent);
         }
 
         public Account GetAccount() {

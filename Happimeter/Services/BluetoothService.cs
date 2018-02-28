@@ -129,6 +129,7 @@ namespace Happimeter.Services
 
         public void ExchangeData() {
             Console.WriteLine("Starting ExchangeData");
+            ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.DataExchangeStart);
             var connectedDevices = CrossBleAdapter.Current.GetConnectedDevices();
             var pairedDevices = CrossBleAdapter.Current.GetPairedDevices();
             var userId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId();
@@ -305,6 +306,11 @@ namespace Happimeter.Services
                         {
                             EventType = AndroidWatchExchangeDataStates.Complete,
                         });
+                    var eventData = new Dictionary<string, string> {
+                        {"durationSeconds", stopWatch.Elapsed.TotalSeconds.ToString()},
+                        {"bytesTransfered", result.Count().ToString()}
+                    };
+                    ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.DataExchangeEnd, eventData);
 
                 }
                 catch (Exception e)
@@ -315,6 +321,7 @@ namespace Happimeter.Services
                             EventType = AndroidWatchExchangeDataStates.ErrorOnExchange,
                         });
                     Console.WriteLine($"Exception on Dataexchange after starting the exchange: {e.Message}");
+                    ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.DataExchangeFailure);
                     IsBusy.Remove(characteristic.Service.Device.Uuid);
                 }
             }
