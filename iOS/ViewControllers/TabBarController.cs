@@ -13,16 +13,6 @@ namespace Happimeter.iOS
             var viewControllers = ViewControllers.ToList();
             //viewControllers = viewControllers.Append(new SurveyPage().CreateViewController()).ToList();
             ViewControllers = viewControllers.ToArray();
-
-            /*
-            var tabBarItem = new UITabBarItem();
-            tabBarItem.Title = "asdasd";
-            TabBar.Items.Append(tabBarItem);
-
-            TabBar.Items[0].Title = "Browse";
-            TabBar.Items[1].Title = "About";
-            TabBar.Items[2].Title = "Bluetooth";
-            */
         }
     }
 }

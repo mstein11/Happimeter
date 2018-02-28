@@ -27,6 +27,11 @@ namespace Happimeter.ViewModels.Forms
                 .Get<IConfigService>()
                 .GetConfigValueByKey(ConfigService.GenericQuestionGroupIdKey);
 
+            var hasBtPairing = ServiceLocator.Instance.Get<ISharedDatabaseContext>().Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive) != null;
+            ShowPushQuestionsToWatchButton = hasBtPairing;
+
+            NumberOfGenericQuestions = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyQuestions().SurveyItems.Count();
+
             Logout = new Command(() =>
             {
                 ServiceLocator
@@ -45,12 +50,28 @@ namespace Happimeter.ViewModels.Forms
                     .NavigateToLoginPage();
             });
 
-            ChangeGenericQuestionGroupId = new Command(() =>
+            ChangeGenericQuestionGroupId = new Command(async () =>
             {
-                ServiceLocator
+                SaveGenericGroupButtonEnabled = false;
+                GenericGroupButtonText = "Loading...";
+                var questions = await ServiceLocator
                     .Instance
-                    .Get<IConfigService>()
-                    .AddOrUpdateConfigEntry(ConfigService.GenericQuestionGroupIdKey, GenericQuestionGroupId);
+                    .Get<IMeasurementService>()
+                    .DownloadAndSaveGenericQuestions(GenericQuestionGroupId);
+
+                if (questions == null) {
+                    //Error while downloading questions
+                    DisplayGenericQuestionDownloadError = true;
+                    Timer timer = null;
+                    timer = new Timer((obj) =>
+                    {
+                        DisplayGenericQuestionDownloadError = false;
+                        timer.Dispose();
+                    }, null, 2000, System.Threading.Timeout.Infinite);
+                }
+                NumberOfGenericQuestions = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyQuestions().SurveyItems.Count();
+                SaveGenericGroupButtonEnabled = true;
+                GenericGroupButtonText = "Save & Download";
             });
 
             UploadCommand = new Command(() =>
@@ -71,6 +92,8 @@ namespace Happimeter.ViewModels.Forms
             ServiceLocator.Instance.Get<ISharedDatabaseContext>().ModelChanged += (sender, e) => {
                 var survey = sender as SurveyMeasurement;
                 var sensor = sender as SurveyMeasurement;
+                var btPairing = sender as SharedBluetoothDevicePairing;
+
                 if (survey != null && !survey.IsUploadedToServer) {
                     UnsyncronizedChangedVisible = true;
                     _surveysNotSynched.Add(survey);
@@ -90,6 +113,13 @@ namespace Happimeter.ViewModels.Forms
                 if (!_surveysNotSynched.Any() && !_sensorsNotSynched.Any())
                 {
                     UnsyncronizedChangedVisible = false;
+                }
+
+                if (btPairing != null && btPairing.IsPairingActive) {
+                    ShowPushQuestionsToWatchButton = true;
+                }
+                if (btPairing != null && !btPairing.IsPairingActive) {
+                    ShowPushQuestionsToWatchButton = false;
                 }
             };
         }
@@ -129,9 +159,44 @@ namespace Happimeter.ViewModels.Forms
             set => SetProperty(ref _synchronizingStatus, value);
         }
 
+        private bool _displayGenericQuestionDownloadError;
+        public bool DisplayGenericQuestionDownloadError
+        {
+            get => _displayGenericQuestionDownloadError;
+            set => SetProperty(ref _displayGenericQuestionDownloadError, value);
+        }
+
+        private int _numberOfGenericQuestions;
+        public int NumberOfGenericQuestions
+        {
+            get => _numberOfGenericQuestions;
+            set => SetProperty(ref _numberOfGenericQuestions, value);
+        }
+
+        private bool _saveGenericGroupButtonEnabled;
+        public bool SaveGenericGroupButtonEnabled
+        {
+            get => _saveGenericGroupButtonEnabled;
+            set => SetProperty(ref _saveGenericGroupButtonEnabled, value);
+        }
+        private string _genericGroupButtonText = "Save & Download";
+        public string GenericGroupButtonText 
+        {
+            get => _genericGroupButtonText;
+            set => SetProperty(ref _genericGroupButtonText, value);
+        }
+
+        private bool _showPushQuestionsToWatchButton;
+        public bool ShowPushQuestionsToWatchButton 
+        {
+            get => _showPushQuestionsToWatchButton;
+            set => SetProperty(ref _showPushQuestionsToWatchButton, value);
+        }
+
         public ICommand Logout { protected set; get; }
         public ICommand ChangeGenericQuestionGroupId { protected set; get; }
         public ICommand UploadCommand { protected set; get; }
+        public ICommand PushGenericQuestionsToWatchCommand { protected set; get; }
 
         private void HandleUploadStatusUpdate(object sender, SynchronizeDataEventArgs e) {
             switch (e.EventType) {

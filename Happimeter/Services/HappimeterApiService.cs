@@ -21,6 +21,7 @@ namespace Happimeter.Services
         private const string ApiPathAuth = "/v1/auth";
         private const string ApiPathRegister = "/v1/users";
         private const string ApiPathGetMe = "/v1/me";
+        private const string ApiPathGetGenericQuestion = "/v1/moods/genericquestions/";
 
         private const string ApiPathPostMood = "/v1/moods";
         private const string ApiPathPostMoodV2 = "/v2/moods";
@@ -53,12 +54,12 @@ namespace Happimeter.Services
             {
                 result = await _restService.Post(url, data);
             }
-            catch (WebException e)
+            catch (WebException)
             {
                 methodResult.ResultType = RegisterUserResultTypes.ErrorNoInternet;
                 return methodResult;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 methodResult.ResultType = RegisterUserResultTypes.ErrorUnknown;
                 return methodResult;
@@ -103,10 +104,10 @@ namespace Happimeter.Services
             HttpResponseMessage result = null;
             try {
                 result = await _restService.Post(url, data);    
-            } catch (WebException e) {
+            } catch (WebException) {
                 methodResult.ResultType = AuthResultTypes.ErrorNoInternet;
                 return methodResult;
-            } catch (Exception e) {
+            } catch (Exception) {
                 methodResult.ResultType = AuthResultTypes.ErrorUnknown;
                 return methodResult;
             }
@@ -151,7 +152,7 @@ namespace Happimeter.Services
             {
                 result = await _restService.Get(url);
             }
-            catch (WebException e)
+            catch (WebException)
             {
                 methodResult.ResultType = HappimeterApiResultInformation.NoInternet;
                 return methodResult;
@@ -173,6 +174,7 @@ namespace Happimeter.Services
             return methodResult;
         }
 
+        public event EventHandler<SynchronizeDataEventArgs> UploadMoodStatusUpdate;
         public async Task<HappimeterApiResultInformation> UploadMood()
         {
             var measurementService = ServiceLocator.Instance.Get<IMeasurementService>();
@@ -234,7 +236,7 @@ namespace Happimeter.Services
 
                 return HappimeterApiResultInformation.Success;
             }
-            catch (WebException e)
+            catch (WebException)
             {
                 UploadMoodStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
                 {
@@ -242,7 +244,7 @@ namespace Happimeter.Services
                 });
                 return HappimeterApiResultInformation.NoInternet;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 UploadMoodStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
                 {
@@ -252,8 +254,7 @@ namespace Happimeter.Services
             }
         }
 
-        public event EventHandler<SynchronizeDataEventArgs> UploadMoodStatusUpdate;
-
+        public event EventHandler<SynchronizeDataEventArgs> UploadSensorStatusUpdate;
         public async Task<HappimeterApiResultInformation> UploadSensor() {
             var measurementService = ServiceLocator.Instance.Get<IMeasurementService>();
             (var toSend, var toSendNewFormat) = measurementService.GetSensorDataForServer();
@@ -309,7 +310,7 @@ namespace Happimeter.Services
                 });
                 return HappimeterApiResultInformation.Success;
             }
-            catch (WebException e)
+            catch (WebException)
             {
                 UploadSensorStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
                 {
@@ -317,7 +318,7 @@ namespace Happimeter.Services
                 });
                 return HappimeterApiResultInformation.NoInternet;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 UploadSensorStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
                 {
@@ -327,6 +328,37 @@ namespace Happimeter.Services
             }
         }
 
-        public event EventHandler<SynchronizeDataEventArgs> UploadSensorStatusUpdate;
+        public async Task<GetGenericQuestionApiResult> GetGenericQuestions(string groupId) {
+            var methodResult = new GetGenericQuestionApiResult();
+            var url = GetUrlForPath(ApiPathGetGenericQuestion);
+            url += groupId;
+            HttpResponseMessage result = null;
+            try
+            {
+                result = await _restService.Get(url);
+            }
+            catch (WebException)
+            {
+                methodResult.ResultType = HappimeterApiResultInformation.NoInternet;
+                return methodResult;
+            }
+            var stringResult = await result.Content.ReadAsStringAsync();
+            var questions = Newtonsoft.Json.JsonConvert.DeserializeObject<GetGenericQuestionApiResult>(stringResult);
+            if (result.IsSuccessStatusCode)
+            {
+                methodResult = questions;
+                methodResult.ResultType = HappimeterApiResultInformation.Success;
+            }
+            else if (result.StatusCode == HttpStatusCode.Forbidden)
+            {
+                methodResult.ResultType = HappimeterApiResultInformation.AuthenticationError;
+            }
+            else
+            {
+                methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
+            }
+
+            return methodResult;
+        }
     }
 }

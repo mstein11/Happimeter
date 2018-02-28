@@ -88,6 +88,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\PostMoodServiceModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\PostSensorDataServiceModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\SynchronizeDataEvent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\GetGenericQuestionApiResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />

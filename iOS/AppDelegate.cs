@@ -3,6 +3,9 @@ using CoreLocation;
 using Foundation;
 using Happimeter.DependencyInjection;
 using Happimeter.Interfaces;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using Plugin.BluetoothLE;
 using UIKit;
 using Xamarin.Forms;
@@ -26,6 +29,10 @@ namespace Happimeter.iOS
         {
             //we need this or our chartview are not working. Probably an issue with the linker
             var ignore_chartView = new Microcharts.Forms.ChartView();
+
+            AppCenter.Start("3119c95f-ca17-4e2d-9ae0-46c5382633f8",
+                   typeof(Analytics), typeof(Crashes));
+            
 
             Happimeter.iOS.DependencyInjection.Container.RegisterElements();
             Forms.Init();

@@ -33,6 +33,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\Bluetooth\WriteReceiverContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Bluetooth\ReadHostContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExtensionMethods\CompressExtension.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Database\GenericQuestion.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Models\" />

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Happimeter.Core.Database;
 using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Models.ServiceModels;
@@ -18,5 +19,6 @@ namespace Happimeter.Interfaces
         (List<PostSensorDataServiceModel>, List<SensorMeasurement>) GetSensorDataForServer();
         void SetIsUploadedToServerForSensorData(PostSensorDataServiceModel sensor);
         bool HasUnsynchronizedChanges();
+        Task<List<GenericQuestion>> DownloadAndSaveGenericQuestions(string groupId);
     }
 }

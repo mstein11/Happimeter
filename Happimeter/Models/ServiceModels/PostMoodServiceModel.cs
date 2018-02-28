@@ -22,7 +22,7 @@ namespace Happimeter.Models.ServiceModels
         public double Lon { get; set; }
 
         [JsonProperty("generic_question_group")]
-        public int GenericQuestionGroup { get; set; }
+        public string GenericQuestionGroup { get; set; }
         [JsonProperty("generic_question_count")]
         public int GenericQuestionCount { get; set; }
         [JsonProperty("generic_values")]

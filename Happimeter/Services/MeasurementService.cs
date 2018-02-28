@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Happimeter.Core.Database;
 using Happimeter.Core.Helper;
 using Happimeter.Core.Models.Bluetooth;
@@ -34,15 +35,25 @@ namespace Happimeter.Services
                 HardcodedId = 2,
                 Answer = .5
             };
-            var question3 = new SurveyItemViewModel
+
+            var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
+
+
+            var groupId = ServiceLocator
+                .Instance
+                .Get<IConfigService>()
+                .GetConfigValueByKey(ConfigService.GenericQuestionGroupIdKey);
+
+            var dbQuestions = context.GetAll<GenericQuestion>(x => x.GroupIdentifier == groupId);
+            var additionalQuestions = dbQuestions.Select(x => new SurveyItemViewModel
             {
-                Question = "How Stressed do you feel?",
+                Question = x.Question,
                 Answer = .5
-            };
+            });
 
             questions.SurveyItems.Add(question1);
             questions.SurveyItems.Add(question2);
-            questions.SurveyItems.Add(question3);
+            questions.SurveyItems.AddRange(additionalQuestions);
 
             return questions;
         }
@@ -119,7 +130,10 @@ namespace Happimeter.Services
         public (List<PostMoodServiceModel>, List<SurveyMeasurement>) GetSurveyModelForServer() {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             var entries = context.GetAllWithChildren<SurveyMeasurement>(x => !x.IsUploadedToServer);
-
+            var groupId = ServiceLocator
+                .Instance
+                .Get<IConfigService>()
+                .GetConfigValueByKey(ConfigService.GenericQuestionGroupIdKey);
             var result = new List<PostMoodServiceModel>();
 
             foreach (var entry in entries) {
@@ -134,7 +148,10 @@ namespace Happimeter.Services
                     Pleasance = GetOldSurveyScaleValue(entry
                                                         ?.SurveyItemMeasurement
                                                         ?.FirstOrDefault(x => x.HardcodedQuestionId == (int)SurveyHardcodedEnumeration.Pleasance)?.Answer ?? 0),
-                    DeviceId = ""
+                    DeviceId = "",
+                    GenericQuestionCount = entry.SurveyItemMeasurement.Count() - 2,
+                    GenericQuestionGroup = groupId,
+                    GenericQuestionValues = entry.SurveyItemMeasurement.Where(x => x.HardcodedQuestionId == 0).Select(x => GetOldSurveyScaleValue(x.Answer)).ToArray()
                 });
             }
 
@@ -219,6 +236,39 @@ namespace Happimeter.Services
         public List<SurveyMeasurement> GetSurveyMeasurements() {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             return context.GetAllWithChildren<SurveyMeasurement>();
+        }
+
+        /// <summary>
+        ///     Returns null, when api return an error (e.g. no internt)
+        /// </summary>
+        /// <returns>The and save generic questions.</returns>
+        /// <param name="groupId">Group identifier.</param>
+        public async Task<List<GenericQuestion>> DownloadAndSaveGenericQuestions(string groupId) {
+            var api = ServiceLocator.Instance.Get<IHappimeterApiService>();
+            var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
+            var questions  = await api.GetGenericQuestions(groupId);
+            if (!questions.IsSuccess) {
+                return null;
+            }
+
+            context.DeleteAll<GenericQuestion>();
+
+            ServiceLocator
+                .Instance
+                .Get<IConfigService>()
+                .AddOrUpdateConfigEntry(ConfigService.GenericQuestionGroupIdKey, groupId);
+
+            var dbQuestions = questions.Questions.Select(q => new GenericQuestion
+            {
+                GroupIdentifier = groupId,
+                Question = q
+            }).ToList();
+
+            foreach (var dbQuestion in dbQuestions) {
+                context.Add(dbQuestion);    
+            }
+
+            return dbQuestions;
         }
     }
 }

@@ -50,6 +50,7 @@ namespace Happimeter.Core.Database
             databaseTables.Add(typeof(SensorMeasurement));
             databaseTables.Add(typeof(SensorItemMeasurement));
             databaseTables.Add(typeof(ConfigEntry));
+            databaseTables.Add(typeof(GenericQuestion));
 
             //here we give the possibility to alter the list of tables created by subprojects (e.g. different devices)
             databaseTables = BeforeCreateDatabase(databaseTables);

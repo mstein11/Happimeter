@@ -28,7 +28,10 @@
                     <Label Text="Generic Question Groups"/>
                     <Label FontSize="12" Text="Here you can configure a generic question group. If you put in an identifier that correspons to one of our question groups, you will find additional questions during the survey."/>
                     <Entry Placeholder="Generic Question Group Identifier" Text="{Binding GenericQuestionGroupId}"></Entry>
-                    <Button Text="Save" Command="{Binding ChangeGenericQuestionGroupId}"></Button>
+                    <Label FontSize="12" Text="{Binding NumberOfGenericQuestions, StringFormat='You have {0} additional Questions in your survey.' }" />
+                    <Button Text="{Binding GenericGroupButtonText}" IsEnabled="{Binding SaveGenericGroupButtonEnabled}" Command="{Binding ChangeGenericQuestionGroupId}"></Button>
+                    <Label FontSize="12" IsVisible="{Binding DisplayGenericQuestionDownloadError}" Text="Error while downloading the questions, please try again later!" />
+                    <Button Text="Push Questions to Watch" IsVisible="{Binding ShowPushQuestionsToWatchButton}" Command="{Binding PushGenericQuestionsToWatchCommand}"></Button>
                 </StackLayout>
             </StackLayout>
         </ScrollView>
