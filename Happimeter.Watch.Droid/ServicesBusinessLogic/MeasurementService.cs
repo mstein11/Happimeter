@@ -24,24 +24,37 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
             {
                 Question = "How Pleasant do you feel?",
                 IsHardcodedQuestion = true,
-                HardcodedId = 1
+                HardcodedId = 1,
+                Answer = 50
             };
             var question2 = new SurveyFragmentViewModel
             {
                 Question = "How Active do you feel?",
                 IsHardcodedQuestion = true,
-                HardcodedId = 2
-            };
-            var question3 = new SurveyFragmentViewModel
-            {
-                Question = "How Stressed do you feel?",
-                IsHardcodedQuestion = true,
+                HardcodedId = 2,
+                Answer = 50
             };
             questions.Questions.Add(question1);
             questions.Questions.Add(question2);
-            questions.Questions.Add(question3);
+
+            var generics = ServiceLocator.Instance.Get<IDatabaseContext>().GetAll<GenericQuestion>();
+            foreach (var generic in generics) {
+                questions.Questions.Add(new SurveyFragmentViewModel {
+                    Question = generic.Question,
+                    Answer = 50
+                });
+            }
+
 
             return questions;
+        }
+
+        public void AddGenericQuestions(List<GenericQuestion> questions) {
+            ServiceLocator.Instance.Get<IDatabaseContext>().DeleteAll<GenericQuestion>();
+            foreach (var question in questions) {
+                question.Id = 0;
+                ServiceLocator.Instance.Get<IDatabaseContext>().Add(question);
+            }
         }
 
         public DataExchangeMessage GetMeasurementsForDataTransfer() 

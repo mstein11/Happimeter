@@ -31,7 +31,7 @@ namespace Happimeter.ViewModels.Forms
             ShowPushQuestionsToWatchButton = hasBtPairing;
 
             NumberOfGenericQuestions = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyQuestions().SurveyItems.Count();
-
+            SaveGenericGroupButtonEnabled = true;
             Logout = new Command(() =>
             {
                 ServiceLocator
@@ -50,6 +50,61 @@ namespace Happimeter.ViewModels.Forms
                     .NavigateToLoginPage();
             });
 
+            PushGenericQuestionToWatchButtonText = "Push Questions to Watch";
+            PushQuestionsToWatchButtonEnabled = true;
+            PushGenericQuestionsToWatchCommand = new Command(() =>
+            {
+                PushQuestionsToWatchButtonEnabled = false;
+                PushGenericQuestionToWatchButtonText = "Loading...";
+                ServiceLocator.Instance.Get<IBluetoothService>().SendGenericQuestions((connectionUpdate) => {
+                    Timer timer = null;
+                    switch (connectionUpdate) {
+                        case BluetoothWriteEvent.Initialized:            
+                            break;
+                        case BluetoothWriteEvent.Connected:
+                            PushGenericQuestionToWatchButtonText = "Loading... (connected to device)";
+                            break;
+
+                        case BluetoothWriteEvent.Complete:
+                            PushGenericQuestionToWatchButtonText = "Successfully pushed Questions";
+                            timer = null;
+                            timer = new Timer((obj) =>
+                            {
+                                PushGenericQuestionToWatchButtonText = "Push Questions to Watch";
+                                PushQuestionsToWatchButtonEnabled = true;
+                                timer.Dispose();
+                            }, null, 2000, System.Threading.Timeout.Infinite);
+                            break;
+                        case BluetoothWriteEvent.ErrorOnConnectingToDevice:
+                            PushGenericQuestionToWatchButtonText = "Error!";
+                            timer = null;
+                            timer = new Timer((obj) =>
+                            {
+                                PushGenericQuestionToWatchButtonText = "Push Questions to Watch";
+                                PushQuestionsToWatchButtonEnabled = true;
+                                if (timer != null)
+                                {
+                                    timer.Dispose();
+                                }
+                            }, null, 2000, System.Threading.Timeout.Infinite);
+                            break;
+                        case BluetoothWriteEvent.ErrorOnWrite:
+                            PushGenericQuestionToWatchButtonText = "Error!";
+                            timer = null;
+                            timer = new Timer((obj) =>
+                            {
+                                PushGenericQuestionToWatchButtonText = "Push Questions to Watch";
+                                PushQuestionsToWatchButtonEnabled = true;
+                                if (timer != null)
+                                {
+                                    timer.Dispose();
+                                }
+                            }, null, 2000, System.Threading.Timeout.Infinite);
+                            break;
+                    }
+                });
+            });
+
             ChangeGenericQuestionGroupId = new Command(async () =>
             {
                 SaveGenericGroupButtonEnabled = false;
@@ -58,20 +113,21 @@ namespace Happimeter.ViewModels.Forms
                     .Instance
                     .Get<IMeasurementService>()
                     .DownloadAndSaveGenericQuestions(GenericQuestionGroupId);
-
+                Timer timer = null;
                 if (questions == null) {
                     //Error while downloading questions
-                    DisplayGenericQuestionDownloadError = true;
-                    Timer timer = null;
-                    timer = new Timer((obj) =>
-                    {
-                        DisplayGenericQuestionDownloadError = false;
-                        timer.Dispose();
-                    }, null, 2000, System.Threading.Timeout.Infinite);
+                    GenericGroupButtonText = "Error Downloading Questinos";
+                } else {
+                    NumberOfGenericQuestions = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyQuestions().SurveyItems.Count();   
+                    GenericGroupButtonText = $"Successfully downloaded  {questions.Count} questions";
                 }
-                NumberOfGenericQuestions = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyQuestions().SurveyItems.Count();
-                SaveGenericGroupButtonEnabled = true;
-                GenericGroupButtonText = "Save & Download";
+
+                timer = new Timer((obj) =>
+                {
+                    SaveGenericGroupButtonEnabled = true;
+                    GenericGroupButtonText = "Save & Download";
+                    timer.Dispose();
+                }, null, 2000, System.Threading.Timeout.Infinite);
             });
 
             UploadCommand = new Command(() =>
@@ -159,13 +215,6 @@ namespace Happimeter.ViewModels.Forms
             set => SetProperty(ref _synchronizingStatus, value);
         }
 
-        private bool _displayGenericQuestionDownloadError;
-        public bool DisplayGenericQuestionDownloadError
-        {
-            get => _displayGenericQuestionDownloadError;
-            set => SetProperty(ref _displayGenericQuestionDownloadError, value);
-        }
-
         private int _numberOfGenericQuestions;
         public int NumberOfGenericQuestions
         {
@@ -191,6 +240,20 @@ namespace Happimeter.ViewModels.Forms
         {
             get => _showPushQuestionsToWatchButton;
             set => SetProperty(ref _showPushQuestionsToWatchButton, value);
+        }
+
+        private string _pushGenericQuestionToWatchButtonText;
+        public string PushGenericQuestionToWatchButtonText
+        {
+            get => _pushGenericQuestionToWatchButtonText;
+            set => SetProperty(ref _pushGenericQuestionToWatchButtonText, value);
+        }
+
+        private bool _pushQuestionsToWatchButtonEnabled;
+        public bool PushQuestionsToWatchButtonEnabled
+        {
+            get => _pushQuestionsToWatchButtonEnabled;
+            set => SetProperty(ref _pushQuestionsToWatchButtonEnabled, value);
         }
 
         public ICommand Logout { protected set; get; }

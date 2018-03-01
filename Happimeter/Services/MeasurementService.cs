@@ -244,12 +244,18 @@ namespace Happimeter.Services
         /// <returns>The and save generic questions.</returns>
         /// <param name="groupId">Group identifier.</param>
         public async Task<List<GenericQuestion>> DownloadAndSaveGenericQuestions(string groupId) {
-            var api = ServiceLocator.Instance.Get<IHappimeterApiService>();
+            List<string> genericQuestions = new List<string>();
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
-            var questions  = await api.GetGenericQuestions(groupId);
-            if (!questions.IsSuccess) {
-                return null;
+            if (!string.IsNullOrEmpty(groupId)) {
+                var api = ServiceLocator.Instance.Get<IHappimeterApiService>();
+                var questions = await api.GetGenericQuestions(groupId);
+                if (!questions.IsSuccess)
+                {
+                    return null;
+                }
+                genericQuestions.AddRange(questions.Questions);
             }
+
 
             context.DeleteAll<GenericQuestion>();
 
@@ -258,7 +264,7 @@ namespace Happimeter.Services
                 .Get<IConfigService>()
                 .AddOrUpdateConfigEntry(ConfigService.GenericQuestionGroupIdKey, groupId);
 
-            var dbQuestions = questions.Questions.Select(q => new GenericQuestion
+            var dbQuestions = genericQuestions.Select(q => new GenericQuestion
             {
                 GroupIdentifier = groupId,
                 Question = q
@@ -267,7 +273,6 @@ namespace Happimeter.Services
             foreach (var dbQuestion in dbQuestions) {
                 context.Add(dbQuestion);    
             }
-
             return dbQuestions;
         }
     }
