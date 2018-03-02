@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Happimeter.Core.Database;
 using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Watch.Droid.Database;
@@ -45,6 +46,9 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
                 });
             }
 
+            if (generics.Any()) {
+                questions.GenericQuestionGroupId = generics.FirstOrDefault().GenericQuestionGroupId;
+            }
 
             return questions;
         }

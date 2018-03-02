@@ -20,9 +20,21 @@ namespace Happimeter.Services
 
         private const double MeterPerSqaureSecondToMilliGForce = 101.93679918451;
 
+
+
         public SurveyViewModel GetSurveyQuestions()
         {
-            var questions = new SurveyViewModel();
+
+            var groupId = ServiceLocator
+                .Instance
+                .Get<IConfigService>()
+                .GetConfigValueByKey(ConfigService.GenericQuestionGroupIdKey);
+
+            var questions = new SurveyViewModel
+            {
+                GenericQuestionGroupId = groupId
+            };
+
             var question1 = new SurveyItemViewModel
             {
                 Question = "How Pleasant do you feel?",
@@ -39,16 +51,13 @@ namespace Happimeter.Services
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
 
 
-            var groupId = ServiceLocator
-                .Instance
-                .Get<IConfigService>()
-                .GetConfigValueByKey(ConfigService.GenericQuestionGroupIdKey);
 
-            var dbQuestions = context.GetAll<GenericQuestion>(x => x.GroupIdentifier == groupId);
+
+            var dbQuestions = context.GetAll<GenericQuestion>(x => x.GenericQuestionGroupId == groupId);
             var additionalQuestions = dbQuestions.Select(x => new SurveyItemViewModel
             {
                 Question = x.Question,
-                Answer = .5
+                Answer = .5,
             });
 
             questions.SurveyItems.Add(question1);
@@ -90,7 +99,8 @@ namespace Happimeter.Services
             {
                 IdFromWatch = -1,
                 Timestamp = DateTime.UtcNow,
-                SurveyItemMeasurement = new List<SurveyItemMeasurement>()
+                SurveyItemMeasurement = new List<SurveyItemMeasurement>(),
+                GenericQuestionGroupId = model.GenericQuestionGroupId
             };
 
             foreach (var item in model.SurveyItems) {
@@ -99,7 +109,7 @@ namespace Happimeter.Services
                     Answer = (int)(item.Answer * 100),
                     HardcodedQuestionId = item.HardcodedId,
                     Question = item.Question,
-                    AnswerDisplay = item.AnswerDisplay,
+                    AnswerDisplay = item.AnswerDisplay
                 });  
             }
 
@@ -149,9 +159,9 @@ namespace Happimeter.Services
                                                         ?.SurveyItemMeasurement
                                                         ?.FirstOrDefault(x => x.HardcodedQuestionId == (int)SurveyHardcodedEnumeration.Pleasance)?.Answer ?? 0),
                     DeviceId = "",
-                    GenericQuestionCount = entry.SurveyItemMeasurement.Count() - 2,
-                    GenericQuestionGroup = groupId,
-                    GenericQuestionValues = entry.SurveyItemMeasurement.Where(x => x.HardcodedQuestionId == 0).Select(x => GetOldSurveyScaleValue(x.Answer)).ToArray()
+                    GenericQuestionCount = entry.GenericQuestionGroupId != null ? entry.SurveyItemMeasurement.Count(x => x.HardcodedQuestionId == 0 || x.HardcodedQuestionId == null) : 0,
+                    GenericQuestionGroup = entry.GenericQuestionGroupId,
+                    GenericQuestionValues = entry.SurveyItemMeasurement.Where(x => x.HardcodedQuestionId == 0 || x.HardcodedQuestionId == null).Select(x => GetOldSurveyScaleValue(x.Answer)).ToArray()
                 });
             }
 
@@ -202,6 +212,9 @@ namespace Happimeter.Services
                         VarZ = Math.Pow(GetOldAccelerometerScaleValue(entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.AccelerometerZ)?.StdDev ?? 0), 2)
                     },
                     Position = new PositionModel {
+                        Altitude = entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.LocationAlt)?.Magnitude ?? 0,
+                        Latitude = entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.LocationLat)?.Magnitude ?? 0,
+                        Longitude = entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.LocationLon)?.Magnitude ?? 0,
                     }
                 });
             }
@@ -266,7 +279,7 @@ namespace Happimeter.Services
 
             var dbQuestions = genericQuestions.Select(q => new GenericQuestion
             {
-                GroupIdentifier = groupId,
+                GenericQuestionGroupId = groupId,
                 Question = q
             }).ToList();
 

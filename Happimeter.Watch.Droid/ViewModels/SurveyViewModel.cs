@@ -16,6 +16,8 @@ namespace Happimeter.Watch.Droid.ViewModels
         public SurveyFragmentViewModel GetCurrentQuestion() => Questions.FirstOrDefault(x => !x.IsAnswered);
         public int GetCurrentQuestionPosition() => Questions.FindIndex(x => !x.IsAnswered);
 
+        public string GenericQuestionGroupId { get; set; }
+
         public SurveyMeasurement GetDataModel() {
 
             var answers = new List<SurveyItemMeasurement>();
@@ -32,7 +34,8 @@ namespace Happimeter.Watch.Droid.ViewModels
             var measurement = new SurveyMeasurement()
             {
                 Timestamp = DateTime.UtcNow,
-                SurveyItemMeasurement = answers
+                SurveyItemMeasurement = answers,
+                GenericQuestionGroupId = GenericQuestionGroupId
             };
 
             return measurement;

@@ -150,6 +150,23 @@ namespace Happimeter.Watch.Droid.Workers
                     });
                 }
 
+                sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+                {
+                    Type = MeasurementItemTypes.LocationLat,
+                    Magnitude = 1,
+                });
+                sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+                {
+                    Type = MeasurementItemTypes.LocationLon,
+                    Magnitude = 1,
+                });
+                sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+                {
+                    Type = MeasurementItemTypes.LocationAlt,
+                    Magnitude = 1,
+                });
+
+
                 ServiceLocator.Instance.Get<IDatabaseContext>().AddGraph(sensorMeasurement);
                 await Task.Delay(TimeSpan.FromSeconds(45));
                 Console.WriteLine("Saved new Sensormeasurement");

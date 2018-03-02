@@ -16,5 +16,7 @@ namespace Happimeter.ViewModels.Forms
             get => _surveyItems;
             set => SetProperty(ref _surveyItems, value);
         }
+
+        public string GenericQuestionGroupId { get; set; }
     }
 }

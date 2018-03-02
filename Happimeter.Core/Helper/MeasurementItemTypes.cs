@@ -11,5 +11,8 @@ namespace Happimeter.Core.Helper
         public const string AccelerometerY = "AccelerometerY";
         public const string AccelerometerZ = "AccelerometerZ";
         public const string Microphone = "Microphone";
+        public const string LocationLat = "LocationLat";
+        public const string LocationLon = "LocationLon";
+        public const string LocationAlt = "LocationAlt";
     }
 }
