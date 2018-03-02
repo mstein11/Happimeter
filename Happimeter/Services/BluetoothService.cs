@@ -59,6 +59,7 @@ namespace Happimeter.Services
                     ScanReplaySubject = new ReplaySubject<IScanResult>();
                     //todo: open settings
                 }
+                ScanReplaySubject.OnCompleted();
                 return ScanReplaySubject;
             }
 
@@ -70,12 +71,17 @@ namespace Happimeter.Services
             }
             ScanReplaySubject = new ReplaySubject<IScanResult>();
             FoundDevices = new List<IScanResult>();
-            scannerObs.TakeUntil(Observable.Timer(TimeSpan.FromSeconds(_scanTimeoutSeconds))).Subscribe(scan => {
+
+            var timerObs = Observable.Timer(TimeSpan.FromSeconds(_scanTimeoutSeconds));
+            scannerObs.TakeUntil(timerObs).Subscribe(scan => {
                 if (!FoundDevices.Select(x => x.Device.Uuid).Contains(scan.Device.Uuid)) {
                     Console.WriteLine($"Found device. Name: {scan.Device.Name}, Uuid: {scan.Device.Uuid}, data: {System.Text.Encoding.UTF8.GetString(scan.AdvertisementData.ServiceData?.FirstOrDefault() ?? new byte[0])}");
                     FoundDevices.Add(scan);
                     ScanReplaySubject.OnNext(scan);
                 }
+            });
+            timerObs.Subscribe((longi) => {
+                ScanReplaySubject.OnCompleted();
             });
             return ScanReplaySubject;
         }
@@ -122,11 +128,109 @@ namespace Happimeter.Services
             return obs;
         }
 
+
+
+
+        public void SendGenericQuestions(Action<BluetoothWriteEvent> statusUpdate = null) {
+            statusUpdate?.Invoke(BluetoothWriteEvent.Initialized);
+            var connectedDevices = CrossBleAdapter.Current.GetConnectedDevices();
+            var pairedDevices = CrossBleAdapter.Current.GetPairedDevices();
+            var userId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId();
+            var userIdBytes = System.Text.Encoding.UTF8.GetBytes(userId.ToString());
+
+            if (connectedDevices.Any(x => x.Name?.Contains("Happimeter") ?? false))
+            {
+                statusUpdate?.Invoke(BluetoothWriteEvent.Connected);
+                Console.WriteLine("Device already connected");
+                connectedDevices.FirstOrDefault(x => x.Name.Contains("Happimeter"))
+                                .WhenAnyCharacteristicDiscovered()
+                                .Where(characteristic => characteristic.Uuid == UuidHelper.GenericQuestionCharacteristicUuid)
+                                .Take(1)
+                                .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
+                                .Subscribe(characteristic =>
+                                {
+                                    CharacteristicDiscoveredForGenericQuestions(characteristic, statusUpdate);
+                                }, (err) =>
+                                {
+                                    statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnWrite);
+                                    CancelConnectionOnTimeoutError(err);
+                                });
+            }
+            else
+            {
+                if (!CrossBleAdapter.Current.IsScanning)
+                {
+                    Console.WriteLine("Not connected, not scanning, starting scanning");
+                    StartScan(UuidHelper.AndroidWatchServiceUuidString);
+                }
+
+                //we skip 2 because the first two bytes are not relevant to us. the actual advertisement data start at position 3
+                ScanReplaySubject.Where(scanRes => scanRes?.AdvertisementData?.ServiceData?.FirstOrDefault()?.Skip(2)?.SequenceEqual(userIdBytes) ?? false).Select(result => result.Device)
+                                 .Take(1)
+                                 .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
+                                 .Subscribe(result =>
+                                 {
+                                     Console.WriteLine("Found matching device");
+                                     result.Connect()
+                                           .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
+                                           .Subscribe(conn =>
+                                           {
+                                           statusUpdate?.Invoke(BluetoothWriteEvent.Connected);
+                                           Console.WriteLine("Connected");
+                                               result.WhenAnyCharacteristicDiscovered()
+                                                     .Where(characteristic => characteristic.Uuid == UuidHelper.GenericQuestionCharacteristicUuid)
+                                                    .Take(1)
+                                                    .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
+                                                     .Subscribe(characteristic =>
+                                                     {
+                                                         CharacteristicDiscoveredForGenericQuestions(characteristic, statusUpdate);
+                                                     }, (err) =>
+                                                      {
+                                                          statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnWrite);
+                                                          CancelConnectionOnTimeoutError(err);
+                                                      });
+                                           }, err => //Error from connecting to device
+                                            {
+                                                statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnConnectingToDevice);
+                                                Console.WriteLine($"Failed to connect to device: {result.Uuid}");
+                                           });
+
+                                 }, err => {//Error from Replaysubject (scan)
+                                     if (err is TimeoutException)
+                                     {
+                                         Console.WriteLine($"No device found in {_messageTimeoutSeconds} seconds");
+                                     }
+                                     else
+                                     {
+                                         Console.WriteLine($"Received unknown exception on exchange data attempt: {err.Message}");
+                                     }
+                                     statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnConnectingToDevice);
+                                 });
+            }
+        }
+
+        private async void CharacteristicDiscoveredForGenericQuestions(IGattCharacteristic characteristic, Action<BluetoothWriteEvent> statusUpdate = null) {
+            if (characteristic.Uuid == UuidHelper.GenericQuestionCharacteristicUuid) {
+                var genericQuestions = ServiceLocator.Instance.Get<ISharedDatabaseContext>().GetAll<GenericQuestion>();
+                var genericQuestionMessage = new GenericQuestionMessage
+                {
+                    Questions = genericQuestions
+                };
+
+                var result = await WriteAsync(characteristic, genericQuestionMessage);
+                if (result) {
+                    statusUpdate?.Invoke(BluetoothWriteEvent.Complete);
+                } else {
+                    statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnWrite);
+                }
+            }
+        }
+
+
         public event EventHandler<AndroidWatchExchangeDataEventArgs> DataExchangeStatusUpdate;
 
         //is busy with data exchange?
         private Dictionary<Guid, bool> IsBusy = new Dictionary<Guid, bool>();
-
         public void ExchangeData() {
             Console.WriteLine("Starting ExchangeData");
             ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.DataExchangeStart);
@@ -154,7 +258,14 @@ namespace Happimeter.Services
                                 .Where(characteristic => characteristic.Uuid == UuidHelper.DataExchangeCharacteristicUuid)
                                 .Take(1)
                                 .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
-                                .Subscribe(CharacteristicDiscoveredForDataExchange, CancelConnectionOnTimeoutError);
+                                .Subscribe(CharacteristicDiscoveredForDataExchange, (err) =>
+                                {
+                                    CancelConnectionOnTimeoutError(err);
+                                    if (err is TimeoutException)
+                                    {
+                                        ExchangeData();
+                                    }
+                                });
                 
             } else {
                 if (!CrossBleAdapter.Current.IsScanning) {
@@ -183,8 +294,15 @@ namespace Happimeter.Services
                         result.WhenAnyCharacteristicDiscovered()
                               .Where(characteristic => characteristic.Uuid == UuidHelper.DataExchangeCharacteristicUuid)
                               .Take(1)
-                              .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds)) 
-                              .Subscribe(CharacteristicDiscoveredForDataExchange, CancelConnectionOnTimeoutError);
+                              .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
+                              .Subscribe(CharacteristicDiscoveredForDataExchange, (err) =>
+                              {
+                                  CancelConnectionOnTimeoutError(err);
+                                  if (err is TimeoutException)
+                                  {
+                                      ExchangeData();
+                                  }
+                              });
                     }, err => //Error from connecting to device
                     {
                         DataExchangeStatusUpdate?.Invoke(this,
@@ -225,8 +343,6 @@ namespace Happimeter.Services
                     device.CancelConnection();
                     Console.WriteLine($"Cancelled Connection to device {device.Uuid}");
                 }
-                //restart!
-                ExchangeData();
             }
         }
 

@@ -9,20 +9,52 @@ using Xamarin.Forms;
 
 namespace Happimeter.ViewModels.Forms
 {
-    public class BluetoothPairingPageViewModel
+    public class BluetoothPairingPageViewModel : BaseViewModel
     {
         public BluetoothPairingPageViewModel()
         {
             Items = new ObservableCollection<BluetoothPairingItemViewModel>();
+
+            StartScanButtonText = "Scan for Devices";
+            StartScanButtonIsEnabled = true;
+
             StartScanCommand = new Command(() =>
             {
+                if (!StartScanButtonIsEnabled) {
+                    return;
+                }
+                StartScanButtonText = "Scanning...";
+                StartScanButtonIsEnabled = false;
                 var btService = ServiceLocator.Instance.Get<IBluetoothService>();
                 Items.Clear();
+
                 var obs = btService.StartScan();
-                obs.Subscribe(result => {
+
+                obs.Finally(() =>
+                {
+                    StartScanButtonIsEnabled = true;
+                    StartScanButtonText = "Scan for Devices";
+                }).Subscribe(result =>
+                {
                     Items.Add(new BluetoothPairingItemViewModel(BluetoothDevice.Create(result.Device)));
                 });
             });
+        }
+
+        private string _startScanButtonText;
+        public string StartScanButtonText
+        {
+            get => _startScanButtonText;
+            set => SetProperty(ref _startScanButtonText, value);
+
+        }
+
+        private bool _startScanButtonIsEnabled;
+        public bool StartScanButtonIsEnabled
+        {
+            get => _startScanButtonIsEnabled;
+            set => SetProperty(ref _startScanButtonIsEnabled, value);
+
         }
 
         public Command StartScanCommand { get; set; }

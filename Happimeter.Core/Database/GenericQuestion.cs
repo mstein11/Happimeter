@@ -8,6 +8,6 @@ namespace Happimeter.Core.Database
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         public string Question { get; set; }
-        public string GroupIdentifier { get; set; }
+        public string GenericQuestionGroupId { get; set; }
     }
 }

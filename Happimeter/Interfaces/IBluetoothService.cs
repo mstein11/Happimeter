@@ -15,6 +15,7 @@ namespace Happimeter.Interfaces
         void ExchangeData();
         IObservable<bool> PairDevice(BluetoothDevice device);
         event EventHandler<AndroidWatchExchangeDataEventArgs> DataExchangeStatusUpdate;
+        void SendGenericQuestions(Action<BluetoothWriteEvent> statusUpdate = null);
 
         Task<bool> WriteAsync(IGattCharacteristic characteristic, BaseBluetoothMessage message);
         Task<string> ReadAsync(IGattCharacteristic characteristic, Action<int, int> statusUpdateAction = null);

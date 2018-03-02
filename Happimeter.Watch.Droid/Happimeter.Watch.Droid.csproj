@@ -131,6 +131,7 @@
     <Compile Include="BroadcastReceiver\AutoStartBroadcastReceiver.cs" />
     <Compile Include="BroadcastReceiver\BluetoothBroadcastReceiver.cs" />
     <Compile Include="Workers\MeasurementWorker.cs" />
+    <Compile Include="Bluetooth\HappimeterGenericQuestionCharacteristic.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

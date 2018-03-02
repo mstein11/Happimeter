@@ -15,7 +15,7 @@
                     </Grid.RowDefinitions>
                     <Label FontSize="24" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="0" TextColor="White" Text="Here you can logout and change other settings" />
                     <StackLayout Grid.Row="1"  VerticalOptions="CenterAndExpand" Spacing="0">
-                        <Label IsVisible="{Binding UnsyncronizedChangedVisible}" FontSize="14" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" TextColor="White" Text="You have unsyncronized changed. Press the button below to upload the changes to our server." />
+                        <Label IsVisible="{Binding UnsyncronizedChangedVisible}" FontSize="14" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" TextColor="White" Text="You have unsyncronized changes. Press the button below to upload the changes to our server." />
                         <Button VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" TextColor="White" Text="Synchronize with server" Command="{Binding UploadCommand}" /> 
                         <Label FontSize="14" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" TextColor="White" IsVisible="{Binding SynchronizingStatusIsVisible}" Text="{Binding SynchronizingStatus}" /> 
                     </StackLayout>
@@ -29,9 +29,10 @@
                     <Label FontSize="12" Text="Here you can configure a generic question group. If you put in an identifier that correspons to one of our question groups, you will find additional questions during the survey."/>
                     <Entry Placeholder="Generic Question Group Identifier" Text="{Binding GenericQuestionGroupId}"></Entry>
                     <Label FontSize="12" Text="{Binding NumberOfGenericQuestions, StringFormat='You have {0} additional Questions in your survey.' }" />
-                    <Button Text="{Binding GenericGroupButtonText}" IsEnabled="{Binding SaveGenericGroupButtonEnabled}" Command="{Binding ChangeGenericQuestionGroupId}"></Button>
-                    <Label FontSize="12" IsVisible="{Binding DisplayGenericQuestionDownloadError}" Text="Error while downloading the questions, please try again later!" />
-                    <Button Text="Push Questions to Watch" IsVisible="{Binding ShowPushQuestionsToWatchButton}" Command="{Binding PushGenericQuestionsToWatchCommand}"></Button>
+                    <StackLayout Spacing="0">
+                        <Button Text="{Binding GenericGroupButtonText}" IsEnabled="{Binding SaveGenericGroupButtonEnabled}" Command="{Binding ChangeGenericQuestionGroupId}"></Button>
+                        <Button Text="{Binding PushGenericQuestionToWatchButtonText}" IsEnabled="{Binding PushQuestionsToWatchButtonEnabled}" IsVisible="{Binding ShowPushQuestionsToWatchButton}" Command="{Binding PushGenericQuestionsToWatchCommand}"></Button>
+                    </StackLayout>
                 </StackLayout>
             </StackLayout>
         </ScrollView>

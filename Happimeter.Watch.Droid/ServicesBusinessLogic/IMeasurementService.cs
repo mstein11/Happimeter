@@ -1,4 +1,5 @@
-﻿using Happimeter.Core.Database;
+﻿using System.Collections.Generic;
+using Happimeter.Core.Database;
 using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Watch.Droid.ViewModels;
 
@@ -10,5 +11,6 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
         SurveyViewModel GetSurveyQuestions();
         DataExchangeMessage GetMeasurementsForDataTransfer();
         void DeleteSurveyMeasurement(DataExchangeMessage message);
+        void AddGenericQuestions(List<GenericQuestion> questions);
     }
 }

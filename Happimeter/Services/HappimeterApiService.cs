@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -179,6 +180,10 @@ namespace Happimeter.Services
         {
             var measurementService = ServiceLocator.Instance.Get<IMeasurementService>();
             (var toSend, var toSendNewFormat) = measurementService.GetSurveyModelForServer();
+
+            if (!toSend.Any()) {
+                return HappimeterApiResultInformation.Success;
+            }
 
             var url = GetUrlForPath(ApiPathPostMood);
             var newUrl = GetUrlForPath(ApiPathPostMoodV2);
