@@ -215,7 +215,10 @@ namespace Happimeter.Services
                         Altitude = entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.LocationAlt)?.Magnitude ?? 0,
                         Latitude = entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.LocationLat)?.Magnitude ?? 0,
                         Longitude = entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.LocationLon)?.Magnitude ?? 0,
-                    }
+                    },
+                    Activity = GetOldActivityScaleValue(entry.SensorItemMeasures),
+                    Vmc = entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.Vmc)?.Magnitude ?? 0,
+                    AvgLightlevel = entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.Light)?.Magnitude ?? 0,
                 });
             }
 
@@ -244,6 +247,36 @@ namespace Happimeter.Services
         /// <param name="newScaleValue">New scale value.</param>
         private int GetOldAccelerometerScaleValue(double newScaleValue) {
             return (int) (newScaleValue * MeterPerSqaureSecondToMilliGForce);
+        }
+
+        private int GetOldActivityScaleValue(List<SensorItemMeasurement> items) {
+            var activityMeasures = items.Where(x => MeasurementItemTypes.ActivityTypes.Contains(x.Type));
+            var mostLikelyActivity = items.OrderByDescending(x => x.Magnitude).FirstOrDefault();
+
+            if (mostLikelyActivity == null) {
+                //lookup unspecific actovity
+                return 2;
+            }
+
+            if (mostLikelyActivity.Type == MeasurementItemTypes.ActivityOnFoot) {
+                mostLikelyActivity = activityMeasures.Where(x => x.Type != MeasurementItemTypes.ActivityOnFoot).OrderByDescending(x => x.Magnitude).FirstOrDefault();
+            }
+
+            if (mostLikelyActivity.Type == MeasurementItemTypes.ActivityWalking)
+            {
+                return 3;
+            }
+
+            if (mostLikelyActivity.Type == MeasurementItemTypes.ActivityRunning) {
+                return 4;
+            }
+
+            if (mostLikelyActivity.Type == MeasurementItemTypes.ActivityStill)
+            {
+                return 1;
+            }
+
+            return 2;
         }
 
         public List<SurveyMeasurement> GetSurveyMeasurements() {
