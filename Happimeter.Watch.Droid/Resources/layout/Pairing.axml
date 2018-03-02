@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ff82b1ff"
+    android:gravity="center_vertical">
+    <TextView
+        android:text="Please pair with your phone!"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView1"
+        android:textSize="50dp"
+        android:textColor="#ffffff"
+        android:layout_gravity="center"
+        android:gravity="center" />
+    <TextView
+        android:text="Text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/PairingDeviceName"
+        android:textColor="#ffffff"
+        android:textSize="40dp"
+        android:layout_gravity="center"
+        android:gravity="center" />
+</LinearLayout>

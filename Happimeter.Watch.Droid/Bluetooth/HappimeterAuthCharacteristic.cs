@@ -5,8 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Android.Bluetooth;
+using Happimeter.Core.Helper;
 using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Watch.Droid.Database;
+using Happimeter.Watch.Droid.ServicesBusinessLogic;
 using Happimeter.Watch.Droid.Workers;
 using Java.Util;
 
@@ -73,25 +75,8 @@ namespace Happimeter.Watch.Droid.Bluetooth
             {
                 var messageData = Newtonsoft.Json.JsonConvert.DeserializeObject<AuthSecondMessage>(json);
                 System.Diagnostics.Debug.WriteLine($"Device {address} finalized authentication procedure");
-                var pairedDevice = new BluetoothPairing
-                {
-                    PhoneOs = messageData.PhoneOs,
-                    Password = messageData.Password,
-                    LastDataSync = null,
-                    IsPairingActive = true,
-                    PairedAt = DateTime.UtcNow,
-                    PairedDeviceName = address,
-                    PairedWithUserName = messageData.HappimeterUsername,
-                    PairedWithUserId = messageData.HappimeterUserId
-                };
-                ServiceLocator.Instance.Get<IDatabaseContext>().Add(pairedDevice);
-                //start beacon
-                Task.Factory.StartNew(() =>
-                {
-                    BeaconWorker.GetInstance().Start();
-                });
 
-
+                ServiceLocator.Instance.Get<IDeviceService>().AddPairing(messageData);
                 return;
             }
         }

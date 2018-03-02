@@ -1,5 +1,6 @@
 ﻿using System.Windows.Input;
 using Happimeter.Core.Database;
+using Happimeter.Core.Helper;
 
 namespace Happimeter
 {

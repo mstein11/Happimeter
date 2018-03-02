@@ -2,6 +2,7 @@
 using CoreLocation;
 using Foundation;
 using Happimeter.Core.Database;
+using Happimeter.Core.Helper;
 using Happimeter.Interfaces;
 using UIKit;
 

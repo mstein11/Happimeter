@@ -4,6 +4,7 @@ using UIKit;
 using Happimeter.iOS.Services;
 using Happimeter.Interfaces;
 using Happimeter.iOS.ViewControllers;
+using Happimeter.Core.Helper;
 
 namespace Happimeter.iOS
 {

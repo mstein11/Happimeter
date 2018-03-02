@@ -1,4 +1,4 @@
-﻿namespace Happimeter.Interfaces
+﻿namespace Happimeter.Core.Services
 {
     public interface IConfigService
     {

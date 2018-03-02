@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Happimeter.Core.Helper;
 using Happimeter.Interfaces;
 using Happimeter.Models.ServiceModels;
 

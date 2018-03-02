@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Happimeter
+namespace Happimeter.Core.Helper
 {
     public sealed class ServiceLocator
     {
@@ -14,6 +14,12 @@ namespace Happimeter
         {
             registeredServices[typeof(TContract)] =
                 new Lazy<object>(() => Activator.CreateInstance(typeof(TService)));
+        }
+
+        public void RegisterWithInstance<TContract, TService>(TService instance) where TService : new()
+        {
+            registeredServices[typeof(TContract)] =
+                new Lazy<object>(() => instance);
         }
 
         public T Get<T>() where T : class

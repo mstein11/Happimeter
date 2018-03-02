@@ -4,6 +4,7 @@ using Android.Content;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
+using Happimeter.Core.Helper;
 using Happimeter.Watch.Droid.Fragments;
 using Happimeter.Watch.Droid.ServicesBusinessLogic;
 using Happimeter.Watch.Droid.ViewModels;
@@ -40,8 +41,8 @@ namespace Happimeter.Watch.Droid.Activities
                     //save answers to database
                     measurementService.AddSurveyMeasurement(ViewModel.GetDataModel());
 
-                    var intent = new Intent(this, typeof(FinishSurveyActivity));
-                    StartActivity(intent);
+                    //var intent = new Intent(this, typeof(MainActivity));
+                    //StartActivity(intent);
                     Finish();
                     return;
                 } 

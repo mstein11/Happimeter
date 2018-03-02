@@ -1,4 +1,5 @@
 ﻿using System;
+using Happimeter.Core.Helper;
 using Happimeter.Interfaces;
 using Happimeter.iOS.Services;
 

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Happimeter.Core.Helper;
 using Happimeter.Events;
 using Happimeter.Interfaces;
 using Happimeter.Models.ApiResultModels;

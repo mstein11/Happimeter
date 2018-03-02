@@ -1,6 +1,7 @@
 ﻿using System;
 using CoreLocation;
 using Foundation;
+using Happimeter.Core.Helper;
 using Happimeter.DependencyInjection;
 using Happimeter.Interfaces;
 using Microsoft.AppCenter;

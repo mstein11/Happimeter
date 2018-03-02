@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using Happimeter.Interfaces;
 using Happimeter.Models;
 using System.Diagnostics;
+using Happimeter.Core.Helper;
 
 namespace Happimeter.iOS
 {

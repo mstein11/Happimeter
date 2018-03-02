@@ -6,6 +6,7 @@ using Xamarin.Forms;
 using Happimeter.Core.Database;
 using Happimeter.ViewModels.Forms;
 using System.Linq;
+using Happimeter.Core.Helper;
 
 namespace Happimeter.iOS
 {
@@ -14,7 +15,7 @@ namespace Happimeter.iOS
         private BluetoothMainPage _bluetoothMainPage;
         private BluetoothPairingPage _bluetoothPairingPage;
 
-        public BluetoothPageViewController (IntPtr handle) : base (handle)
+        private BluetoothPageViewController (IntPtr handle) : base (handle)
         {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             if (context.Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive) != null) {

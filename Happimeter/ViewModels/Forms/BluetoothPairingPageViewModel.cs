@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Happimeter.Core.Helper;
 using Happimeter.Interfaces;
 using Happimeter.Models;
 using Xamarin.Forms;

@@ -14,6 +14,7 @@ using Happimeter.Core.Helper;
 using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Watch.Droid.Bluetooth;
 using Happimeter.Watch.Droid.Database;
+using Happimeter.Watch.Droid.ServicesBusinessLogic;
 using Java.Util;
 
 namespace Happimeter.Watch.Droid.Workers
@@ -98,7 +99,9 @@ namespace Happimeter.Watch.Droid.Workers
                                                 .SetConnectable(true)
                                                 .Build();
 
-            var tmpr = BluetoothAdapter.DefaultAdapter.SetName("Happimeter " + BluetoothHelper.GetBluetoothName());
+            var deviceName = ServiceLocator.Instance.Get<IDeviceService>().GetDeviceName();
+
+            var tmpr = BluetoothAdapter.DefaultAdapter.SetName(deviceName);
             var userId = ServiceLocator.Instance.Get<IDatabaseContext>().Get<BluetoothPairing>(x => x.IsPairingActive)?.PairedWithUserId ?? 0;
             var data = new AdvertiseData.Builder()
                                         .SetIncludeDeviceName(true)

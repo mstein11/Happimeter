@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using Happimeter.Core.Database;
+using Happimeter.Core.Helper;
 using Happimeter.Interfaces;
 
 namespace Happimeter.ViewModels.Forms

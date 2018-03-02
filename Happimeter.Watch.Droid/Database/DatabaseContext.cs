@@ -55,6 +55,7 @@ namespace Happimeter.Watch.Droid.Database
                         connection.Insert(newPairing);
                     }
                 }
+                OnModelChanged(newPairing);
             }
             catch (Exception e)
             {

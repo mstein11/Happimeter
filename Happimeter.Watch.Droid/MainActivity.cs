@@ -11,6 +11,10 @@ using Happimeter.Core.Database;
 using Happimeter.Watch.Droid.Activities;
 using System;
 using System.Linq;
+using Android.Views;
+using Happimeter.Watch.Droid.DependencyInjection;
+using Happimeter.Core.Helper;
+using Happimeter.Watch.Droid.ServicesBusinessLogic;
 
 namespace Happimeter.Watch.Droid
 {
@@ -30,41 +34,53 @@ namespace Happimeter.Watch.Droid
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            Container.RegisterElements();
 
+            RequestWindowFeature(WindowFeatures.NoTitle);
+            //Remove notification bar
+            Window.SetFlags(WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
-
-            //smm.RegisterListener(this, acc, SensorDelay.Normal);
 
 
             var pairing = ServiceLocator.Instance.Get<IDatabaseContext>().GetCurrentBluetoothPairing();
             if (pairing != null) {
-                FindViewById<TextView>(Resource.Id.isPairedValue).Text = "yes";
-                FindViewById<TextView>(Resource.Id.ExchangeAtValue).Text = pairing.LastDataSync?.ToString() ?? "-";
-                FindViewById<TextView>(Resource.Id.PairedAtValue).Text = pairing.PairedAt?.ToString() ?? "-";
-                FindViewById<Button>(Resource.Id.removePairingButton).Click += delegate {
-                    ServiceLocator.Instance.Get<IDatabaseContext>().DeleteAll<BluetoothPairing>();
-                    Toast.MakeText(this, "Deleted, View will not update unless you restart app",ToastLength.Long);
-                };
+
             } else {
-                FindViewById<Button>(Resource.Id.removePairingButton).Visibility = Android.Views.ViewStates.Invisible;
+                var intent = new Intent(this, typeof(PairingActivity));
+                StartActivity(intent);
+                Finish();
             }
+
+            FindViewById<Button>(Resource.Id.removePairingButton).Click += delegate {
+                ServiceLocator.Instance.Get<IDeviceService>().RemovePairing();
+                var intent = new Intent(this, typeof(PairingActivity));
+                StartActivity(intent);
+                Finish();
+            };
             FindViewById<Button>(Resource.Id.surveyButton).Click += (sender, e) => {
                 var intent = new Intent(this, typeof(SurveyActivity));
                 StartActivity(intent);
             };
-
-            StartService(new Intent(this,typeof(BackgroundService)));
-            StartService(new Intent(this, typeof(BeaconService)));
-
-            FindViewById<Button>(Resource.Id.restartWorker).Click += (sender, e) => {
-                StopService(new Intent(this, typeof(BackgroundService)));
+            if (!IsMyServiceRunning(typeof(BackgroundService))) {
                 StartService(new Intent(this, typeof(BackgroundService)));
-            };
-            //RequestPermissions(Manifest.Permission.BodySensors, 0);
-            //smm.RegisterListener(this, heartRate, SensorDelay.Fastest);
+            }
+            if (!IsMyServiceRunning(typeof(BeaconService))) {
+                StartService(new Intent(this, typeof(BeaconService)));    
+            }
+        }
 
-            //button.Click += delegate { button.Text = $"{count++} clicks!"; };
+        private bool IsMyServiceRunning(Type serviceClass)
+        {
+            var manager = (ActivityManager)GetSystemService(Context.ActivityService);
+            foreach (var service in manager.GetRunningServices(int.MaxValue))
+            {
+                if (service.GetType() == serviceClass)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

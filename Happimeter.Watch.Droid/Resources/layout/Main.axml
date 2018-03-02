@@ -2,86 +2,39 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/linearLayout1">
-        <TextView
-            android:text="Pairing Information"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView1" />
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/linearLayout2">
-            <TextView
-                android:text="IsPaired"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/isPairedLabel"
-                android:minEms="5"
-                android:textStyle="bold" />
-            <TextView
-                android:text="no"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/isPairedValue" />
-        </LinearLayout>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/linearLayout2">
-            <TextView
-                android:text="PairedAt"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/PairedAtLabel"
-                android:minEms="5"
-                android:textStyle="bold" />
-            <TextView
-                android:text="-"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/PairedAtValue" />
-        </LinearLayout>
-    </LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/linearLayout2">
-        <TextView
-            android:text="ExchangeAt"
-            android:layout_width="82.5dp"
-            android:layout_height="match_parent"
-            android:id="@+id/ExchangeAtLabel"
-            android:minEms="5"
-            android:textStyle="bold" />
-        <TextView
-            android:text="-"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/ExchangeAtValue" />
-    </LinearLayout>
+    android:layout_height="match_parent"
+    android:background="#ff82b1ff"
+    android:gravity="center_vertical">
     <Button
         android:text="Remove Pairing"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/removePairingButton" />
-    <Button
-        android:text="Restart Worker"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/restartWorker" />
+        android:id="@+id/removePairingButton"
+        android:textSize="50dp"
+        android:backgroundTint="#ff424242"
+        android:textColor="#ffffff"
+        android:paddingTop="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp" />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/surveyButton"
-        android:text="Mood input" />
+        android:text="Mood input"
+        android:textSize="50dp"
+        android:backgroundTint="#ff424242"
+        android:textColor="#ffffff"
+        android:paddingTop="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp" />
 </LinearLayout>

@@ -3,6 +3,7 @@ using Xamarin.Auth;
 using Happimeter.Interfaces;
 using System.Linq;
 using System.Diagnostics;
+using Happimeter.Core.Helper;
 
 namespace Happimeter.Services
 {

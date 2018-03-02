@@ -35,6 +35,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)ExtensionMethods\CompressExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Database\GenericQuestion.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Bluetooth\GenericQuestionMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ConfigService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IConfigService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helper\ServiceLocator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Models\" />
@@ -42,5 +45,6 @@
     <Folder Include="$(MSBuildThisFileDirectory)Database\" />
     <Folder Include="$(MSBuildThisFileDirectory)Helper\" />
     <Folder Include="$(MSBuildThisFileDirectory)ExtensionMethods\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Services\" />
   </ItemGroup>
 </Project>

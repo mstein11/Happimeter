@@ -3,6 +3,7 @@ using System;
 using UIKit;
 using Happimeter.Models;
 using Happimeter.Interfaces;
+using Happimeter.Core.Helper;
 
 namespace Happimeter.iOS
 {

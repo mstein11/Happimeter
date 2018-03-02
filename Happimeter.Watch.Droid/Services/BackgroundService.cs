@@ -36,40 +36,29 @@ namespace Happimeter.Watch.Droid.Services
 
         public override StartCommandResult OnStartCommand(Android.Content.Intent intent, StartCommandFlags flags, int startId)
         {
-            Task.Factory.StartNew(() =>
-            {
-                MicrophoneWorker.GetInstance().Start();
-            });
-            Task.Factory.StartNew(() =>
-            {
-                MeasurementWorker.GetInstance().Start();
-            });
-
-            if (BluetoothAdapter.DefaultAdapter.IsEnabled)
-            {                
+            if (!MicrophoneWorker.GetInstance().IsRunning) {
                 Task.Factory.StartNew(() =>
                 {
-                    BluetoothWorker.GetInstance().Start();
-                });
+                    MicrophoneWorker.GetInstance().Start();
+                });    
             }
-            // start your service logic here
-            Task.Factory.StartNew(async () =>
-            {
-                var preferences = GetSharedPreferences("TEST", FileCreationMode.Append);
 
-                while (true)
+            if (!MeasurementWorker.GetInstance().IsRunning) {
+                Task.Factory.StartNew(() =>
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(30));
-                    var numberOfEntries = preferences.GetInt("NumberOfEntries", 0);
-                    numberOfEntries++;
-                    var timeStamp = DateTime.UtcNow.ToString();
-                    var editor = preferences.Edit();
-                    editor.PutInt("NumberOfEntries", numberOfEntries);
-                    editor.PutString("LastTime", timeStamp);
-                    editor.Commit();
-                }
-            });
+                    MeasurementWorker.GetInstance().Start();
+                });    
+            }
 
+            if (!BluetoothWorker.GetInstance().IsRunning) {
+                if (BluetoothAdapter.DefaultAdapter.IsEnabled)
+                {
+                    Task.Factory.StartNew(() =>
+                    {
+                        BluetoothWorker.GetInstance().Start();
+                    });
+                }    
+            }
             return StartCommandResult.StickyCompatibility;
         }
 

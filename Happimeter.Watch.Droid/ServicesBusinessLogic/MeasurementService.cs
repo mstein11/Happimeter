@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Happimeter.Core.Database;
+using Happimeter.Core.Helper;
 using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Watch.Droid.Database;
 using Happimeter.Watch.Droid.ViewModels;

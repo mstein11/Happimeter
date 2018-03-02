@@ -5,6 +5,7 @@ using Android.Bluetooth;
 using Android.Content;
 using Android.OS;
 using Android.Widget;
+using Happimeter.Core.Helper;
 using Happimeter.Watch.Droid.Database;
 using Happimeter.Watch.Droid.Workers;
 

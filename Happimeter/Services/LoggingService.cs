@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Happimeter.Core.Helper;
 using Happimeter.Interfaces;
 using Microsoft.AppCenter.Analytics;
 

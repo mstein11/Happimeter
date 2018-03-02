@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using Happimeter.Core.Services;
 using Happimeter.Watch.Droid.Database;
 using Happimeter.Watch.Droid.ServicesBusinessLogic;
 
 namespace Happimeter.Watch.Droid
 {
-    public sealed class ServiceLocator
+    public sealed class ServiceLocator123
     {
+        /*
         private bool IsInitialized { get; set; }
 
         static readonly Lazy<ServiceLocator> instance = new Lazy<ServiceLocator>(() => new ServiceLocator());
@@ -18,6 +20,11 @@ namespace Happimeter.Watch.Droid
         {
             registeredServices[typeof(TContract)] =
                 new Lazy<object>(() => Activator.CreateInstance(typeof(TService)));
+        }
+
+        public void RegisterWithInstance<TContract, TService>(TService instance) where TService : new() {
+            registeredServices[typeof(TContract)] =
+                new Lazy<object>(() => instance);
         }
 
         public T Get<T>() where T : class
@@ -37,7 +44,10 @@ namespace Happimeter.Watch.Droid
         public void Configure() {
             Register<IDatabaseContext, DatabaseContext>();
             Register<IMeasurementService, MeasurementService>();
+            Register<IConfigService, ConfigService>();
+            Register<IDeviceService, DeviceService>();
             IsInitialized = true;
         }
+        */
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Happimeter.Core.Database;
+using Happimeter.Core.Helper;
 using Happimeter.Helpers;
 using Happimeter.Interfaces;
 

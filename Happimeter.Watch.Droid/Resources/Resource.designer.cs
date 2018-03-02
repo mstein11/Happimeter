@@ -44,41 +44,17 @@ namespace Happimeter.Watch.Droid
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f05000b
-			public const int ExchangeAtLabel = 2131034123;
-			
-			// aapt resource value: 0x7f05000c
-			public const int ExchangeAtValue = 2131034124;
-			
-			// aapt resource value: 0x7f050009
-			public const int PairedAtLabel = 2131034121;
-			
-			// aapt resource value: 0x7f05000a
-			public const int PairedAtValue = 2131034122;
+			// aapt resource value: 0x7f050007
+			public const int PairingDeviceName = 2131034119;
 			
 			// aapt resource value: 0x7f050000
 			public const int finishSurvey_MainText = 2131034112;
 			
-			// aapt resource value: 0x7f050010
-			public const int fragment_container = 2131034128;
-			
-			// aapt resource value: 0x7f050007
-			public const int isPairedLabel = 2131034119;
-			
 			// aapt resource value: 0x7f050008
-			public const int isPairedValue = 2131034120;
+			public const int fragment_container = 2131034120;
 			
 			// aapt resource value: 0x7f050004
-			public const int linearLayout1 = 2131034116;
-			
-			// aapt resource value: 0x7f050006
-			public const int linearLayout2 = 2131034118;
-			
-			// aapt resource value: 0x7f05000d
-			public const int removePairingButton = 2131034125;
-			
-			// aapt resource value: 0x7f05000e
-			public const int restartWorker = 2131034126;
+			public const int removePairingButton = 2131034116;
 			
 			// aapt resource value: 0x7f050002
 			public const int surveyAnserIndicator = 2131034114;
@@ -86,17 +62,17 @@ namespace Happimeter.Watch.Droid
 			// aapt resource value: 0x7f050003
 			public const int surveyAnswerSeekbar = 2131034115;
 			
-			// aapt resource value: 0x7f05000f
-			public const int surveyButton = 2131034127;
+			// aapt resource value: 0x7f050005
+			public const int surveyButton = 2131034117;
 			
-			// aapt resource value: 0x7f050011
-			public const int surveyConfirmBurron = 2131034129;
+			// aapt resource value: 0x7f050009
+			public const int surveyConfirmBurron = 2131034121;
 			
 			// aapt resource value: 0x7f050001
 			public const int surveyQuestion = 2131034113;
 			
-			// aapt resource value: 0x7f050005
-			public const int textView1 = 2131034117;
+			// aapt resource value: 0x7f050006
+			public const int textView1 = 2131034118;
 			
 			static Id()
 			{
@@ -121,7 +97,10 @@ namespace Happimeter.Watch.Droid
 			public const int Main = 2130903042;
 			
 			// aapt resource value: 0x7f030003
-			public const int Survey = 2130903043;
+			public const int Pairing = 2130903043;
+			
+			// aapt resource value: 0x7f030004
+			public const int Survey = 2130903044;
 			
 			static Layout()
 			{

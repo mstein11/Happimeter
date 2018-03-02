@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Happimeter.Core.Database;
 using Happimeter.Core.Helper;
 using Happimeter.Core.Models.Bluetooth;
+using Happimeter.Core.Services;
 using Happimeter.Helpers;
 using Happimeter.Interfaces;
 using Happimeter.Models.ServiceModels;

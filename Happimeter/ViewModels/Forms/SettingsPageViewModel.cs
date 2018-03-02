@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Input;
 using Happimeter.Core.Database;
+using Happimeter.Core.Helper;
+using Happimeter.Core.Services;
 using Happimeter.Events;
 using Happimeter.Interfaces;
 using Happimeter.Services;

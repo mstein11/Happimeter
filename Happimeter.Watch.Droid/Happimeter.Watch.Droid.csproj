@@ -132,6 +132,10 @@
     <Compile Include="BroadcastReceiver\BluetoothBroadcastReceiver.cs" />
     <Compile Include="Workers\MeasurementWorker.cs" />
     <Compile Include="Bluetooth\HappimeterGenericQuestionCharacteristic.cs" />
+    <Compile Include="Activities\PairingActivity.cs" />
+    <Compile Include="ServicesBusinessLogic\DeviceService.cs" />
+    <Compile Include="ServicesBusinessLogic\IDeviceService.cs" />
+    <Compile Include="DependencyInjection\Container.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -150,6 +154,7 @@
     <AndroidResource Include="Resources\layout\Survey.axml" />
     <AndroidResource Include="Resources\layout\Fragment_SurveyItem.axml" />
     <AndroidResource Include="Resources\layout\FinishedSurvey.axml" />
+    <AndroidResource Include="Resources\layout\Pairing.axml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />
@@ -162,6 +167,7 @@
     <Folder Include="Fragments\" />
     <Folder Include="ServicesBusinessLogic\" />
     <Folder Include="BroadcastReceiver\" />
+    <Folder Include="DependencyInjection\" />
   </ItemGroup>
   <Import Project="..\Happimeter.Core\Happimeter.Core.projitems" Label="Shared" Condition="Exists('..\Happimeter.Core\Happimeter.Core.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

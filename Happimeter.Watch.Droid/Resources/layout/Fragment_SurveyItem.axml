@@ -6,14 +6,16 @@
     <TextView
         android:text="How Pleasant do you feel?"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_width="156.0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/surveyQuestion"
         android:paddingTop="20dp"
         android:layout_gravity="center"
         android:gravity="center"
         android:layout_marginRight="0.0dp"
-        android:paddingBottom="10dp" />
+        android:paddingBottom="10dp"
+        android:textSize="40dp"
+        android:textColor="#ffffff" />
     <TextView
         android:text="1"
         android:textAppearance="?android:attr/textAppearanceLarge"
@@ -29,5 +31,11 @@
         android:layout_height="wrap_content"
         android:id="@+id/surveyAnswerSeekbar"
         android:layout_gravity="center"
-        android:paddingBottom="20dp" />
+        android:paddingBottom="50dp"
+        android:minHeight="10dp"
+        android:maxHeight="10dp"
+        android:layout_centerVertical="true"
+        android:thumbTint="#ff424242"
+        android:thumbTintMode="multiply"
+        android:progressTint="#ff424242" />
 </LinearLayout>

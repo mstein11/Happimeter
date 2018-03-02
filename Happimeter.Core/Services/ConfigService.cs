@@ -1,12 +1,13 @@
 ﻿using System;
 using Happimeter.Core.Database;
-using Happimeter.Interfaces;
+using Happimeter.Core.Helper;
 
-namespace Happimeter.Services
+namespace Happimeter.Core.Services
 {
     public class ConfigService : IConfigService
     {
         public const string GenericQuestionGroupIdKey = "GENERIC_QUESTION_GROUP";
+        public const string WatchNameKey = "WATCH_NAME_KEY";
 
         public void AddOrUpdateConfigEntry(string key, string value) {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();

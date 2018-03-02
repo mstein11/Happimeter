@@ -32,6 +32,9 @@ namespace Happimeter.Watch.Droid.Workers
 
         public override void Start()
         {
+            if (IsRunning) {
+                Stop();
+            }
             var userId = ServiceLocator.Instance.Get<IDatabaseContext>().Get<BluetoothPairing>(x => x.IsPairingActive)?.PairedWithUserId ?? 0;
             (var major, var minor) = UtilHelper.GetMajorMinorFromUserId(userId);
             var beaconUuid = UuidHelper.BeaconUuidString;
