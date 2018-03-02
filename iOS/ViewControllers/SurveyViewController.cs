@@ -31,10 +31,10 @@ namespace Happimeter.iOS
                     await Task.Delay(TimeSpan.FromSeconds(2));
                     PopToRootViewController(true);
                 };
-
-
-
             };
+
+            NavigationBar.TintColor = UIColor.White;
+
             /*AddChildViewController(startSurveyVc);
             View.Add(startSurveyVc.View);
             startSurveyVc.DidMoveToParentViewController(this);

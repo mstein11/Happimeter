@@ -15,7 +15,7 @@
                     </Grid.RowDefinitions>
                     <Label FontSize="24" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="0" TextColor="White" Text="Here you can logout and change other settings" />
                     <StackLayout Grid.Row="1"  VerticalOptions="CenterAndExpand" Spacing="0">
-                        <Label IsVisible="{Binding UnsyncronizedChangedVisible}" FontSize="14" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" TextColor="White" Text="You have unsyncronized changed. Press the button below to upload the changes to our server." />
+                        <Label IsVisible="{Binding UnsyncronizedChangedVisible}" FontSize="14" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" TextColor="White" Text="You have unsyncronized changes. Press the button below to upload the changes to our server." />
                         <Button VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" TextColor="White" Text="Synchronize with server" Command="{Binding UploadCommand}" /> 
                         <Label FontSize="14" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" TextColor="White" IsVisible="{Binding SynchronizingStatusIsVisible}" Text="{Binding SynchronizingStatus}" /> 
                     </StackLayout>

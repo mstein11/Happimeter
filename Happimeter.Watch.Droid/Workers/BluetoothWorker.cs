@@ -98,7 +98,7 @@ namespace Happimeter.Watch.Droid.Workers
                                                 .SetConnectable(true)
                                                 .Build();
 
-            var tmpr = BluetoothAdapter.DefaultAdapter.SetName("Happimeter AAAA");
+            var tmpr = BluetoothAdapter.DefaultAdapter.SetName("Happimeter " + BluetoothHelper.GetBluetoothName());
             var userId = ServiceLocator.Instance.Get<IDatabaseContext>().Get<BluetoothPairing>(x => x.IsPairingActive)?.PairedWithUserId ?? 0;
             var data = new AdvertiseData.Builder()
                                         .SetIncludeDeviceName(true)

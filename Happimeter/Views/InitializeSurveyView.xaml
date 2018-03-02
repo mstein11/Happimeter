@@ -12,7 +12,7 @@
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
                 <Label FontSize="24" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="0" TextColor="White" Text="Please click the button below to start the survey. " />
-                <Label HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="1" TextColor="White" Text="All survey responses will be transferred to our server where they are safely stored." />
+                <Label HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="1" TextColor="White" Text="All survey responses will be transferred to our server where they are safely stored. We will not share any of your personal data with any third party. Data may be pusblished in aggregated format." />
             </Grid>
             <StackLayout Spacing="20" Padding="20" VerticalOptions="FillAndExpand">
                 <Label FontAttributes="Bold" HorizontalTextAlignment="Center"> By partaking in this survey, you agree that your survey responses may be used for scientific purposes.</Label>

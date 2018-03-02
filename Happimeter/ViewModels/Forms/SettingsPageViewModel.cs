@@ -30,7 +30,7 @@ namespace Happimeter.ViewModels.Forms
             var hasBtPairing = ServiceLocator.Instance.Get<ISharedDatabaseContext>().Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive) != null;
             ShowPushQuestionsToWatchButton = hasBtPairing;
 
-            NumberOfGenericQuestions = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyQuestions().SurveyItems.Count();
+            NumberOfGenericQuestions = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyQuestions().SurveyItems.Count() - 2;
             SaveGenericGroupButtonEnabled = true;
             Logout = new Command(() =>
             {
@@ -118,7 +118,7 @@ namespace Happimeter.ViewModels.Forms
                     //Error while downloading questions
                     GenericGroupButtonText = "Error Downloading Questinos";
                 } else {
-                    NumberOfGenericQuestions = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyQuestions().SurveyItems.Count();   
+                    NumberOfGenericQuestions = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyQuestions().SurveyItems.Count() - 2;   
                     GenericGroupButtonText = $"Successfully downloaded  {questions.Count} questions";
                 }
 
