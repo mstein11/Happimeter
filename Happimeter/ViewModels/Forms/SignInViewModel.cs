@@ -9,9 +9,12 @@ namespace Happimeter.ViewModels.Forms
     {
         public SignInViewModel()
         {
+            LoginButtonIsEnabled = true;
+            LoginButtonText = "Login / Signup";
             LoginCommand = new Command(async () =>
             {
-                IsBusy = false;
+                LoginButtonIsEnabled = false;
+                LoginButtonText = "Loading...";
                 ErrorTextVisible = false;
                 var apiService = ServiceLocator.Instance.Get<IHappimeterApiService>();
                 var result = await apiService.Auth(UserName, Password);
@@ -51,7 +54,8 @@ namespace Happimeter.ViewModels.Forms
                         ErrorTextVisible = true;
                     }
                 }
-                IsBusy = true;
+                LoginButtonIsEnabled = true;
+                LoginButtonText = "Login / Signup";
             });
         }
 
@@ -84,6 +88,19 @@ namespace Happimeter.ViewModels.Forms
         }
 
         public Command LoginCommand { get; set; }
+
+        private bool _loginButtonIsEnabled;
+        public bool LoginButtonIsEnabled {
+            get => _loginButtonIsEnabled;
+            set => SetProperty(ref _loginButtonIsEnabled, value);
+        }
+
+        private string _loginButtonText;
+        public string LoginButtonText
+        {
+            get => _loginButtonText;
+            set => SetProperty(ref _loginButtonText, value);
+        }
     }
 }
 

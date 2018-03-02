@@ -59,6 +59,7 @@ namespace Happimeter.Services
                     ScanReplaySubject = new ReplaySubject<IScanResult>();
                     //todo: open settings
                 }
+                ScanReplaySubject.OnCompleted();
                 return ScanReplaySubject;
             }
 
