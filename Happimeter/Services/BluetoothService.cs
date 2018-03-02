@@ -70,12 +70,17 @@ namespace Happimeter.Services
             }
             ScanReplaySubject = new ReplaySubject<IScanResult>();
             FoundDevices = new List<IScanResult>();
-            scannerObs.TakeUntil(Observable.Timer(TimeSpan.FromSeconds(_scanTimeoutSeconds))).Subscribe(scan => {
+
+            var timerObs = Observable.Timer(TimeSpan.FromSeconds(_scanTimeoutSeconds));
+            scannerObs.TakeUntil(timerObs).Subscribe(scan => {
                 if (!FoundDevices.Select(x => x.Device.Uuid).Contains(scan.Device.Uuid)) {
                     Console.WriteLine($"Found device. Name: {scan.Device.Name}, Uuid: {scan.Device.Uuid}, data: {System.Text.Encoding.UTF8.GetString(scan.AdvertisementData.ServiceData?.FirstOrDefault() ?? new byte[0])}");
                     FoundDevices.Add(scan);
                     ScanReplaySubject.OnNext(scan);
                 }
+            });
+            timerObs.Subscribe((longi) => {
+                ScanReplaySubject.OnCompleted();
             });
             return ScanReplaySubject;
         }

@@ -14,7 +14,7 @@
                 </Grid.RowDefinitions>
                 <Label FontSize="24" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="0" TextColor="White" Text="Pair BT Device" />
                 <Label HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="1" TextColor="White" Text="Here you can Pair with and Android Watch Device that is running the Happimeter app. Click the Button below to start Scanning." />
-                <Button Grid.Row="2" TextColor="White" Text="Scan for Devices" Command="{Binding StartScanCommand}"></Button>
+                <Button Grid.Row="2" TextColor="White" Text="{Binding StartScanButtonText}" Command="{Binding StartScanCommand}"></Button>
             </Grid>
             <ListView ItemsSource="{Binding Items}" ItemSelected="Handle_ItemSelected">
                 <ListView.ItemTemplate>
