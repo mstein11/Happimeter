@@ -39,11 +39,17 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
             ServiceLocator.Instance.Get<IDatabaseContext>().Add(pairedDevice);
             //start beacon
             BeaconWorker.GetInstance().Start();
+            BluetoothWorker.GetInstance().RemoveAuthService();
         }
 
         public void RemovePairing() {
             ServiceLocator.Instance.Get<IDatabaseContext>().DeleteAll<BluetoothPairing>();
             BeaconWorker.GetInstance().Stop();
+            BluetoothWorker.GetInstance().AddAuthService();
+        }
+
+        public bool IsPaired() {
+            return ServiceLocator.Instance.Get<IDatabaseContext>().Get<BluetoothPairing>(x => x.IsPairingActive) != null;
         }
     }
 }

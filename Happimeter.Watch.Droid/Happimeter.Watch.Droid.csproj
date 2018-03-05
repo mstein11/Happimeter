@@ -136,6 +136,7 @@
     <Compile Include="ServicesBusinessLogic\DeviceService.cs" />
     <Compile Include="ServicesBusinessLogic\IDeviceService.cs" />
     <Compile Include="DependencyInjection\Container.cs" />
+    <Compile Include="Bluetooth\HappimeterAuthService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

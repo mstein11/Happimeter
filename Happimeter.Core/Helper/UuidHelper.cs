@@ -9,6 +9,9 @@ namespace Happimeter.Core.Helper
         public const string AndroidWatchServiceUuidString = "0000F0F0-0000-1000-8000-00805F9B34FB";
         public static Guid AndroidWatchServiceUuid => Guid.Parse(AndroidWatchServiceUuidString);
 
+        public const string AndroidWatchAuthServiceUuidString = "0000F0F1-0000-1000-8000-00805F9B34FB";
+        public static Guid AndroidWatchAuthServiceUuid => Guid.Parse(AndroidWatchServiceUuidString);
+
         public const string DataExchangeCharacteristicUuidString = "7918ec07-2ba4-4542-aa13-0a10ff3826ba";
         public static Guid DataExchangeCharacteristicUuid => Guid.Parse(DataExchangeCharacteristicUuidString);
 

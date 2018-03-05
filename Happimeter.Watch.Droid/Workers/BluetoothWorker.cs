@@ -71,6 +71,11 @@ namespace Happimeter.Watch.Droid.Workers
         private void InitializeGatt() {
             GattServer = Manager.OpenGattServer(Application.Context, new CallbackGatt(this));
             GattServer.AddService(HappimeterService.Create());
+
+            if (!ServiceLocator.Instance.Get<IDeviceService>().IsPaired()) {
+                GattServer.AddService(HappimeterAuthService.Create());    
+            }
+
             System.Diagnostics.Debug.WriteLine("Gatt initialized");
         }
 
@@ -85,7 +90,25 @@ namespace Happimeter.Watch.Droid.Workers
             Manager.Adapter.BluetoothLeAdvertiser?.Dispose();
 
             IsRunning = false;
+        }
 
+        public void RemoveAuthService() {
+
+            GattServer?.Services.ToList().ForEach((x) => Console.WriteLine(x.Uuid.ToString()));
+            var authService = GattServer?.Services.Where(x => x.Uuid.ToString().ToUpper() == UuidHelper.AndroidWatchAuthServiceUuidString.ToUpper()).FirstOrDefault() ?? null;
+            if (authService != null) {
+                GattServer.RemoveService(authService);
+                Console.WriteLine("Removed Auth Service");
+            }
+        }
+
+        public void AddAuthService() {
+            var authService = GattServer?.Services.FirstOrDefault(x => x.Uuid.ToString().ToUpper() == UuidHelper.AndroidWatchAuthServiceUuidString.ToUpper()) ?? null;
+            if (authService == null && GattServer != null)
+            {
+                GattServer.AddService(HappimeterAuthService.Create());
+                Console.WriteLine("Added Auth Service");
+            }
         }
 
         private void ConnectableAdvertisement()
