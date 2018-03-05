@@ -132,6 +132,14 @@ namespace Happimeter.Core.Database
             }
         }
 
+        /// <summary>
+        ///     The methods below is a little bit faster in quering the data from db. Thats why we use it. 
+        ///     The best way to query the data would be to not rely on reflection for the object mapping.
+        ///     We might want to implement that at some point.
+        /// </summary>
+        /// <returns>The sensor measurements.</returns>
+        /// <param name="skip">Skip.</param>
+        /// <param name="take">Take.</param>
         public virtual List<SensorMeasurement> GetSensorMeasurements(int skip = 0, int take = 150) {
             EnsureDatabaseCreated();
             lock (SyncLock)

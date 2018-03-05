@@ -143,6 +143,7 @@ namespace Happimeter.ViewModels.Forms
         public void RefreshData()
         {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
+            //todo: use method that is specific for sensormeasurements and adjust the ordering in this method
             var measurements = context.GetAllWithChildren<SensorMeasurement>().OrderByDescending(x => x.Timestamp).Take(100);
             Items.Clear();
             foreach (var measurement in measurements)

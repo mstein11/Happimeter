@@ -51,9 +51,6 @@ namespace Happimeter.Services
 
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
 
-
-
-
             var dbQuestions = context.GetAll<GenericQuestion>(x => x.GenericQuestionGroupId == groupId);
             var additionalQuestions = dbQuestions.Select(x => new SurveyItemViewModel
             {
