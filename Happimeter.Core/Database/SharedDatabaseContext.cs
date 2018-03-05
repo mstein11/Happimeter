@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using Happimeter.Core.Database.ModelsNotMappedToDb;
 using SQLite;
 using SQLiteNetExtensions.Extensions;
 
@@ -125,7 +127,43 @@ namespace Happimeter.Core.Database
             {
                 using (var connection = GetConnection())
                 {
-                    return connection.GetAllWithChildren<T>(whereClause, true).ToList();
+                    return connection.GetAllWithChildren<T>(whereClause, false).ToList();
+                }
+            }
+        }
+
+        public virtual List<SensorMeasurement> GetSensorMeasurements(int skip = 0, int take = 150) {
+            EnsureDatabaseCreated();
+            lock (SyncLock)
+            {
+                using (var connection = GetConnection())
+                {
+                    var sw = new Stopwatch();
+                    sw.Start();
+                    var items =  connection.Query<SensorMeasurementsAndItems>($"SELECT * FROM (SELECT * FROM SensorMeasurement as s1 LIMIT {take} OFFSET {skip}) as s1, SensorItemMeasurement as s2 WHERE s1.Id == s2.SensorMeasurementId").ToList();
+                    sw.Stop();
+                    Debug.WriteLine($"Took {sw.ElapsedMilliseconds} milliseconds to read sensordata");
+                    return items.GroupBy(group => new {group.SensorMeasurementId, group.Timestamp, group.IsUploadedToServer})
+                         .Select(x => new SensorMeasurement{
+                        Id = x.Key.SensorMeasurementId,
+                        Timestamp = x.Key.Timestamp,
+                        IsUploadedToServer = x.Key.IsUploadedToServer,
+                        SensorItemMeasures = x.Select(item => {
+                            return new SensorItemMeasurement
+                            {
+                                Average = item.Average,
+                                HighestValuesAmount = item.HighestValuesAmount,
+                                Magnitude = item.Magnitude,
+                                NumberOfMeasures = item.NumberOfMeasures,
+                                Quantile1 = item.Quantile1,
+                                Quantile2 = item.Quantile2,
+                                Quantile3 = item.Quantile3,
+                                StdDev = item.StdDev,
+                                Type = item.Type,
+                                SensorMeasurementId = item.SensorMeasurementId
+                            };
+                        }).ToList()
+                    }).ToList();
                 }
             }
         }
@@ -216,9 +254,12 @@ namespace Happimeter.Core.Database
 
         public virtual void Delete<T>(T entity) where T : new() {
             EnsureDatabaseCreated();
-            using (var connection = GetConnection())
+            lock (SyncLock)
             {
-                connection.Delete(entity);
+                using (var connection = GetConnection())
+                {
+                    connection.Delete(entity);
+                }
             }
         }
 

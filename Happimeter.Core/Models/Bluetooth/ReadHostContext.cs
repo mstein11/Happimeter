@@ -16,8 +16,9 @@ namespace Happimeter.Core.Models.Bluetooth
         public ReadHostContext(BaseBluetoothMessage message)
         {
             Message = message;
-            Header = BluetoothHelper.GetMessageHeader(message);
-            BytesToSend = BluetoothHelper.GetMessageJson(message).ToList();
+            (var header, var bytesToSent) = BluetoothHelper.GetHeaderAndContent(message);
+            Header = header;
+            BytesToSend = bytesToSent.ToList();
             Cursor = 0;
         }
 

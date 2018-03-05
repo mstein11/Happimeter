@@ -535,7 +535,7 @@ namespace Happimeter.Services
 
             //from the first read request we assume to get an header, which contains information what and how much is sent
             var headerResult = await characteristic.Read()
-                    .Timeout(TimeSpan.FromSeconds(5))
+                    .Timeout(TimeSpan.FromSeconds(10))
                     .Catch<CharacteristicResult, Exception>((arg) =>
                     {
                         if (arg is TimeoutException)
@@ -557,7 +557,7 @@ namespace Happimeter.Services
             {
                 //here we receive the actual data until we got the complete message
                 var nextBytes = await characteristic.Read()
-                    .Timeout(TimeSpan.FromSeconds(5))
+                    .Timeout(TimeSpan.FromSeconds(10))
                     .Catch<CharacteristicResult, Exception>((arg) =>
                     {
                         if (arg is TimeoutException)

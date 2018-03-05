@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Happimeter.Core.Database;
 using Happimeter.Core.Helper;
@@ -64,8 +65,15 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
 
         public DataExchangeMessage GetMeasurementsForDataTransfer() 
         {
-            var moods = ServiceLocator.Instance.Get<IDatabaseContext>().GetAllWithChildren<SurveyMeasurement>();
-            var sensors = ServiceLocator.Instance.Get<IDatabaseContext>().GetAllWithChildren<SensorMeasurement>();
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+            var moods = ServiceLocator.Instance.Get<IDatabaseContext>().GetAllWithChildren<SurveyMeasurement>().Take(100).ToList();
+            stopWatch.Stop();
+            Debug.WriteLine($"Read {moods.Count} moods from db. took {stopWatch.Elapsed.Seconds} seconds");
+            stopWatch.Reset();
+            stopWatch.Start();
+            var sensors = ServiceLocator.Instance.Get<IDatabaseContext>().GetSensorMeasurements().ToList();
+            Debug.WriteLine($"Read {sensors.Count} sensors from db. took {stopWatch.Elapsed.Seconds} seconds");
             //remove self referencing loop so that we can serialize it
             moods.ForEach(x => x.SurveyItemMeasurement.ForEach(y => y.SurveyMeasurement = null));
             sensors.ForEach(x => x.SensorItemMeasures.ForEach(y => y.SensorMeasurement = null));

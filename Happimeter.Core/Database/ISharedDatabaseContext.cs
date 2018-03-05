@@ -20,6 +20,7 @@ namespace Happimeter.Core.Database
         T Get<T>(Expression<Func<T, bool>> whereClause) where T : new();
         List<T> GetAll<T>(Expression<Func<T, bool>> whereClause = null) where T : new();
         List<T> GetAllWithChildren<T>(Expression<Func<T, bool>> whereClause = null) where T : new();
+        List<SensorMeasurement> GetSensorMeasurements(int skip = 0, int take = 300);
         event EventHandler ModelChanged;
     }
 }

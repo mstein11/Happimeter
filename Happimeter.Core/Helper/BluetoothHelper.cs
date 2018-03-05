@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using Happimeter.Core.ExtensionMethods;
 using Happimeter.Core.Models.Bluetooth;
@@ -8,7 +9,7 @@ namespace Happimeter.Core.Helper
     public static class BluetoothHelper
     {
 
-        public static byte[] GetMessageHeader(BaseBluetoothMessage message) {
+        public static byte[] GetMessageHeader(BaseBluetoothMessage message, byte[] jsonBytes = null) {
             var header = new byte[20];
             var messageNameBytes = System.Text.Encoding.UTF8.GetBytes(message.MessageName);
             if (messageNameBytes.Count() > 10)
@@ -26,8 +27,11 @@ namespace Happimeter.Core.Helper
                     header[i] = 0x00;
                 }
             }
-            var messageJsonBytes = GetMessageJson(message);
-            var sizeOfMessage = messageJsonBytes.Count();
+            if (jsonBytes == null) {
+                jsonBytes = GetMessageJson(message);     
+            }
+
+            var sizeOfMessage = jsonBytes.Count();
             var sizeOfMessageBytes = System.Text.Encoding.UTF8.GetBytes(sizeOfMessage.ToString("D"));
             if (sizeOfMessageBytes.Count() > 10)
             {
@@ -48,6 +52,13 @@ namespace Happimeter.Core.Helper
             return header;
         }
 
+        public static (byte[], byte[]) GetHeaderAndContent(BaseBluetoothMessage message) {
+            var json = GetMessageJson(message);
+            var header = GetMessageHeader(message, json);
+
+            return (header, json);
+        }
+
         public static (string messageName, int messageSize) GetMessageHeaderContent(byte[] header) {
             var messageNamebytes = header.Take(10).ToList();
             var removed = messageNamebytes.RemoveAll(x => x == (byte) 0x00);
@@ -61,9 +72,16 @@ namespace Happimeter.Core.Helper
         }
 
         public static byte[] GetMessageJson(BaseBluetoothMessage message) {
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
             var json = message.GetAsJson();
+            stopWatch.Stop();
+            Debug.WriteLine($"Took {stopWatch.Elapsed.Seconds} Seconds to serialize obj");
+            stopWatch.Reset();
+            stopWatch.Start();
             var compressed = json.Zip();
-            Console.WriteLine($"Compressed json of size {json.Count()} into {compressed.Count()} via gzip");
+            stopWatch.Stop();
+            Console.WriteLine($"Compressed json of size {json.Count()} into {compressed.Count()} via gzip. Took {stopWatch.Elapsed.Seconds} seconds");
             return compressed;
         }
 
