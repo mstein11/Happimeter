@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using Happimeter.Core.Events;
 using SQLite;
 using SQLiteNetExtensions.Extensions;
 
@@ -223,6 +224,20 @@ namespace Happimeter.Core.Database
         }
 
         public event EventHandler ModelChanged;
+
+        public event EventHandler<DatabaseChangedEventArgs> ModelAdded;
+        protected void OnModelAdded(List<object> models) {
+            if (!models.Any()) {
+                return;
+            }
+            var args = new DatabaseChangedEventArgs();
+            args.TypeOfEnties = models.FirstOrDefault().GetType();
+            args.Entites = models;
+            ModelAdded?.Invoke(this, args);
+        }
+
+        public event EventHandler<DatabaseChangedEventArgs> OnModelUpdated;
+        public event EventHandler<DatabaseChangedEventArgs> OnModelDeleted;
         protected void OnModelChanged(object model) {
             ModelChanged?.Invoke(model, new EventArgs());
         }

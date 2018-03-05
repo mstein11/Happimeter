@@ -38,6 +38,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\ConfigService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\IConfigService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helper\ServiceLocator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\DatabaseChangedEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Models\" />
@@ -46,5 +47,6 @@
     <Folder Include="$(MSBuildThisFileDirectory)Helper\" />
     <Folder Include="$(MSBuildThisFileDirectory)ExtensionMethods\" />
     <Folder Include="$(MSBuildThisFileDirectory)Services\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Events\" />
   </ItemGroup>
 </Project>
