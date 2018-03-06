@@ -17,7 +17,7 @@ namespace Happimeter.Watch.Droid
 {
     [BroadcastReceiver(Enabled = true)]
     [IntentFilter(new[] { Intent.ActionBootCompleted }, Priority = (int)IntentFilterPriority.LowPriority)]
-    public class AutoStartBroadcastReceiver : BroadcastReceiver
+    public class AutoStartBroadcastReceiver : Android.Content.BroadcastReceiver
     {
         public override void OnReceive(Context context, Intent intent)
         {

@@ -30,6 +30,7 @@ namespace Happimeter.Watch.Droid.Workers
         private SensorListener _lightListener { get; set; }
 
 
+
         private MeasurementWorker()
         {
         }
@@ -45,144 +46,160 @@ namespace Happimeter.Watch.Droid.Workers
             return Instance;
         }
 
+        public async Task StartOnce() {
+            IsRunning = true;
+            StartSensors();
+            //await Task.Delay(TimeSpan.FromSeconds(450));
+            await Task.Delay(TimeSpan.FromSeconds(120));
+            CollectMeasurements();
+            StopSensors();
+            IsRunning = false;
+        }
+
         public async override void Start()
         {
-            
-
             IsRunning = true;
             StartSensors();
             while(IsRunning) {
                 //StartSensors();
                 await Task.Delay(TimeSpan.FromSeconds(45));
                 //StopSensors();
-                var sensorMeasurement = new SensorMeasurement
-                {
-                    Timestamp = DateTime.UtcNow,
-                    SensorItemMeasures = new List<SensorItemMeasurement>()
-                };
 
-                var accMeasuresToSave = AccelerometerMeasures.ToList();
-                AccelerometerMeasures.Clear();
+                CollectMeasurements();
 
-                if (accMeasuresToSave.Any()) {
-                    sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
-                    {
-                        Type = MeasurementItemTypes.AccelerometerX,
-                        NumberOfMeasures = accMeasuresToSave.Count,
-                        Average = accMeasuresToSave.Select(x => x.Item1).Average(),
-                        StdDev = accMeasuresToSave.Select(x => x.Item1).StdDev(),
-                        Magnitude = accMeasuresToSave.Select(x => x.Item1).Sum()
-                    });    
-                    sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
-                    {
-                        Type = MeasurementItemTypes.AccelerometerY,
-                        NumberOfMeasures = accMeasuresToSave.Count,
-                        Average = accMeasuresToSave.Select(x => x.Item2).Average(),
-                        StdDev = accMeasuresToSave.Select(x => x.Item2).StdDev(),
-                        Magnitude = accMeasuresToSave.Select(x => x.Item2).Sum()
-                    });    
-                    sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
-                    {
-                        Type = MeasurementItemTypes.AccelerometerZ,
-                        NumberOfMeasures = accMeasuresToSave.Count,
-                        Average = accMeasuresToSave.Select(x => x.Item3).Average(),
-                        StdDev = accMeasuresToSave.Select(x => x.Item3).StdDev(),
-                        Magnitude = accMeasuresToSave.Select(x => x.Item3).Sum()
-                    });    
-                }
-
-
-                var hearRateMeasuresToSave = HeartRateMeasures.ToList();
-                HeartRateMeasures.Clear();
-
-                if (hearRateMeasuresToSave.Any()) {
-                    sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
-                    {
-                        Type = MeasurementItemTypes.HeartRate,
-                        NumberOfMeasures = hearRateMeasuresToSave.Count(),
-                        Average = hearRateMeasuresToSave.Average(),
-                        StdDev = hearRateMeasuresToSave.StdDev(),
-                        Magnitude = hearRateMeasuresToSave.Sum()
-                    });
-                }
-
-                var stepMeasuresToSave = StepMeasures.ToList();
-                StepMeasures.Clear();
-
-                if (stepMeasuresToSave.Any())
-                {
-                    sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
-                    {
-                        Type = MeasurementItemTypes.Step,
-                        NumberOfMeasures = stepMeasuresToSave.Count(),
-                        Average = stepMeasuresToSave.Average(),
-                        StdDev = stepMeasuresToSave.StdDev(),
-                        Magnitude = stepMeasuresToSave.Sum()
-                    });
-                }
-
-                var lightMeasuresToSave = LightMeasures.ToList();
-                LightMeasures.Clear();
-                if (lightMeasuresToSave.Any())
-                {
-                    sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
-                    {
-                        Type = MeasurementItemTypes.Light,
-                        NumberOfMeasures = stepMeasuresToSave.Count(),
-                        Average = stepMeasuresToSave.Average(),
-                        StdDev = stepMeasuresToSave.StdDev(),
-                        Magnitude = stepMeasuresToSave.Sum()
-                    });
-                }
-
-                var microphoneMeasures = MicrophoneWorker.GetInstance().MicrophoneMeasures.ToList();
-                MicrophoneWorker.GetInstance().MicrophoneMeasures.Clear();
-
-                if (microphoneMeasures.Any())
-                {
-                    sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
-                    {
-                        Type = MeasurementItemTypes.Microphone,
-                        NumberOfMeasures = microphoneMeasures.Count(),
-                        Average = microphoneMeasures.Average(),
-                        StdDev = microphoneMeasures.StdDev(),
-                        Magnitude = microphoneMeasures.Sum()
-                    });
-                }
-
-                sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
-                {
-                    Type = MeasurementItemTypes.LocationLat,
-                    Magnitude = 1,
-                });
-                sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
-                {
-                    Type = MeasurementItemTypes.LocationLon,
-                    Magnitude = 1,
-                });
-                sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
-                {
-                    Type = MeasurementItemTypes.LocationAlt,
-                    Magnitude = 1,
-                });
-
-                sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
-                {
-                    Type = MeasurementItemTypes.Vmc,
-                    Magnitude = -1,
-                });
-
-                sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
-                {
-                    Type = MeasurementItemTypes.ActivityUnspecific,
-                    Magnitude = 1,
-                });
-
-
-                ServiceLocator.Instance.Get<IDatabaseContext>().AddGraph(sensorMeasurement);
                 await Task.Delay(TimeSpan.FromSeconds(45));
                 Console.WriteLine("Saved new Sensormeasurement");
             }
+        }
+
+        private void CollectMeasurements() {
+            var sensorMeasurement = new SensorMeasurement
+            {
+                Timestamp = DateTime.UtcNow,
+                SensorItemMeasures = new List<SensorItemMeasurement>()
+            };
+
+            var accMeasuresToSave = AccelerometerMeasures.ToList();
+            AccelerometerMeasures.Clear();
+
+            if (accMeasuresToSave.Any())
+            {
+                sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+                {
+                    Type = MeasurementItemTypes.AccelerometerX,
+                    NumberOfMeasures = accMeasuresToSave.Count,
+                    Average = accMeasuresToSave.Select(x => x.Item1).Average(),
+                    StdDev = accMeasuresToSave.Select(x => x.Item1).StdDev(),
+                    Magnitude = accMeasuresToSave.Select(x => x.Item1).Sum()
+                });
+                sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+                {
+                    Type = MeasurementItemTypes.AccelerometerY,
+                    NumberOfMeasures = accMeasuresToSave.Count,
+                    Average = accMeasuresToSave.Select(x => x.Item2).Average(),
+                    StdDev = accMeasuresToSave.Select(x => x.Item2).StdDev(),
+                    Magnitude = accMeasuresToSave.Select(x => x.Item2).Sum()
+                });
+                sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+                {
+                    Type = MeasurementItemTypes.AccelerometerZ,
+                    NumberOfMeasures = accMeasuresToSave.Count,
+                    Average = accMeasuresToSave.Select(x => x.Item3).Average(),
+                    StdDev = accMeasuresToSave.Select(x => x.Item3).StdDev(),
+                    Magnitude = accMeasuresToSave.Select(x => x.Item3).Sum()
+                });
+            }
+
+
+            var hearRateMeasuresToSave = HeartRateMeasures.ToList();
+            HeartRateMeasures.Clear();
+
+            if (hearRateMeasuresToSave.Any())
+            {
+                sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+                {
+                    Type = MeasurementItemTypes.HeartRate,
+                    NumberOfMeasures = hearRateMeasuresToSave.Count(),
+                    Average = hearRateMeasuresToSave.Average(),
+                    StdDev = hearRateMeasuresToSave.StdDev(),
+                    Magnitude = hearRateMeasuresToSave.Sum()
+                });
+            }
+
+            var stepMeasuresToSave = StepMeasures.ToList();
+            StepMeasures.Clear();
+
+            if (stepMeasuresToSave.Any())
+            {
+                sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+                {
+                    Type = MeasurementItemTypes.Step,
+                    NumberOfMeasures = stepMeasuresToSave.Count(),
+                    Average = stepMeasuresToSave.Average(),
+                    StdDev = stepMeasuresToSave.StdDev(),
+                    Magnitude = stepMeasuresToSave.Sum()
+                });
+            }
+
+            var lightMeasuresToSave = LightMeasures.ToList();
+            LightMeasures.Clear();
+            if (lightMeasuresToSave.Any())
+            {
+                sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+                {
+                    Type = MeasurementItemTypes.Light,
+                    NumberOfMeasures = stepMeasuresToSave.Count(),
+                    Average = stepMeasuresToSave.Average(),
+                    StdDev = stepMeasuresToSave.StdDev(),
+                    Magnitude = stepMeasuresToSave.Sum()
+                });
+            }
+
+            var microphoneMeasures = MicrophoneWorker.GetInstance().MicrophoneMeasures.ToList();
+            MicrophoneWorker.GetInstance().MicrophoneMeasures.Clear();
+
+            if (microphoneMeasures.Any())
+            {
+                sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+                {
+                    Type = MeasurementItemTypes.Microphone,
+                    NumberOfMeasures = microphoneMeasures.Count(),
+                    Average = microphoneMeasures.Average(),
+                    StdDev = microphoneMeasures.StdDev(),
+                    Magnitude = microphoneMeasures.Sum()
+                });
+            }
+
+            sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+            {
+                Type = MeasurementItemTypes.LocationLat,
+                Magnitude = 1,
+            });
+            sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+            {
+                Type = MeasurementItemTypes.LocationLon,
+                Magnitude = 1,
+            });
+            sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+            {
+                Type = MeasurementItemTypes.LocationAlt,
+                Magnitude = 1,
+            });
+
+            sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+            {
+                Type = MeasurementItemTypes.Vmc,
+                Magnitude = -1,
+            });
+
+            sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+            {
+                Type = MeasurementItemTypes.ActivityUnspecific,
+                Magnitude = 1,
+            });
+
+
+            ServiceLocator.Instance.Get<IDatabaseContext>().AddGraph(sensorMeasurement);
         }
 
         public override void Stop()

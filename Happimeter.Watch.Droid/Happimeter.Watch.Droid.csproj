@@ -137,6 +137,8 @@
     <Compile Include="ServicesBusinessLogic\IDeviceService.cs" />
     <Compile Include="DependencyInjection\Container.cs" />
     <Compile Include="Bluetooth\HappimeterAuthService.cs" />
+    <Compile Include="Services\MeasurementJobService.cs" />
+    <Compile Include="BroadcastReceiver\AlarmBroadcastReceiver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

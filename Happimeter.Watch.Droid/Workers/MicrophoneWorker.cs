@@ -16,7 +16,7 @@ namespace Happimeter.Watch.Droid.Workers
         private const int SampleRate = 8000;
         private const ChannelIn Channel = ChannelIn.Mono;
         private const Encoding AudioEncoding = Encoding.Pcm16bit;
-        private const int RecordingDurationSec = 1;
+        private const int RecordingDurationSec = 120;
 
         private static MicrophoneWorker Instance;
 
@@ -40,6 +40,55 @@ namespace Happimeter.Watch.Droid.Workers
         public override void Start() {
             IsRunning = true;
             RunAsync();
+        }
+
+        public void StartOnce() {
+            IsRunning = true;
+            try
+            {
+                int bufferSize = AudioRecord.GetMinBufferSize(SampleRate,
+                          Channel,
+                          AudioEncoding);
+
+                if (bufferSize == 0)
+                {
+                    bufferSize = SampleRate * 2;
+                }
+                short[] audioBuffer = new short[bufferSize / 2];
+                AudioRecord record = new AudioRecord(AudioSource.Default,
+                                                     SampleRate,
+                                                     Channel,
+                                                     AudioEncoding,
+                                                     bufferSize);
+
+
+                record.StartRecording();
+                var bytesRead = 0;
+                var bigAudioBuffer = new List<short>();
+                while (bytesRead < SampleRate * RecordingDurationSec)
+                {
+
+                    int numberOfShort = record.Read(audioBuffer, 0, audioBuffer.Count());
+                    bytesRead += numberOfShort;
+                    for (var i = 0; i < numberOfShort; i++)
+                    {
+                        bigAudioBuffer.Add(audioBuffer[i]);
+                    }
+                }
+                var volume = CalculateVolumeForData(bigAudioBuffer.ToArray());
+                var measure = new MicrophoneMeasurement
+                {
+                    Volumne = volume,
+                    TimeStamp = DateTime.UtcNow
+                };
+                MicrophoneMeasures.Add(volume);
+                record.Stop();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error while Getting Microphone measurement. Stopping the worker. Error Message {e.Message}");
+                IsRunning = false;
+            }
         }
 
         public override void Stop() {

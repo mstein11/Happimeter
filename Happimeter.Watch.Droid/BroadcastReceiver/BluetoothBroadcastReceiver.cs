@@ -8,7 +8,7 @@ namespace Happimeter.Watch.Droid
 {
     [BroadcastReceiver(Enabled = true)]
     [IntentFilter(new[] { Android.Bluetooth.BluetoothAdapter.ActionStateChanged }, Priority = (int)IntentFilterPriority.HighPriority)]
-    public class BluetoothBroadcastReceiver : BroadcastReceiver
+    public class BluetoothBroadcastReceiver : Android.Content.BroadcastReceiver
     {
         public override void OnReceive(Context context, Intent intent)
         {
