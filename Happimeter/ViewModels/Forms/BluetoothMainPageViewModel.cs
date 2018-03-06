@@ -146,7 +146,8 @@ namespace Happimeter.ViewModels.Forms
         {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             //todo: use method that is specific for sensormeasurements and adjust the ordering in this method
-            var measurements = context.GetAllWithChildren<SensorMeasurement>().OrderByDescending(x => x.Timestamp).Take(100);
+            //var measurements = context.GetAllWithChildren<SensorMeasurement>().OrderByDescending(x => x.Timestamp).Take(100);
+            var measurements = context.GetSensorMeasurements(0, 100, true);
             Items.Clear();
             foreach (var measurement in measurements)
             {
@@ -156,7 +157,8 @@ namespace Happimeter.ViewModels.Forms
 
         public void LoadMoreData() {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
-            var measurements = context.GetAllWithChildren<SensorMeasurement>().OrderByDescending(x => x.Timestamp).Skip(Items.Count()).Take(100);
+            var measurements = context.GetSensorMeasurements(Items.Count, 100, true);
+            //var measurements = context.GetAllWithChildren<SensorMeasurement>().OrderByDescending(x => x.Timestamp).Skip(Items.Count()).Take(100);
             foreach (var measurement in measurements)
             {
                 Items.Add(new BluetoothMainItemViewModel(measurement));

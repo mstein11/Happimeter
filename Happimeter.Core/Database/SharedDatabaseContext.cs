@@ -143,7 +143,8 @@ namespace Happimeter.Core.Database
         /// <returns>The sensor measurements.</returns>
         /// <param name="skip">Skip.</param>
         /// <param name="take">Take.</param>
-        public virtual List<SensorMeasurement> GetSensorMeasurements(int skip = 0, int take = 150) {
+        /// <param name="orderDesc">If true, we will order descending before applying skip and take, if false we will order ascending</param>
+        public virtual List<SensorMeasurement> GetSensorMeasurements(int skip = 0, int take = 150, bool orderDesc = false) {
             EnsureDatabaseCreated();
             lock (SyncLock)
             {
@@ -151,7 +152,8 @@ namespace Happimeter.Core.Database
                 {
                     var sw = new Stopwatch();
                     sw.Start();
-                    var items =  connection.Query<SensorMeasurementsAndItems>($"SELECT * FROM (SELECT * FROM SensorMeasurement as s1 LIMIT {take} OFFSET {skip}) as s1, SensorItemMeasurement as s2 WHERE s1.Id == s2.SensorMeasurementId").ToList();
+                    var orderString = orderDesc ? "DESC" : ""; 
+                    var items =  connection.Query<SensorMeasurementsAndItems>($"SELECT * FROM (SELECT * FROM SensorMeasurement as s1 ORDER BY Timestamp {orderString} LIMIT {take} OFFSET {skip}) as s1, SensorItemMeasurement as s2 WHERE s1.Id == s2.SensorMeasurementId").ToList();
                     sw.Stop();
                     Debug.WriteLine($"Took {sw.ElapsedMilliseconds} milliseconds to read sensordata");
                     return items.GroupBy(group => new {group.SensorMeasurementId, group.Timestamp, group.IsUploadedToServer})
