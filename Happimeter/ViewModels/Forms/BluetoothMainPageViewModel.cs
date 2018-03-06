@@ -20,13 +20,15 @@ namespace Happimeter.ViewModels.Forms
 
             SetValuesInViewModel(pairing);
 
-            context.ModelChanged += (object sender, EventArgs e) =>
-            {
-                var updatedPairing = (sender as SharedBluetoothDevicePairing);
-                if (updatedPairing != null) {
-                    SetValuesInViewModel(updatedPairing);
+            context.WhenEntryChanged<SharedBluetoothDevicePairing>().Subscribe(x => {
+                foreach (var entry in x.Entites) {
+                    var updatedPairing = (entry as SharedBluetoothDevicePairing);
+                    if (updatedPairing != null && updatedPairing.IsPairingActive)
+                    {
+                        SetValuesInViewModel(updatedPairing);
+                    }    
                 }
-            };
+            });
 
             RemovePairingCommand = new Command(() =>
             {

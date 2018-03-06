@@ -1,10 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using Happimeter.Core.Database.ModelsNotMappedToDb;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using Happimeter.Core.Events;
 using SQLite;
 using SQLiteNetExtensions.Extensions;
 
@@ -15,6 +18,8 @@ namespace Happimeter.Core.Database
         protected string DatabaseName = "db_sqlnet.db";
         protected object SyncLock = new object();
         private bool DatabaseCreated = false;
+
+        protected Subject<DatabaseChangedEventArgs> DatabaseEntriesChangedSubject = new Subject<DatabaseChangedEventArgs>();
 
         public SharedDatabaseContext()
         {
@@ -77,8 +82,6 @@ namespace Happimeter.Core.Database
                         }
                     }
                 }
-                //connection.CreateTable<MicrophoneMeasurement>();
-                //connection.CreateTable<BluetoothPairing>();
             }
             catch (SQLiteException ex)
             {
@@ -127,7 +130,7 @@ namespace Happimeter.Core.Database
             {
                 using (var connection = GetConnection())
                 {
-                    return connection.GetAllWithChildren<T>(whereClause, false).ToList();
+                    return connection.GetAllWithChildren<T>(whereClause, true).ToList();
                 }
             }
         }
@@ -212,9 +215,9 @@ namespace Happimeter.Core.Database
                 using (var connection = GetConnection())
                 {
                     connection.Insert(entity);
-                    OnModelChanged(entity);
                 }
             }
+            DatabaseEntriesChangedSubject.OnNext(new DatabaseChangedEventArgs(entity, typeof(T), DatabaseChangedEventTypes.Added));
         }
 
         public virtual void AddGraph<T>(T entity) where T : new()
@@ -231,9 +234,9 @@ namespace Happimeter.Core.Database
                 using (var connection = GetConnection())
                 {
                     connection.InsertWithChildren(entity, true);
-                    OnModelChanged(entity);
                 }
             }
+            DatabaseEntriesChangedSubject.OnNext(new DatabaseChangedEventArgs(entity, typeof(T), DatabaseChangedEventTypes.Added));
         }
 
         public virtual void Update<T>(T entity) where T : new()
@@ -244,9 +247,9 @@ namespace Happimeter.Core.Database
                 using (var connection = GetConnection())
                 {
                     connection.Update(entity);
-                    OnModelChanged(entity);
                 }
             }
+            DatabaseEntriesChangedSubject.OnNext(new DatabaseChangedEventArgs(entity, typeof(T), DatabaseChangedEventTypes.Updated));
         }
 
         public virtual void DeleteAll<T>() where T : new() {
@@ -269,11 +272,7 @@ namespace Happimeter.Core.Database
                     connection.Delete(entity);
                 }
             }
-        }
-
-        public event EventHandler ModelChanged;
-        protected void OnModelChanged(object model) {
-            ModelChanged?.Invoke(model, new EventArgs());
+            DatabaseEntriesChangedSubject.OnNext(new DatabaseChangedEventArgs(entity, entity.GetType(), DatabaseChangedEventTypes.Deleted));
         }
 
         protected void AddBluetoothPairing(SharedBluetoothDevicePairing pairing) {
@@ -283,6 +282,9 @@ namespace Happimeter.Core.Database
                 oldPairing.IsPairingActive = false;
                 Update(oldPairing);
             }
+            if (oldPairings.Any()) {
+                DatabaseEntriesChangedSubject.OnNext(new DatabaseChangedEventArgs(oldPairings, oldPairings.FirstOrDefault().GetType(), DatabaseChangedEventTypes.Updated));
+            }
             lock (SyncLock)
             {
                 using (var connection = GetConnection())
@@ -290,7 +292,41 @@ namespace Happimeter.Core.Database
                     connection.Insert(pairing);
                 }
             }
-            OnModelChanged(pairing);
+            DatabaseEntriesChangedSubject.OnNext(new DatabaseChangedEventArgs(pairing, pairing.GetType(), DatabaseChangedEventTypes.Added));
+        }
+
+
+        public IObservable<DatabaseChangedEventArgs> WhenEntryAdded()
+        {
+            return DatabaseEntriesChangedSubject.Where(x => x.TypeOfEvent == DatabaseChangedEventTypes.Added);
+        }
+        public IObservable<DatabaseChangedEventArgs> WhenEntryAdded<T>()
+        {
+            return DatabaseEntriesChangedSubject.Where(x => x.TypeOfEvent == DatabaseChangedEventTypes.Added && x.TypeOfEnties == typeof(T));
+        }
+        public IObservable<DatabaseChangedEventArgs> WhenEntryUpdated()
+        {
+            return DatabaseEntriesChangedSubject.Where(x => x.TypeOfEvent == DatabaseChangedEventTypes.Updated);
+        }
+        public IObservable<DatabaseChangedEventArgs> WhenEntryUpdated<T>()
+        {
+            return DatabaseEntriesChangedSubject.Where(x => x.TypeOfEvent == DatabaseChangedEventTypes.Updated && x.TypeOfEnties == typeof(T));
+        }
+        public IObservable<DatabaseChangedEventArgs> WhenEntryDeleted()
+        {
+            return DatabaseEntriesChangedSubject.Where(x => x.TypeOfEvent == DatabaseChangedEventTypes.Deleted);
+        }
+        public IObservable<DatabaseChangedEventArgs> WhenEntryDeleted<T>()
+        {
+            return DatabaseEntriesChangedSubject.Where(x => (x.TypeOfEvent == DatabaseChangedEventTypes.Deleted || x.TypeOfEvent == DatabaseChangedEventTypes.DeleteAll) && x.TypeOfEnties == typeof(T));
+        }
+        public IObservable<DatabaseChangedEventArgs> WhenEntryChanged<T>()
+        {
+            return DatabaseEntriesChangedSubject.Where(x => x.TypeOfEnties == typeof(T));
+        }
+        public IObservable<DatabaseChangedEventArgs> WhenEntryChanged()
+        {
+            return DatabaseEntriesChangedSubject;
         }
     }
 }
