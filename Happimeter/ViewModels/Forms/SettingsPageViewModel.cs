@@ -7,15 +7,15 @@ using Happimeter.Core.Helper;
 using Happimeter.Core.Services;
 using Happimeter.Events;
 using Happimeter.Interfaces;
-using Happimeter.Services;
+using System;
 
 namespace Happimeter.ViewModels.Forms
 {
     public class SettingsPageViewModel : BaseViewModel
     {
 
-        private List<SurveyMeasurement> _surveysNotSynched = new List<SurveyMeasurement>();
-        private List<SensorMeasurement> _sensorsNotSynched = new List<SensorMeasurement>();
+        private List<int> _surveyIdsNotSynched = new List<int>();
+        private List<int> _sensorIdsNotSynched = new List<int>();
 
         public SettingsPageViewModel()
         {
@@ -147,39 +147,106 @@ namespace Happimeter.ViewModels.Forms
                 UnsyncronizedChangedVisible = true;
             }
 
-            ServiceLocator.Instance.Get<ISharedDatabaseContext>().ModelChanged += (sender, e) => {
-                var survey = sender as SurveyMeasurement;
-                var sensor = sender as SurveyMeasurement;
-                var btPairing = sender as SharedBluetoothDevicePairing;
-
-                if (survey != null && !survey.IsUploadedToServer) {
-                    UnsyncronizedChangedVisible = true;
-                    _surveysNotSynched.Add(survey);
-                } else if (survey != null && survey.IsUploadedToServer) {
-                    _surveysNotSynched.Remove(survey);
+            var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
+            context.WhenEntryChanged<SharedBluetoothDevicePairing>().Subscribe(eventInfo =>
+            {
+                if (eventInfo.Entites.Cast<SharedBluetoothDevicePairing>().Any(x => x.IsPairingActive) 
+                    && eventInfo.TypeOfEvent != Core.Events.DatabaseChangedEventTypes.Deleted
+                    && eventInfo.TypeOfEvent != Core.Events.DatabaseChangedEventTypes.DeleteAll) {
+                    ShowPushQuestionsToWatchButton = true;
+                } else {
+                    ShowPushQuestionsToWatchButton = false;
                 }
-                if (sensor != null && !sensor.IsUploadedToServer)
+            });
+            context.WhenEntryAdded<SurveyMeasurement>().Subscribe(eventInfos =>
+            {
+                var surveyMeasurements = eventInfos.Entites.Cast<SurveyMeasurement>();
+                var notUploaded = surveyMeasurements.Where(x => !x.IsUploadedToServer);
+                foreach (var entry in notUploaded) {
+                    _surveyIdsNotSynched.Add(entry.Id);
+                }
+                if (_sensorIdsNotSynched.Any() || _surveyIdsNotSynched.Any())
                 {
                     UnsyncronizedChangedVisible = true;
-                    _surveysNotSynched.Add(sensor);
-                } 
-                else if (sensor != null && sensor.IsUploadedToServer)
-                {
-                    _surveysNotSynched.Remove(sensor);
                 }
-
-                if (!_surveysNotSynched.Any() && !_sensorsNotSynched.Any())
+                else
                 {
                     UnsyncronizedChangedVisible = false;
                 }
+            });
+            context.WhenEntryAdded<SensorMeasurement>().Subscribe(eventInfos =>
+            {
+                var surveyMeasurements = eventInfos.Entites.Cast<SensorMeasurement>();
+                var notUploaded = surveyMeasurements.Where(x => !x.IsUploadedToServer);
+                foreach (var entry in notUploaded)
+                {
+                    _sensorIdsNotSynched.Add(entry.Id);
+                }
+                if (_sensorIdsNotSynched.Any() || _surveyIdsNotSynched.Any())
+                {
+                    UnsyncronizedChangedVisible = true;
+                }
+                else
+                {
+                    UnsyncronizedChangedVisible = false;
+                }
+            });
+            context.WhenEntryUpdated<SurveyMeasurement>().Subscribe(eventInfos =>
+            {
+                var surveyMeasurements = eventInfos.Entites.Cast<SurveyMeasurement>();
 
-                if (btPairing != null && btPairing.IsPairingActive) {
-                    ShowPushQuestionsToWatchButton = true;
+                foreach (var entry in surveyMeasurements)
+                {
+                    if (!entry.IsUploadedToServer) {
+                        if (!_surveyIdsNotSynched.Contains(entry.Id)) {
+                            _surveyIdsNotSynched.Add(entry.Id);        
+                        }
+                    } else {
+                        if (_surveyIdsNotSynched.Contains(entry.Id))
+                        {
+                            _surveyIdsNotSynched.Remove(entry.Id);
+                        }
+                    }
                 }
-                if (btPairing != null && !btPairing.IsPairingActive) {
-                    ShowPushQuestionsToWatchButton = false;
+                if (_sensorIdsNotSynched.Any() || _surveyIdsNotSynched.Any())
+                {
+                    UnsyncronizedChangedVisible = true;
                 }
-            };
+                else
+                {
+                    UnsyncronizedChangedVisible = false;
+                }
+            });
+            context.WhenEntryUpdated<SensorMeasurement>().Subscribe(eventInfos =>
+            {
+                var sensorMeasurements = eventInfos.Entites.Cast<SensorMeasurement>();
+
+                foreach (var entry in sensorMeasurements)
+                {
+                    if (!entry.IsUploadedToServer)
+                    {
+                        if (!_sensorIdsNotSynched.Contains(entry.Id))
+                        {
+                            _sensorIdsNotSynched.Add(entry.Id);
+                        }
+                    }
+                    else
+                    {
+                        if (_sensorIdsNotSynched.Contains(entry.Id))
+                        {
+                            _sensorIdsNotSynched.Remove(entry.Id);
+                        }
+                    }
+                }
+                if (_sensorIdsNotSynched.Any() || _surveyIdsNotSynched.Any())
+                {
+                    UnsyncronizedChangedVisible = true;
+                }
+                else
+                {
+                    UnsyncronizedChangedVisible = false;
+                }
+            });
         }
 
         private string _userEmail;

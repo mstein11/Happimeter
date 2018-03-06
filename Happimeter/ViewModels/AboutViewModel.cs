@@ -1,7 +1,8 @@
 ﻿using System.Windows.Input;
 using Happimeter.Core.Database;
+using Happimeter.Core.Events;
 using Happimeter.Core.Helper;
-
+using System;
 namespace Happimeter
 {
     public class AboutViewModel : BaseViewModel
@@ -14,18 +15,18 @@ namespace Happimeter
             var model = dbContext.Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive);
             UpdateModel(model);
 
-            dbContext.ModelChanged += (sender, e) => {
-                var updateModel = sender as SharedBluetoothDevicePairing;
-                //if model changed and pairing is still active
-                if (updateModel != null && updateModel.IsPairingActive) {
-                    UpdateModel(updateModel);
+            dbContext.WhenEntryChanged<SharedBluetoothDevicePairing>().Subscribe((DatabaseChangedEventArgs eventInfo)=> {
+                foreach (var entry in eventInfo.Entites) {
+                    var realEntry = entry as SharedBluetoothDevicePairing;
+                    if (realEntry != null && realEntry.IsPairingActive) {
+                        UpdateModel(realEntry);
+                    }
+                    if (realEntry != null && realEntry.Id == Id && !realEntry.IsPairingActive)
+                    {
+                        UpdateModel(null);
+                    }
                 }
-                //if model changed and pairing is not active anymore we restet the view
-                if (updateModel != null && updateModel.Id == Id && !updateModel.IsPairingActive) {
-                    UpdateModel(null);
-                }
-            };
-
+            });
         }
 
         private void UpdateModel(SharedBluetoothDevicePairing model) {

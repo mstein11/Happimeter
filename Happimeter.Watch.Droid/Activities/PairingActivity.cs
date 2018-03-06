@@ -35,14 +35,13 @@ namespace Happimeter.Watch.Droid.Activities
             var textView = FindViewById<TextView>(Resource.Id.PairingDeviceName);
             textView.Text = name;
 
-            db.ModelChanged += (sender, e) => {
-                var btPairing = sender as BluetoothPairing;
-                if (btPairing != null && btPairing.IsPairingActive) {
+            db.WhenEntryChanged<BluetoothPairing>().Subscribe(eventInfo => {
+                if (eventInfo.Entites.Cast<BluetoothPairing>().Any(x => x.IsPairingActive)) {
                     var intent = new Intent(this, typeof(MainActivity));
                     StartActivity(intent);
                     Finish();
                 }
-            };
+            });
             // Create your application here
         }
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Happimeter.Core.Database;
+using Happimeter.Core.Events;
 using SQLite;
 
 namespace Happimeter.Watch.Droid.Database
@@ -55,7 +56,7 @@ namespace Happimeter.Watch.Droid.Database
                         connection.Insert(newPairing);
                     }
                 }
-                OnModelChanged(newPairing);
+                DatabaseEntriesChangedSubject.OnNext(new DatabaseChangedEventArgs(newPairing, newPairing.GetType(), DatabaseChangedEventTypes.Added));
             }
             catch (Exception e)
             {
