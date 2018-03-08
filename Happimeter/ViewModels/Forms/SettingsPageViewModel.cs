@@ -22,7 +22,7 @@ namespace Happimeter.ViewModels.Forms
             UserEmail = ServiceLocator
                 .Instance
                 .Get<IAccountStoreService>()
-                .GetAccount().Username;
+                .GetAccount()?.Username ?? "";
             
             GenericQuestionGroupId = ServiceLocator
                 .Instance

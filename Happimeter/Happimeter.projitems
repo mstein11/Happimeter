@@ -89,6 +89,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\LoggingService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\ILoggingService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\BluetoothWriteEvent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\TestPage.xaml.cs">
+      <DependentUpon>TestPage.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />
@@ -134,6 +137,10 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\SignInPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\TestPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>

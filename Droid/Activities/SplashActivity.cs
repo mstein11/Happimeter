@@ -1,7 +1,8 @@
 ﻿using Android.App;
-using Android.Content;
 using Android.OS;
 using Android.Support.V7.App;
+using Happimeter.Core.Helper;
+using Happimeter.Interfaces;
 
 namespace Happimeter.Droid
 {
@@ -12,12 +13,13 @@ namespace Happimeter.Droid
         {
             base.OnCreate(savedInstanceState);
 
-            var newIntent = new Intent(this, typeof(MainActivity));
-            newIntent.AddFlags(ActivityFlags.ClearTop);
-            newIntent.AddFlags(ActivityFlags.SingleTop);
-
-            StartActivity(newIntent);
-            Finish();
+            var isAuth = ServiceLocator.Instance.Get<IAccountStoreService>().IsAuthenticated();
+            if (isAuth) {
+                ServiceLocator.Instance.Get<INativeNavigationService>().NavigateToLoggedInPage();
+            } else {
+                ServiceLocator.Instance.Get<INativeNavigationService>().NavigateToLoginPage();
+            }
+            Finish(); 
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Happimeter.Droid
             RegisterActivityLifecycleCallbacks(this);
 
             App.Initialize();
-            Container.RegisterElements();
+            Droid.DependencyInjection.Container.RegisterElements();
         }
 
         public override void OnTerminate()

@@ -248,6 +248,12 @@
     <Compile Include="DependencyInjection\Container.cs" />
     <Compile Include="Services\BeaconWakeupService.cs" />
     <Compile Include="Services\DeviceInformationService.cs" />
+    <Compile Include="Activities\TabMainActivity.cs" />
+    <Compile Include="Fragments\FragmentContainer.cs" />
+    <Compile Include="Helpers\BackPressImpl.cs" />
+    <Compile Include="Helpers\OnBackPressListener.cs" />
+    <Compile Include="Activities\SignInActivity.cs" />
+    <Compile Include="Services\NativeNavigationService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\AboutAssets.txt" />
@@ -289,6 +295,9 @@
     <AndroidResource Include="Resources\values\styles.xml" />
     <AndroidResource Include="Resources\values-v19\styles.xml" />
     <AndroidResource Include="Resources\values-v21\styles.xml" />
+    <AndroidResource Include="Resources\layout\tab_main_activity.axml" />
+    <AndroidResource Include="Resources\layout\fragment_container.axml" />
+    <AndroidResource Include="Resources\layout\activity_sign_in.axml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DependencyInjection\" />

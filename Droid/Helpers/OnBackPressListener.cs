@@ -3,5 +3,6 @@ namespace Happimeter.Droid.Helpers
 {
     public interface OnBackPressListener
     {
+        bool OnBackPressed();
     }
 }

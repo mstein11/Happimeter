@@ -4,6 +4,8 @@ using Android.App;
 using Android.OS;
 using Android.Widget;
 using Android.Support.Design.Widget;
+using Happimeter.Views;
+using Xamarin.Forms.Platform.Android;
 
 namespace Happimeter.Droid
 {
@@ -24,10 +26,17 @@ namespace Happimeter.Droid
             // Create your application here
             SetContentView(Resource.Layout.activity_add_item);
             saveButton = FindViewById<FloatingActionButton>(Resource.Id.save_button);
-            title = FindViewById<EditText>(Resource.Id.txtTitle);
-            description = FindViewById<EditText>(Resource.Id.txtDesc);
+            var frameLayout = FindViewById<FrameLayout>(Resource.Id.test_frame_layout);
+            //var fragment = SurveyItemFragment.NewInstance(ViewModel.GetCurrentQuestionPosition());
+            var fragment = new InitializeSurveyView().CreateFragment(Application.Context);
+            // In case this activity was started with special instructions from an
+            // Intent, pass the Intent's extras to the fragment as arguments
+            //firstFragment.setArguments(getIntent().getExtras());
 
-            saveButton.Click += SaveButton_Click;
+            var transaction = FragmentManager.BeginTransaction();
+            transaction.Replace(Resource.Id.test_frame_layout, fragment);
+            transaction.Commit();
+            //saveButton.Click += SaveButton_Click;
         }
 
         void SaveButton_Click(object sender, EventArgs e)

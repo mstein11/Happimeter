@@ -7,16 +7,22 @@ using Android.Widget;
 using Android.Support.V4.App;
 using Android.Support.V4.View;
 using Android.Support.Design.Widget;
+using Happimeter.Views;
+using Xamarin.Forms.Platform.Android;
+using Happimeter.Views.MoodOverview;
 
 namespace Happimeter.Droid
 {
-    [Activity(Label = "@string/app_name", Icon = "@mipmap/icon",
+    /*[Activity(Label = "@string/app_name", Icon = "@mipmap/icon",
         LaunchMode = LaunchMode.SingleInstance,
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation,
-        ScreenOrientation = ScreenOrientation.Portrait)]
+        ScreenOrientation = ScreenOrientation.Portrait)]*/
+    [Activity(Label ="Main")]
     public class MainActivity : BaseActivity
     {
         protected override int LayoutResource => Resource.Layout.activity_main;
+
+        public static MainActivity Instance = null;
 
         ViewPager pager;
         TabsAdapter adapter;
@@ -24,6 +30,7 @@ namespace Happimeter.Droid
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            Instance = this;
 
             adapter = new TabsAdapter(this, SupportFragmentManager);
             pager = FindViewById<ViewPager>(Resource.Id.viewpager);
@@ -45,8 +52,8 @@ namespace Happimeter.Droid
                 StartActivity(intent);
             };
 
-            SupportActionBar.SetDisplayHomeAsUpEnabled(false);
-            SupportActionBar.SetHomeButtonEnabled(false);
+            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+            SupportActionBar.SetHomeButtonEnabled(true);
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -74,8 +81,8 @@ namespace Happimeter.Droid
         {
             switch (position)
             {
-                case 0: return BrowseFragment.NewInstance();
-                case 1: return AboutFragment.NewInstance();
+                case 0: return new InitializeSurveyView().CreateSupportFragment(MainActivity.Instance);
+                case 1: return new SurveyOverviewListPage().CreateSupportFragment(MainActivity.Instance);
             }
             return null;
         }
