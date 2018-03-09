@@ -66,7 +66,7 @@ namespace Happimeter.Droid.Activities
             };
             */
             //SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-            SupportActionBar.SetHomeButtonEnabled(true);
+            //SupportActionBar.SetHomeButtonEnabled(true);
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)

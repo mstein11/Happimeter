@@ -3304,8 +3304,8 @@ namespace Happimeter.Droid
 			// aapt resource value: 0x7f0a0073
 			public const int signin_container = 2131361907;
 			
-			// aapt resource value: 0x7f0a00ba
-			public const int sliding_tabs = 2131361978;
+			// aapt resource value: 0x7f0a00b9
+			public const int sliding_tabs = 2131361977;
 			
 			// aapt resource value: 0x7f0a0075
 			public const int smallLabel = 2131361909;
@@ -3349,8 +3349,8 @@ namespace Happimeter.Droid
 			// aapt resource value: 0x7f0a0011
 			public const int tabMode = 2131361809;
 			
-			// aapt resource value: 0x7f0a00b8
-			public const int tabs = 2131361976;
+			// aapt resource value: 0x7f0a00b7
+			public const int tabs = 2131361975;
 			
 			// aapt resource value: 0x7f0a00b3
 			public const int text = 2131361971;
@@ -3385,8 +3385,8 @@ namespace Happimeter.Droid
 			// aapt resource value: 0x7f0a0057
 			public const int title_template = 2131361879;
 			
-			// aapt resource value: 0x7f0a00b7
-			public const int toolbar = 2131361975;
+			// aapt resource value: 0x7f0a00ba
+			public const int toolbar = 2131361978;
 			
 			// aapt resource value: 0x7f0a0029
 			public const int top = 2131361833;
@@ -3412,8 +3412,8 @@ namespace Happimeter.Droid
 			// aapt resource value: 0x7f0a000e
 			public const int view_offset_helper = 2131361806;
 			
-			// aapt resource value: 0x7f0a00b9
-			public const int viewpager = 2131361977;
+			// aapt resource value: 0x7f0a00b8
+			public const int viewpager = 2131361976;
 			
 			// aapt resource value: 0x7f0a00bb
 			public const int visible = 2131361979;
