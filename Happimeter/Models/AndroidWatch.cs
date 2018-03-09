@@ -44,31 +44,31 @@ namespace Happimeter.Models
 
             WhenDeviceReady().Take(1).Subscribe(success =>
             {
-                OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.BtConnected, null);
+                OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.BtConnected, null);
                 if (success) {
                     try {
                         Device.WhenAnyCharacteristicDiscovered().Where(x => x.Uuid == AuthCharacteristic).Take(1).Subscribe(async characteristic =>
                         {
                             Debug.WriteLine("Found our AuthCharacteristic");
-                            OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.AuthCharacteristicDiscovered, null);
+                            OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.AuthCharacteristicDiscovered, null);
 
                             var btService = ServiceLocator.Instance.Get<IBluetoothService>();
                             var writeResult = await btService.WriteAsync(characteristic, new AuthFirstMessage());
                             if (!writeResult) {
                                 //we got an error here
-                                OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.ErrorOnFirstWrite, null);
+                                OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorOnFirstWrite, null);
                                 return;
                             }
-                            OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.FirstWriteSuccessfull, null);
+                            OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.FirstWriteSuccessfull, null);
 
                             var readResult = await btService.ReadAsync(characteristic);
                             if (readResult == null) {
                                 //we got an error here!
-                                OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.ErrorOnRead, null);
+                                OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorOnRead, null);
                                 return;
                             }
 
-                            OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.ReadSuccessfull, null);
+                            OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ReadSuccessfull, null);
                             //todo: validate data from gattservice
 
                             var dataToSend = new AuthSecondMessage
@@ -83,11 +83,11 @@ namespace Happimeter.Models
                             var writeResult2 = await btService.WriteAsync(characteristic, dataToSend);
                             if (!writeResult2) {
                                 //we got an error here!
-                                OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.ErrorOnSecondWrite, null);
+                                OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorOnSecondWrite, null);
                                 return;
                             }
 
-                            OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.SecondWriteSuccessfull, null);
+                            OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.SecondWriteSuccessfull, null);
                             var paring = new SharedBluetoothDevicePairing
                             {
                                 IsPairingActive = true,
@@ -100,7 +100,7 @@ namespace Happimeter.Models
 
                             //Lets wait for his beacon signal
                             ServiceLocator.Instance.Get<IBeaconWakeupService>().StartWakeupForBeacon();
-                            OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.Complete, null);
+                            OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.Complete, null);
                             ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.PairEvent);
 
                             //not really needed but we leave it here incase we want to implement notifications
@@ -112,11 +112,11 @@ namespace Happimeter.Models
                     } catch (Exception e) {
                         Console.WriteLine("Something went wrong during authentication. Error: " + e.Message);
                         ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.PairFailureEvent);
-                        OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.ErrorBeforeComplete, null);
+                        OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorBeforeComplete, null);
                     }
                 }
             }, error => {
-                OnConnectingStateChanged.Invoke(AndroidWatchConnectingStates.ErrorOnBtConnection, null);
+                OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorOnBtConnection, null);
             });
 
             return connection;

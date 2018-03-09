@@ -38,12 +38,24 @@ namespace Happimeter.Models
         }
 
         public virtual IObservable<object> Connect() {
-            var connection = Device.Connect();
+            var connection = Device.Connect(new GattConnectionConfig
+            {
+
+                AutoConnect = false,
+                Priority = ConnectionPriority.High
+            });
             connection.Subscribe(res => {
                 InitializedReplaySubject.OnNext(true);
             }, error => {
                 InitializedReplaySubject.OnError(new Exception("Exception while establishing connection to device"));
             });
+
+            Device.WhenStatusChanged().Subscribe((x) => {
+                Debug.WriteLine(x);
+            }, (err) => {
+                Debug.WriteLine(err);
+            });
+
             return connection;
         }
 

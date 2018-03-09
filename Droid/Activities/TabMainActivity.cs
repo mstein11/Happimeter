@@ -17,6 +17,10 @@ using Happimeter.Views;
 using Xamarin.Forms.Platform.Android;
 using Happimeter.Views.MoodOverview;
 using Happimeter.Droid.Helpers;
+using Happimeter.Core.Helper;
+using Happimeter.Core.Database;
+using Xamarin.Forms;
+using Happimeter.ViewModels.Forms;
 
 namespace Happimeter.Droid.Activities
 {
@@ -100,9 +104,22 @@ namespace Happimeter.Droid.Activities
         public override Android.Support.V4.App.Fragment GetItem(int position)
         {
             if (!FragmentsWithPosition.Any()) {
+                ServiceLocator.Instance.Get<ISharedDatabaseContext>();
                 var initSurvey = new InitializeSurveyView();
                 var overviewPage = new SurveyOverviewListPage();
-                var btPage = new BluetoothPairingPage();
+                ContentPage btPage = null;
+                var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
+                var hasPairing = context.Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive) != null;
+                                    
+                if (hasPairing)
+                {
+                    btPage = new BluetoothMainPage();
+                }
+                else
+                {
+                    btPage = new BluetoothPairingPage();    
+                }
+
                 var settingPage = new SettingsPage();
 
 
@@ -110,20 +127,46 @@ namespace Happimeter.Droid.Activities
 
                 //var initSurveyFrag = initSurvey.CreateSupportFragment(TabMainActivity.Instance);
                 initSurvey.StartSurveyClickedEvent += (sender, e) => {
-
-                    var childFragmgnt = fragmentContainer1.ChildFragmentManager;
-                    var transaction = childFragmgnt.BeginTransaction();
-
-                    var surveyPage = new SurveyPage();
-                    var surveyPageFrag = surveyPage.CreateSupportFragment(TabMainActivity.Instance);
-
-                    // Store the Fragment in stack
-                    transaction.AddToBackStack(null);
-                    transaction.Replace(Resource.Id.fragment_container_content, surveyPageFrag).Commit();
+                    fragmentContainer1.TransitionToPage(new SurveyPage());
                 };
 
                 var fragmentContainer2 = new Fragments.FragmentContainer(overviewPage);
                 var fragmentContainer3 = new Fragments.FragmentContainer(btPage);
+
+
+                EventHandler removePairingHandler = null;
+                EventHandler addPairingHandler = null;
+                removePairingHandler = (sender, e) => {
+                    var oldBtMainPage = fragmentContainer3.ChildPage;
+                    var btPairingPage = new BluetoothPairingPage();
+                    fragmentContainer3.TransitionToPage(btPairingPage);
+
+                    var vm = (btPairingPage.BindingContext as BluetoothPairingPageViewModel);
+                    vm.OnPairedDevice += addPairingHandler;
+
+                    var oldVm = (oldBtMainPage.BindingContext as BluetoothMainPageViewModel);
+                    oldVm.OnRemovedPairing -= removePairingHandler;
+                };
+                addPairingHandler = (sender, e) => {
+                    var oldBtPairingPage = fragmentContainer3.ChildPage;
+                    var btMainPage = new BluetoothMainPage();
+                    fragmentContainer3.TransitionToPage(btMainPage);
+
+                    var vm = (btMainPage.BindingContext as BluetoothMainPageViewModel);
+                    vm.OnRemovedPairing += removePairingHandler;
+
+                    var oldVm = (oldBtPairingPage.BindingContext as BluetoothPairingPageViewModel);
+                    oldVm.OnPairedDevice -= addPairingHandler;
+                };
+
+                if (hasPairing) {
+                    var vm = ((btPage as BluetoothMainPage).BindingContext as BluetoothMainPageViewModel);
+                    vm.OnRemovedPairing += removePairingHandler;
+                } else {
+                    var vm = ((btPage as BluetoothPairingPage).BindingContext as BluetoothPairingPageViewModel);
+                    vm.OnPairedDevice += addPairingHandler;
+                }
+
                 var fragmentContainer4 = new Fragments.FragmentContainer(settingPage);
 
                 FragmentsWithPosition.Add(0, fragmentContainer1);
@@ -143,5 +186,6 @@ namespace Happimeter.Droid.Activities
         }
 
         public override int GetItemPosition(Java.Lang.Object frag) => PositionNone;
+
     }
 }

@@ -104,7 +104,7 @@ namespace Happimeter.Services
             var obs = device.WhenDeviceReady().Take(1);
             obs.Subscribe(success => {
                 PairedDevice = device;
-                if(PairedDevice.Device.IsPairingAvailable()) {
+                if(PairedDevice.Device.IsPairingAvailable() && false) {
                     Console.WriteLine("Pairing is available");
                     PairedDevice.Device.PairingRequest().Subscribe(result => {
                         Console.WriteLine("Paired: " + result);

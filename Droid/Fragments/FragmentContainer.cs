@@ -54,5 +54,16 @@ namespace Happimeter.Droid.Fragments
         {
             return new BackPressImpl(this).OnBackPressed();
         }
+
+        public void TransitionToPage(ContentPage page, bool addToBackStack = false) {
+            var fragment = page.CreateSupportFragment(TabMainActivity.Instance);
+            var transaction = ChildFragmentManager.BeginTransaction();
+            if (addToBackStack) {
+                transaction.AddToBackStack(null);    
+            }
+            transaction.Replace(Resource.Id.fragment_container_content, fragment);
+            transaction.Commit();
+            ChildPage = page;
+        }
     }
 }
