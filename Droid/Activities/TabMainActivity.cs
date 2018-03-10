@@ -21,6 +21,7 @@ using Happimeter.Core.Helper;
 using Happimeter.Core.Database;
 using Xamarin.Forms;
 using Happimeter.ViewModels.Forms;
+using System.Threading;
 
 namespace Happimeter.Droid.Activities
 {
@@ -57,16 +58,6 @@ namespace Happimeter.Droid.Activities
 
                 fragment?.BecameVisible();
             };
-
-            /*
-            Toolbar.MenuItemClick += (sender, e) =>
-            {
-                var intent = new Intent(this, typeof(AddItemActivity)); ;
-                StartActivity(intent);
-            };
-            */
-            //SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-            //SupportActionBar.SetHomeButtonEnabled(true);
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -127,7 +118,23 @@ namespace Happimeter.Droid.Activities
 
                 //var initSurveyFrag = initSurvey.CreateSupportFragment(TabMainActivity.Instance);
                 initSurvey.StartSurveyClickedEvent += (sender, e) => {
-                    fragmentContainer1.TransitionToPage(new SurveyPage());
+                    var surveyPage = new SurveyPage();
+                    fragmentContainer1.TransitionToPage(surveyPage, true);
+                    EventHandler finishedSurveyHandler = null;
+                    finishedSurveyHandler = (finSender, finE) =>
+                    {
+                        var finalizeSurveyPage = new FinalizeSurveyPage();
+                        fragmentContainer1.TransitionToPage(finalizeSurveyPage, true);
+                        surveyPage.FinishedSurvey -= finishedSurveyHandler;
+                        Timer timer = null;
+                        timer = new Timer((obj) =>
+                        {
+                            //fragmentContainer1.TransitionToPage(initSurvey);
+                            fragmentContainer1.PopBackStackToRoot();
+                            timer.Dispose();
+                        }, null, 2000, System.Threading.Timeout.Infinite);
+                    };
+                    surveyPage.FinishedSurvey += finishedSurveyHandler;
                 };
 
                 var fragmentContainer2 = new Fragments.FragmentContainer(overviewPage);

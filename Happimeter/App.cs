@@ -3,7 +3,9 @@ using Happimeter.Core.Database;
 using Happimeter.Core.Helper;
 using Happimeter.DependencyInjection;
 using Happimeter.Interfaces;
+using Xamarin.Forms.Xaml;
 
+[assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace Happimeter
 {
     public class App

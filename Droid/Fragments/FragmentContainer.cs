@@ -55,6 +55,21 @@ namespace Happimeter.Droid.Fragments
             return new BackPressImpl(this).OnBackPressed();
         }
 
+        public void PopBackStackToRoot() {
+
+            var count = ChildFragmentManager.BackStackEntryCount;
+            if (count == 0) {
+                return;
+            }
+            var entry = ChildFragmentManager.GetBackStackEntryAt(count - 1);
+
+            if (entry == null) {
+                return;
+            }
+            var index = entry.Id;
+            ChildFragmentManager.PopBackStack(0, (int)PopBackStackFlags.Inclusive);
+        }
+
         public void TransitionToPage(ContentPage page, bool addToBackStack = false) {
             var fragment = page.CreateSupportFragment(TabMainActivity.Instance);
             var transaction = ChildFragmentManager.BeginTransaction();

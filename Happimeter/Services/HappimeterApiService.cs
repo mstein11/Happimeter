@@ -348,6 +348,11 @@ namespace Happimeter.Services
                 methodResult.ResultType = HappimeterApiResultInformation.NoInternet;
                 return methodResult;
             }
+            catch (Exception) 
+            {
+                methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
+                return methodResult;
+            }
             var stringResult = await result.Content.ReadAsStringAsync();
             var questions = Newtonsoft.Json.JsonConvert.DeserializeObject<GetGenericQuestionApiResult>(stringResult);
             if (result.IsSuccessStatusCode)
