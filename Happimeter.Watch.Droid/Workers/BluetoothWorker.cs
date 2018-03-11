@@ -100,6 +100,7 @@ namespace Happimeter.Watch.Droid.Workers
                 GattServer.RemoveService(authService);
                 Console.WriteLine("Removed Auth Service");
             }
+            ConnectableAdvertisement();
         }
 
         public void AddAuthService() {
@@ -109,32 +110,41 @@ namespace Happimeter.Watch.Droid.Workers
                 GattServer.AddService(HappimeterAuthService.Create());
                 Console.WriteLine("Added Auth Service");
             }
+            ConnectableAdvertisement();
         }
 
         private void ConnectableAdvertisement()
         {
-            System.Diagnostics.Debug.WriteLine("About to start auth advertiser");
+
             //make sure no previous ad is running
+            //todo: maybe we have to await the callback
             BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser.StopAdvertising(new CallbackAd());
             var settings = new AdvertiseSettings.Builder()
                                                 .SetAdvertiseMode(AdvertiseMode.LowLatency)
                                                 .SetTxPowerLevel(AdvertiseTx.PowerHigh)
                                                 .SetConnectable(true)
                                                 .Build();
-
             var deviceName = ServiceLocator.Instance.Get<IDeviceService>().GetDeviceName();
-
-            var tmpr = BluetoothAdapter.DefaultAdapter.SetName(deviceName);
-            var userId = ServiceLocator.Instance.Get<IDatabaseContext>().Get<BluetoothPairing>(x => x.IsPairingActive)?.PairedWithUserId ?? 0;
-            var data = new AdvertiseData.Builder()
-                                        .SetIncludeDeviceName(true)
-                                        .AddServiceUuid(ParcelUuid.FromString(UuidHelper.AndroidWatchServiceUuidString))
-                                        //advertise the userId, so that phone can connect to right watch
-                                        .AddServiceData(ParcelUuid.FromString(UuidHelper.AndroidWatchServiceUuidString), Encoding.UTF8.GetBytes(userId.ToString()))
-                                        .Build();
+            BluetoothAdapter.DefaultAdapter.SetName(deviceName);
+            AdvertiseData data = null;
+            if (ServiceLocator.Instance.Get<IDeviceService>().IsPaired()) {
+                //if we are paired, we advertise the DataExchangeUuid and the userId as Data
+                var userId = ServiceLocator.Instance.Get<IDatabaseContext>().Get<BluetoothPairing>(x => x.IsPairingActive)?.PairedWithUserId ?? 0;
+                data = new AdvertiseData.Builder()
+                                            .SetIncludeDeviceName(true)
+                                            .AddServiceUuid(ParcelUuid.FromString(UuidHelper.AndroidWatchServiceUuidString))
+                                            .AddServiceData(ParcelUuid.FromString(UuidHelper.AndroidWatchServiceUuidString), Encoding.UTF8.GetBytes(userId.ToString()))
+                                            .Build();
+            } else {
+                //if we are not paired, we advertise the AuthUuid
+                data = new AdvertiseData.Builder()
+                                            .SetIncludeDeviceName(true)
+                                            .AddServiceUuid(ParcelUuid.FromString(UuidHelper.AndroidWatchAuthServiceUuidString))
+                                            //.AddServiceData(ParcelUuid.FromString(UuidHelper.AndroidWatchServiceUuidString), Encoding.UTF8.GetBytes(userId.ToString()))
+                                            .Build();
+            }
 
             BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser.StartAdvertising(settings, data, new CallbackAd());
-            System.Diagnostics.Debug.WriteLine("stopped auth advertiser");
         }
     }
 

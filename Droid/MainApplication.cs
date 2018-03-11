@@ -4,6 +4,9 @@ using Android.App;
 using Android.OS;
 using Android.Runtime;
 using Happimeter.DependencyInjection;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using Plugin.CurrentActivity;
 
 namespace Happimeter.Droid
@@ -20,6 +23,9 @@ namespace Happimeter.Droid
         public override void OnCreate()
         {
             base.OnCreate();
+            AppCenter.Start("a5a4fc8f-8bd6-4b43-a1a9-241453a38c5c",
+                   typeof(Analytics), typeof(Crashes));
+
             RegisterActivityLifecycleCallbacks(this);
 
             Droid.DependencyInjection.Container.RegisterElements();
