@@ -203,7 +203,7 @@ namespace Happimeter.Services
                                              .Where(charac => charac.Uuid == UuidHelper.GenericQuestionCharacteristicUuid)
                                              .Take(1)
                                              .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
-                                             .Catch((Exception e) => null);
+                                             .Catch((Exception e) => Observable.Return<IGattCharacteristic>(null));
 
             if (characteristic == null) {
                 //we did not find the characteristic within the give timeframe
@@ -228,123 +228,38 @@ namespace Happimeter.Services
             }
         }
 
+        //todo: maybe use give a statusUpdate delagate to function instead of providing events
         public event EventHandler<AndroidWatchExchangeDataEventArgs> DataExchangeStatusUpdate;
-
         //is busy with data exchange?
         private Dictionary<Guid, bool> IsBusy = new Dictionary<Guid, bool>();
-        public void ExchangeData() {
-            Console.WriteLine("Starting ExchangeData");
-            ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.DataExchangeStart);
-            var connectedDevices = CrossBleAdapter.Current.GetConnectedDevices();
-            var pairedDevices = CrossBleAdapter.Current.GetPairedDevices();
-            var userId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId();
-            var userIdBytes = System.Text.Encoding.UTF8.GetBytes(userId.ToString());
+        public async void ExchangeData() {
 
             DataExchangeStatusUpdate?.Invoke(this,
                                              new AndroidWatchExchangeDataEventArgs
                                              {
                                                  EventType = AndroidWatchExchangeDataStates.SearchingForDevice
                                              });
-
-            if (connectedDevices.Any(x => x.Name?.Contains("Happimeter") ?? false))
-            {
+            var device = await GetConnectedDevice();
+            if (device == null) {
                 DataExchangeStatusUpdate?.Invoke(this,
-                                 new AndroidWatchExchangeDataEventArgs
-                                 {
-                                     EventType = AndroidWatchExchangeDataStates.DeviceConnected
-                                 });
-                Console.WriteLine("Device already connected");
-                connectedDevices.FirstOrDefault(x => x.Name.Contains("Happimeter"))
-                                .WhenAnyCharacteristicDiscovered()
-                                .Where(characteristic => characteristic.Uuid == UuidHelper.DataExchangeCharacteristicUuid)
-                                .Take(1)
-                                .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
-                                .Subscribe(CharacteristicDiscoveredForDataExchange, (err) =>
-                                {
-                                    CancelConnectionOnTimeoutError(err);
-                                    if (err is TimeoutException)
-                                    {
-                                        ExchangeData();
-                                    }
-                                });
-                
-            } else {
-                if (!CrossBleAdapter.Current.IsScanning) {
-                    Console.WriteLine("Not connected, not scanning, starting scanning");
-                    StartScan(UuidHelper.AndroidWatchServiceUuidString);
-                }
-
-                //we skip 2 because the first two bytes are not relevant to us. the actual advertisement data start at position 3
-                ScanReplaySubject.Where(scanRes => scanRes?.AdvertisementData?.ServiceData?.FirstOrDefault()?.Skip(2)?.SequenceEqual(userIdBytes) ?? false).Select(result => result.Device)
-                                 .Take(1)
-                                 .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
-                                 .Subscribe(result =>
-                {
-                    Console.WriteLine("Found matching device");
-                    result.Connect()
-                          .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
-                          .Subscribe(conn =>
-                    {
-                        DataExchangeStatusUpdate?.Invoke(this,
-                                 new AndroidWatchExchangeDataEventArgs
-                                 {
-                                     EventType = AndroidWatchExchangeDataStates.DeviceConnected
-                                 });
-
-                        Console.WriteLine("Connected");
-                        result.WhenAnyCharacteristicDiscovered()
-                              .Where(characteristic => characteristic.Uuid == UuidHelper.DataExchangeCharacteristicUuid)
-                              .Take(1)
-                              .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
-                              .Subscribe(CharacteristicDiscoveredForDataExchange, (err) =>
-                              {
-                                  CancelConnectionOnTimeoutError(err);
-                                  if (err is TimeoutException)
-                                  {
-                                      ExchangeData();
-                                  }
-                              });
-                    }, err => //Error from connecting to device
-                    {
-                        DataExchangeStatusUpdate?.Invoke(this,
                                  new AndroidWatchExchangeDataEventArgs
                                  {
                                      EventType = AndroidWatchExchangeDataStates.DeviceNotFound
                                  });
-                        Console.WriteLine($"Failed to connect to device: {result.Uuid}");
-                    });
-
-                }, err => {//Error from Replaysubject (scan)
-                    if (err is TimeoutException) {
-                        Console.WriteLine($"No device found in {_messageTimeoutSeconds} seconds");
-                    } else {
-                        Console.WriteLine($"Received unknown exception on exchange data attempt: {err.Message}");
-                    }
-                    DataExchangeStatusUpdate?.Invoke(this,
-                        new AndroidWatchExchangeDataEventArgs
-                        {
-                            EventType = AndroidWatchExchangeDataStates.CouldNotConnect
-                        });
-                });
+                return;
             }
-        }
 
-        private void CancelConnectionOnTimeoutError(Exception e) {
-            DataExchangeStatusUpdate?.Invoke(this,
-             new AndroidWatchExchangeDataEventArgs
-             {
-                 EventType = AndroidWatchExchangeDataStates.CouldNotDiscoverCharacteristic
-             });
-            if (e is TimeoutException)
-            {
-                Console.WriteLine("Timeout while waiting for characteristic on already connected device!");
-                var devicesToDisconnect = CrossBleAdapter.Current.GetConnectedDevices();
-                foreach (var device in devicesToDisconnect)
-                {
-                    device.CancelConnection();
-                    Console.WriteLine($"Cancelled Connection to device {device.Uuid}");
-                }
+            var characteristic = await device.WhenAnyCharacteristicDiscovered()
+                                             .Where(charac => charac.Uuid == UuidHelper.DataExchangeCharacteristicUuid)
+                                             .Take(1)
+                                             .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
+                                             .Catch((Exception e) => Observable.Return<IGattCharacteristic>(null));
+
+            if (characteristic == null) {
+                return;
             }
+
+            CharacteristicDiscoveredForDataExchange(characteristic);
         }
 
         private async void CharacteristicDiscoveredForDataExchange(IGattCharacteristic characteristic) {
