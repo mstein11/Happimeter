@@ -128,104 +128,105 @@ namespace Happimeter.Services
             return obs;
         }
 
-
-
-
-        public void SendGenericQuestions(Action<BluetoothWriteEvent> statusUpdate = null) {
-            statusUpdate?.Invoke(BluetoothWriteEvent.Initialized);
+        /// <summary>
+        /// This methods returns a paired (paired means it has an entry wihtin our db, not neccessary paired as per BT terminology) device.
+        /// If the corresponding device is already connected to the phone, it will simply be returned.
+        /// If there is no connection to the device (maybe because we went out of range or something similar) we scan for a few seconds to find the device and return it if we find it.
+        /// </summary>
+        /// <returns>The connected device.</returns>
+        private async Task<IDevice> GetConnectedDevice() {
             var connectedDevices = CrossBleAdapter.Current.GetConnectedDevices();
-            var pairedDevices = CrossBleAdapter.Current.GetPairedDevices();
-            var userId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId();
-            var userIdBytes = System.Text.Encoding.UTF8.GetBytes(userId.ToString());
 
+            //todo: not be reliable on name
             if (connectedDevices.Any(x => x.Name?.Contains("Happimeter") ?? false))
             {
-                statusUpdate?.Invoke(BluetoothWriteEvent.Connected);
                 Console.WriteLine("Device already connected");
-                connectedDevices.FirstOrDefault(x => x.Name.Contains("Happimeter"))
-                                .WhenAnyCharacteristicDiscovered()
-                                .Where(characteristic => characteristic.Uuid == UuidHelper.GenericQuestionCharacteristicUuid)
-                                .Take(1)
-                                .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
-                                .Subscribe(characteristic =>
-                                {
-                                    CharacteristicDiscoveredForGenericQuestions(characteristic, statusUpdate);
-                                }, (err) =>
-                                {
-                                    statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnWrite);
-                                    CancelConnectionOnTimeoutError(err);
-                                });
+                var device = connectedDevices.FirstOrDefault(x => x.Name.Contains("Happimeter"));
+                return device;
             }
             else
             {
                 if (!CrossBleAdapter.Current.IsScanning)
                 {
                     Console.WriteLine("Not connected, not scanning, starting scanning");
-                    StartScan(UuidHelper.AndroidWatchServiceUuidString);
+                    var replaySubj = StartScan(UuidHelper.AndroidWatchServiceUuidString);
                 }
-
+                var userId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId();
+                var userIdBytes = System.Text.Encoding.UTF8.GetBytes(userId.ToString());
                 //we skip 2 because the first two bytes are not relevant to us. the actual advertisement data start at position 3
-                ScanReplaySubject.Where(scanRes => scanRes?.AdvertisementData?.ServiceData?.FirstOrDefault()?.Skip(2)?.SequenceEqual(userIdBytes) ?? false).Select(result => result.Device)
-                                 .Take(1)
-                                 .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
-                                 .Subscribe(result =>
-                                 {
-                                     Console.WriteLine("Found matching device");
-                                     result.Connect()
-                                           .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
-                                           .Subscribe(conn =>
-                                           {
-                                           statusUpdate?.Invoke(BluetoothWriteEvent.Connected);
-                                           Console.WriteLine("Connected");
-                                               result.WhenAnyCharacteristicDiscovered()
-                                                     .Where(characteristic => characteristic.Uuid == UuidHelper.GenericQuestionCharacteristicUuid)
-                                                    .Take(1)
-                                                    .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
-                                                     .Subscribe(characteristic =>
-                                                     {
-                                                         CharacteristicDiscoveredForGenericQuestions(characteristic, statusUpdate);
-                                                     }, (err) =>
-                                                      {
-                                                          statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnWrite);
-                                                          CancelConnectionOnTimeoutError(err);
-                                                      });
-                                           }, err => //Error from connecting to device
-                                            {
-                                                statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnConnectingToDevice);
-                                                Console.WriteLine($"Failed to connect to device: {result.Uuid}");
-                                           });
-
-                                 }, err => {//Error from Replaysubject (scan)
-                                     if (err is TimeoutException)
-                                     {
-                                         Console.WriteLine($"No device found in {_messageTimeoutSeconds} seconds");
-                                     }
-                                     else
-                                     {
-                                         Console.WriteLine($"Received unknown exception on exchange data attempt: {err.Message}");
-                                     }
-                                     statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnConnectingToDevice);
-                                 });
-            }
-        }
-
-        private async void CharacteristicDiscoveredForGenericQuestions(IGattCharacteristic characteristic, Action<BluetoothWriteEvent> statusUpdate = null) {
-            if (characteristic.Uuid == UuidHelper.GenericQuestionCharacteristicUuid) {
-                var genericQuestions = ServiceLocator.Instance.Get<ISharedDatabaseContext>().GetAll<GenericQuestion>();
-                var genericQuestionMessage = new GenericQuestionMessage
-                {
-                    Questions = genericQuestions
-                };
-
-                var result = await WriteAsync(characteristic, genericQuestionMessage);
-                if (result) {
-                    statusUpdate?.Invoke(BluetoothWriteEvent.Complete);
-                } else {
-                    statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnWrite);
+                var device = await ScanReplaySubject.Where(scanRes => scanRes?.AdvertisementData?.ServiceData?.FirstOrDefault()?.Skip(2)?.SequenceEqual(userIdBytes) ?? false).Select(result => result.Device)
+                                                          .Take(1)
+                                                          .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
+                                                    .Catch((Exception arg) =>
+                                                    {
+                                                        Console.WriteLine(arg.Message);
+                                                        return Observable.Return<IDevice>(null);
+                                                    });
+                if (device == null) {
+                    return null;
                 }
+
+                bool connectionResult = true;
+                await device.Connect(
+                    new GattConnectionConfig
+                    {
+                        AutoConnect = false,
+                        Priority = ConnectionPriority.High
+                    })
+                    .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
+                                                .Catch((Exception arg) =>
+                                                {
+                                                    connectionResult = false;
+                                                    return Observable.Return<object>(null);
+                                                });
+
+                if (!connectionResult) {
+                    //connection was not successful!
+                    return null;
+                }
+                return device;
             }
         }
 
+
+
+        public async void SendGenericQuestions(Action<BluetoothWriteEvent> statusUpdate = null) {
+            statusUpdate?.Invoke(BluetoothWriteEvent.Initialized);
+            var device = await GetConnectedDevice();
+            if (device == null) {
+                //device could either not be found or not be connected to
+                statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnConnectingToDevice);
+                return;
+            }
+            statusUpdate?.Invoke(BluetoothWriteEvent.Connected);
+            var characteristic = await device.WhenAnyCharacteristicDiscovered()
+                                             .Where(charac => charac.Uuid == UuidHelper.GenericQuestionCharacteristicUuid)
+                                             .Take(1)
+                                             .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
+                                             .Catch((Exception e) => null);
+
+            if (characteristic == null) {
+                //we did not find the characteristic within the give timeframe
+                statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnConnectingToDevice);
+                return;
+            }
+
+            var genericQuestions = ServiceLocator.Instance.Get<ISharedDatabaseContext>().GetAll<GenericQuestion>();
+            var genericQuestionMessage = new GenericQuestionMessage
+            {
+                Questions = genericQuestions
+            };
+
+            var result = await WriteAsync(characteristic, genericQuestionMessage);
+            if (result)
+            {
+                statusUpdate?.Invoke(BluetoothWriteEvent.Complete);
+            }
+            else
+            {
+                statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnWrite);
+            }
+        }
 
         public event EventHandler<AndroidWatchExchangeDataEventArgs> DataExchangeStatusUpdate;
 
