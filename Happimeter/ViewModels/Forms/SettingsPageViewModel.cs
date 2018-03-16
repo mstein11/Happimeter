@@ -23,11 +23,6 @@ namespace Happimeter.ViewModels.Forms
                 .Instance
                 .Get<IAccountStoreService>()
                 .GetAccount()?.Username ?? "";
-            
-            GenericQuestionGroupId = ServiceLocator
-                .Instance
-                .Get<IConfigService>()
-                .GetConfigValueByKey(ConfigService.GenericQuestionGroupIdKey);
 
             var hasBtPairing = ServiceLocator.Instance.Get<ISharedDatabaseContext>().Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive) != null;
             ShowPushQuestionsToWatchButton = hasBtPairing;
@@ -114,7 +109,7 @@ namespace Happimeter.ViewModels.Forms
                 var questions = await ServiceLocator
                     .Instance
                     .Get<IMeasurementService>()
-                    .DownloadAndSaveGenericQuestions(GenericQuestionGroupId);
+                    .DownloadAndSaveGenericQuestions();
                 Timer timer = null;
                 if (questions == null) {
                     //Error while downloading questions
@@ -254,13 +249,6 @@ namespace Happimeter.ViewModels.Forms
         {
             get => _userEmail;
             set => SetProperty(ref _userEmail, value);
-        }
-
-        private string _genericQuestionGroupId;
-        public string GenericQuestionGroupId 
-        {
-            get => _genericQuestionGroupId;
-            set => SetProperty(ref _genericQuestionGroupId, value);
         }
 
         private bool _unsyncronizedChangedVisible;

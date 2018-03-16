@@ -23,22 +23,6 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
 
         public SurveyViewModel GetSurveyQuestions() {
             var questions = new SurveyViewModel();
-            var question1 = new SurveyFragmentViewModel
-            {
-                Question = "How Pleasant do you feel?",
-                IsHardcodedQuestion = true,
-                HardcodedId = 1,
-                Answer = 50
-            };
-            var question2 = new SurveyFragmentViewModel
-            {
-                Question = "How Active do you feel?",
-                IsHardcodedQuestion = true,
-                HardcodedId = 2,
-                Answer = 50
-            };
-            questions.Questions.Add(question1);
-            questions.Questions.Add(question2);
 
             var generics = ServiceLocator.Instance.Get<IDatabaseContext>().GetAll<GenericQuestion>();
             foreach (var generic in generics) {
@@ -47,9 +31,24 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
                     Answer = 50
                 });
             }
-
-            if (generics.Any()) {
-                questions.GenericQuestionGroupId = generics.FirstOrDefault().GenericQuestionGroupId;
+            if (!questions.Questions.Any()) {
+                //if we don't have any questions. Add the default ones.
+                var question1 = new SurveyFragmentViewModel
+                {
+                    Question = "How Pleasant do you feel?",
+                    IsHardcodedQuestion = true,
+                    QuestionId = 2,
+                    Answer = 50
+                };
+                var question2 = new SurveyFragmentViewModel
+                {
+                    Question = "How Active do you feel?",
+                    IsHardcodedQuestion = true,
+                    QuestionId = 1,
+                    Answer = 50
+                };
+                questions.Questions.Add(question1);
+                questions.Questions.Add(question2);                
             }
 
             return questions;

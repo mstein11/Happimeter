@@ -13,7 +13,7 @@ namespace Happimeter.Core.Database
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
-        public int? HardcodedQuestionId { get; set; }
+        public int QuestionId { get; set; }
         public string Question { get; set; }
         public int Answer { get; set; }
         public int AnswerDisplay { get; set; }

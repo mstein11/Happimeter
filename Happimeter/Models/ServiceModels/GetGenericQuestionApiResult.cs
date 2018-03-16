@@ -7,12 +7,17 @@ namespace Happimeter.Models.ServiceModels
     {
         public GetGenericQuestionApiResult()
         {
-            Questions = new List<string>();
+            Questions = new List<GenericQuestionItemApiResult>();
         }
 
-        public List<string> Questions { get; set; }
+        public List<GenericQuestionItemApiResult> Questions { get; set; }
 
         public HappimeterApiResultInformation ResultType { get; set; }
         public bool IsSuccess => ResultType == HappimeterApiResultInformation.Success;
+    }
+
+    public class GenericQuestionItemApiResult {
+        public int Id { get; set; }
+        public string Question { get; set; }
     }
 }

@@ -14,11 +14,11 @@ namespace Happimeter.Watch.Droid.ViewModels
             set => SetProperty(ref _question, value);
         }
 
-        private int? _hardcodedId = null;
-        public int? HardcodedId
+        private int _questionId;
+        public int QuestionId
         {
-            get => _hardcodedId;
-            set => SetProperty(ref _hardcodedId, value);
+            get => _questionId;
+            set => SetProperty(ref _questionId, value);
         }
 
         private bool _isHardcodedQuestion = false;

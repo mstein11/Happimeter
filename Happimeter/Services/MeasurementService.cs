@@ -25,42 +25,36 @@ namespace Happimeter.Services
 
         public SurveyViewModel GetSurveyQuestions()
         {
-
-            var groupId = ServiceLocator
-                .Instance
-                .Get<IConfigService>()
-                .GetConfigValueByKey(ConfigService.GenericQuestionGroupIdKey);
-
-            var questions = new SurveyViewModel
-            {
-                GenericQuestionGroupId = groupId
-            };
-
-            var question1 = new SurveyItemViewModel
-            {
-                Question = "How Pleasant do you feel?",
-                HardcodedId = 1,
-                Answer = .5
-            };
-            var question2 = new SurveyItemViewModel
-            {
-                Question = "How Active do you feel?",
-                HardcodedId = 2,
-                Answer = .5
-            };
-
+            var questions = new SurveyViewModel();
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
 
-            var dbQuestions = context.GetAll<GenericQuestion>(x => x.GenericQuestionGroupId == groupId);
+            var dbQuestions = context.GetAll<GenericQuestion>();
             var additionalQuestions = dbQuestions.Select(x => new SurveyItemViewModel
             {
                 Question = x.Question,
+                QuestionId = x.QuestionId,
                 Answer = .5,
             });
 
-            questions.SurveyItems.Add(question1);
-            questions.SurveyItems.Add(question2);
-            questions.SurveyItems.AddRange(additionalQuestions);
+            if (additionalQuestions.Count() == 0) {
+                //if we don't have downloaded any questions, lets use the standart questions
+                var question1 = new SurveyItemViewModel
+                {
+                    Question = "How Pleasant do you feel?",
+                    QuestionId = 2, //QuestionId corresponds to the question id of the server
+                    Answer = .5
+                };
+                var question2 = new SurveyItemViewModel
+                {
+                    Question = "How Active do you feel?",
+                    QuestionId = 1, //QuestionId corresponds to the question id of the server
+                    Answer = .5
+                };
+                questions.SurveyItems.Add(question1);
+                questions.SurveyItems.Add(question2);                
+            } else {
+                questions.SurveyItems.AddRange(additionalQuestions);    
+            }
 
             return questions;
         }
@@ -98,15 +92,15 @@ namespace Happimeter.Services
                 IdFromWatch = -1,
                 Timestamp = DateTime.UtcNow,
                 SurveyItemMeasurement = new List<SurveyItemMeasurement>(),
-                GenericQuestionGroupId = model.GenericQuestionGroupId
+                //GenericQuestionGroupId = model.GenericQuestionGroupId
             };
 
             foreach (var item in model.SurveyItems) {
                 surveyMeasurement.SurveyItemMeasurement.Add(new SurveyItemMeasurement
                 {
                     Answer = (int)(item.Answer * 100),
-                    HardcodedQuestionId = item.HardcodedId,
                     Question = item.Question,
+                    QuestionId = item.QuestionId,//identifier for server
                     AnswerDisplay = item.AnswerDisplay
                 });  
             }
@@ -145,6 +139,7 @@ namespace Happimeter.Services
             var result = new List<PostMoodServiceModel>();
 
             foreach (var entry in entries) {
+                var answers = entry.SurveyItemMeasurement.Select(x => new KeyValuePair<int, int>(x.QuestionId, x.Answer)).ToDictionary(x => x.Key, x => x.Value);
                 result.Add(new PostMoodServiceModel
                 {
                     Id = entry.Id,
@@ -152,14 +147,15 @@ namespace Happimeter.Services
                     LocalTimestamp = new DateTimeOffset(entry.Timestamp.ToLocalTime()).ToUnixTimeSeconds(),
                     Activation = GetOldSurveyScaleValue(entry
                                                         ?.SurveyItemMeasurement
-                                                        ?.FirstOrDefault(x => x.HardcodedQuestionId == (int)SurveyHardcodedEnumeration.Activation)?.Answer ?? 0),
+                                                        ?.FirstOrDefault(x => x.QuestionId == (int)SurveyHardcodedEnumeration.Activation)?.Answer ?? 0),
                     Pleasance = GetOldSurveyScaleValue(entry
                                                         ?.SurveyItemMeasurement
-                                                        ?.FirstOrDefault(x => x.HardcodedQuestionId == (int)SurveyHardcodedEnumeration.Pleasance)?.Answer ?? 0),
+                                                       ?.FirstOrDefault(x => x.QuestionId == (int)SurveyHardcodedEnumeration.Pleasance)?.Answer ?? 0),
                     DeviceId = "",
-                    GenericQuestionCount = entry.GenericQuestionGroupId != null ? entry.SurveyItemMeasurement.Count(x => x.HardcodedQuestionId == 0 || x.HardcodedQuestionId == null) : 0,
-                    GenericQuestionGroup = entry.GenericQuestionGroupId,
-                    GenericQuestionValues = entry.SurveyItemMeasurement.Where(x => x.HardcodedQuestionId == 0 || x.HardcodedQuestionId == null).Select(x => GetOldSurveyScaleValue(x.Answer)).ToArray()
+                    MoodAnswers = answers
+                    //GenericQuestionCount = entry.GenericQuestionGroupId != null ? entry.SurveyItemMeasurement.Count(x => x.HardcodedQuestionId == 0 || x.HardcodedQuestionId == null) : 0,
+                    //GenericQuestionGroup = entry.GenericQuestionGroupId,
+                    //GenericQuestionValues = entry.SurveyItemMeasurement.Where(x => x.HardcodedQuestionId == 0 || x.HardcodedQuestionId == null).Select(x => GetOldSurveyScaleValue(x.Answer)).ToArray()
                 });
             }
 
@@ -286,32 +282,25 @@ namespace Happimeter.Services
         ///     Returns null, when api return an error (e.g. no internt)
         /// </summary>
         /// <returns>The and save generic questions.</returns>
-        /// <param name="groupId">Group identifier.</param>
-        public async Task<List<GenericQuestion>> DownloadAndSaveGenericQuestions(string groupId) {
-            List<string> genericQuestions = new List<string>();
+        public async Task<List<GenericQuestion>> DownloadAndSaveGenericQuestions() {
+            List<GenericQuestionItemApiResult> genericQuestions = new List<GenericQuestionItemApiResult>();
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
-            if (!string.IsNullOrEmpty(groupId)) {
-                var api = ServiceLocator.Instance.Get<IHappimeterApiService>();
-                var questions = await api.GetGenericQuestions(groupId);
-                if (!questions.IsSuccess)
-                {
-                    return null;
-                }
-                genericQuestions.AddRange(questions.Questions);
-            }
 
+            var api = ServiceLocator.Instance.Get<IHappimeterApiService>();
+            var questions = await api.GetGenericQuestions();
+            if (!questions.IsSuccess)
+            {
+                return null;
+            }
+            genericQuestions.AddRange(questions.Questions);
 
             context.DeleteAll<GenericQuestion>();
 
-            ServiceLocator
-                .Instance
-                .Get<IConfigService>()
-                .AddOrUpdateConfigEntry(ConfigService.GenericQuestionGroupIdKey, groupId);
-
             var dbQuestions = genericQuestions.Select(q => new GenericQuestion
             {
-                GenericQuestionGroupId = groupId,
-                Question = q
+                //GenericQuestionGroupId = groupId,
+                Question = q.Question,
+                QuestionId = q.Id
             }).ToList();
 
             foreach (var dbQuestion in dbQuestions) {

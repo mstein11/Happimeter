@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Happimeter.Models.ServiceModels
@@ -20,6 +21,8 @@ namespace Happimeter.Models.ServiceModels
         public double Lat { get; set; }
         [JsonProperty("lon")]
         public double Lon { get; set; }
+        [JsonProperty("mood_answers")]
+        public Dictionary<int, int> MoodAnswers { get; set; }
 
         [JsonProperty("generic_question_group")]
         public string GenericQuestionGroup { get; set; }

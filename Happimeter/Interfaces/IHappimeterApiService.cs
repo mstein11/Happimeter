@@ -14,6 +14,6 @@ namespace Happimeter.Interfaces
         event EventHandler<SynchronizeDataEventArgs> UploadMoodStatusUpdate;
         Task<HappimeterApiResultInformation> UploadSensor();
         event EventHandler<SynchronizeDataEventArgs> UploadSensorStatusUpdate;
-        Task<GetGenericQuestionApiResult> GetGenericQuestions(string groupId);
+        Task<GetGenericQuestionApiResult> GetGenericQuestions();
     }
 }

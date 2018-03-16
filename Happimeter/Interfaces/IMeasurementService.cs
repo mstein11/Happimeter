@@ -19,6 +19,6 @@ namespace Happimeter.Interfaces
         (List<PostSensorDataServiceModel>, List<SensorMeasurement>) GetSensorDataForServer();
         void SetIsUploadedToServerForSensorData(PostSensorDataServiceModel sensor);
         bool HasUnsynchronizedChanges();
-        Task<List<GenericQuestion>> DownloadAndSaveGenericQuestions(string groupId);
+        Task<List<GenericQuestion>> DownloadAndSaveGenericQuestions();
     }
 }

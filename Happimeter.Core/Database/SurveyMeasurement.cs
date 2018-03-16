@@ -16,7 +16,5 @@ namespace Happimeter.Core.Database
 
         [OneToMany(CascadeOperations = CascadeOperation.All)]
         public List<SurveyItemMeasurement> SurveyItemMeasurement { get; set; }
-
-        public string GenericQuestionGroupId { get; set; }
     }
 }

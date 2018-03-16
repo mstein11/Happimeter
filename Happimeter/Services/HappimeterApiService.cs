@@ -23,10 +23,9 @@ namespace Happimeter.Services
         private const string ApiPathAuth = "/v1/auth";
         private const string ApiPathRegister = "/v1/users";
         private const string ApiPathGetMe = "/v1/me";
-        private const string ApiPathGetGenericQuestion = "/v1/moods/genericquestions/";
+        private const string ApiPathGetGenericQuestion = "/v1/moods/genericquestions";
 
-        private const string ApiPathPostMood = "/v1/moods";
-        private const string ApiPathPostMoodV2 = "/v2/moods";
+        private const string ApiPathPostMood = "/v1/moods-generic";
         private const string ApiPathPostSensor = "/v1/sensors";
         private const string ApiPathPostSensorV2 = "/v2/sensors";
 
@@ -187,8 +186,6 @@ namespace Happimeter.Services
             }
 
             var url = GetUrlForPath(ApiPathPostMood);
-            var newUrl = GetUrlForPath(ApiPathPostMoodV2);
-
 
             HttpResponseMessage result = null;
             try
@@ -201,37 +198,32 @@ namespace Happimeter.Services
                     EventType = SyncronizeDataStates.UploadingMood
                 });
 
-                result = await _restService.Post(newUrl, toSendNewFormat);
-                if (!result.IsSuccessStatusCode)
-                {
-                    //if the new api is not available yet, we try to send with the old one.
-                    foreach (var moodEntry in toSend) {
+                //if the new api is not available yet, we try to send with the old one.
+                foreach (var moodEntry in toSend) {
+                    UploadMoodStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
+                    {
+                        EntriesSent = counter,
+                        TotalEntries = toSend.Count,
+                        EventType = SyncronizeDataStates.UploadingMood
+                    });
+                    result = await _restService.Post(url, moodEntry);
+                    if (result.IsSuccessStatusCode)
+                    {
+                        measurementService.SetIsUploadedToServerForSurveys(moodEntry);
+                    }
+                    else
+                    {
                         UploadMoodStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
                         {
                             EntriesSent = counter,
                             TotalEntries = toSend.Count,
-                            EventType = SyncronizeDataStates.UploadingMood
+                            EventType = SyncronizeDataStates.UploadingError
                         });
-                        result = await _restService.Post(url, moodEntry);
-                        if (result.IsSuccessStatusCode)
-                        {
-                            measurementService.SetIsUploadedToServerForSurveys(moodEntry);
-                        }
-                        else
-                        {
-                            UploadMoodStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
-                            {
-                                EntriesSent = counter,
-                                TotalEntries = toSend.Count,
-                                EventType = SyncronizeDataStates.UploadingError
-                            });
-                            return HappimeterApiResultInformation.UnknownError;
-                        } 
-                    
-
-                        counter++;
-                    }
+                        return HappimeterApiResultInformation.UnknownError;
+                    } 
+                    counter++;
                 }
+
 
                 UploadMoodStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
                 {
@@ -334,10 +326,9 @@ namespace Happimeter.Services
             }
         }
 
-        public async Task<GetGenericQuestionApiResult> GetGenericQuestions(string groupId) {
+        public async Task<GetGenericQuestionApiResult> GetGenericQuestions() {
             var methodResult = new GetGenericQuestionApiResult();
             var url = GetUrlForPath(ApiPathGetGenericQuestion);
-            url += groupId;
             HttpResponseMessage result = null;
             try
             {

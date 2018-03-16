@@ -83,9 +83,9 @@ namespace Happimeter.ViewModels.Forms
                 return;
             }
             HasData = true;
-            OverallAverageResponse = _measurements.Where(x => x.SurveyItemMeasurement.Any(y => y.HardcodedQuestionId == (int)type))
+            OverallAverageResponse = _measurements.Where(x => x.SurveyItemMeasurement.Any(y => y.QuestionId == (int)type))
                                               .Average(measurements => measurements.SurveyItemMeasurement
-                                                       .FirstOrDefault(item => item.HardcodedQuestionId == (int)type)?.Answer ?? 0);
+                                                       .FirstOrDefault(item => item.QuestionId == (int)type)?.Answer ?? 0);
 
             NumberOfResponses = _measurements.Count;
             LastResponse = _measurements.OrderByDescending(x => x.Timestamp).FirstOrDefault()?.Timestamp.ToLocalTime() ?? new DateTime();

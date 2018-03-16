@@ -32,11 +32,11 @@ namespace Happimeter.ViewModels.Forms
             set => SetProperty(ref _question, value);
         }
 
-        private int _hardcodedId;
-        public int HardcodedId 
+        private int _questionId;
+        public int QuestionId
         {
-            get => _hardcodedId;
-            set => SetProperty(ref _hardcodedId, value);
+            get => _questionId;
+            set => SetProperty(ref _questionId, value);
         }
     }
 }
