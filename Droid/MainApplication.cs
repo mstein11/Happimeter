@@ -15,6 +15,7 @@ namespace Happimeter.Droid
     [Application]
     public class MainApplication : Application, Application.IActivityLifecycleCallbacks
     {
+        private bool _isInitialized = false;
         public MainApplication(IntPtr handle, JniHandleOwnership transer)
         : base(handle, transer)
         {
@@ -29,7 +30,7 @@ namespace Happimeter.Droid
             RegisterActivityLifecycleCallbacks(this);
 
             Droid.DependencyInjection.Container.RegisterElements();
-            App.Initialize();
+
 
         }
 
@@ -41,8 +42,12 @@ namespace Happimeter.Droid
 
         public void OnActivityCreated(Activity activity, Bundle savedInstanceState)
         {
-            Xamarin.Forms.Forms.Init(this, savedInstanceState);
             CrossCurrentActivity.Current.Activity = activity;
+            if (!_isInitialized) {
+                Xamarin.Forms.Forms.Init(this, savedInstanceState);   
+                App.Initialize();
+                _isInitialized = true;
+            }
         }
 
         public void OnActivityDestroyed(Activity activity)
