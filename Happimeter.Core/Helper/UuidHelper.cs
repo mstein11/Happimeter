@@ -15,6 +15,9 @@ namespace Happimeter.Core.Helper
         public const string DataExchangeCharacteristicUuidString = "7918ec07-2ba4-4542-aa13-0a10ff3826ba";
         public static Guid DataExchangeCharacteristicUuid => Guid.Parse(DataExchangeCharacteristicUuidString);
 
+        public const string AuthCharacteristicUuidString = "68b13553-0c4d-43de-8c1c-2b10d77d2d90";
+        public static Guid AuthCharacteristicUuid => Guid.Parse(AuthCharacteristicUuidString);
+
         public const string GenericQuestionCharacteristicUuidString = "679a39d2-1d7c-11e8-b467-0ed5f89f718b";
         public static Guid GenericQuestionCharacteristicUuid => Guid.Parse(GenericQuestionCharacteristicUuidString);
 

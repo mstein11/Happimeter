@@ -14,11 +14,9 @@ namespace Happimeter.Watch.Droid.Bluetooth
         private HappimeterService() : base(uuid: UUID.FromString(UuidHelper.AndroidWatchServiceUuidString),serviceType: GattServiceType.Primary)
         {
             Characteristics.Add(new HappimeterDataCharacteristic());
-            //Characteristics.Add(new HappimeterAuthCharacteristic());
             Characteristics.Add(new HappimeterGenericQuestionCharacteristic());
-            Characteristics.Add(new ReadCharacteristic());
 
-            var descriptorForNotifications = new BluetoothGattDescriptor(UUID.FromString("00002902-0000-1000-8000-00805F9B34FB"), GattDescriptorPermission.Read | GattDescriptorPermission.Write);
+            //var descriptorForNotifications = new BluetoothGattDescriptor(UUID.FromString("00002902-0000-1000-8000-00805F9B34FB"), GattDescriptorPermission.Read | GattDescriptorPermission.Write);
 
             /*
             foreach(var characteristic in Characteristics)  {

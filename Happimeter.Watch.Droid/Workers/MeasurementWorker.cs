@@ -148,10 +148,10 @@ namespace Happimeter.Watch.Droid.Workers
                 sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
                 {
                     Type = MeasurementItemTypes.Light,
-                    NumberOfMeasures = stepMeasuresToSave.Count(),
-                    Average = stepMeasuresToSave.Average(),
-                    StdDev = stepMeasuresToSave.StdDev(),
-                    Magnitude = stepMeasuresToSave.Sum()
+                    NumberOfMeasures = lightMeasuresToSave.Count(),
+                    Average = lightMeasuresToSave.Average(),
+                    StdDev = lightMeasuresToSave.StdDev(),
+                    Magnitude = lightMeasuresToSave.Sum()
                 });
             }
 

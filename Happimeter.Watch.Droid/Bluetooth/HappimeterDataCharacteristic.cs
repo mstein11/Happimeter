@@ -22,7 +22,7 @@ namespace Happimeter.Watch.Droid.Bluetooth
         public HappimeterDataCharacteristic() : base(uuid: UUID.FromString(UuidHelper.DataExchangeCharacteristicUuidString), properties: GattProperties, permissions: GattPermissions)
         {
             var uuid = UUID.FromString("00002902-0000-1000-8000-00805f9b34fb");
-            this.WriteType = GattWriteType.Default;
+            //this.WriteType = GattWriteType.Default;
             var configDescriptor = new BluetoothGattDescriptor(uuid, GattDescriptorPermission.Read | GattDescriptorPermission.Write);
             AddDescriptor(configDescriptor);
         }

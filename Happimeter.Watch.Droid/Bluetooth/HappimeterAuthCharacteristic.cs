@@ -16,15 +16,18 @@ namespace Happimeter.Watch.Droid.Bluetooth
 {
     public class HappimeterAuthCharacteristic : BluetoothGattCharacteristic
     {
-        public const string CharacteristicUuid = "68b13553-0c4d-43de-8c1c-2b10d77d2d90";
         private const GattProperty GattProperties = GattProperty.Read | GattProperty.Write | GattProperty.Notify;
-        private const GattPermission GattPermissions = GattPermission.ReadEncrypted | GattPermission.WriteEncrypted;
+        private const GattPermission GattPermissions = GattPermission.Read | GattPermission.Write;
         private Dictionary<string, bool> AuthenticationDeviceDidGreat = new Dictionary<string, bool>();
 
         private Dictionary<string, ReadHostContext> ReadHostContextForDevice = new Dictionary<string, ReadHostContext>();
 
-        public HappimeterAuthCharacteristic() : base(uuid: UUID.FromString(CharacteristicUuid), properties: GattProperties, permissions: GattPermissions)
+        public HappimeterAuthCharacteristic() : base(uuid: UUID.FromString(UuidHelper.AuthCharacteristicUuidString), properties: GattProperties, permissions: GattPermissions)
         {
+            var uuid = UUID.FromString("00002902-0000-1000-8000-00805f9b34fb");
+            //this.WriteType = GattWriteType.Default;
+            var configDescriptor = new BluetoothGattDescriptor(uuid, GattDescriptorPermission.Read | GattDescriptorPermission.Write);
+            //AddDescriptor(configDescriptor);
         }
 
 

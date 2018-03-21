@@ -53,12 +53,24 @@ namespace Happimeter.Models
                             OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.AuthCharacteristicDiscovered, null);
 
                             var btService = ServiceLocator.Instance.Get<IBluetoothService>();
+
+                            var notificationsEnabled = await characteristic.EnableNotifications(true);
+                            if (notificationsEnabled) {
+                                Console.WriteLine("Notifications Enabled");
+                            }
+                            //not really needed but we leave it here incase we want to implement notifications
+                            characteristic.WhenNotificationReceived().Take(1).Subscribe(result =>
+                            {
+                                Debug.WriteLine("Got Notification: " + System.Text.Encoding.UTF8.GetString(result.Data));
+                            });
+
                             var writeResult = await btService.WriteAsync(characteristic, new AuthFirstMessage());
                             if (!writeResult) {
                                 //we got an error here
                                 OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorOnFirstWrite, null);
                                 return;
                             }
+                            return;
                             OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.FirstWriteSuccessfull, null);
 
                             var readResult = await btService.ReadAsync(characteristic);
@@ -103,11 +115,6 @@ namespace Happimeter.Models
                             OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.Complete, null);
                             ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.PairEvent);
 
-                            //not really needed but we leave it here incase we want to implement notifications
-                            characteristic.WhenNotificationReceived().Take(1).Subscribe(result =>
-                            {
-                                Debug.WriteLine("Got Notification: " + System.Text.Encoding.UTF8.GetString(result.Data));
-                            });
                         });
                     } catch (Exception e) {
                         Console.WriteLine("Something went wrong during authentication. Error: " + e.Message);

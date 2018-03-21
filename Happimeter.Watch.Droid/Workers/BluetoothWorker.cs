@@ -113,6 +113,18 @@ namespace Happimeter.Watch.Droid.Workers
             ConnectableAdvertisement();
         }
 
+        public void SendNotifiation(BluetoothDevice device = null, BluetoothGattCharacteristic characteristic = null) {
+            if (characteristic == null || device == null) {
+                return;
+            }
+
+            characteristic = GattServer.GetService(UUID.FromString(UuidHelper.AndroidWatchAuthServiceUuidString)).GetCharacteristic(UUID.FromString(UuidHelper.AuthCharacteristicUuidString));
+            characteristic.SetValue(new byte[] { 0x01, 0x02 });
+            var res = GattServer.NotifyCharacteristicChanged(device, characteristic, false);
+            Console.WriteLine(res);
+
+        }
+
         private void ConnectableAdvertisement()
         {
 
@@ -395,7 +407,7 @@ namespace Happimeter.Watch.Droid.Workers
                     }
 
                 }
-                else if (value.SequenceEqual(BluetoothGattDescriptor.EnableNotificationValue))
+                else if (value.SequenceEqual(BluetoothGattDescriptor.DisableNotificationValue))
                 {
                     if (Worker.SubscribedDevices.ContainsKey(device.Address))
                     {
@@ -419,9 +431,13 @@ namespace Happimeter.Watch.Droid.Workers
                             requestId,
                             Android.Bluetooth.GattStatus.Success,
                             0,
-                            null);
+                            value);
                 }
             }
+
+            Worker.SendNotifiation(device, descriptor.Characteristic);
+
+
         }
 
         public override void OnMtuChanged(BluetoothDevice device, int mtu)
