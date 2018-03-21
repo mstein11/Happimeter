@@ -20,5 +20,7 @@ namespace Happimeter.Interfaces
         Task<bool> WriteAsync(IGattCharacteristic characteristic, BaseBluetoothMessage message);
         Task<string> ReadAsync(IGattCharacteristic characteristic, Action<int, int> statusUpdateAction = null);
         Task<string> AwaitNotificationAsync(IGattCharacteristic characteristic);
+        Task EnableNotificationsFor(IGattCharacteristic characteristic);
+        IObservable<(string, string)> WhenNotificationReceived();
     }
 }

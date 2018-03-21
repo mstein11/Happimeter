@@ -113,11 +113,7 @@ namespace Happimeter.Watch.Droid.Workers
             ConnectableAdvertisement();
         }
 
-        public void SendNotifiation(BluetoothGattCharacteristic characteristic = null, BaseBluetoothMessage message) {
-            if (characteristic == null) {
-                return;
-            }
-
+        public void SendNotifiation(BluetoothGattCharacteristic characteristic = null, BaseBluetoothMessage message = null) {
             var readhost = new ReadHostContext(message);
             var header = readhost.Header;
             characteristic = GattServer.GetService(UUID.FromString(UuidHelper.AndroidWatchAuthServiceUuidString)).GetCharacteristic(UUID.FromString(UuidHelper.AuthCharacteristicUuidString));
@@ -130,7 +126,6 @@ namespace Happimeter.Watch.Droid.Workers
                 }
             }
 
-
             while(!readhost.Complete) {
                 var messagePart = readhost.GetNextBytes(20);
                 characteristic.SetValue(messagePart);
@@ -139,10 +134,6 @@ namespace Happimeter.Watch.Droid.Workers
                     GattServer.NotifyCharacteristicChanged(dev.Value, characteristic, false);    
                 }
             }
-            //characteristic = GattServer.GetService(UUID.FromString(UuidHelper.AndroidWatchAuthServiceUuidString)).GetCharacteristic(UUID.FromString(UuidHelper.AuthCharacteristicUuidString));
-            //characteristic.SetValue(new byte[] { 0x01, 0x02 });
-            //var res = GattServer.NotifyCharacteristicChanged(device, characteristic, false);
-            //Console.WriteLine(res);
         }
 
         private void ConnectableAdvertisement()
@@ -455,7 +446,7 @@ namespace Happimeter.Watch.Droid.Workers
                 }
             }
 
-            Worker.SendNotifiation(device, descriptor.Characteristic);
+            //Worker.SendNotifiation(device, descriptor.Characteristic);
 
 
         }

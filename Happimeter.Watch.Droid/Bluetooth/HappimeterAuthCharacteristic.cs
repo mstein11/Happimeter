@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Android.Bluetooth;
 using Happimeter.Core.Helper;
 using Happimeter.Core.Models.Bluetooth;
-using Happimeter.Watch.Droid.Database;
 using Happimeter.Watch.Droid.ServicesBusinessLogic;
 using Happimeter.Watch.Droid.Workers;
 using Java.Util;
@@ -70,7 +64,12 @@ namespace Happimeter.Watch.Droid.Bluetooth
                 {
                     AuthenticationDeviceDidGreat.Add(address, true);
                 }
-                BluetoothWorker.GetInstance().SendNotifiation(null, new BaseBluetoothMessage("Test"));
+
+                var timer = new System.Threading.Timer((obj) =>
+                {
+                    BluetoothWorker.GetInstance().SendNotifiation(null, new AuthNotificationMessage(true));
+                }, null, 5000, System.Threading.Timeout.Infinite);
+
                 return;
             }
 

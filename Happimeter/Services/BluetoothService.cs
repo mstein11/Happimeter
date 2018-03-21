@@ -505,15 +505,14 @@ namespace Happimeter.Services
         }
 
         public async Task<string> AwaitNotificationAsync(IGattCharacteristic characteristic) {
-            var enableResult = await characteristic.EnableNotifications();
-            if (!enableResult) {
-                return null;
+            if (!CharacteristicNotifiationSubjects.ContainsKey(characteristic.Uuid.ToString())) {
+                await EnableNotificationsFor(characteristic);
             }
-
-            var headerNotificationResult =  await characteristic.WhenNotificationReceived();
+            var notificationSubject = CharacteristicNotifiationSubjects[characteristic.Uuid.ToString()] as IObservable<CharacteristicResult>;
+            var headerNotificationResult =  await notificationSubject.FirstAsync();
             var context = new WriteReceiverContext(headerNotificationResult.Data);
             while (true) {
-                var messagePart = await characteristic.WhenNotificationReceived();
+                var messagePart = await notificationSubject;
                 if (!context.CanAddMessagePart(messagePart.Data)) {
                     return null;
                 }
@@ -522,7 +521,47 @@ namespace Happimeter.Services
                     break;
                 }
             }
+            var subject = CharacteristicNotifiationSubjects[characteristic.Uuid.ToString()];
+            subject.OnCompleted();
+            CharacteristicNotifiationSubjects.Remove(characteristic.Uuid.ToString());
+
             return context.GetMessageAsJson();
+        }
+
+        private Dictionary<string, ReplaySubject<CharacteristicResult>> CharacteristicNotifiationSubjects = new Dictionary<string, ReplaySubject<CharacteristicResult>>();
+        //first string is message name, second string is message json
+        private ReplaySubject<(string, string)> NotificationSubject = new ReplaySubject<(string, string)>(TimeSpan.FromSeconds(2));
+        public IObservable<(string, string)> WhenNotificationReceived() {
+            return NotificationSubject as IObservable<(string, string)>;
+        }
+
+        public async Task EnableNotificationsFor(IGattCharacteristic characteristic) {
+            var res = await characteristic.EnableNotifications();
+            if (!res) {
+                throw new Exception("Could not enable Notifications");
+            }
+            WriteReceiverContext context = null;
+            characteristic.WhenNotificationReceived().Subscribe(result => {
+                if (result.Data == null) {
+                    return;
+                }
+                if (context == null) {
+                    context = new WriteReceiverContext(result.Data);
+                    return;
+                }
+                if (!context.CanAddMessagePart(result.Data))
+                {
+                    context = null;
+                    return;
+                }
+                context.AddMessagePart(result.Data);
+                if (context.ReadComplete) {
+                    var json = context.GetMessageAsJson();
+                    var name = context.MessageName;
+                    context = null;
+                    NotificationSubject.OnNext((name, json));
+                }
+            });
         }
     }
 }
