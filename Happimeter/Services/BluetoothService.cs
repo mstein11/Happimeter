@@ -503,5 +503,26 @@ namespace Happimeter.Services
             var returnJson = context.GetMessageAsJson();
             return returnJson;
         }
+
+        public async Task<string> AwaitNotificationAsync(IGattCharacteristic characteristic) {
+            var enableResult = await characteristic.EnableNotifications();
+            if (!enableResult) {
+                return null;
+            }
+
+            var headerNotificationResult =  await characteristic.WhenNotificationReceived();
+            var context = new WriteReceiverContext(headerNotificationResult.Data);
+            while (true) {
+                var messagePart = await characteristic.WhenNotificationReceived();
+                if (!context.CanAddMessagePart(messagePart.Data)) {
+                    return null;
+                }
+                context.AddMessagePart(messagePart.Data);
+                if (context.ReadComplete) {
+                    break;
+                }
+            }
+            return context.GetMessageAsJson();
+        }
     }
 }

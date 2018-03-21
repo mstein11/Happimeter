@@ -113,16 +113,36 @@ namespace Happimeter.Watch.Droid.Workers
             ConnectableAdvertisement();
         }
 
-        public void SendNotifiation(BluetoothDevice device = null, BluetoothGattCharacteristic characteristic = null) {
-            if (characteristic == null || device == null) {
+        public void SendNotifiation(BluetoothGattCharacteristic characteristic = null, BaseBluetoothMessage message) {
+            if (characteristic == null) {
                 return;
             }
 
+            var readhost = new ReadHostContext(message);
+            var header = readhost.Header;
             characteristic = GattServer.GetService(UUID.FromString(UuidHelper.AndroidWatchAuthServiceUuidString)).GetCharacteristic(UUID.FromString(UuidHelper.AuthCharacteristicUuidString));
-            characteristic.SetValue(new byte[] { 0x01, 0x02 });
-            var res = GattServer.NotifyCharacteristicChanged(device, characteristic, false);
-            Console.WriteLine(res);
+            characteristic.SetValue(header);
 
+            foreach (var dev in SubscribedDevices) {
+                var headerResult = GattServer.NotifyCharacteristicChanged(dev.Value, characteristic, false);    
+                if (!headerResult) {
+                    throw new ArgumentException("Could not notify client");
+                }
+            }
+
+
+            while(!readhost.Complete) {
+                var messagePart = readhost.GetNextBytes(20);
+                characteristic.SetValue(messagePart);
+                foreach (var dev in SubscribedDevices)
+                {
+                    GattServer.NotifyCharacteristicChanged(dev.Value, characteristic, false);    
+                }
+            }
+            //characteristic = GattServer.GetService(UUID.FromString(UuidHelper.AndroidWatchAuthServiceUuidString)).GetCharacteristic(UUID.FromString(UuidHelper.AuthCharacteristicUuidString));
+            //characteristic.SetValue(new byte[] { 0x01, 0x02 });
+            //var res = GattServer.NotifyCharacteristicChanged(device, characteristic, false);
+            //Console.WriteLine(res);
         }
 
         private void ConnectableAdvertisement()

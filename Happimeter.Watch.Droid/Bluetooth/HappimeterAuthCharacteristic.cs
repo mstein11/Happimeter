@@ -70,6 +70,7 @@ namespace Happimeter.Watch.Droid.Bluetooth
                 {
                     AuthenticationDeviceDidGreat.Add(address, true);
                 }
+                BluetoothWorker.GetInstance().SendNotifiation(null, new BaseBluetoothMessage("Test"));
                 return;
             }
 

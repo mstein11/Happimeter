@@ -54,15 +54,12 @@ namespace Happimeter.Models
 
                             var btService = ServiceLocator.Instance.Get<IBluetoothService>();
 
-                            var notificationsEnabled = await characteristic.EnableNotifications(true);
-                            if (notificationsEnabled) {
-                                Console.WriteLine("Notifications Enabled");
+                            var notification = await btService.AwaitNotificationAsync(characteristic);
+                            if (notification == null) {
+                                OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorOnRead, null);
+                                return;
                             }
-                            //not really needed but we leave it here incase we want to implement notifications
-                            characteristic.WhenNotificationReceived().Take(1).Subscribe(result =>
-                            {
-                                Debug.WriteLine("Got Notification: " + System.Text.Encoding.UTF8.GetString(result.Data));
-                            });
+
 
                             var writeResult = await btService.WriteAsync(characteristic, new AuthFirstMessage());
                             if (!writeResult) {
