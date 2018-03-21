@@ -10,6 +10,7 @@ using System.Reactive.Subjects;
 using Happimeter.Core.Events;
 using SQLite;
 using SQLiteNetExtensions.Extensions;
+using System.Threading.Tasks;
 
 namespace Happimeter.Core.Database
 {
@@ -25,12 +26,18 @@ namespace Happimeter.Core.Database
         {
         }
 
-        protected virtual string GetDatabasePath() {
+        protected virtual string GetDatabasePath()
+        {
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), DatabaseName);
         }
 
-        protected virtual SQLiteConnection GetConnection() {
+        protected virtual SQLiteConnection GetConnection()
+        {
             return new SQLiteConnection(GetDatabasePath());
+        }
+        protected virtual SQLiteAsyncConnection GetAsyncConnection()
+        {
+            return new SQLiteAsyncConnection(GetDatabasePath());
         }
 
         /// <summary>
@@ -38,17 +45,31 @@ namespace Happimeter.Core.Database
         /// </summary>
         /// <returns>The create database.</returns>
         /// <param name="tables">Tables.</param>
-        protected virtual List<Type> BeforeCreateDatabase(List<Type> tables) {
+        protected virtual List<Type> BeforeCreateDatabase(List<Type> tables)
+        {
             return tables;
         }
 
-        protected virtual void EnsureDatabaseCreated() {
-            if (!DatabaseCreated) {
+        protected virtual void EnsureDatabaseCreated()
+        {
+            if (!DatabaseCreated)
+            {
                 CreateDatabase();
             }
         }
+        protected virtual async Task EnsureDatabaseCreatedAsync()
+        {
+            await Task.Factory.StartNew(() =>
+            {
+                if (!DatabaseCreated)
+                {
+                    CreateDatabase();
+                }
+            });
+        }
 
-        private List<Type> GetDatabaseTables() {
+        private List<Type> GetDatabaseTables()
+        {
             var databaseTables = new List<Type>();
             databaseTables.Add(typeof(MicrophoneMeasurement));
             databaseTables.Add(typeof(SharedBluetoothDevicePairing));
@@ -65,7 +86,8 @@ namespace Happimeter.Core.Database
             return databaseTables;
         }
 
-        public virtual void CreateDatabase() {
+        public virtual void CreateDatabase()
+        {
             var databasePath = GetDatabasePath();
             try
             {
@@ -95,7 +117,7 @@ namespace Happimeter.Core.Database
             lock (SyncLock)
             {
                 using (var connection = GetConnection())
-                {                    
+                {
                     DeleteAll<ConfigEntry>();
                     DeleteAll<MicrophoneMeasurement>();
                     DeleteAll<SensorItemMeasurement>();
@@ -106,8 +128,8 @@ namespace Happimeter.Core.Database
                 }
             }
         }
-
-        public virtual List<T> GetAll<T>(Expression<Func<T, bool>> whereClause = null) where T: new() {
+        public virtual List<T> GetAll<T>(Expression<Func<T, bool>> whereClause = null) where T : new()
+        {
             EnsureDatabaseCreated();
             lock (SyncLock)
             {
@@ -122,6 +144,7 @@ namespace Happimeter.Core.Database
                 }
             }
         }
+
 
         public virtual List<T> GetAllWithChildren<T>(Expression<Func<T, bool>> whereClause = null) where T : new()
         {
@@ -221,6 +244,24 @@ namespace Happimeter.Core.Database
             }
             DatabaseEntriesChangedSubject.OnNext(new DatabaseChangedEventArgs(entity, typeof(T), DatabaseChangedEventTypes.Added));
         }
+        public virtual async Task AddAsync<T>(T entity) where T : new() {
+            var btPairing = entity as SharedBluetoothDevicePairing;
+            if (btPairing != null)
+            {
+                AddBluetoothPairing(btPairing);
+                return;
+            }
+            await EnsureDatabaseCreatedAsync();
+            var connection = GetAsyncConnection();
+            await connection.InsertAsync(entity);
+        }
+        public virtual async Task<int> InsertSensorsAsync(List<SensorMeasurement> sensors) {
+            using (var connection = GetConnection())
+            {
+                connection.InsertWithChildren(entity, true);
+            }
+        }
+
 
         public virtual void AddGraph<T>(T entity) where T : new()
         {
