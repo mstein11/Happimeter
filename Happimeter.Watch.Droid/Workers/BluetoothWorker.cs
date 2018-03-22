@@ -5,7 +5,6 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using AltBeaconOrg.BoundBeacon;
 using Android.App;
 using Android.Bluetooth;
 using Android.Bluetooth.LE;
@@ -23,6 +22,7 @@ namespace Happimeter.Watch.Droid.Workers
     {
         public BluetoothManager Manager;
         public BluetoothGattServer GattServer;
+        public CallbackAd AdvertisementCallback = new CallbackAd();
         //public Dictionary<string, BluetoothGatt> GattClients = new Dictionary<string, BluetoothGatt>();
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Happimeter.Watch.Droid.Workers
                 GattServer.Close();
                 GattServer.Dispose();                
             }
-            Manager.Adapter.BluetoothLeAdvertiser?.StopAdvertising(new CallbackAd());
+            Manager.Adapter.BluetoothLeAdvertiser?.StopAdvertising(AdvertisementCallback);
             Manager.Adapter.BluetoothLeAdvertiser?.Dispose();
 
             IsRunning = false;
@@ -141,7 +141,7 @@ namespace Happimeter.Watch.Droid.Workers
 
             //make sure no previous ad is running
             //todo: maybe we have to await the callback
-            BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser.StopAdvertising(new CallbackAd());
+            BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser.StopAdvertising(AdvertisementCallback);
             var settings = new AdvertiseSettings.Builder()
                                                 .SetAdvertiseMode(AdvertiseMode.LowLatency)
                                                 .SetTxPowerLevel(AdvertiseTx.PowerHigh)
@@ -167,7 +167,7 @@ namespace Happimeter.Watch.Droid.Workers
                                             .Build();
             }
 
-            BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser.StartAdvertising(settings, data, new CallbackAd());
+            BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser.StartAdvertising(settings, data, AdvertisementCallback);
         }
     }
 
@@ -289,7 +289,7 @@ namespace Happimeter.Watch.Droid.Workers
                 //if the header is maleformated we need to catch that!
                 try {
                     WriteReceiverContextForDevice.Add((device.Address, characteristic.Uuid.ToString()), new WriteReceiverContext(value));    
-                } catch (Exception e) {
+                } catch (Exception) {
                     Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Failure, offset, value);
                 }
 
