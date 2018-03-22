@@ -1,7 +1,10 @@
 ﻿using System;
+using Android.App;
+using Android.Content;
 using Happimeter.Core.Helper;
 using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Core.Services;
+using Happimeter.Watch.Droid.Activities;
 using Happimeter.Watch.Droid.Database;
 using Happimeter.Watch.Droid.Workers;
 
@@ -50,6 +53,13 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
 
         public bool IsPaired() {
             return ServiceLocator.Instance.Get<IDatabaseContext>().Get<BluetoothPairing>(x => x.IsPairingActive) != null;
+        }
+
+        public void NavigateToPairingRequestPage(string deviceName) {
+            var intent = new Intent(Application.Context.ApplicationContext, typeof(PairingRequestActivity));
+            intent.AddFlags(ActivityFlags.NewTask);
+            intent.PutExtra("DeviceName", deviceName);
+            Application.Context.StartActivity(intent);
         }
     }
 }

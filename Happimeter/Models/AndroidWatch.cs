@@ -16,10 +16,11 @@ namespace Happimeter.Models
         ErrorOnBtConnection,
         AuthCharacteristicDiscovered,
         ErrorOnAuthCharacteristicDiscovered,
-        FirstWriteSuccessfull,
+        WaitingForNotification,
         ErrorOnFirstWrite,
-        ReadSuccessfull,
-        ErrorOnRead,
+        UserAccepted,
+        UserDeclined,
+        NotificationTimeout,
         SecondWriteSuccessfull,
         ErrorOnSecondWrite,
         Complete,
@@ -54,14 +55,15 @@ namespace Happimeter.Models
 
                             var btService = ServiceLocator.Instance.Get<IBluetoothService>();
                             await btService.EnableNotificationsFor(characteristic);
+                            var deviceName = ServiceLocator.Instance.Get<IDeviceInformationService>().GetDeviceName();
 
-                            var writeResult = await btService.WriteAsync(characteristic, new AuthFirstMessage());
+                            var writeResult = await btService.WriteAsync(characteristic, new AuthFirstMessage(deviceName));
                             if (!writeResult) {
                                 //we got an error here
                                 OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorOnFirstWrite, null);
                                 return;
                             }
-                            OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.FirstWriteSuccessfull, null);
+                            OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.WaitingForNotification, null);
 
                             //item one is message name item two  is message json
                             var notification = await btService.WhenNotificationReceived()
@@ -75,15 +77,15 @@ namespace Happimeter.Models
 
                             if (notification.Item2 == null)
                             {
-                                OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorOnRead, null);
+                                OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.NotificationTimeout, null);
                                 return;
                             }
                             var message = Newtonsoft.Json.JsonConvert.DeserializeObject<AuthNotificationMessage>(notification.Item2);
                             if(!message.Accepted) {
-                                OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorOnRead, null);
+                                OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.UserDeclined, null);
                                 return;
                             }
-                            OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ReadSuccessfull, null);
+                            OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.UserAccepted, null);
                             //todo: validate data from gattservice
 
                             var dataToSend = new AuthSecondMessage

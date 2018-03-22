@@ -417,12 +417,12 @@ namespace Happimeter.Services
             while (bytesSentCounter < messageJson.Count()) {
                 var toSend = messageJson.Skip(bytesSentCounter).Take(mtu).ToArray();
                 var sent = await characteristic.Write(toSend)
-                   .Timeout(TimeSpan.FromSeconds(5))
+                   .Timeout(TimeSpan.FromSeconds(8))
                    .Catch<CharacteristicResult, Exception>((arg) =>
                    {
                        if (arg is TimeoutException)
                        {
-                           Console.WriteLine("Writing took longer than 5 seconds. Abort!");
+                           Console.WriteLine("Writing took longer than 8 seconds. Abort!");
                        }
                        else
                        {

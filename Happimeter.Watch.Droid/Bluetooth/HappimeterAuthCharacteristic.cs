@@ -64,12 +64,14 @@ namespace Happimeter.Watch.Droid.Bluetooth
                 {
                     AuthenticationDeviceDidGreat.Add(address, true);
                 }
-
+                var messageData = Newtonsoft.Json.JsonConvert.DeserializeObject<AuthFirstMessage>(json);
+                /*
                 var timer = new System.Threading.Timer((obj) =>
                 {
                     BluetoothWorker.GetInstance().SendNotifiation(null, new AuthNotificationMessage(true));
                 }, null, 5000, System.Threading.Timeout.Infinite);
-
+                */
+                ServiceLocator.Instance.Get<IDeviceService>().NavigateToPairingRequestPage(messageData.DeviceName);
                 return;
             }
 

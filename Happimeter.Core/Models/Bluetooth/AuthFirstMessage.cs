@@ -9,5 +9,12 @@ namespace Happimeter.Core.Models.Bluetooth
             MessageValue = "Hallo";
         }
 
+        public AuthFirstMessage(string deviceName) : base(MessageNameConstant)
+        {
+            DeviceName = deviceName;
+        }
+
+        public string DeviceName { get; set; }
+
     }
 }

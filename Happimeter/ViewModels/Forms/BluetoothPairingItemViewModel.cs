@@ -55,11 +55,14 @@ namespace Happimeter.ViewModels.Forms
                 case AndroidWatchConnectingStates.AuthCharacteristicDiscovered:
                     DisplayIndication("Auth discovered");
                     break;
-                case AndroidWatchConnectingStates.FirstWriteSuccessfull:
-                    DisplayIndication("Wrote once");
+                case AndroidWatchConnectingStates.WaitingForNotification:
+                    DisplayIndication("Awaiting Response");
                     break;
-                case AndroidWatchConnectingStates.ReadSuccessfull:
-                    DisplayIndication("Read once");
+                case AndroidWatchConnectingStates.UserAccepted:
+                    DisplayIndication("User Accepted");
+                    break;
+                case AndroidWatchConnectingStates.UserDeclined:
+                    DisplayIndication("User Declined", 2000);
                     break;
                 case AndroidWatchConnectingStates.SecondWriteSuccessfull:
                     DisplayIndication("Wrote twice");
@@ -76,8 +79,8 @@ namespace Happimeter.ViewModels.Forms
                 case AndroidWatchConnectingStates.ErrorOnFirstWrite:
                     DisplayIndication("Error: Could not write", 2000);
                     break;
-                case AndroidWatchConnectingStates.ErrorOnRead:
-                    DisplayIndication("Error: Could not read", 2000);
+                case AndroidWatchConnectingStates.NotificationTimeout:
+                    DisplayIndication("No Response from Watch - abort", 2000);
                     break;
                 case AndroidWatchConnectingStates.ErrorOnSecondWrite:
                     DisplayIndication("Error: Could not write again", 2000);

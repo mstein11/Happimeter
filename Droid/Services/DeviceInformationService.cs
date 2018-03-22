@@ -13,5 +13,9 @@ namespace Happimeter.Droid.Services
         {
             return "Android";
         }
+
+        public string GetDeviceName() {
+            return Android.OS.Build.Model;
+        } 
     }
 }

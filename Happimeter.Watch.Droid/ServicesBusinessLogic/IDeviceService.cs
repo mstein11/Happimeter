@@ -8,5 +8,6 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
         void AddPairing(AuthSecondMessage message);
         void RemovePairing();
         bool IsPaired();
+        void NavigateToPairingRequestPage(string deviceName);
     }
 }

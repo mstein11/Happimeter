@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ff82b1ff"
+    android:gravity="center_vertical">
+    <TextView
+        android:text="Pairing Request From:"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView1"
+        android:textSize="50dp"
+        android:textColor="#ffffff"
+        android:layout_gravity="center"
+        android:gravity="center" />
+    <TextView
+        android:text="Mariuss Stein iPhone 7 Device"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/PairingRequestDeviceName"
+        android:textColor="#ffffff"
+        android:textSize="30dp"
+        android:layout_gravity="center"
+        android:gravity="center" />
+    <Button
+        android:id="@+id/PairingRequestAccept"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Accept"
+        android:textSize="50dp"
+        android:backgroundTint="#ff424242"
+        android:textColor="#ffffff"
+        android:paddingTop="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp" />
+    <Button
+        android:id="@+id/PairingRequestDecline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Decline"
+        android:textSize="50dp"
+        android:backgroundTint="#ff424242"
+        android:textColor="#ffffff"
+        android:paddingTop="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp" />
+    <ProgressBar
+        android:id="@+id/PairingRequestLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:minHeight="50dp"
+        android:maxHeight="50dp"
+        android:minWidth="50dp"
+        android:maxWidth="50dp"
+        android:visibility="gone" />
+</LinearLayout>

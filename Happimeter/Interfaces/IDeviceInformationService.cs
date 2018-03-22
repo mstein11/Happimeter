@@ -3,5 +3,6 @@
     public interface IDeviceInformationService
     {
         string GetPhoneOs();
+        string GetDeviceName();
     }
 }

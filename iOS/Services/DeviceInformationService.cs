@@ -1,5 +1,6 @@
 ﻿using System;
 using Happimeter.Interfaces;
+using UIKit;
 
 namespace Happimeter.iOS.Services
 {
@@ -12,5 +13,9 @@ namespace Happimeter.iOS.Services
         public string GetPhoneOs() {
             return "iOS";
         }
+
+        public string GetDeviceName() {
+            return UIDevice.CurrentDevice.Name;
+        } 
     }
 }

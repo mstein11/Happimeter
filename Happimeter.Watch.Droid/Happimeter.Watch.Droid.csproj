@@ -139,6 +139,7 @@
     <Compile Include="Bluetooth\HappimeterAuthService.cs" />
     <Compile Include="Services\MeasurementJobService.cs" />
     <Compile Include="BroadcastReceiver\AlarmBroadcastReceiver.cs" />
+    <Compile Include="Activities\PairingRequestActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -158,6 +159,7 @@
     <AndroidResource Include="Resources\layout\Fragment_SurveyItem.axml" />
     <AndroidResource Include="Resources\layout\FinishedSurvey.axml" />
     <AndroidResource Include="Resources\layout\Pairing.axml" />
+    <AndroidResource Include="Resources\layout\PairingRequest.axml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />
