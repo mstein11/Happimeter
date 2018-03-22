@@ -2,7 +2,6 @@
 using System;
 using System.Threading.Tasks;
 using Android.App;
-using Android.App.Job;
 using Android.Bluetooth;
 using Android.Content;
 using Android.OS;
@@ -45,19 +44,6 @@ namespace Happimeter.Watch.Droid.Services
                 });    
             }
 
-
-            /**
-            var scheduler = (JobScheduler) Application.GetSystemService(Context.JobSchedulerService);
-            var componentName = new ComponentName(this, Java.Lang.Class.FromType(typeof(MeasurementJobService)));
-            var builder = new JobInfo.Builder(1, componentName);
-            builder.SetPeriodic(TimeSpan.FromMinutes(4).Milliseconds);
-
-            if (scheduler.Schedule(builder.Build()) <= 0) {
-                //error
-            }
-            */
-
-
             if (!MeasurementWorker.GetInstance().IsRunning) {
                 Task.Factory.StartNew(() =>
                 {
@@ -82,6 +68,8 @@ namespace Happimeter.Watch.Droid.Services
             binder = new BackgroundServiceBinder(this);
             return binder;
         }
+
+
     }
 
     public class BackgroundServiceBinder : Binder
