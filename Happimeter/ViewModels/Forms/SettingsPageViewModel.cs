@@ -145,6 +145,9 @@ namespace Happimeter.ViewModels.Forms
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             context.WhenEntryChanged<SharedBluetoothDevicePairing>().Subscribe(eventInfo =>
             {
+                Console.WriteLine("EVENT TYPE: " + eventInfo.TypeOfEnties.ToString());
+                Console.WriteLine("EntitiyFirstOrDefault Type: " + eventInfo.Entites.FirstOrDefault()?.GetType() ?? "No element in sequence");
+                Console.WriteLine("Event kind: " + eventInfo.TypeOfEvent);
                 if (eventInfo.Entites.Cast<SharedBluetoothDevicePairing>().Any(x => x.IsPairingActive) 
                     && eventInfo.TypeOfEvent != Core.Events.DatabaseChangedEventTypes.Deleted
                     && eventInfo.TypeOfEvent != Core.Events.DatabaseChangedEventTypes.DeleteAll) {

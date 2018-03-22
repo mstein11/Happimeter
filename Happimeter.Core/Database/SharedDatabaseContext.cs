@@ -285,7 +285,11 @@ namespace Happimeter.Core.Database
                 Update(oldPairing);
             }
             if (oldPairings.Any()) {
-                DatabaseEntriesChangedSubject.OnNext(new DatabaseChangedEventArgs(oldPairings, oldPairings.FirstOrDefault().GetType(), DatabaseChangedEventTypes.Updated));
+                DatabaseEntriesChangedSubject.OnNext(new DatabaseChangedEventArgs {
+                    Entites = oldPairings.ToList<object>(),
+                    TypeOfEnties = oldPairings.FirstOrDefault().GetType(),
+                    TypeOfEvent = DatabaseChangedEventTypes.Updated
+                });
             }
             lock (SyncLock)
             {

@@ -12,7 +12,7 @@ namespace Happimeter.Core.Events
         public DatabaseChangedEventArgs(object entity, Type typeOfEntry, DatabaseChangedEventTypes eventTypes) : this(new List<object>{entity}, typeOfEntry, eventTypes)
         {
         }
-        public DatabaseChangedEventArgs(List<object> entities, Type typeOfEntry, DatabaseChangedEventTypes eventTypes)
+        private DatabaseChangedEventArgs(List<object> entities, Type typeOfEntry, DatabaseChangedEventTypes eventTypes)
         {
             Entites = entities;
             TypeOfEnties = typeOfEntry;
