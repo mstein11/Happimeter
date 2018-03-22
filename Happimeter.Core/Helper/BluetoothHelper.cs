@@ -72,21 +72,33 @@ namespace Happimeter.Core.Helper
         }
 
         public static byte[] GetMessageJson(BaseBluetoothMessage message) {
-            var stopWatch = new Stopwatch();
-            stopWatch.Start();
             var json = message.GetAsJson();
-            stopWatch.Stop();
-            Debug.WriteLine($"Took {stopWatch.Elapsed.Seconds} Seconds to serialize obj");
-            stopWatch.Reset();
-            stopWatch.Start();
-            var compressed = json.Zip();
-            stopWatch.Stop();
-            Console.WriteLine($"Compressed json of size {json.Count()} into {compressed.Count()} via gzip. Took {stopWatch.Elapsed.Seconds} seconds");
-            return compressed;
+            var compressed = json.Zip().ToList();
+            var lastBytes = compressed.TakeLast(3);
+
+            //https://stackoverflow.com/questions/49419112/is-there-any-byte-sequence-that-will-never-occur-at-the-end-of-an-gzip-byte-sequ
+            var base64LastBytes = System.Text.Encoding.ASCII.GetBytes(Convert.ToBase64String(lastBytes.ToArray()));
+            compressed.RemoveAt(compressed.Count - 1);
+            compressed.RemoveAt(compressed.Count - 1);
+            compressed.RemoveAt(compressed.Count - 1);
+            compressed.AddRange(base64LastBytes);
+
+            return compressed.ToArray();
         }
 
         public static string GetMessageJsonFromBytes(byte[] bytes) {
-            var json = bytes.Unzip();
+            var bytesList = bytes.ToList();
+            var lastBytesBase64Encoded = bytes.TakeLast(4);
+            var lastBytesAsAscii = System.Text.Encoding.ASCII.GetString(lastBytesBase64Encoded.ToArray());
+            var lastBytesOriginal = Convert.FromBase64String(lastBytesAsAscii);
+            bytesList.RemoveAt(bytesList.Count - 1);
+            bytesList.RemoveAt(bytesList.Count - 1);
+            bytesList.RemoveAt(bytesList.Count - 1);
+            bytesList.RemoveAt(bytesList.Count - 1);
+
+            bytesList.AddRange(lastBytesOriginal);
+
+            var json = bytesList.ToArray().Unzip();
             Console.WriteLine($"Decompressed bytes of size {bytes.Count()} into json with size of {json.Count()} via gzip");
             //var json = System.Text.Encoding.UTF8.GetString(bytes);
             return json;

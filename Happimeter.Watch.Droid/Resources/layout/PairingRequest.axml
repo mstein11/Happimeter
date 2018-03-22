@@ -6,7 +6,7 @@
     android:background="#ff82b1ff"
     android:gravity="center_vertical">
     <TextView
-        android:text="Pairing Request From:"
+        android:text="Pairing Request:"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/textView1"
@@ -15,7 +15,7 @@
         android:layout_gravity="center"
         android:gravity="center" />
     <TextView
-        android:text="Mariuss Stein iPhone 7 Device"
+        android:text="Device Name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/PairingRequestDeviceName"
@@ -38,7 +38,9 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp" />
+        android:layout_marginBottom="10dp"
+        android:layout_gravity="center"
+        android:gravity="center" />
     <Button
         android:id="@+id/PairingRequestDecline"
         android:layout_width="wrap_content"
@@ -54,7 +56,9 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp" />
+        android:layout_marginBottom="10dp"
+        android:layout_gravity="center"
+        android:gravity="center" />
     <ProgressBar
         android:id="@+id/PairingRequestLoading"
         android:layout_width="wrap_content"
@@ -64,5 +68,7 @@
         android:maxHeight="50dp"
         android:minWidth="50dp"
         android:maxWidth="50dp"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:layout_gravity="center"
+        android:gravity="center" />
 </LinearLayout>

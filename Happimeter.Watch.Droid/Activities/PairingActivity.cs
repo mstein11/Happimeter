@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 
 using Android.App;
@@ -35,7 +36,7 @@ namespace Happimeter.Watch.Droid.Activities
             var textView = FindViewById<TextView>(Resource.Id.PairingDeviceName);
             textView.Text = name;
 
-            db.WhenEntryChanged<BluetoothPairing>().Subscribe(eventInfo => {
+            db.WhenEntryChanged<BluetoothPairing>().Take(1).Subscribe(eventInfo => {
                 if (eventInfo.Entites.Cast<BluetoothPairing>().Any(x => x.IsPairingActive)) {
                     var intent = new Intent(this, typeof(MainActivity));
                     StartActivity(intent);
