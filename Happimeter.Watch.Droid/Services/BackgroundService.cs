@@ -1,11 +1,15 @@
 ﻿
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Android.App;
 using Android.App.Job;
 using Android.Bluetooth;
 using Android.Content;
+using Android.Gms.Common;
+using Android.Gms.Location;
 using Android.OS;
+using Android.Util;
 using Android.Widget;
 using Happimeter.Watch.Droid.Workers;
 
@@ -14,7 +18,10 @@ namespace Happimeter.Watch.Droid.Services
     [Service(Label = "BackgroundService")]
     public class BackgroundService : Service
     {
+        public static Context ServiceContext { get; set; }
+
         IBinder binder;
+        FusedLocationProviderClient fusedLocationProviderClient;
 
         public override void OnDestroy()
         {
@@ -28,11 +35,7 @@ namespace Happimeter.Watch.Droid.Services
         {
             base.OnCreate();
             Toast.MakeText(this, "My Service Started", ToastLength.Long).Show();
-            var preferences = GetSharedPreferences("TEST", FileCreationMode.Append);
-            var editor = preferences.Edit();
-
-            editor.PutString("LastStarted", DateTime.UtcNow.ToString());
-            editor.Commit();
+            ServiceContext = this;
         }
 
         public override StartCommandResult OnStartCommand(Android.Content.Intent intent, StartCommandFlags flags, int startId)
@@ -45,17 +48,7 @@ namespace Happimeter.Watch.Droid.Services
                 });    
             }
 
-
-            /**
-            var scheduler = (JobScheduler) Application.GetSystemService(Context.JobSchedulerService);
-            var componentName = new ComponentName(this, Java.Lang.Class.FromType(typeof(MeasurementJobService)));
-            var builder = new JobInfo.Builder(1, componentName);
-            builder.SetPeriodic(TimeSpan.FromMinutes(4).Milliseconds);
-
-            if (scheduler.Schedule(builder.Build()) <= 0) {
-                //error
-            }
-            */
+           
 
 
             if (!MeasurementWorker.GetInstance().IsRunning) {
@@ -96,6 +89,27 @@ namespace Happimeter.Watch.Droid.Services
         public BackgroundService GetBackgroundService()
         {
             return service;
+        }
+    }
+
+    public class FusedLocationProviderCallback : LocationCallback
+    {
+        public override void OnLocationAvailability(LocationAvailability locationAvailability)
+        {
+            Console.WriteLine($"IsLocationAvailable: {locationAvailability.IsLocationAvailable}");
+        }
+
+        public override void OnLocationResult(LocationResult result)
+        {
+            if (result.Locations.Any())
+            {
+                var location = result.Locations.First();
+                Console.WriteLine($"The location is :" + location.Latitude + " - " + location.Longitude);
+            }
+            else
+            {
+                // No locations to work with.
+            }
         }
     }
 }

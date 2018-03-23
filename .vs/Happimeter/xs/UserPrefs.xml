@@ -1,5 +1,5 @@
 ﻿<Properties StartupConfiguration="{B926B5BC-5FAA-4225-BAC6-BA1BDABB67E9}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Happimeter.Watch.Droid/Activities/PairingActivity.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Happimeter.Watch.Droid/Workers/MeasurementWorker.cs">
     <Files>
       <File FileName="iOS/Main.storyboard" />
       <File FileName="Happimeter/Interfaces/IBeaconWakeupService.cs" Line="5" Column="14" />
@@ -13,7 +13,7 @@
       <File FileName="iOS/Main.cs" Line="12" Column="1" />
       <File FileName="Happimeter.Core/Models/Bluetooth/AuthNotificationMessage.cs" Line="1" Column="1" />
       <File FileName="Happimeter.Watch.Droid/Activities/PairingActivity.cs" Line="46" Column="44" />
-      <File FileName="Happimeter.Watch.Droid/Activities/PairingRequestActivity.cs" Line="1" Column="1" />
+      <File FileName="Happimeter.Watch.Droid/Activities/PairingRequestActivity.cs" Line="25" Column="10" />
       <File FileName="Happimeter.Watch.Droid/ServicesBusinessLogic/IDeviceService.cs" Line="1" Column="1" />
       <File FileName="Happimeter/ViewModels/Forms/BluetoothPairingItemViewModel.cs" Line="1" Column="1" />
       <File FileName="iOS/Services/DeviceInformationService.cs" Line="1" Column="1" />
@@ -27,6 +27,10 @@
       <File FileName="../../../../Library/Frameworks/Xamarin.Android.framework/Versions/8.1.3-0/lib/xamarin.android/xbuild/Xamarin/Android/Xamarin.Android.Common.targets" Line="1797" Column="42" />
       <File FileName="Happimeter.Watch.Droid/Activities/FinishSurveyActivity.cs" Line="1" Column="1" />
       <File FileName="Happimeter.Watch.Droid/Activities/SurveyActivity.cs" Line="1" Column="1" />
+      <File FileName="Happimeter.Watch.Droid/Services/BackgroundService.cs" Line="132" Column="52" />
+      <File FileName="Happimeter/Services/BluetoothService.cs" Line="45" Column="55" />
+      <File FileName="Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" Line="170" Column="13" />
+      <File FileName="Happimeter.Watch.Droid/Workers/MeasurementWorker.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />

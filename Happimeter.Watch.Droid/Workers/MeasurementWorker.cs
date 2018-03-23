@@ -5,12 +5,16 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Android.App;
+using Android.Gms.Common;
+using Android.Gms.Location;
 using Android.Hardware;
+using Android.Locations;
 using Android.Runtime;
 using Happimeter.Core.Database;
 using Happimeter.Core.ExtensionMethods;
 using Happimeter.Core.Helper;
 using Happimeter.Watch.Droid.Database;
+using Happimeter.Watch.Droid.Services;
 
 namespace Happimeter.Watch.Droid.Workers
 {
@@ -29,10 +33,18 @@ namespace Happimeter.Watch.Droid.Workers
         private SensorListener _stepListener { get; set; }
         private SensorListener _lightListener { get; set; }
 
+        private bool _playServicesReady = false;
+        FusedLocationProviderClient fusedLocationProviderClient;
+
 
 
         private MeasurementWorker()
         {
+            _playServicesReady = IsGooglePlayServicesInstalled();
+            if (_playServicesReady)
+            {
+                fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(BackgroundService.ServiceContext);
+            }
         }
 
         private static MeasurementWorker Instance { get; set; }
@@ -65,19 +77,43 @@ namespace Happimeter.Watch.Droid.Workers
                 await Task.Delay(TimeSpan.FromSeconds(45));
                 //StopSensors();
 
-                CollectMeasurements();
+                await CollectMeasurements();
+
 
                 await Task.Delay(TimeSpan.FromSeconds(45));
                 Console.WriteLine("Saved new Sensormeasurement");
             }
         }
 
-        private void CollectMeasurements() {
+        private async Task CollectMeasurements() {
             var sensorMeasurement = new SensorMeasurement
             {
                 Timestamp = DateTime.UtcNow,
                 SensorItemMeasures = new List<SensorItemMeasurement>()
             };
+
+            Location location = null;
+            if (_playServicesReady) {
+                location = await fusedLocationProviderClient.GetLastLocationAsync();
+                if (location != null) {
+                    sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+                    {
+                        Type = MeasurementItemTypes.LocationLat,
+                        Magnitude = location.Latitude,
+                    });
+                    sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+                    {
+                        Type = MeasurementItemTypes.LocationLon,
+                        Magnitude = location.Longitude,
+                    });
+                    sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+                    {
+                        Type = MeasurementItemTypes.LocationAlt,
+                        Magnitude = location.Altitude,
+                    });
+                }
+            }
+             
 
             var accMeasuresToSave = AccelerometerMeasures.ToList();
             AccelerometerMeasures.Clear();
@@ -172,22 +208,6 @@ namespace Happimeter.Watch.Droid.Workers
 
             sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
             {
-                Type = MeasurementItemTypes.LocationLat,
-                Magnitude = 1,
-            });
-            sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
-            {
-                Type = MeasurementItemTypes.LocationLon,
-                Magnitude = 1,
-            });
-            sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
-            {
-                Type = MeasurementItemTypes.LocationAlt,
-                Magnitude = 1,
-            });
-
-            sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
-            {
                 Type = MeasurementItemTypes.Vmc,
                 Magnitude = -1,
             });
@@ -257,6 +277,27 @@ namespace Happimeter.Watch.Droid.Workers
                 _stepListener = new SensorListener(this);
                 _sensorManager.RegisterListener(_stepListener, stepCounter, SensorDelay.Ui);
             }
+        }
+
+        bool IsGooglePlayServicesInstalled()
+        {
+            var queryResult = Android.Gms.Common.GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable(BackgroundService.ServiceContext);
+            if (queryResult == Android.Gms.Common.ConnectionResult.Success)
+            {
+                Console.WriteLine("Google Play Services is installed on this device.");
+                return true;
+            }
+
+            if (GoogleApiAvailability.Instance.IsUserResolvableError(queryResult))
+            {
+                // Check if there is a way the user can resolve the issue
+                var errorString = GoogleApiAvailability.Instance.GetErrorString(queryResult);
+                Console.WriteLine($"There is a problem with Google Play Services on this device: {queryResult} - {errorString}");
+
+                // Alternately, display the error to the user.
+            }
+
+            return false;
         }
     }
 
