@@ -165,7 +165,8 @@ namespace Happimeter.Core.Database
                             return new SensorItemMeasurement
                             {
                                 Average = item.Average,
-                                HighestValuesAmount = item.HighestValuesAmount,
+                                Max = item.Max,
+                                Min = item.Min,
                                 Magnitude = item.Magnitude,
                                 NumberOfMeasures = item.NumberOfMeasures,
                                 Quantile1 = item.Quantile1,

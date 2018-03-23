@@ -25,7 +25,8 @@ namespace Happimeter.Core.Database.ModelsNotMappedToDb
         public double Quantile2 { get; set; }
         public double Quantile3 { get; set; }
 
-        public double HighestValuesAmount { get; set; }
+        public double Min { get; set; }
+        public double Max { get; set; }
 
 
     }

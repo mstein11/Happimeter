@@ -272,34 +272,33 @@ namespace Happimeter.Services
                 });
 
                 result = await _restService.Post(newUrl, toSendNewFormat);
-                if (!result.IsSuccessStatusCode) {
-                    foreach (var sensorEntry in toSend)
+                foreach (var sensorEntry in toSend)
+                {
+                    UploadSensorStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
+                    {
+                        EntriesSent = counter,
+                        TotalEntries = toSend.Count,
+                        EventType = SyncronizeDataStates.UploadingSensor
+                    });
+
+                    result = await _restService.Post(url, sensorEntry);
+                    if (result.IsSuccessStatusCode)
+                    {
+                        measurementService.SetIsUploadedToServerForSensorData(sensorEntry);
+                    }
+                    else
                     {
                         UploadSensorStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
                         {
                             EntriesSent = counter,
                             TotalEntries = toSend.Count,
-                            EventType = SyncronizeDataStates.UploadingSensor
+                            EventType = SyncronizeDataStates.UploadingError
                         });
-
-                        result = await _restService.Post(url, sensorEntry);
-                        if (result.IsSuccessStatusCode)
-                        {
-                            measurementService.SetIsUploadedToServerForSensorData(sensorEntry);
-                        }
-                        else
-                        {
-                            UploadSensorStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
-                            {
-                                EntriesSent = counter,
-                                TotalEntries = toSend.Count,
-                                EventType = SyncronizeDataStates.UploadingError
-                            });
-                            return HappimeterApiResultInformation.UnknownError;
-                        }
-                        counter++;
+                        return HappimeterApiResultInformation.UnknownError;
                     }
+                    counter++;
                 }
+
                 UploadSensorStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
                 {
                     EntriesSent = counter,
