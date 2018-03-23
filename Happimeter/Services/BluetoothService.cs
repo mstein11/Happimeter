@@ -59,7 +59,6 @@ namespace Happimeter.Services
                     ScanReplaySubject = new ReplaySubject<IScanResult>();
                     //todo: open settings
                 }
-                ScanReplaySubject.OnCompleted();
                 return ScanReplaySubject;
             }
 
@@ -81,7 +80,7 @@ namespace Happimeter.Services
                 }
             });
             timerObs.Subscribe((longi) => {
-                ScanReplaySubject.OnCompleted();
+                ScanReplaySubject.OnCompleted();    
             });
             return ScanReplaySubject;
         }
@@ -154,14 +153,16 @@ namespace Happimeter.Services
                 var userId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId();
                 var userIdBytes = System.Text.Encoding.UTF8.GetBytes(userId.ToString());
                 //we skip 2 because the first two bytes are not relevant to us. the actual advertisement data start at position 3
-                var device = await ScanReplaySubject.Where(scanRes => scanRes?.AdvertisementData?.ServiceData?.FirstOrDefault()?.Skip(2)?.SequenceEqual(userIdBytes) ?? false).Select(result => result.Device)
-                                                          .Take(1)
-                                                          .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
+                var device = await ScanReplaySubject.Where(scanRes => scanRes?.AdvertisementData?.ServiceData?.FirstOrDefault()?.Skip(2)?.SequenceEqual(userIdBytes) ?? false)
+                                                    .Select(result => result.Device)
+                                                    .Take(1)
+                                                    .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
                                                     .Catch((Exception arg) =>
                                                     {
                                                         Console.WriteLine(arg.Message);
                                                         return Observable.Return<IDevice>(null);
-                                                    });
+                                                    })
+                                                    .DefaultIfEmpty();
                 if (device == null) {
                     return null;
                 }
