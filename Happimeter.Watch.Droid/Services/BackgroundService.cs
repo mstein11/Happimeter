@@ -21,7 +21,6 @@ namespace Happimeter.Watch.Droid.Services
         public static Context ServiceContext { get; set; }
 
         IBinder binder;
-        FusedLocationProviderClient fusedLocationProviderClient;
 
         public override void OnDestroy()
         {
@@ -47,9 +46,6 @@ namespace Happimeter.Watch.Droid.Services
                     MicrophoneWorker.GetInstance().Start();
                 });    
             }
-
-           
-
 
             if (!MeasurementWorker.GetInstance().IsRunning) {
                 Task.Factory.StartNew(() =>
@@ -89,27 +85,6 @@ namespace Happimeter.Watch.Droid.Services
         public BackgroundService GetBackgroundService()
         {
             return service;
-        }
-    }
-
-    public class FusedLocationProviderCallback : LocationCallback
-    {
-        public override void OnLocationAvailability(LocationAvailability locationAvailability)
-        {
-            Console.WriteLine($"IsLocationAvailable: {locationAvailability.IsLocationAvailable}");
-        }
-
-        public override void OnLocationResult(LocationResult result)
-        {
-            if (result.Locations.Any())
-            {
-                var location = result.Locations.First();
-                Console.WriteLine($"The location is :" + location.Latitude + " - " + location.Longitude);
-            }
-            else
-            {
-                // No locations to work with.
-            }
         }
     }
 }

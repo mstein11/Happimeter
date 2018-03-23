@@ -10,6 +10,7 @@ using Android.Gms.Location;
 using Android.Hardware;
 using Android.Locations;
 using Android.Runtime;
+using Android.Widget;
 using Happimeter.Core.Database;
 using Happimeter.Core.ExtensionMethods;
 using Happimeter.Core.Helper;
@@ -112,6 +113,8 @@ namespace Happimeter.Watch.Droid.Workers
                         Magnitude = location.Altitude,
                     });
                 }
+            } else {
+                Toast.MakeText(BackgroundService.ServiceContext, $"Google Play Service not working, we don't get Locations and activities", ToastLength.Long).Show();
             }
              
 
@@ -293,7 +296,7 @@ namespace Happimeter.Watch.Droid.Workers
                 // Check if there is a way the user can resolve the issue
                 var errorString = GoogleApiAvailability.Instance.GetErrorString(queryResult);
                 Console.WriteLine($"There is a problem with Google Play Services on this device: {queryResult} - {errorString}");
-
+                Toast.MakeText(BackgroundService.ServiceContext, $"There is a problem with Google Play Services on this device: {queryResult} - {errorString}", ToastLength.Long).Show();
                 // Alternately, display the error to the user.
             }
 
