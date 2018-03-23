@@ -171,6 +171,7 @@
     <Compile Include="Services\MeasurementJobService.cs" />
     <Compile Include="BroadcastReceiver\AlarmBroadcastReceiver.cs" />
     <Compile Include="Activities\PairingRequestActivity.cs" />
+    <Compile Include="Services\DetectedActivityIntentService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

@@ -245,7 +245,7 @@ namespace Happimeter.Services
 
         private int GetOldActivityScaleValue(List<SensorItemMeasurement> items) {
             var activityMeasures = items.Where(x => MeasurementItemTypes.ActivityTypes.Contains(x.Type));
-            var mostLikelyActivity = items.OrderByDescending(x => x.Magnitude).FirstOrDefault();
+            var mostLikelyActivity = items.OrderByDescending(x => x.Average).FirstOrDefault();
 
             if (mostLikelyActivity == null) {
                 //lookup unspecific actovity
