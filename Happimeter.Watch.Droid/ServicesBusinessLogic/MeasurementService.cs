@@ -16,22 +16,28 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
         {
         }
 
-        public void AddSurveyMeasurement(SurveyMeasurement measurement) {
+        public void AddSurveyMeasurement(SurveyMeasurement measurement)
+        {
             var dbContext = ServiceLocator.Instance.Get<IDatabaseContext>();
             dbContext.AddGraph(measurement);
         }
 
-        public SurveyViewModel GetSurveyQuestions() {
+        public SurveyViewModel GetSurveyQuestions()
+        {
             var questions = new SurveyViewModel();
 
             var generics = ServiceLocator.Instance.Get<IDatabaseContext>().GetAll<GenericQuestion>();
-            foreach (var generic in generics) {
-                questions.Questions.Add(new SurveyFragmentViewModel {
+            foreach (var generic in generics)
+            {
+                questions.Questions.Add(new SurveyFragmentViewModel
+                {
                     Question = generic.Question,
+                    QuestionId = generic.QuestionId,
                     Answer = 50
                 });
             }
-            if (!questions.Questions.Any()) {
+            if (!questions.Questions.Any())
+            {
                 //if we don't have any questions. Add the default ones.
                 var question1 = new SurveyFragmentViewModel
                 {
@@ -48,21 +54,23 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
                     Answer = 50
                 };
                 questions.Questions.Add(question1);
-                questions.Questions.Add(question2);                
+                questions.Questions.Add(question2);
             }
 
             return questions;
         }
 
-        public void AddGenericQuestions(List<GenericQuestion> questions) {
+        public void AddGenericQuestions(List<GenericQuestion> questions)
+        {
             ServiceLocator.Instance.Get<IDatabaseContext>().DeleteAll<GenericQuestion>();
-            foreach (var question in questions) {
+            foreach (var question in questions)
+            {
                 question.Id = 0;
                 ServiceLocator.Instance.Get<IDatabaseContext>().Add(question);
             }
         }
 
-        public DataExchangeMessage GetMeasurementsForDataTransfer() 
+        public DataExchangeMessage GetMeasurementsForDataTransfer()
         {
             var stopWatch = new Stopwatch();
             stopWatch.Start();
@@ -76,12 +84,14 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
             //remove self referencing loop so that we can serialize it
             moods.ForEach(x => x.SurveyItemMeasurement.ForEach(y => y.SurveyMeasurement = null));
             sensors.ForEach(x => x.SensorItemMeasures.ForEach(y => y.SensorMeasurement = null));
-            return new DataExchangeMessage { SurveyMeasurements = moods, SensorMeasurements = sensors};
+            return new DataExchangeMessage { SurveyMeasurements = moods, SensorMeasurements = sensors };
         }
 
-        public void DeleteSurveyMeasurement(DataExchangeMessage message) {
+        public void DeleteSurveyMeasurement(DataExchangeMessage message)
+        {
             var context = ServiceLocator.Instance.Get<IDatabaseContext>();
-            foreach (var measruement in message.SurveyMeasurements) {
+            foreach (var measruement in message.SurveyMeasurements)
+            {
                 context.Delete(measruement);
             }
             foreach (var measruement in message.SensorMeasurements)
