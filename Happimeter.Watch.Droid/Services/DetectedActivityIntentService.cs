@@ -23,11 +23,18 @@ namespace Happimeter.Watch.Droid.Services
 
             IList<DetectedActivity> detectedActivities = result.ProbableActivities;
 
-            for (var i = 0; i < 9; i++) {
+            for (var i = 0; i < 9; i++)
+            {
+                if (i == 5 || i == 6)
+                {
+                    //5 is tilting and 6 shouldn't occur, we skip for those activities
+                    continue;
+                }
                 if (!Measures.ContainsKey(i))
                 {
                     var res = Measures.TryAdd(i, new ConcurrentBag<int>());
-                    if (!res) {
+                    if (!res)
+                    {
                         continue;
                     }
                 }
@@ -38,7 +45,7 @@ namespace Happimeter.Watch.Droid.Services
                 else
                 {
                     Measures[i].Add(detectedActivities.FirstOrDefault(x => x.Type == i).Confidence);
-                }    
+                }
             }
 
             Console.WriteLine("activities detected");

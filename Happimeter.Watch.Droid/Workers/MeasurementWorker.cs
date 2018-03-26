@@ -69,7 +69,8 @@ namespace Happimeter.Watch.Droid.Workers
             return Instance;
         }
 
-        public async Task StartOnce() {
+        public async Task StartOnce()
+        {
             IsRunning = true;
             await StartSensors();
             //await Task.Delay(TimeSpan.FromSeconds(450));
@@ -83,7 +84,8 @@ namespace Happimeter.Watch.Droid.Workers
         {
             IsRunning = true;
             await StartSensors();
-            while(IsRunning) {
+            while (IsRunning)
+            {
                 //StartSensors();
                 await Task.Delay(TimeSpan.FromSeconds(45));
                 //StopSensors();
@@ -96,7 +98,8 @@ namespace Happimeter.Watch.Droid.Workers
             }
         }
 
-        private async Task CollectMeasurements() {
+        private async Task CollectMeasurements()
+        {
             var sensorMeasurement = new SensorMeasurement
             {
                 Timestamp = DateTime.UtcNow,
@@ -104,9 +107,11 @@ namespace Happimeter.Watch.Droid.Workers
             };
 
             Location location = null;
-            if (_playServicesReady) {
+            if (_playServicesReady)
+            {
                 location = await fusedLocationProviderClient.GetLastLocationAsync();
-                if (location != null) {
+                if (location != null)
+                {
                     sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
                     {
                         Type = MeasurementItemTypes.LocationLat,
@@ -123,14 +128,15 @@ namespace Happimeter.Watch.Droid.Workers
                         Magnitude = location.Altitude,
                     });
                 }
-            } else {
+            }
+            else
+            {
                 Toast.MakeText(BackgroundService.ServiceContext, $"Google Play Service not working, we don't get Locations and activities", ToastLength.Long).Show();
             }
-             
+
 
             var accMeasuresToSave = AccelerometerMeasures.ToList();
             AccelerometerMeasures.Clear();
-
             if (accMeasuresToSave.Any())
             {
                 sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
@@ -139,7 +145,12 @@ namespace Happimeter.Watch.Droid.Workers
                     NumberOfMeasures = accMeasuresToSave.Count,
                     Average = accMeasuresToSave.Select(x => x.Item1).Average(),
                     StdDev = accMeasuresToSave.Select(x => x.Item1).StdDev(),
-                    Magnitude = accMeasuresToSave.Select(x => x.Item1).Sum()
+                    Magnitude = accMeasuresToSave.Select(x => x.Item1).Sum(),
+                    Quantile1 = accMeasuresToSave.Select(x => x.Item1).Quantile1(),
+                    Quantile2 = accMeasuresToSave.Select(x => x.Item1).Quantile2(),
+                    Quantile3 = accMeasuresToSave.Select(x => x.Item1).Quantile3(),
+                    Min = accMeasuresToSave.Select(x => x.Item1).Min(),
+                    Max = accMeasuresToSave.Select(x => x.Item1).Max()
                 });
                 sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
                 {
@@ -147,7 +158,12 @@ namespace Happimeter.Watch.Droid.Workers
                     NumberOfMeasures = accMeasuresToSave.Count,
                     Average = accMeasuresToSave.Select(x => x.Item2).Average(),
                     StdDev = accMeasuresToSave.Select(x => x.Item2).StdDev(),
-                    Magnitude = accMeasuresToSave.Select(x => x.Item2).Sum()
+                    Magnitude = accMeasuresToSave.Select(x => x.Item2).Sum(),
+                    Quantile1 = accMeasuresToSave.Select(x => x.Item2).Quantile1(),
+                    Quantile2 = accMeasuresToSave.Select(x => x.Item2).Quantile2(),
+                    Quantile3 = accMeasuresToSave.Select(x => x.Item2).Quantile3(),
+                    Min = accMeasuresToSave.Select(x => x.Item2).Min(),
+                    Max = accMeasuresToSave.Select(x => x.Item2).Max()
                 });
                 sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
                 {
@@ -155,23 +171,46 @@ namespace Happimeter.Watch.Droid.Workers
                     NumberOfMeasures = accMeasuresToSave.Count,
                     Average = accMeasuresToSave.Select(x => x.Item3).Average(),
                     StdDev = accMeasuresToSave.Select(x => x.Item3).StdDev(),
-                    Magnitude = accMeasuresToSave.Select(x => x.Item3).Sum()
+                    Magnitude = accMeasuresToSave.Select(x => x.Item3).Sum(),
+                    Quantile1 = accMeasuresToSave.Select(x => x.Item3).Quantile1(),
+                    Quantile2 = accMeasuresToSave.Select(x => x.Item3).Quantile2(),
+                    Quantile3 = accMeasuresToSave.Select(x => x.Item3).Quantile3(),
+                    Min = accMeasuresToSave.Select(x => x.Item3).Min(),
+                    Max = accMeasuresToSave.Select(x => x.Item3).Max()
                 });
             }
 
 
             var hearRateMeasuresToSave = HeartRateMeasures.ToList();
             HeartRateMeasures.Clear();
-
             if (hearRateMeasuresToSave.Any())
             {
                 sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
                 {
                     Type = MeasurementItemTypes.HeartRate,
                     NumberOfMeasures = hearRateMeasuresToSave.Count(),
-                    Average = hearRateMeasuresToSave.Average(),
-                    StdDev = hearRateMeasuresToSave.StdDev(),
-                    Magnitude = hearRateMeasuresToSave.Sum()
+                    Average = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 0.1).Average(),
+                    StdDev = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 0.1).StdDev(),
+                    Magnitude = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 0.1).Sum(),
+                    Quantile1 = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 0.1).Quantile1(),
+                    Quantile2 = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 0.1).Quantile2(),
+                    Quantile3 = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 0.1).Quantile3(),
+                    Min = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 0.1).Min(),
+                    Max = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 0.1).Max()
+                });
+
+                sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+                {
+                    Type = MeasurementItemTypes.HeartRateClean,
+                    NumberOfMeasures = hearRateMeasuresToSave.Count(),
+                    Average = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 25).Average(),
+                    StdDev = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 25).StdDev(),
+                    Magnitude = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 25).Sum(),
+                    Quantile1 = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 25).Quantile1(),
+                    Quantile2 = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 25).Quantile2(),
+                    Quantile3 = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 25).Quantile3(),
+                    Min = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 25).Min(),
+                    Max = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 0.1).Max()
                 });
             }
 
@@ -184,9 +223,6 @@ namespace Happimeter.Watch.Droid.Workers
                 {
                     Type = MeasurementItemTypes.Step,
                     NumberOfMeasures = stepMeasuresToSave.Count(),
-                    Average = stepMeasuresToSave.Average(),
-                    StdDev = stepMeasuresToSave.StdDev(),
-                    Magnitude = stepMeasuresToSave.Sum()
                 });
             }
 
@@ -200,13 +236,17 @@ namespace Happimeter.Watch.Droid.Workers
                     NumberOfMeasures = lightMeasuresToSave.Count(),
                     Average = lightMeasuresToSave.Average(),
                     StdDev = lightMeasuresToSave.StdDev(),
-                    Magnitude = lightMeasuresToSave.Sum()
+                    Magnitude = lightMeasuresToSave.Sum(),
+                    Quantile1 = lightMeasuresToSave.Quantile1(),
+                    Quantile2 = lightMeasuresToSave.Quantile2(),
+                    Quantile3 = lightMeasuresToSave.Quantile3(),
+                    Min = lightMeasuresToSave.Min(),
+                    Max = lightMeasuresToSave.Max()
                 });
             }
 
             var microphoneMeasures = MicrophoneWorker.GetInstance().MicrophoneMeasures.ToList();
             MicrophoneWorker.GetInstance().MicrophoneMeasures.Clear();
-
             if (microphoneMeasures.Any())
             {
                 sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
@@ -215,7 +255,12 @@ namespace Happimeter.Watch.Droid.Workers
                     NumberOfMeasures = microphoneMeasures.Count(),
                     Average = microphoneMeasures.Average(),
                     StdDev = microphoneMeasures.StdDev(),
-                    Magnitude = microphoneMeasures.Sum()
+                    Magnitude = microphoneMeasures.Sum(),
+                    Quantile1 = microphoneMeasures.Quantile1(),
+                    Quantile2 = microphoneMeasures.Quantile2(),
+                    Quantile3 = microphoneMeasures.Quantile3(),
+                    Min = microphoneMeasures.Min(),
+                    Max = microphoneMeasures.Max()
                 });
             }
 
@@ -226,26 +271,27 @@ namespace Happimeter.Watch.Droid.Workers
             });
 
             var measures = DetectedActivityIntentService.Measures;
-            foreach (var measure in measures) {
-                if (measure.Value.Any()) {
+            foreach (var measure in measures)
+            {
+                if (measure.Value.Any())
+                {
+                    var measureList = measure.Value.ToList().Select(x => (double)x);
                     sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
                     {
                         Type = GetActivityById(measure.Key),
-                        Magnitude = measure.Value.Max(),
-                        Average = measure.Value.Average(),
-                        NumberOfMeasures = measure.Value.Count()
+                        NumberOfMeasures = measureList.Count(),
+                        Average = measureList.Average(),
+                        StdDev = measureList.StdDev(),
+                        Magnitude = measureList.Sum(),
+                        Quantile1 = measureList.Quantile1(),
+                        Quantile2 = measureList.Quantile2(),
+                        Quantile3 = measureList.Quantile3(),
+                        Min = measureList.Min(),
+                        Max = measureList.Max()
                     });
                 }
             }
             DetectedActivityIntentService.Measures.Clear();
-            /*
-            sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
-            {
-                Type = MeasurementItemTypes.ActivityUnspecific,
-                Magnitude = 1,
-            });
-            */
-
             ServiceLocator.Instance.Get<IDatabaseContext>().AddGraph(sensorMeasurement);
         }
 
@@ -255,7 +301,8 @@ namespace Happimeter.Watch.Droid.Workers
             StopSensors();
         }
 
-        private async Task StopSensors() {
+        private async Task StopSensors()
+        {
             if (_accelerometerListener != null)
             {
                 _sensorManager.UnregisterListener(_accelerometerListener);
@@ -279,7 +326,8 @@ namespace Happimeter.Watch.Droid.Workers
             }
         }
 
-        private async Task StartSensors() {
+        private async Task StartSensors()
+        {
             _sensorManager = (SensorManager)Application.Context.GetSystemService(Android.Content.Context.SensorService);
 
             var light = _sensorManager.GetDefaultSensor(SensorType.Light);
@@ -310,7 +358,8 @@ namespace Happimeter.Watch.Droid.Workers
                 _sensorManager.RegisterListener(_stepListener, stepCounter, SensorDelay.Ui);
             }
 
-            if (_playServicesReady) {
+            if (_playServicesReady)
+            {
                 await activityRecognitionClient.RequestActivityUpdatesAsync(60 * 1000, ActivityDetectionPendingIntent);
             }
 
@@ -337,8 +386,10 @@ namespace Happimeter.Watch.Droid.Workers
             return false;
         }
 
-        private string GetActivityById(int id) {
-            switch (id) {
+        private string GetActivityById(int id)
+        {
+            switch (id)
+            {
                 case 0:
                     return MeasurementItemTypes.ActivityInCar;
                 case 1:
@@ -371,7 +422,7 @@ namespace Happimeter.Watch.Droid.Workers
 
         public void OnAccuracyChanged(Sensor sensor, [GeneratedEnum] SensorStatus accuracy)
         {
-            
+
         }
 
         public void OnSensorChanged(SensorEvent e)
@@ -388,13 +439,17 @@ namespace Happimeter.Watch.Droid.Workers
                     _worker.HeartRateMeasures.Add(measure);
                 }
             }
-            else if (e.Sensor.Type == SensorType.StepCounter) {
+            else if (e.Sensor.Type == SensorType.StepCounter)
+            {
                 foreach (var measure in e.Values)
                 {
-                    if (_worker.StepsFromLastMeasurement == 0) {
-                        _worker.StepsFromLastMeasurement = (int) measure;
-                    } else {
-                        _worker.StepMeasures.Add(measure - _worker.StepsFromLastMeasurement);    
+                    if (_worker.StepsFromLastMeasurement == 0)
+                    {
+                        _worker.StepsFromLastMeasurement = (int)measure;
+                    }
+                    else
+                    {
+                        _worker.StepMeasures.Add(measure - _worker.StepsFromLastMeasurement);
                         _worker.StepsFromLastMeasurement = (int)measure;
                     }
                 }

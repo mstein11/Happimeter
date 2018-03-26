@@ -7,6 +7,7 @@ namespace Happimeter.Core.Helper
     {
 
         public const string HeartRate = "Heartrate";
+        public const string HeartRateClean = "HeartrateClean";
         public const string Step = "Step";
         public const string Light = "Light";
         public const string AccelerometerX = "AccelerometerX";

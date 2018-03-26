@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Android.Media;
 using Happimeter.Core.Database;
 using Happimeter.Watch.Droid.Database;
+using System.Diagnostics;
 
 namespace Happimeter.Watch.Droid.Workers
 {
@@ -16,7 +17,9 @@ namespace Happimeter.Watch.Droid.Workers
         private const int SampleRate = 8000;
         private const ChannelIn Channel = ChannelIn.Mono;
         private const Encoding AudioEncoding = Encoding.Pcm16bit;
-        private const int RecordingDurationSec = 120;
+        private const int RecordingDurationSecSample = 1;
+        private const int RecordingDurationSecRunning = 60;
+        private const int RecordingDurationSecPausing = 60;
 
         private static MicrophoneWorker Instance;
 
@@ -34,15 +37,17 @@ namespace Happimeter.Watch.Droid.Workers
 
         private MicrophoneWorker()
         {
-            
+
         }
 
-        public override void Start() {
+        public override void Start()
+        {
             IsRunning = true;
             RunAsync();
         }
 
-        public void StartOnce() {
+        public void StartOnce()
+        {
             IsRunning = true;
             try
             {
@@ -65,7 +70,7 @@ namespace Happimeter.Watch.Droid.Workers
                 record.StartRecording();
                 var bytesRead = 0;
                 var bigAudioBuffer = new List<short>();
-                while (bytesRead < SampleRate * RecordingDurationSec)
+                while (bytesRead < SampleRate * RecordingDurationSecSample)
                 {
 
                     int numberOfShort = record.Read(audioBuffer, 0, audioBuffer.Count());
@@ -91,7 +96,8 @@ namespace Happimeter.Watch.Droid.Workers
             }
         }
 
-        public override void Stop() {
+        public override void Stop()
+        {
             IsRunning = false;
         }
 
@@ -114,19 +120,31 @@ namespace Happimeter.Watch.Droid.Workers
                                                      AudioEncoding,
                                                      bufferSize);
 
+                var stopwatch = new Stopwatch();
                 while (IsRunning)
                 {
+                    if (stopwatch.Elapsed.Seconds > RecordingDurationSecRunning)
+                    {
+                        stopwatch.Stop();
+                        stopwatch.Reset();
+                        await Task.Delay(TimeSpan.FromSeconds(RecordingDurationSecPausing));
+                    }
+                    if (!stopwatch.IsRunning)
+                    {
+                        stopwatch.Start();
+                    }
                     record.StartRecording();
                     var bytesRead = 0;
                     var bigAudioBuffer = new List<short>();
-                    while (bytesRead < SampleRate * RecordingDurationSec)
+                    while (bytesRead < SampleRate * RecordingDurationSecSample)
                     {
 
                         int numberOfShort = record.Read(audioBuffer, 0, audioBuffer.Count());
                         bytesRead += numberOfShort;
                         //System.Diagnostics.Debug.WriteLine(string.Concat(audioBuffer));
-                        for (var i = 0; i < numberOfShort; i++) {
-                            bigAudioBuffer.Add(audioBuffer[i]);    
+                        for (var i = 0; i < numberOfShort; i++)
+                        {
+                            bigAudioBuffer.Add(audioBuffer[i]);
                         }
                     }
                     var volume = CalculateVolumeForData(bigAudioBuffer.ToArray());
@@ -139,7 +157,7 @@ namespace Happimeter.Watch.Droid.Workers
                     //ServiceLocator.Instance.Get<IDatabaseContext>().Add(measure);
                     MicrophoneMeasures.Add(volume);
                     record.Stop();
-                    await Task.Delay(TimeSpan.FromSeconds(RecordingDurationSec));
+                    await Task.Delay(TimeSpan.FromSeconds(RecordingDurationSecSample));
                 }
             }
             catch (Exception e)

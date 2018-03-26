@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Happimeter.Core.ExtensionMethods
 {
@@ -23,6 +24,27 @@ namespace Happimeter.Core.ExtensionMethods
                 stdDev = Math.Sqrt(sum / (n - 1));
 
             return stdDev;
+        }
+
+        public static double Quantile1(this IEnumerable<double> values)
+        {
+            var count = values.Count();
+            var q1 = values.Count() / 4;
+            return values.ToList().OrderBy(x => x).Take(q1).LastOrDefault();
+        }
+
+        public static double Quantile2(this IEnumerable<double> values)
+        {
+            var count = values.Count();
+            var q1 = values.Count() / 2;
+            return values.ToList().OrderBy(x => x).Take(q1).LastOrDefault();
+        }
+
+        public static double Quantile3(this IEnumerable<double> values)
+        {
+            var count = values.Count();
+            var q1 = values.Count() / 4;
+            return values.ToList().OrderBy(x => x).Take(count - q1).LastOrDefault();
         }
     }
 }
