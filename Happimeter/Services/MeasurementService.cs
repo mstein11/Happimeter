@@ -36,7 +36,8 @@ namespace Happimeter.Services
                 Answer = .5,
             });
 
-            if (additionalQuestions.Count() == 0) {
+            if (additionalQuestions.Count() == 0)
+            {
                 //if we don't have downloaded any questions, lets use the standart questions
                 var question1 = new SurveyItemViewModel
                 {
@@ -51,15 +52,18 @@ namespace Happimeter.Services
                     Answer = .5
                 };
                 questions.SurveyItems.Add(question1);
-                questions.SurveyItems.Add(question2);                
-            } else {
-                questions.SurveyItems.AddRange(additionalQuestions);    
+                questions.SurveyItems.Add(question2);
+            }
+            else
+            {
+                questions.SurveyItems.AddRange(additionalQuestions);
             }
 
             return questions;
         }
 
-        public void AddMeasurements(DataExchangeMessage message) {
+        public void AddMeasurements(DataExchangeMessage message)
+        {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             var apiService = ServiceLocator.Instance.Get<IHappimeterApiService>();
 
@@ -70,7 +74,8 @@ namespace Happimeter.Services
                 context.AddGraph(measurement);
             }
 
-            if (message.SurveyMeasurements.Any()) {
+            if (message.SurveyMeasurements.Any())
+            {
                 apiService.UploadMood();
             }
 
@@ -80,12 +85,14 @@ namespace Happimeter.Services
                 measurement.Id = 0;
                 context.AddGraph(measurement);
             }
-            if (message.SensorMeasurements.Any()) {
+            if (message.SensorMeasurements.Any())
+            {
                 apiService.UploadSensor();
             }
         }
 
-        public void AddSurveyData(SurveyViewModel model) {
+        public void AddSurveyData(SurveyViewModel model)
+        {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             var surveyMeasurement = new SurveyMeasurement
             {
@@ -95,14 +102,15 @@ namespace Happimeter.Services
                 //GenericQuestionGroupId = model.GenericQuestionGroupId
             };
 
-            foreach (var item in model.SurveyItems) {
+            foreach (var item in model.SurveyItems)
+            {
                 surveyMeasurement.SurveyItemMeasurement.Add(new SurveyItemMeasurement
                 {
                     Answer = (int)(item.Answer * 100),
                     Question = item.Question,
                     QuestionId = item.QuestionId,//identifier for server
                     AnswerDisplay = item.AnswerDisplay
-                });  
+                });
             }
 
             context.AddGraph(surveyMeasurement);
@@ -110,7 +118,8 @@ namespace Happimeter.Services
             apiService.UploadMood();
         }
 
-        public bool HasUnsynchronizedChanges() {
+        public bool HasUnsynchronizedChanges()
+        {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             var needsMoodUpload = context.Get<SurveyMeasurement>(x => !x.IsUploadedToServer) != null;
             var needsSensorUpload = context.Get<SensorMeasurement>(x => !x.IsUploadedToServer) != null;
@@ -118,7 +127,8 @@ namespace Happimeter.Services
             return needsMoodUpload || needsSensorUpload;
         }
 
-        public List<SurveyMeasurement> GetSurveyData() {
+        public List<SurveyMeasurement> GetSurveyData()
+        {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             return context.GetAllWithChildren<SurveyMeasurement>().ToList();
         }
@@ -129,7 +139,8 @@ namespace Happimeter.Services
         ///     The second reutnr list contains the data in a format compatible with happimeter api v2. Here we can send all the data, but the api might not be available at this point.
         /// </summary>
         /// <returns>The survey model for server.</returns>
-        public (List<PostMoodServiceModel>, List<SurveyMeasurement>) GetSurveyModelForServer() {
+        public (List<PostMoodServiceModel>, List<SurveyMeasurement>) GetSurveyModelForServer()
+        {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             var entries = context.GetAllWithChildren<SurveyMeasurement>(x => !x.IsUploadedToServer);
             var groupId = ServiceLocator
@@ -138,8 +149,9 @@ namespace Happimeter.Services
                 .GetConfigValueByKey(ConfigService.GenericQuestionGroupIdKey);
             var result = new List<PostMoodServiceModel>();
 
-            foreach (var entry in entries) {
-                var answers = entry.SurveyItemMeasurement.Select(x => new KeyValuePair<int, int>(x.QuestionId, x.Answer)).ToDictionary(x => x.Key, x => x.Value);
+            foreach (var entry in entries)
+            {
+                var answers = entry.SurveyItemMeasurement.Where(x => x.QuestionId != 0).Select(x => new KeyValuePair<int, object>(x.QuestionId, new { answer = GetOldSurveyScaleValue(x.Answer), answer_new_scale = x.Answer })).ToDictionary(x => x.Key, x => x.Value);
                 result.Add(new PostMoodServiceModel
                 {
                     Id = entry.Id,
@@ -165,14 +177,16 @@ namespace Happimeter.Services
             return (result, entries);
         }
 
-        public void SetIsUploadedToServerForSurveys(PostMoodServiceModel survey) {
+        public void SetIsUploadedToServerForSurveys(PostMoodServiceModel survey)
+        {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             var toUpdate = context.Get<SurveyMeasurement>(x => x.Id == survey.Id);
             toUpdate.IsUploadedToServer = true;
             context.Update(toUpdate);
         }
 
-        public void SetIsUploadedToServerForSensorData(PostSensorDataServiceModel sensor) {
+        public void SetIsUploadedToServerForSensorData(PostSensorDataServiceModel sensor)
+        {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             var toUpdate = context.Get<SensorMeasurement>(x => x.Id == sensor.Id);
             toUpdate.IsUploadedToServer = true;
@@ -184,12 +198,14 @@ namespace Happimeter.Services
         ///     The second reutnr list contains the data in a format compatible with happimeter api v2. Here we can send all the data, but the api might not be available at this point.
         /// </summary>
         /// <returns>The survey model for server.</returns>
-        public (List<PostSensorDataServiceModel>, List<SensorMeasurement>) GetSensorDataForServer() {
+        public (List<PostSensorDataServiceModel>, List<SensorMeasurement>) GetSensorDataForServer()
+        {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
-            var entries = context.GetAllWithChildren<SensorMeasurement>(x => !x.IsUploadedToServer);
+            var entries = context.GetAllWithChildren<SensorMeasurement>(x => !x.IsUploadedToServer).Take(150).ToList();
 
             var result = new List<PostSensorDataServiceModel>();
-            foreach(var entry in entries) {
+            foreach (var entry in entries)
+            {
                 result.Add(new PostSensorDataServiceModel
                 {
                     Id = entry.Id,
@@ -205,7 +221,8 @@ namespace Happimeter.Services
                         VarY = Math.Pow(GetOldAccelerometerScaleValue(entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.AccelerometerY)?.StdDev ?? 0), 2),
                         VarZ = Math.Pow(GetOldAccelerometerScaleValue(entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.AccelerometerZ)?.StdDev ?? 0), 2)
                     },
-                    Position = new PositionModel {
+                    Position = new PositionModel
+                    {
                         Altitude = entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.LocationAlt)?.Magnitude ?? 0,
                         Latitude = entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.LocationLat)?.Magnitude ?? 0,
                         Longitude = entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.LocationLon)?.Magnitude ?? 0,
@@ -222,12 +239,15 @@ namespace Happimeter.Services
             return (result, entries);
         }
 
-        private int GetOldSurveyScaleValue(int newScaleValue) {
+        private int GetOldSurveyScaleValue(int newScaleValue)
+        {
 
-            if (newScaleValue < 33) {
+            if (newScaleValue < 33)
+            {
                 return 0;
-            } 
-            if (newScaleValue < 66) {
+            }
+            if (newScaleValue < 66)
+            {
                 return 1;
             }
             return 2;
@@ -239,20 +259,24 @@ namespace Happimeter.Services
         /// </summary>
         /// <returns>The old accelerometer scale value.</returns>
         /// <param name="newScaleValue">New scale value.</param>
-        private int GetOldAccelerometerScaleValue(double newScaleValue) {
-            return (int) (newScaleValue * MeterPerSqaureSecondToMilliGForce);
+        private int GetOldAccelerometerScaleValue(double newScaleValue)
+        {
+            return (int)(newScaleValue * MeterPerSqaureSecondToMilliGForce);
         }
 
-        private int GetOldActivityScaleValue(List<SensorItemMeasurement> items) {
+        private int GetOldActivityScaleValue(List<SensorItemMeasurement> items)
+        {
             var activityMeasures = items.Where(x => MeasurementItemTypes.ActivityTypes.Contains(x.Type));
             var mostLikelyActivity = items.OrderByDescending(x => x.Average).FirstOrDefault();
 
-            if (mostLikelyActivity == null) {
+            if (mostLikelyActivity == null)
+            {
                 //lookup unspecific actovity
                 return 2;
             }
 
-            if (mostLikelyActivity.Type == MeasurementItemTypes.ActivityOnFoot) {
+            if (mostLikelyActivity.Type == MeasurementItemTypes.ActivityOnFoot)
+            {
                 mostLikelyActivity = activityMeasures.Where(x => x.Type != MeasurementItemTypes.ActivityOnFoot).OrderByDescending(x => x.Magnitude).FirstOrDefault();
             }
 
@@ -261,7 +285,8 @@ namespace Happimeter.Services
                 return 3;
             }
 
-            if (mostLikelyActivity.Type == MeasurementItemTypes.ActivityRunning) {
+            if (mostLikelyActivity.Type == MeasurementItemTypes.ActivityRunning)
+            {
                 return 4;
             }
 
@@ -273,7 +298,8 @@ namespace Happimeter.Services
             return 2;
         }
 
-        public List<SurveyMeasurement> GetSurveyMeasurements() {
+        public List<SurveyMeasurement> GetSurveyMeasurements()
+        {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             return context.GetAllWithChildren<SurveyMeasurement>();
         }
@@ -282,7 +308,8 @@ namespace Happimeter.Services
         ///     Returns null, when api return an error (e.g. no internt)
         /// </summary>
         /// <returns>The and save generic questions.</returns>
-        public async Task<List<GenericQuestion>> DownloadAndSaveGenericQuestions() {
+        public async Task<List<GenericQuestion>> DownloadAndSaveGenericQuestions()
+        {
             List<GenericQuestionItemApiResult> genericQuestions = new List<GenericQuestionItemApiResult>();
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
 
@@ -303,8 +330,9 @@ namespace Happimeter.Services
                 QuestionId = q.Id
             }).ToList();
 
-            foreach (var dbQuestion in dbQuestions) {
-                context.Add(dbQuestion);    
+            foreach (var dbQuestion in dbQuestions)
+            {
+                context.Add(dbQuestion);
             }
             return dbQuestions;
         }

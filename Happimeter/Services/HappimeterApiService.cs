@@ -9,6 +9,7 @@ using Happimeter.Interfaces;
 using Happimeter.Models.ApiResultModels;
 using Happimeter.Models.ServiceModels;
 using Newtonsoft.Json.Linq;
+using System.Diagnostics;
 
 namespace Happimeter.Services
 {
@@ -30,7 +31,8 @@ namespace Happimeter.Services
         private const string ApiPathPostSensorV2 = "/v2/sensors";
 
 
-        private static string GetUrlForPath(string path) {
+        private static string GetUrlForPath(string path)
+        {
             return ApiUrl + path;
         }
 
@@ -38,12 +40,14 @@ namespace Happimeter.Services
         {
             _restService = ServiceLocator.Instance.Get<IRestService>();
             _accountStore = ServiceLocator.Instance.Get<IAccountStoreService>();
-            if (_accountStore.IsAuthenticated()) {
+            if (_accountStore.IsAuthenticated())
+            {
                 _restService.AddAuthorizationTokenToInstance(_accountStore.GetAccountToken());
             }
         }
 
-        public async Task<RegisterUserResultModel> CreateAccount(string email, string password) {
+        public async Task<RegisterUserResultModel> CreateAccount(string email, string password)
+        {
 
             var methodResult = new RegisterUserResultModel();
 
@@ -84,12 +88,13 @@ namespace Happimeter.Services
                 {
                     methodResult.ResultType = RegisterUserResultTypes.ErrorUserAlreadyTaken;
                 }
-                else if (apiResult.Status == 410) {
+                else if (apiResult.Status == 410)
+                {
                     methodResult.ResultType = RegisterUserResultTypes.ErrorInvalidEmail;
                 }
                 else
                 {
-                    methodResult.ResultType = RegisterUserResultTypes.ErrorUnknown;   
+                    methodResult.ResultType = RegisterUserResultTypes.ErrorUnknown;
                 }
             }
 
@@ -103,23 +108,30 @@ namespace Happimeter.Services
             var url = GetUrlForPath(ApiPathAuth);
             var data = new { mail = email, password };
             HttpResponseMessage result = null;
-            try {
-                result = await _restService.Post(url, data);    
-            } catch (WebException) {
+            try
+            {
+                result = await _restService.Post(url, data);
+            }
+            catch (WebException)
+            {
                 methodResult.ResultType = AuthResultTypes.ErrorNoInternet;
                 return methodResult;
-            } catch (Exception) {
+            }
+            catch (Exception)
+            {
                 methodResult.ResultType = AuthResultTypes.ErrorUnknown;
                 return methodResult;
             }
 
 
-            if (result.IsSuccessStatusCode) {
+            if (result.IsSuccessStatusCode)
+            {
                 var responseString = await result.Content.ReadAsStringAsync();
                 var apiResult = Newtonsoft.Json.JsonConvert.DeserializeObject<AuthApiResponseModel>(responseString);
 
                 //we got the token
-                if (apiResult.Status == 200) {
+                if (apiResult.Status == 200)
+                {
                     //IsSuccessStatusCode does not work properly because of server
                     _restService.AddAuthorizationTokenToInstance(apiResult.Token);
                     var me = await GetMe();
@@ -127,16 +139,23 @@ namespace Happimeter.Services
                     _accountStore.SaveAccount(email, apiResult.Token, me.Id, apiResult.Expires);
                     var authenticated = _accountStore.IsAuthenticated();
 
-                    if (authenticated) {
-                        methodResult.ResultType = AuthResultTypes.Success;    
-                    } else {
-                        methodResult.ResultType = AuthResultTypes.ErrorUnknown; 
+                    if (authenticated)
+                    {
+                        methodResult.ResultType = AuthResultTypes.Success;
                     }
-                //authentication error, probably wrong username/password
-                } else if (apiResult.Status == 510) {
+                    else
+                    {
+                        methodResult.ResultType = AuthResultTypes.ErrorUnknown;
+                    }
+                    //authentication error, probably wrong username/password
+                }
+                else if (apiResult.Status == 510)
+                {
                     methodResult.ResultType = AuthResultTypes.ErrorWrongCredentials;
-                //Unknown error
-                } else {
+                    //Unknown error
+                }
+                else
+                {
                     methodResult.ResultType = AuthResultTypes.ErrorUnknown;
                 }
             }
@@ -145,7 +164,8 @@ namespace Happimeter.Services
             return methodResult;
         }
 
-        public async Task<GetMeResultModel> GetMe() {
+        public async Task<GetMeResultModel> GetMe()
+        {
             var methodResult = new GetMeResultModel();
             var url = GetUrlForPath(ApiPathAuth);
             HttpResponseMessage result = null;
@@ -166,9 +186,13 @@ namespace Happimeter.Services
                 var apiResults = jObjectResult["auth"].ToObject<GetMeResultModel>();
                 methodResult = apiResults;
                 methodResult.ResultType = HappimeterApiResultInformation.Success;
-            } else if (status == 510) {
+            }
+            else if (status == 510)
+            {
                 methodResult.ResultType = HappimeterApiResultInformation.AuthenticationError;
-            } else {
+            }
+            else
+            {
                 methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
             }
 
@@ -181,7 +205,8 @@ namespace Happimeter.Services
             var measurementService = ServiceLocator.Instance.Get<IMeasurementService>();
             (var toSend, var toSendNewFormat) = measurementService.GetSurveyModelForServer();
 
-            if (!toSend.Any()) {
+            if (!toSend.Any())
+            {
                 return HappimeterApiResultInformation.Success;
             }
 
@@ -199,7 +224,8 @@ namespace Happimeter.Services
                 });
 
                 //if the new api is not available yet, we try to send with the old one.
-                foreach (var moodEntry in toSend) {
+                foreach (var moodEntry in toSend)
+                {
                     UploadMoodStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
                     {
                         EntriesSent = counter,
@@ -220,7 +246,7 @@ namespace Happimeter.Services
                             EventType = SyncronizeDataStates.UploadingError
                         });
                         return HappimeterApiResultInformation.UnknownError;
-                    } 
+                    }
                     counter++;
                 }
 
@@ -234,16 +260,18 @@ namespace Happimeter.Services
 
                 return HappimeterApiResultInformation.Success;
             }
-            catch (WebException)
+            catch (WebException e)
             {
+                Debug.WriteLine(e.Message);
                 UploadMoodStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
                 {
                     EventType = SyncronizeDataStates.UploadingError
                 });
                 return HappimeterApiResultInformation.NoInternet;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.WriteLine(e.Message);
                 UploadMoodStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
                 {
                     EventType = SyncronizeDataStates.UploadingError
@@ -253,7 +281,8 @@ namespace Happimeter.Services
         }
 
         public event EventHandler<SynchronizeDataEventArgs> UploadSensorStatusUpdate;
-        public async Task<HappimeterApiResultInformation> UploadSensor() {
+        public async Task<HappimeterApiResultInformation> UploadSensor()
+        {
             var measurementService = ServiceLocator.Instance.Get<IMeasurementService>();
             (var toSend, var toSendNewFormat) = measurementService.GetSensorDataForServer();
 
@@ -307,16 +336,22 @@ namespace Happimeter.Services
                 });
                 return HappimeterApiResultInformation.Success;
             }
-            catch (WebException)
+            catch (WebException e)
             {
+                Debug.WriteLine(e.Message);
                 UploadSensorStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
                 {
                     EventType = SyncronizeDataStates.UploadingError
                 });
                 return HappimeterApiResultInformation.NoInternet;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.WriteLine(e.Message);
+                if (e.InnerException != null)
+                {
+                    Debug.WriteLine(e.InnerException.Message);
+                }
                 UploadSensorStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
                 {
                     EventType = SyncronizeDataStates.UploadingError
@@ -325,7 +360,8 @@ namespace Happimeter.Services
             }
         }
 
-        public async Task<GetGenericQuestionApiResult> GetGenericQuestions() {
+        public async Task<GetGenericQuestionApiResult> GetGenericQuestions()
+        {
             var methodResult = new GetGenericQuestionApiResult();
             var url = GetUrlForPath(ApiPathGetGenericQuestion);
             HttpResponseMessage result = null;
@@ -338,7 +374,7 @@ namespace Happimeter.Services
                 methodResult.ResultType = HappimeterApiResultInformation.NoInternet;
                 return methodResult;
             }
-            catch (Exception) 
+            catch (Exception)
             {
                 methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
                 return methodResult;

@@ -22,7 +22,7 @@ namespace Happimeter.Models.ServiceModels
         [JsonProperty("lon")]
         public double Lon { get; set; }
         [JsonProperty("mood_answers")]
-        public Dictionary<int, int> MoodAnswers { get; set; }
+        public Dictionary<int, object> MoodAnswers { get; set; }
 
         [JsonProperty("generic_question_group")]
         public string GenericQuestionGroup { get; set; }
@@ -30,6 +30,8 @@ namespace Happimeter.Models.ServiceModels
         public int GenericQuestionCount { get; set; }
         [JsonProperty("generic_values")]
         public int[] GenericQuestionValues { get; set; }
+        [JsonProperty("has_new_format")]
+        public bool HasNewFormat { get; set; } = true;
 
         [JsonProperty("device_id")]
         public string DeviceId { get; set; }

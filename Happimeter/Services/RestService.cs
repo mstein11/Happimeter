@@ -21,11 +21,13 @@ namespace Happimeter.Services
             AddAuthorizationTokenToInstance(authToken);
         }
 
-        public void AddAuthorizationTokenToInstance(string token) {
+        public void AddAuthorizationTokenToInstance(string token)
+        {
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
         }
 
-        public async Task<HttpResponseMessage> Get(string url) {
+        public async Task<HttpResponseMessage> Get(string url)
+        {
             return await _httpClient.GetAsync(url);
         }
 
