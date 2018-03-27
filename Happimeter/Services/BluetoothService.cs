@@ -376,11 +376,11 @@ namespace Happimeter.Services
                                 EventType = AndroidWatchExchangeDataStates.Complete,
                             });
                         var eventData = new Dictionary<string, string> {
-                        {"durationSeconds", stopWatch.Elapsed.TotalSeconds.ToString()},
-                        {"bytesTransfered", result.Count().ToString()}
-                    };
+                            {"durationSeconds", stopWatch.Elapsed.TotalSeconds.ToString()},
+                            {"bytesTransfered", result.Count().ToString()}
+                        };
                         ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.DataExchangeEnd, eventData);
-                    });
+                    }, "data_exchange_task");
                 }
                 catch (Exception e)
                 {

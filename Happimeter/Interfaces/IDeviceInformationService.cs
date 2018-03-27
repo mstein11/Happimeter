@@ -7,6 +7,6 @@ namespace Happimeter.Interfaces
     {
         string GetPhoneOs();
         string GetDeviceName();
-        Task RunCodeInBackgroundMode(Action action);
+        Task RunCodeInBackgroundMode(Func<Task> action, string name = "MyBackgroundTaskName");
     }
 }

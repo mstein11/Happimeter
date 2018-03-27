@@ -21,32 +21,40 @@ namespace Happimeter.iOS.Services
             return UIDevice.CurrentDevice.Name;
         }
 
-        public async Task RunCodeInBackgroundMode(Action action)
+
+        /// <summary>
+        ///     Start a Background Task for the given action. This enables us to run for up to 180 seconds in background instaed of only 10 seconds.
+        ///     We may want to add an overload for this method that takes not async actions. 
+        /// </summary>
+        /// <returns>The code in background mode.</returns>
+        /// <param name="action">Action.</param>
+        public async Task RunCodeInBackgroundMode(Func<Task> action, string name = "MyBackgroundTaskName")
         {
             nint taskId = 0;
             var taskEnded = false;
-            taskId = UIApplication.SharedApplication.BeginBackgroundTask("MyTaskName", () =>
+            taskId = UIApplication.SharedApplication.BeginBackgroundTask(name, () =>
             {
-                Console.WriteLine("Background task got killed");
+                Console.WriteLine($"Background task '{name}' got killed");
                 taskEnded = true;
                 UIApplication.SharedApplication.EndBackgroundTask(taskId);
             });
-            await Task.Factory.StartNew(() =>
+            await Task.Factory.StartNew(async () =>
             {
-                action();
+                Console.WriteLine($"Background task '{name}' started");
+                await action();
+                taskEnded = true;
+                UIApplication.SharedApplication.EndBackgroundTask(taskId);
+                Console.WriteLine($"Background task '{name}' finished");
             });
 
             await Task.Factory.StartNew(async () =>
             {
                 while (!taskEnded)
                 {
-                    Console.WriteLine("Background time remaining: " + UIApplication.SharedApplication.BackgroundTimeRemaining);
+                    Console.WriteLine($"Background task '{name}' time remaining: {UIApplication.SharedApplication.BackgroundTimeRemaining}");
                     await Task.Delay(1000);
                 }
             });
-
-            taskEnded = true;
-            UIApplication.SharedApplication.EndBackgroundTask(taskId);
         }
     }
 }
