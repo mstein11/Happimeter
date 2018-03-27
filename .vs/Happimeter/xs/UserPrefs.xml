@@ -1,5 +1,5 @@
-﻿<Properties StartupConfiguration="{B926B5BC-5FAA-4225-BAC6-BA1BDABB67E9}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Droid/Services/BeaconWakeupService.cs">
+﻿<Properties StartupConfiguration="{A206867A-1792-4275-9C38-842623227972}|Default" NuGet.AddPackagesDialog.IncludePrerelease="True">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Happimeter/App.cs">
     <Files>
       <File FileName="iOS/Main.storyboard" />
       <File FileName="Happimeter/Interfaces/IBeaconWakeupService.cs" Line="5" Column="14" />
@@ -67,13 +67,24 @@
       <File FileName="Happimeter.Watch.Droid/ViewModels/SurveyViewModel.cs" Line="21" Column="1" />
       <File FileName="iOS/Services/BeaconWakeupService.cs" Line="16" Column="10" />
       <File FileName="Droid/Services/DeviceInformationService.cs" Line="50" Column="93" />
-      <File FileName="Droid/Services/BeaconWakeupService.cs" Line="15" Column="6" />
+      <File FileName="Happimeter/Services/LoggingService.cs" Line="17" Column="29" />
+      <File FileName="Happimeter.Core/Helper/UuidHelper.cs" Line="6" Column="29" />
+      <File FileName="Droid/Services/BeaconWakeupService.cs" Line="38" Column="70" />
+      <File FileName="Source Not Available" />
+      <File FileName="Droid/MainApplication.cs" Line="48" Column="26" />
+      <File FileName="Happimeter/App.cs" Line="16" Column="28" />
     </Files>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
-  <MonoDevelop.Ide.ItemProperties.Happimeter.Droid AndroidDesignerPreferredTheme="Theme.DeviceDefault.NoActionBar.Fullscreen" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Happimeter.Droid PreferredExecutionTarget="Android.329F76369FB2" AndroidDesignerPreferredTheme="Theme.DeviceDefault.NoActionBar.Fullscreen" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Droid/Services/BeaconWakeupService.cs" relfile="Droid/Services/BeaconWakeupService.cs" line="118" column="1" />
+      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Droid/Services/BeaconWakeupService.cs" relfile="Droid/Services/BeaconWakeupService.cs" line="123" column="1" />
+      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Droid/Services/BeaconWakeupService.cs" relfile="Droid/Services/BeaconWakeupService.cs" line="128" column="1" />
+      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Droid/Services/BeaconWakeupService.cs" relfile="Droid/Services/BeaconWakeupService.cs" line="29" column="1" />
+      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Droid/Services/BeaconWakeupService.cs" relfile="Droid/Services/BeaconWakeupService.cs" line="63" column="1" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.ItemProperties.Happimeter.iOS PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.63A75A00-18A6-4043-9869-2D3DD3D3B5C7" automaticSigning="False" />

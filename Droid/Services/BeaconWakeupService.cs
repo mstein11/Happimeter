@@ -8,6 +8,8 @@ using Android.Content;
 using Android.Runtime;
 using Plugin.CurrentActivity;
 using Happimeter.Services;
+using Android.OS;
+using AltBeaconOrg.BoundBeacon.Powersave;
 
 namespace Happimeter.Droid.Services
 {
@@ -20,7 +22,7 @@ namespace Happimeter.Droid.Services
         {
         }
 
-        public Context ApplicationContext => CrossCurrentActivity.Current.Activity;
+        public Context ApplicationContext => MainApplication.Context;
 
         public bool BindService(Intent intent, IServiceConnection serviceConnection, [GeneratedEnum] Bind flags)
         {
@@ -29,24 +31,30 @@ namespace Happimeter.Droid.Services
 
         public void OnBeaconServiceConnect()
         {
-            BeaconManager.SetForegroundBetweenScanPeriod(TimeSpan.FromMinutes(5).Seconds * 1000);
-            BeaconManager.SetBackgroundScanPeriod(TimeSpan.FromMinutes(5).Seconds * 1000);
-            BeaconManager.SetMonitorNotifier(_monitorNotifier);
-            _monitorNotifier.EnterRegionComplete += (sender, e) => {
+            BeaconManager.SetDebug(true);
+            BeaconManager.SetForegroundScanPeriod(30 * 1000);
+            BeaconManager.SetBackgroundScanPeriod(30 * 1000);
+            BeaconManager.SetBackgroundBetweenScanPeriod(30 * 1000);
+            BeaconManager.SetForegroundBetweenScanPeriod(30 * 1000);
+            _monitorNotifier.EnterRegionComplete += (sender, e) =>
+            {
+                Console.WriteLine("Did enter region");
                 var btService = ServiceLocator.Instance.Get<IBluetoothService>();
                 ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.BeaconRegionEnteredEvent);
                 btService.ExchangeData();
             };
 
-            _monitorNotifier.ExitRegionComplete += (sender, e) => {
+            _monitorNotifier.ExitRegionComplete += (sender, e) =>
+            {
+                Console.WriteLine("Did leave region");
                 ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.BeaconRegionLeftEvent);
             };
 
             var userId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId();
             var tupple = UtilHelper.GetMajorMinorFromUserId(userId);
             //a region constitutes the beacon that should be found. 
-            var region = new AltBeaconOrg.BoundBeacon.Region("com.example.company", Identifier.Parse(UuidHelper.BeaconUuidString), Identifier.FromInt(tupple.Item1), Identifier.FromInt(tupple.Item2));
-
+            var region = new AltBeaconOrg.BoundBeacon.Region("com.company.name", Identifier.Parse(UuidHelper.BeaconUuidString), Identifier.FromInt(tupple.Item1), Identifier.FromInt(tupple.Item2));
+            BeaconManager.SetMonitorNotifier(_monitorNotifier);
             BeaconManager.StartMonitoringBeaconsInRegion(region);
         }
 
