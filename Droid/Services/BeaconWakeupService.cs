@@ -32,10 +32,10 @@ namespace Happimeter.Droid.Services
         public void OnBeaconServiceConnect()
         {
             BeaconManager.SetDebug(true);
-            /*BeaconManager.SetForegroundScanPeriod(60 * 1000);
+            BeaconManager.SetForegroundScanPeriod(60 * 1000);
             BeaconManager.SetBackgroundScanPeriod(60 * 1000);
-            BeaconManager.SetBackgroundBetweenScanPeriod(60 * 1000);
-            BeaconManager.SetForegroundBetweenScanPeriod(60 * 1000);**/
+            BeaconManager.SetBackgroundBetweenScanPeriod(600 * 1000);
+            BeaconManager.SetForegroundBetweenScanPeriod(600 * 1000);
             PowerSave = new BackgroundPowerSaver(ApplicationContext);
             _monitorNotifier.EnterRegionComplete += (sender, e) =>
             {
