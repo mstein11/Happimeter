@@ -17,7 +17,7 @@ namespace Happimeter.Droid.Services
     {
         private BeaconManager BeaconManager { get; set; }
         private readonly MonitorNotifier _monitorNotifier = new MonitorNotifier();
-
+        private BackgroundPowerSaver PowerSave { get; set; }
         public BeaconWakeupService()
         {
         }
@@ -32,10 +32,11 @@ namespace Happimeter.Droid.Services
         public void OnBeaconServiceConnect()
         {
             BeaconManager.SetDebug(true);
-            BeaconManager.SetForegroundScanPeriod(30 * 1000);
-            BeaconManager.SetBackgroundScanPeriod(30 * 1000);
-            BeaconManager.SetBackgroundBetweenScanPeriod(30 * 1000);
-            BeaconManager.SetForegroundBetweenScanPeriod(30 * 1000);
+            /*BeaconManager.SetForegroundScanPeriod(60 * 1000);
+            BeaconManager.SetBackgroundScanPeriod(60 * 1000);
+            BeaconManager.SetBackgroundBetweenScanPeriod(60 * 1000);
+            BeaconManager.SetForegroundBetweenScanPeriod(60 * 1000);**/
+            PowerSave = new BackgroundPowerSaver(ApplicationContext);
             _monitorNotifier.EnterRegionComplete += (sender, e) =>
             {
                 Console.WriteLine("Did enter region");

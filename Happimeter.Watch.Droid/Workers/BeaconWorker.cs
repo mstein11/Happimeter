@@ -32,7 +32,8 @@ namespace Happimeter.Watch.Droid.Workers
 
         public override void Start()
         {
-            if (IsRunning) {
+            if (IsRunning)
+            {
                 Stop();
             }
             var userId = ServiceLocator.Instance.Get<IDatabaseContext>().Get<BluetoothPairing>(x => x.IsPairingActive)?.PairedWithUserId ?? 0;
@@ -44,7 +45,7 @@ namespace Happimeter.Watch.Droid.Workers
                                    .SetId3(minor.ToString())
                                    .SetManufacturer(UuidHelper.BeaconManufacturerId) // Radius Networks.0x0118  Change this for other beacon layouts//0x004C for iPhone
                                    .SetTxPower(UuidHelper.TxPowerLevel) // Power in dB
-                                   //.SetBluetoothName("Happimeter")
+                                                                        //.SetBluetoothName("Happimeter")
                                    .Build();
             var beaconParser = new BeaconParser().SetBeaconLayout(UuidHelper.BeaconLayout);
             BeaconTransmitter = new BeaconTransmitter(Application.Context, beaconParser);
@@ -57,22 +58,22 @@ namespace Happimeter.Watch.Droid.Workers
             }
             Task.Factory.StartNew(async () =>
             {
-                IsRunning = true;
+                //                IsRunning = true;
                 while (IsRunning)
                 {
                     //BluetoothAdapter.DefaultAdapter.SetName("Happimeter");
                     BeaconTransmitter.StartAdvertising(beacon, new CallbackAd());
                     System.Diagnostics.Debug.WriteLine("Started Beacon");
 
-                    await Task.Delay(TimeSpan.FromMinutes(20));
+                    await Task.Delay(TimeSpan.FromMinutes(5));
                     BeaconTransmitter.StopAdvertising();
-                    await Task.Delay(TimeSpan.FromMinutes(20));
+                    await Task.Delay(TimeSpan.FromMinutes(5));
 
                     System.Diagnostics.Debug.WriteLine("Stopped Beacon");
                 }
                 BeaconTransmitter.Dispose();
                 Console.WriteLine($"Stopen Worker: {nameof(BeaconWorker)} because is running became false.");
-            },TokenSource.Token);
+            }, TokenSource.Token);
         }
 
         public override void Stop()
