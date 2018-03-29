@@ -10,6 +10,7 @@ using Happimeter.Models.ApiResultModels;
 using Happimeter.Models.ServiceModels;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
+using Xamarin.Forms;
 
 namespace Happimeter.Services
 {
@@ -27,7 +28,7 @@ namespace Happimeter.Services
         private const string ApiPathGetGenericQuestion = "/v1/moods/genericquestions";
 
         private const string ApiPathPostMood = "/v1/moods-generic";
-        private const string ApiPathPostSensor = "/v1/sensors";
+        private const string ApiPathPostSensor = "/v1/sensorslist";
         private const string ApiPathPostSensorV2 = "/v2/sensors";
 
 
@@ -300,37 +301,44 @@ namespace Happimeter.Services
                     EventType = SyncronizeDataStates.UploadingSensor
                 });
 
+                //first upload in new format
                 result = await _restService.Post(newUrl, toSendNewFormat);
-                foreach (var sensorEntry in toSend)
+                if (!result.IsSuccessStatusCode)
                 {
+                    //if it did not work, lets log this.
+                    ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.CouldNotUploadSensorNewFormat);
+                }
+                var resultOldFormat = await _restService.Post(url, toSend);
+                if (!result.IsSuccessStatusCode)
+                {
+                    //if it did not work, lets log this.
+                    ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.CouldNotUploadSensorOldFormat);
+                }
+
+                if (resultOldFormat.IsSuccessStatusCode || result.IsSuccessStatusCode)
+                {
+                    //if any of the two methods did work, lets mark the entries as uploaded
+                    foreach (var sensorEntry in toSend)
+                    {
+                        measurementService.SetIsUploadedToServerForSensorData(sensorEntry);
+                    }
+                }
+                else
+                {
+                    //both methods did not work. :(
                     UploadSensorStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
                     {
                         EntriesSent = counter,
                         TotalEntries = toSend.Count,
-                        EventType = SyncronizeDataStates.UploadingSensor
+                        EventType = SyncronizeDataStates.UploadingError
                     });
-
-                    result = await _restService.Post(url, sensorEntry);
-                    if (result.IsSuccessStatusCode)
-                    {
-                        measurementService.SetIsUploadedToServerForSensorData(sensorEntry);
-                    }
-                    else
-                    {
-                        UploadSensorStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
-                        {
-                            EntriesSent = counter,
-                            TotalEntries = toSend.Count,
-                            EventType = SyncronizeDataStates.UploadingError
-                        });
-                        return HappimeterApiResultInformation.UnknownError;
-                    }
-                    counter++;
+                    return HappimeterApiResultInformation.UnknownError;
                 }
 
+                //if we arrive here, than at least one method did work.
                 UploadSensorStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
                 {
-                    EntriesSent = counter,
+                    EntriesSent = toSend.Count,
                     TotalEntries = toSend.Count,
                     EventType = SyncronizeDataStates.UploadingSuccessful
                 });

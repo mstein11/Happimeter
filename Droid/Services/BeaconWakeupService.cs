@@ -31,7 +31,7 @@ namespace Happimeter.Droid.Services
 
         public void OnBeaconServiceConnect()
         {
-            BeaconManager.SetDebug(true);
+            //BeaconManager.SetDebug(true);
             BeaconManager.SetForegroundScanPeriod(60 * 1000);
             BeaconManager.SetBackgroundScanPeriod(60 * 1000);
             BeaconManager.SetBackgroundBetweenScanPeriod(600 * 1000);

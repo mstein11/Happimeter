@@ -16,16 +16,21 @@ namespace Happimeter.Services
         public const string DataExchangeFailure = "DataExchangeFailure";
         public const string BeaconRegionEnteredEvent = "BeaconRegionEnteredEvent";
         public const string BeaconRegionLeftEvent = "BeaconRegionLeftEvent";
+        public const string CouldNotUploadSensorNewFormat = "CouldNotUploadSensorNewFormat";
+        public const string CouldNotUploadSensorOldFormat = "CouldNotUploadSensorOldFormat";
 
 
-        public void LogEvent(string name, Dictionary<string, string> data = null) {
-            if (data == null) {
+        public void LogEvent(string name, Dictionary<string, string> data = null)
+        {
+            if (data == null)
+            {
                 data = new Dictionary<string, string>();
             }
             var accountStore = ServiceLocator.Instance.Get<IAccountStoreService>();
             var username = accountStore.GetAccount()?.Username ?? "NO-USERNAME";
-            if (!data.ContainsKey("user")) {
-                data.Add("user", username);    
+            if (!data.ContainsKey("user"))
+            {
+                data.Add("user", username);
             }
             Analytics.TrackEvent(name, data);
         }

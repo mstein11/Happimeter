@@ -58,16 +58,16 @@ namespace Happimeter.Watch.Droid.Workers
             }
             Task.Factory.StartNew(async () =>
             {
-                //                IsRunning = true;
+                IsRunning = true;
                 while (IsRunning)
                 {
                     //BluetoothAdapter.DefaultAdapter.SetName("Happimeter");
                     BeaconTransmitter.StartAdvertising(beacon, new CallbackAd());
                     System.Diagnostics.Debug.WriteLine("Started Beacon");
 
-                    await Task.Delay(TimeSpan.FromMinutes(5));
+                    await Task.Delay(TimeSpan.FromMinutes(20));
                     BeaconTransmitter.StopAdvertising();
-                    await Task.Delay(TimeSpan.FromMinutes(5));
+                    await Task.Delay(TimeSpan.FromMinutes(20));
 
                     System.Diagnostics.Debug.WriteLine("Stopped Beacon");
                 }
