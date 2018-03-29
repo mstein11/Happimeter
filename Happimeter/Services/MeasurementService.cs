@@ -21,8 +21,6 @@ namespace Happimeter.Services
 
         private const double MeterPerSqaureSecondToMilliGForce = 101.93679918451;
 
-
-
         public SurveyViewModel GetSurveyQuestions()
         {
             var questions = new SurveyViewModel();
@@ -67,6 +65,7 @@ namespace Happimeter.Services
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             var apiService = ServiceLocator.Instance.Get<IHappimeterApiService>();
 
+            //save survey responses
             foreach (var measurement in message.SurveyMeasurements)
             {
                 measurement.IdFromWatch = measurement.Id;
@@ -74,20 +73,12 @@ namespace Happimeter.Services
                 context.AddGraph(measurement);
             }
 
-            if (message.SurveyMeasurements.Any())
-            {
-                apiService.UploadMood();
-            }
-
+            //save sensor data
             foreach (var measurement in message.SensorMeasurements)
             {
                 measurement.IdFromWatch = measurement.Id;
                 measurement.Id = 0;
                 context.AddGraph(measurement);
-            }
-            if (message.SensorMeasurements.Any())
-            {
-                apiService.UploadSensor();
             }
         }
 
@@ -120,11 +111,31 @@ namespace Happimeter.Services
 
         public bool HasUnsynchronizedChanges()
         {
-            var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
-            var needsMoodUpload = context.Get<SurveyMeasurement>(x => !x.IsUploadedToServer) != null;
-            var needsSensorUpload = context.Get<SensorMeasurement>(x => !x.IsUploadedToServer) != null;
+            return HasUnsynchronizedSensorData() || HasUnsynchronizedSurveyData();
+        }
 
-            return needsMoodUpload || needsSensorUpload;
+        public bool HasUnsynchronizedSensorData()
+        {
+            var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
+            return context.Get<SensorMeasurement>(x => !x.IsUploadedToServer) != null;
+        }
+
+        public int CountUnsynchronizedSensorData()
+        {
+            var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
+            return context.GetAll<SensorMeasurement>(x => !x.IsUploadedToServer).Count();
+        }
+
+        public bool HasUnsynchronizedSurveyData()
+        {
+            var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
+            return context.Get<SurveyMeasurement>(x => !x.IsUploadedToServer) != null;
+        }
+
+        public int CountUnsynchronizedSurveyData()
+        {
+            var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
+            return context.GetAll<SurveyMeasurement>(x => !x.IsUploadedToServer).Count();
         }
 
         public List<SurveyMeasurement> GetSurveyData()
@@ -135,11 +146,10 @@ namespace Happimeter.Services
 
 
         /// <summary>
-        ///     The first return list contains the data in a format compatible with happimeter api v1. However, in this format we can not save all the data
-        ///     The second reutnr list contains the data in a format compatible with happimeter api v2. Here we can send all the data, but the api might not be available at this point.
+        ///     returns the data in a format that we can send to the server
         /// </summary>
         /// <returns>The survey model for server.</returns>
-        public (List<PostMoodServiceModel>, List<SurveyMeasurement>) GetSurveyModelForServer()
+        public List<PostMoodServiceModel> GetSurveyModelForServer()
         {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             var entries = context.GetAllWithChildren<SurveyMeasurement>(x => !x.IsUploadedToServer);
@@ -165,16 +175,10 @@ namespace Happimeter.Services
                                                        ?.FirstOrDefault(x => x.QuestionId == (int)SurveyHardcodedEnumeration.Pleasance)?.Answer ?? 0),
                     DeviceId = "",
                     MoodAnswers = answers
-                    //GenericQuestionCount = entry.GenericQuestionGroupId != null ? entry.SurveyItemMeasurement.Count(x => x.HardcodedQuestionId == 0 || x.HardcodedQuestionId == null) : 0,
-                    //GenericQuestionGroup = entry.GenericQuestionGroupId,
-                    //GenericQuestionValues = entry.SurveyItemMeasurement.Where(x => x.HardcodedQuestionId == 0 || x.HardcodedQuestionId == null).Select(x => GetOldSurveyScaleValue(x.Answer)).ToArray()
                 });
             }
 
-            //remove circular references so that we can jsonify
-            entries.ForEach(e => e.SurveyItemMeasurement.ForEach(i => i.SurveyMeasurement = null));
-
-            return (result, entries);
+            return result;
         }
 
         public void SetIsUploadedToServerForSurveys(PostMoodServiceModel survey)
@@ -194,6 +198,7 @@ namespace Happimeter.Services
         }
 
         /// <summary>
+        ///     We only return 150 entries to prevent errors. If we return more, than during the upload process the app might be killed because too long in background.
         ///     The first return list contains the data in a format compatible with happimeter api v1. However, in this format we can not save all the data
         ///     The second reutnr list contains the data in a format compatible with happimeter api v2. Here we can send all the data, but the api might not be available at this point.
         /// </summary>

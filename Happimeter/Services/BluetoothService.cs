@@ -336,6 +336,8 @@ namespace Happimeter.Services
                     var deviceInfoServic = ServiceLocator.Instance.Get<IDeviceInformationService>();
                     await deviceInfoServic.RunCodeInBackgroundMode(async () =>
                     {
+                        //FROM HERE ON WE RUN IT IN A BACKGROUND THREAD
+
                         Console.WriteLine("wrote successfully");
                         var stopWatch = new Stopwatch();
                         stopWatch.Start();
@@ -366,8 +368,12 @@ namespace Happimeter.Services
                         pairing.LastDataSync = DateTime.UtcNow;
                         ServiceLocator.Instance.Get<ISharedDatabaseContext>().Update(pairing);
 
-                        //inform watch that we stored his data. In turin it will delete the data on the watch.
+                        //inform watch that we stored his data. In turn it will delete the data on the watch.
                         await WriteAsync(characteristic, new DataExchangeConfirmationMessage());
+                        //As last step we upload the data to the server 
+                        await ServiceLocator.Instance.Get<IHappimeterApiService>().UploadMood();
+                        await ServiceLocator.Instance.Get<IHappimeterApiService>().UploadSensor();
+
                         Console.WriteLine("Succesfully finished data exchange");
                         IsBusy.Remove(characteristic.Service.Device.Uuid);
                         DataExchangeStatusUpdate?.Invoke(this,
