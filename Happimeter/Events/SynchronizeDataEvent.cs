@@ -6,7 +6,8 @@ namespace Happimeter.Events
         UploadingMood,
         UploadingSensor,
         UploadingSuccessful,
-        UploadingError
+        UploadingError,
+        NoInternetError
     }
 
 

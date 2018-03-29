@@ -53,10 +53,12 @@ namespace Happimeter.ViewModels.Forms
             {
                 PushQuestionsToWatchButtonEnabled = false;
                 PushGenericQuestionToWatchButtonText = "Loading...";
-                ServiceLocator.Instance.Get<IBluetoothService>().SendGenericQuestions((connectionUpdate) => {
+                ServiceLocator.Instance.Get<IBluetoothService>().SendGenericQuestions((connectionUpdate) =>
+                {
                     Timer timer = null;
-                    switch (connectionUpdate) {
-                        case BluetoothWriteEvent.Initialized:            
+                    switch (connectionUpdate)
+                    {
+                        case BluetoothWriteEvent.Initialized:
                             break;
                         case BluetoothWriteEvent.Connected:
                             PushGenericQuestionToWatchButtonText = "Loading... (connected to device)";
@@ -111,18 +113,21 @@ namespace Happimeter.ViewModels.Forms
                     .Get<IMeasurementService>()
                     .DownloadAndSaveGenericQuestions();
                 Timer timer = null;
-                if (questions == null) {
+                if (questions == null)
+                {
                     //Error while downloading questions
                     GenericGroupButtonText = "Error Downloading Questinos";
-                } else {
-                    NumberOfGenericQuestions = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyQuestions().SurveyItems.Count() - 2;   
+                }
+                else
+                {
+                    NumberOfGenericQuestions = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyQuestions().SurveyItems.Count() - 2;
                     GenericGroupButtonText = $"Successfully downloaded  {questions.Count} questions";
                 }
 
                 timer = new Timer((obj) =>
                 {
                     SaveGenericGroupButtonEnabled = true;
-                    GenericGroupButtonText = "Save & Download";
+                    GenericGroupButtonText = "Download Questions";
                     timer.Dispose();
                 }, null, 2000, System.Threading.Timeout.Infinite);
             });
@@ -138,18 +143,22 @@ namespace Happimeter.ViewModels.Forms
             ServiceLocator.Instance.Get<IHappimeterApiService>().UploadSensorStatusUpdate += HandleUploadStatusUpdate;
 
             var needSync = ServiceLocator.Instance.Get<IMeasurementService>().HasUnsynchronizedChanges();
-            if (needSync) {
+            if (needSync)
+            {
                 UnsyncronizedChangedVisible = true;
             }
 
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             context.WhenEntryChanged<SharedBluetoothDevicePairing>().Subscribe(eventInfo =>
             {
-                if (eventInfo.Entites.Cast<SharedBluetoothDevicePairing>().Any(x => x.IsPairingActive) 
+                if (eventInfo.Entites.Cast<SharedBluetoothDevicePairing>().Any(x => x.IsPairingActive)
                     && eventInfo.TypeOfEvent != Core.Events.DatabaseChangedEventTypes.Deleted
-                    && eventInfo.TypeOfEvent != Core.Events.DatabaseChangedEventTypes.DeleteAll) {
+                    && eventInfo.TypeOfEvent != Core.Events.DatabaseChangedEventTypes.DeleteAll)
+                {
                     ShowPushQuestionsToWatchButton = true;
-                } else {
+                }
+                else
+                {
                     ShowPushQuestionsToWatchButton = false;
                 }
             });
@@ -157,7 +166,8 @@ namespace Happimeter.ViewModels.Forms
             {
                 var surveyMeasurements = eventInfos.Entites.Cast<SurveyMeasurement>();
                 var notUploaded = surveyMeasurements.Where(x => !x.IsUploadedToServer);
-                foreach (var entry in notUploaded) {
+                foreach (var entry in notUploaded)
+                {
                     _surveyIdsNotSynched.Add(entry.Id);
                 }
                 if (_sensorIdsNotSynched.Any() || _surveyIdsNotSynched.Any())
@@ -192,11 +202,15 @@ namespace Happimeter.ViewModels.Forms
 
                 foreach (var entry in surveyMeasurements)
                 {
-                    if (!entry.IsUploadedToServer) {
-                        if (!_surveyIdsNotSynched.Contains(entry.Id)) {
-                            _surveyIdsNotSynched.Add(entry.Id);        
+                    if (!entry.IsUploadedToServer)
+                    {
+                        if (!_surveyIdsNotSynched.Contains(entry.Id))
+                        {
+                            _surveyIdsNotSynched.Add(entry.Id);
                         }
-                    } else {
+                    }
+                    else
+                    {
                         if (_surveyIdsNotSynched.Contains(entry.Id))
                         {
                             _surveyIdsNotSynched.Remove(entry.Id);
@@ -245,7 +259,7 @@ namespace Happimeter.ViewModels.Forms
         }
 
         private string _userEmail;
-        public string UserEmail 
+        public string UserEmail
         {
             get => _userEmail;
             set => SetProperty(ref _userEmail, value);
@@ -285,15 +299,15 @@ namespace Happimeter.ViewModels.Forms
             get => _saveGenericGroupButtonEnabled;
             set => SetProperty(ref _saveGenericGroupButtonEnabled, value);
         }
-        private string _genericGroupButtonText = "Save & Download";
-        public string GenericGroupButtonText 
+        private string _genericGroupButtonText = "Download Questions";
+        public string GenericGroupButtonText
         {
             get => _genericGroupButtonText;
             set => SetProperty(ref _genericGroupButtonText, value);
         }
 
         private bool _showPushQuestionsToWatchButton;
-        public bool ShowPushQuestionsToWatchButton 
+        public bool ShowPushQuestionsToWatchButton
         {
             get => _showPushQuestionsToWatchButton;
             set => SetProperty(ref _showPushQuestionsToWatchButton, value);
@@ -318,8 +332,10 @@ namespace Happimeter.ViewModels.Forms
         public ICommand UploadCommand { protected set; get; }
         public ICommand PushGenericQuestionsToWatchCommand { protected set; get; }
 
-        private void HandleUploadStatusUpdate(object sender, SynchronizeDataEventArgs e) {
-            switch (e.EventType) {
+        private void HandleUploadStatusUpdate(object sender, SynchronizeDataEventArgs e)
+        {
+            switch (e.EventType)
+            {
                 case SyncronizeDataStates.UploadingMood:
                     DisplayIndication($"Uploading Mood: {e.EntriesSent} of {e.TotalEntries} uploaded");
                     break;
@@ -331,6 +347,9 @@ namespace Happimeter.ViewModels.Forms
                     break;
                 case SyncronizeDataStates.UploadingError:
                     DisplayIndication($"Error while Uploading", 2000);
+                    break;
+                case SyncronizeDataStates.NoInternetError:
+                    DisplayIndication($"No internet", 2000);
                     break;
             }
         }

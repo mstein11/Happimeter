@@ -60,7 +60,10 @@ namespace Happimeter.Services
             {
                 result = await _restService.Post(url, data);
             }
-            catch (WebException)
+            catch (Exception e) when (
+                e is HttpRequestException
+                || e is WebException
+            )
             {
                 methodResult.ResultType = RegisterUserResultTypes.ErrorNoInternet;
                 return methodResult;
@@ -113,7 +116,10 @@ namespace Happimeter.Services
             {
                 result = await _restService.Post(url, data);
             }
-            catch (WebException)
+            catch (Exception e) when (
+                e is HttpRequestException
+                || e is WebException
+            )
             {
                 methodResult.ResultType = AuthResultTypes.ErrorNoInternet;
                 return methodResult;
@@ -174,7 +180,10 @@ namespace Happimeter.Services
             {
                 result = await _restService.Get(url);
             }
-            catch (WebException)
+            catch (Exception e) when (
+                e is HttpRequestException
+                || e is WebException
+            )
             {
                 methodResult.ResultType = HappimeterApiResultInformation.NoInternet;
                 return methodResult;
@@ -260,12 +269,15 @@ namespace Happimeter.Services
 
                 return HappimeterApiResultInformation.Success;
             }
-            catch (WebException e)
+            catch (Exception e) when (
+                e is HttpRequestException
+                || e is WebException
+            )
             {
                 Debug.WriteLine(e.Message);
                 UploadMoodStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
                 {
-                    EventType = SyncronizeDataStates.UploadingError
+                    EventType = SyncronizeDataStates.NoInternetError
                 });
                 return HappimeterApiResultInformation.NoInternet;
             }
@@ -356,12 +368,15 @@ namespace Happimeter.Services
                 });
                 return HappimeterApiResultInformation.Success;
             }
-            catch (WebException e)
+            catch (Exception e) when (
+                e is HttpRequestException
+                || e is WebException
+            )
             {
                 Debug.WriteLine(e.Message);
                 UploadSensorStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
                 {
-                    EventType = SyncronizeDataStates.UploadingError
+                    EventType = SyncronizeDataStates.NoInternetError
                 });
                 return HappimeterApiResultInformation.NoInternet;
             }
@@ -389,13 +404,19 @@ namespace Happimeter.Services
             {
                 result = await _restService.Get(url);
             }
-            catch (WebException)
+            catch (Exception e) when (
+                e is HttpRequestException
+                || e is WebException
+            )
             {
+                Debug.WriteLine(e.Message);
                 methodResult.ResultType = HappimeterApiResultInformation.NoInternet;
                 return methodResult;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.WriteLine(e.Message);
+                Debug.WriteLine(e.GetType());
                 methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
                 return methodResult;
             }
