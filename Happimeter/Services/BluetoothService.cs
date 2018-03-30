@@ -315,6 +315,7 @@ namespace Happimeter.Services
 
 
                 var success = await WriteAsync(characteristic, new DataExchangeFirstMessage());
+                Console.WriteLine("wrote successfully");
                 if (!success)
                 {
                     //writing was not successful
@@ -332,14 +333,12 @@ namespace Happimeter.Services
                                  {
                                      EventType = AndroidWatchExchangeDataStates.DidWrite
                                  });
-                try
+                var deviceInfoServic = ServiceLocator.Instance.Get<IDeviceInformationService>();
+                await deviceInfoServic.RunCodeInBackgroundMode(async () =>
                 {
-                    var deviceInfoServic = ServiceLocator.Instance.Get<IDeviceInformationService>();
-                    await deviceInfoServic.RunCodeInBackgroundMode(async () =>
+                    //FROM HERE ON WE RUN IT IN A BACKGROUND THREAD
+                    try
                     {
-                        //FROM HERE ON WE RUN IT IN A BACKGROUND THREAD
-
-                        Console.WriteLine("wrote successfully");
                         var stopWatch = new Stopwatch();
                         stopWatch.Start();
                         var result = await ReadAsync(characteristic, (read, total) =>
@@ -387,19 +386,19 @@ namespace Happimeter.Services
                             {"bytesTransfered", result.Count().ToString()}
                         };
                         ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.DataExchangeEnd, eventData);
-                    }, "data_exchange_task");
-                }
-                catch (Exception e)
-                {
-                    DataExchangeStatusUpdate?.Invoke(this,
-                        new AndroidWatchExchangeDataEventArgs
-                        {
-                            EventType = AndroidWatchExchangeDataStates.ErrorOnExchange,
-                        });
-                    Console.WriteLine($"Exception on Dataexchange after starting the exchange: {e.Message}");
-                    ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.DataExchangeFailure);
-                    IsBusy.Remove(characteristic.Service.Device.Uuid);
-                }
+                    }
+                    catch (Exception e)
+                    {
+                        DataExchangeStatusUpdate?.Invoke(this,
+                            new AndroidWatchExchangeDataEventArgs
+                            {
+                                EventType = AndroidWatchExchangeDataStates.ErrorOnExchange,
+                            });
+                        Console.WriteLine($"Exception on Dataexchange after starting the exchange: {e.Message}");
+                        ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.DataExchangeFailure);
+                        IsBusy.Remove(characteristic.Service.Device.Uuid);
+                    }
+                }, "data_exchange_task");
             }
         }
 
@@ -527,7 +526,7 @@ namespace Happimeter.Services
                     {
                         if (arg is TimeoutException)
                         {
-                            Console.WriteLine("Reading took longer than 5 seconds. Abort!");
+                            Console.WriteLine("Reading took longer than 10 seconds. Abort!");
                         }
                         else
                         {

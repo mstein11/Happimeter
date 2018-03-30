@@ -80,16 +80,16 @@ namespace Happimeter.ViewModels.Forms
                         DisplayIndication("Data Exchange Complete", e.BytesRead, 2000);
                         break;
                     case Events.AndroidWatchExchangeDataStates.DeviceNotFound:
-                        DisplayIndication("Device could not be found", null, 2000);
+                        DisplayIndication("Device could not be found", e.BytesRead, 2000);
                         break;
                     case Events.AndroidWatchExchangeDataStates.CouldNotConnect:
-                        DisplayIndication("Could not connect to device", null, 2000);
+                        DisplayIndication("Could not connect to device", e.BytesRead, 2000);
                         break;
                     case Events.AndroidWatchExchangeDataStates.CouldNotDiscoverCharacteristic:
-                        DisplayIndication("Could not discover characteristic", null, 2000);
+                        DisplayIndication("Could not discover characteristic", e.BytesRead, 2000);
                         break;
                     case Events.AndroidWatchExchangeDataStates.ErrorOnExchange:
-                        DisplayIndication("Error while exchanging data", null, 2000);
+                        DisplayIndication("Error while exchanging data", e.BytesRead, 2000);
                         break;
                 }
             };
@@ -205,11 +205,9 @@ namespace Happimeter.ViewModels.Forms
                 {
                     DataExchangeStatus = null;
                     DataExchangeStatusIsVisible = false;
-                    if (progress != null)
-                    {
-                        DataExchangeProgressIsVisible = false;
-                        DataExchangeProgress = 0;
-                    }
+                    DataExchangeProgressIsVisible = false;
+                    DataExchangeProgress = 0;
+
                     timer.Dispose();
                 }, null, milliseconds.Value, System.Threading.Timeout.Infinite);
             }
