@@ -20,13 +20,15 @@ namespace Happimeter.ViewModels.Forms
 
             SetValuesInViewModel(pairing);
 
-            context.WhenEntryChanged<SharedBluetoothDevicePairing>().Subscribe(x => {
-                foreach (var entry in x.Entites) {
+            context.WhenEntryChanged<SharedBluetoothDevicePairing>().Subscribe(x =>
+            {
+                foreach (var entry in x.Entites)
+                {
                     var updatedPairing = (entry as SharedBluetoothDevicePairing);
                     if (updatedPairing != null && updatedPairing.IsPairingActive)
                     {
                         SetValuesInViewModel(updatedPairing);
-                    }    
+                    }
                 }
             });
 
@@ -38,14 +40,16 @@ namespace Happimeter.ViewModels.Forms
                 var innerPairing = context
                               .Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive);
 
-                if (innerPairing != null) {
-                    context.Delete(innerPairing);    
+                if (innerPairing != null)
+                {
+                    context.Delete(innerPairing);
                 }
                 OnRemovedPairing?.Invoke(this, null);
             });
 
             ExchangeDataCommand = new Command(() =>
             {
+                App.BluetoothAlertIfNeeded();
                 var btService = ServiceLocator.Instance.Get<IBluetoothService>();
                 btService.ExchangeData();
             });
@@ -53,8 +57,10 @@ namespace Happimeter.ViewModels.Forms
             RefreshData();
 
             var btServiceForUpdate = ServiceLocator.Instance.Get<IBluetoothService>();
-            btServiceForUpdate.DataExchangeStatusUpdate += (sender, e) => {
-                switch (e.EventType) {
+            btServiceForUpdate.DataExchangeStatusUpdate += (sender, e) =>
+            {
+                switch (e.EventType)
+                {
                     case Events.AndroidWatchExchangeDataStates.SearchingForDevice:
                         DisplayIndication("Searching for device");
                         break;
@@ -91,7 +97,7 @@ namespace Happimeter.ViewModels.Forms
         }
 
         private DateTime _synchronizedAt;
-        public DateTime SynchronizedAt 
+        public DateTime SynchronizedAt
         {
             get => _synchronizedAt;
             set => SetProperty(ref _synchronizedAt, value);
@@ -155,7 +161,8 @@ namespace Happimeter.ViewModels.Forms
             }
         }
 
-        public void LoadMoreData() {
+        public void LoadMoreData()
+        {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             var measurements = context.GetSensorMeasurements(Items.Count, 100, true);
             //var measurements = context.GetAllWithChildren<SensorMeasurement>().OrderByDescending(x => x.Timestamp).Skip(Items.Count()).Take(100);
@@ -186,7 +193,8 @@ namespace Happimeter.ViewModels.Forms
             DataExchangeStatus = text;
             Timer timer = null;
 
-            if (progress != null) {
+            if (progress != null)
+            {
                 DataExchangeProgressIsVisible = true;
                 DataExchangeProgress = progress.Value;
             }

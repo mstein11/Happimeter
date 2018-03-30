@@ -21,7 +21,9 @@ namespace Happimeter.ViewModels.Forms
 
             StartScanCommand = new Command(() =>
             {
-                if (!StartScanButtonIsEnabled) {
+                App.BluetoothAlertIfNeeded();
+                if (!StartScanButtonIsEnabled)
+                {
                     return;
                 }
                 StartScanButtonText = "Scanning...";
@@ -62,12 +64,15 @@ namespace Happimeter.ViewModels.Forms
 
         public ObservableCollection<BluetoothPairingItemViewModel> Items { get; set; }
 
-        public void OnItemSelected(object sender, SelectedItemChangedEventArgs e) {
+        public void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
             var selectedItem = (e.SelectedItem as BluetoothPairingItemViewModel)?.Device as AndroidWatch ?? null;
-            if (selectedItem == null) {
+            if (selectedItem == null)
+            {
 
 
-                if ((e.SelectedItem as BluetoothPairingItemViewModel) != null) {
+                if ((e.SelectedItem as BluetoothPairingItemViewModel) != null)
+                {
                     //show indication for 2 seconds
                     (e.SelectedItem as BluetoothPairingItemViewModel).ShowIndication = true;
                     (e.SelectedItem as BluetoothPairingItemViewModel).IndicationText = "Wrong Device";
@@ -91,8 +96,9 @@ namespace Happimeter.ViewModels.Forms
                 {
                     return;
                 }
-                if (state == AndroidWatchConnectingStates.Complete) {
-                    OnPairedDevice?.Invoke(this, null);    
+                if (state == AndroidWatchConnectingStates.Complete)
+                {
+                    OnPairedDevice?.Invoke(this, null);
                 }
 
                 (e.SelectedItem as BluetoothPairingItemViewModel).ShowIndicationForState(state.Value);
@@ -103,8 +109,9 @@ namespace Happimeter.ViewModels.Forms
 
         public event EventHandler OnPairedDevice;
 
-        private void ReceiveConnectingEvent(object sender, EventArgs e) {
-            
+        private void ReceiveConnectingEvent(object sender, EventArgs e)
+        {
+
         }
     }
 }

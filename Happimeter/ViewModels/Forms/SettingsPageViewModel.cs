@@ -51,6 +51,7 @@ namespace Happimeter.ViewModels.Forms
             PushQuestionsToWatchButtonEnabled = true;
             PushGenericQuestionsToWatchCommand = new Command(() =>
             {
+                App.BluetoothAlertIfNeeded();
                 PushQuestionsToWatchButtonEnabled = false;
                 PushGenericQuestionToWatchButtonText = "Loading...";
                 ServiceLocator.Instance.Get<IBluetoothService>().SendGenericQuestions((connectionUpdate) =>

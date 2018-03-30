@@ -33,7 +33,7 @@ namespace Happimeter.iOS
 
             AppCenter.Start("3119c95f-ca17-4e2d-9ae0-46c5382633f8",
                    typeof(Analytics), typeof(Crashes));
-            
+
 
             Happimeter.iOS.DependencyInjection.Container.RegisterElements();
             Forms.Init();
@@ -42,22 +42,24 @@ namespace Happimeter.iOS
 
             var store = ServiceLocator.Instance.Get<IAccountStoreService>();
             Window = new UIWindow(UIScreen.MainScreen.Bounds);
-            if (store.IsAuthenticated()) {
+            if (store.IsAuthenticated())
+            {
                 UIStoryboard board = UIStoryboard.FromName("Main", null);
                 UIViewController ctrl = (UIViewController)board.InstantiateViewController("tabViewController");
                 ctrl.ModalTransitionStyle = UIModalTransitionStyle.FlipHorizontal;
                 Window.RootViewController = ctrl;
                 Window.MakeKeyAndVisible();
-            } else {
+            }
+            else
+            {
                 UIStoryboard board = UIStoryboard.FromName("Main", null);
                 UIViewController ctrl = (UIViewController)board.InstantiateViewController("SignInViewController");
                 ctrl.ModalTransitionStyle = UIModalTransitionStyle.FlipHorizontal;
                 Window.RootViewController = ctrl;
                 Window.MakeKeyAndVisible();
                 //application.KeyWindow.RootViewController = ctrl;
-    
-            }
 
+            }
 
 
             return true;
@@ -86,6 +88,7 @@ namespace Happimeter.iOS
             // Called as part of the transiton from background to active state.
             // Here you can undo many of the changes made on entering the background.
             Console.WriteLine("WILL ENTER FOREGROUND");
+            App.AppResumed();
         }
 
         public override void OnActivated(UIApplication application)

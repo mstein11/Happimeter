@@ -43,8 +43,9 @@ namespace Happimeter.Droid
         public void OnActivityCreated(Activity activity, Bundle savedInstanceState)
         {
             CrossCurrentActivity.Current.Activity = activity;
-            if (!_isInitialized) {
-                Xamarin.Forms.Forms.Init(this, savedInstanceState);   
+            if (!_isInitialized)
+            {
+                Xamarin.Forms.Forms.Init(this, savedInstanceState);
                 App.Initialize();
                 _isInitialized = true;
             }
@@ -63,6 +64,7 @@ namespace Happimeter.Droid
         public void OnActivityResumed(Activity activity)
         {
             CrossCurrentActivity.Current.Activity = activity;
+            App.AppResumed();
         }
 
         public void OnActivitySaveInstanceState(Activity activity, Bundle outState)
