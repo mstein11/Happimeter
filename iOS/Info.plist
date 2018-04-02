@@ -9,7 +9,7 @@
 	<key>CFBundleIdentifier</key>
 	<string>edu.mit.Happimeter</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.1.2</string>
+	<string>1.2.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MinimumOSVersion</key>
@@ -58,6 +58,6 @@
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>We use your Location in order to wake up the app when it is close to an iBeacon</string>
 	<key>CFBundleVersion</key>
-	<string>1.1.2</string>
+	<string>1.2.0</string>
 </dict>
 </plist>

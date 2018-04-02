@@ -1,5 +1,5 @@
 ﻿<Properties StartupConfiguration="{DE8957FA-3B78-4B43-A5A2-C82830EF665B}|Default">
-  <MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench ActiveDocument="iOS/Info.plist">
     <Files>
       <File FileName="iOS/Main.storyboard" />
       <File FileName="Happimeter/Interfaces/IBeaconWakeupService.cs" Line="5" Column="14" />
@@ -30,7 +30,7 @@
       <File FileName="Happimeter.Watch.Droid/Services/BackgroundService.cs" Line="41" Column="10" />
       <File FileName="Happimeter/Services/BluetoothService.cs" Line="308" Column="38" />
       <File FileName="Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" Line="74" Column="13" />
-      <File FileName="Happimeter.Watch.Droid/Workers/MeasurementWorker.cs" Line="103" Column="1" />
+      <File FileName="Happimeter.Watch.Droid/Workers/MeasurementWorker.cs" Line="4" Column="1" />
       <File FileName="Happimeter.Watch.Droid/Properties/AndroidManifest.xml" Line="19" Column="12" />
       <File FileName="Happimeter.Watch.Droid/Services/DetectedActivityIntentService.cs" Line="30" Column="87" />
       <File FileName="Happimeter.Watch.Droid/Workers/AbstractWorker.cs" Line="12" Column="21" />
