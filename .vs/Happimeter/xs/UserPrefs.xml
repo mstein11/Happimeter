@@ -1,9 +1,9 @@
 ﻿<Properties StartupConfiguration="{DE8957FA-3B78-4B43-A5A2-C82830EF665B}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="iOS/Info.plist">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Happimeter.Watch.Droid/Workers/BluetoothWorker.cs">
     <Files>
       <File FileName="Happimeter.Watch.Droid/BroadcastReceiver/AutoStartBroadcastReceiver.cs" Line="1" Column="1" />
       <File FileName="Happimeter.Watch.Droid/Services/BackgroundService.cs" Line="1" Column="1" />
-      <File FileName="Happimeter.Watch.Droid/BroadcastReceiver/BluetoothBroadcastReceiver.cs" Line="24" Column="62" />
+      <File FileName="Happimeter.Watch.Droid/BroadcastReceiver/BluetoothBroadcastReceiver.cs" Line="60" Column="27" />
       <File FileName="Happimeter.Watch.Droid/Services/MeasurementJobService.cs" Line="26" Column="63" />
       <File FileName="Happimeter.Watch.Droid/MainActivity.cs" Line="17" Column="52" />
       <File FileName="Happimeter.Watch.Droid/Services/DetectedActivityIntentService.cs" Line="1" Column="1" />
@@ -15,6 +15,9 @@
       <File FileName="iOS/Services/DeviceInformationService.cs" Line="1" Column="1" />
       <File FileName="Happimeter/Services/LoggingService.cs" Line="1" Column="1" />
       <File FileName="iOS/Info.plist" />
+      <File FileName="Happimeter/ViewModels/Forms/SettingsPageViewModel.cs" Line="76" Column="79" />
+      <File FileName="Happimeter.Watch.Droid/Workers/BeaconWorker.cs" Line="65" Column="72" />
+      <File FileName="Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" Line="176" Column="18" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
@@ -23,7 +26,7 @@
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/iOS/Services/BeaconWakeupService.cs" relfile="iOS/Services/BeaconWakeupService.cs" line="23" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.ItemProperties.Happimeter.Watch.Droid PreferredExecutionTarget="Android.18.189.118.116:5555" />
+  <MonoDevelop.Ide.ItemProperties.Happimeter.Watch.Droid PreferredExecutionTarget="Android.SelectDevice" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.ItemProperties.Happimeter.iOS automaticSigning="False" />
   <MultiItemStartupConfigurations>

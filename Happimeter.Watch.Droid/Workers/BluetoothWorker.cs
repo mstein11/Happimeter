@@ -61,19 +61,22 @@ namespace Happimeter.Watch.Droid.Workers
         {
             //we don't need to test for bt, its done before calling this method
             TokenSource = new CancellationTokenSource();
-            Task.Factory.StartNew(() => {
+            Task.Factory.StartNew(() =>
+            {
                 IsRunning = true;
                 InitializeGatt();
                 ConnectableAdvertisement();
             }, TokenSource.Token);
         }
 
-        private void InitializeGatt() {
+        private void InitializeGatt()
+        {
             GattServer = Manager.OpenGattServer(Application.Context, new CallbackGatt(this));
             GattServer.AddService(HappimeterService.Create());
 
-            if (!ServiceLocator.Instance.Get<IDeviceService>().IsPaired()) {
-                GattServer.AddService(HappimeterAuthService.Create());    
+            if (!ServiceLocator.Instance.Get<IDeviceService>().IsPaired())
+            {
+                GattServer.AddService(HappimeterAuthService.Create());
             }
 
             System.Diagnostics.Debug.WriteLine("Gatt initialized");
@@ -82,9 +85,10 @@ namespace Happimeter.Watch.Droid.Workers
         public override void Stop()
         {
             TokenSource?.Cancel(false);
-            if (GattServer != null) {
+            if (GattServer != null)
+            {
                 GattServer.Close();
-                GattServer.Dispose();                
+                GattServer.Dispose();
             }
             Manager.Adapter.BluetoothLeAdvertiser?.StopAdvertising(AdvertisementCallback);
             Manager.Adapter.BluetoothLeAdvertiser?.Dispose();
@@ -92,18 +96,21 @@ namespace Happimeter.Watch.Droid.Workers
             IsRunning = false;
         }
 
-        public void RemoveAuthService() {
+        public void RemoveAuthService()
+        {
 
             GattServer?.Services.ToList().ForEach((x) => Console.WriteLine(x.Uuid.ToString()));
             var authService = GattServer?.Services.Where(x => x.Uuid.ToString().ToUpper() == UuidHelper.AndroidWatchAuthServiceUuidString.ToUpper()).FirstOrDefault() ?? null;
-            if (authService != null) {
+            if (authService != null)
+            {
                 GattServer.RemoveService(authService);
                 Console.WriteLine("Removed Auth Service");
             }
             ConnectableAdvertisement();
         }
 
-        public void AddAuthService() {
+        public void AddAuthService()
+        {
             var authService = GattServer?.Services.FirstOrDefault(x => x.Uuid.ToString().ToUpper() == UuidHelper.AndroidWatchAuthServiceUuidString.ToUpper()) ?? null;
             if (authService == null && GattServer != null)
             {
@@ -113,25 +120,29 @@ namespace Happimeter.Watch.Droid.Workers
             ConnectableAdvertisement();
         }
 
-        public void SendNotifiation(BluetoothGattCharacteristic characteristic = null, BaseBluetoothMessage message = null) {
+        public void SendNotifiation(BluetoothGattCharacteristic characteristic = null, BaseBluetoothMessage message = null)
+        {
             var readhost = new ReadHostContext(message);
             var header = readhost.Header;
             characteristic = GattServer.GetService(UUID.FromString(UuidHelper.AndroidWatchAuthServiceUuidString)).GetCharacteristic(UUID.FromString(UuidHelper.AuthCharacteristicUuidString));
             characteristic.SetValue(header);
 
-            foreach (var dev in SubscribedDevices) {
-                var headerResult = GattServer.NotifyCharacteristicChanged(dev.Value, characteristic, false);    
-                if (!headerResult) {
+            foreach (var dev in SubscribedDevices)
+            {
+                var headerResult = GattServer.NotifyCharacteristicChanged(dev.Value, characteristic, false);
+                if (!headerResult)
+                {
                     throw new ArgumentException("Could not notify client");
                 }
             }
 
-            while(!readhost.Complete) {
+            while (!readhost.Complete)
+            {
                 var messagePart = readhost.GetNextBytes(20);
                 characteristic.SetValue(messagePart);
                 foreach (var dev in SubscribedDevices)
                 {
-                    GattServer.NotifyCharacteristicChanged(dev.Value, characteristic, false);    
+                    GattServer.NotifyCharacteristicChanged(dev.Value, characteristic, false);
                 }
             }
         }
@@ -150,7 +161,8 @@ namespace Happimeter.Watch.Droid.Workers
             var deviceName = ServiceLocator.Instance.Get<IDeviceService>().GetDeviceName();
             BluetoothAdapter.DefaultAdapter.SetName(deviceName);
             AdvertiseData data = null;
-            if (ServiceLocator.Instance.Get<IDeviceService>().IsPaired()) {
+            if (ServiceLocator.Instance.Get<IDeviceService>().IsPaired())
+            {
                 //if we are paired, we advertise the DataExchangeUuid and the userId as Data
                 var userId = ServiceLocator.Instance.Get<IDatabaseContext>().Get<BluetoothPairing>(x => x.IsPairingActive)?.PairedWithUserId ?? 0;
                 data = new AdvertiseData.Builder()
@@ -158,7 +170,9 @@ namespace Happimeter.Watch.Droid.Workers
                                             .AddServiceUuid(ParcelUuid.FromString(UuidHelper.AndroidWatchServiceUuidString))
                                             .AddServiceData(ParcelUuid.FromString(UuidHelper.AndroidWatchServiceUuidString), Encoding.UTF8.GetBytes(userId.ToString()))
                                             .Build();
-            } else {
+            }
+            else
+            {
                 //if we are not paired, we advertise the AuthUuid
                 data = new AdvertiseData.Builder()
                                             .SetIncludeDeviceName(true)
@@ -184,6 +198,12 @@ namespace Happimeter.Watch.Droid.Workers
         public override void OnStartFailure(AdvertiseFailure errorCode)
         {
             base.OnStartFailure(errorCode);
+            BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.DefaultAdapter;
+            if (mBluetoothAdapter.IsEnabled && errorCode == AdvertiseFailure.InternalError)
+            {
+
+                mBluetoothAdapter.Disable();
+            }
             System.Diagnostics.Debug.WriteLine("advertising error  " + errorCode.ToString());
         }
     }
@@ -208,7 +228,8 @@ namespace Happimeter.Watch.Droid.Workers
         {
             base.OnConnectionStateChange(device, status, newState);
 
-            if (newState == ProfileState.Connected) {
+            if (newState == ProfileState.Connected)
+            {
                 Console.WriteLine("device is now connected: watch as server");
 
                 /*var client = device.ConnectGatt(Application.Context, true, new CallBackGattClient(Worker));
@@ -235,11 +256,13 @@ namespace Happimeter.Watch.Droid.Workers
                 context = dataCharac.GetReadHostContext(device.Address);
             }
 
-            if (context == null) {
+            if (context == null)
+            {
                 Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, new byte[] { 0x00, 0x00, 0x00 });
                 return;
             }
-            if (!context.DidSendHeader) {
+            if (!context.DidSendHeader)
+            {
                 Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, context.Header);
                 context.DidSendHeader = true;
                 return;
@@ -248,24 +271,26 @@ namespace Happimeter.Watch.Droid.Workers
             var mtu = Worker.DevicesMtu.ContainsKey(device.Address) ? Worker.DevicesMtu[device.Address] : 20;
             var bytesToSend = context.GetNextBytes(mtu);
 
-            if (context.Complete) {
+            if (context.Complete)
+            {
                 if (authCharac != null)
                 {
                     authCharac.DoneReading(device.Address);
                 }
 
                 if (dataCharac != null)
-                { 
+                {
                     dataCharac.DoneReading(device.Address);
                 }
             }
 
-            if (!bytesToSend.Any()) {
+            if (!bytesToSend.Any())
+            {
                 bytesToSend = new byte[] { 0x00, 0x00, 0x00 };
             }
 
             Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, bytesToSend);
-            return; 
+            return;
         }
 
         public override void OnCharacteristicWriteRequest(BluetoothDevice device, int requestId, BluetoothGattCharacteristic characteristic, bool preparedWrite, bool responseNeeded, int offset, byte[] value)
@@ -287,9 +312,12 @@ namespace Happimeter.Watch.Droid.Workers
                 isInitialMessage = true;
 
                 //if the header is maleformated we need to catch that!
-                try {
-                    WriteReceiverContextForDevice.Add((device.Address, characteristic.Uuid.ToString()), new WriteReceiverContext(value));    
-                } catch (Exception) {
+                try
+                {
+                    WriteReceiverContextForDevice.Add((device.Address, characteristic.Uuid.ToString()), new WriteReceiverContext(value));
+                }
+                catch (Exception)
+                {
                     Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Failure, offset, value);
                 }
 
@@ -297,7 +325,7 @@ namespace Happimeter.Watch.Droid.Workers
             var context = WriteReceiverContextForDevice[(device.Address, characteristic.Uuid.ToString())];
             var messageName = WriteReceiverContextForDevice[(device.Address, characteristic.Uuid.ToString())].MessageName;
 
-            if (messageName != DataExchangeFirstMessage.MessageNameConstant 
+            if (messageName != DataExchangeFirstMessage.MessageNameConstant
                 && messageName != DataExchangeConfirmationMessage.MessageNameConstant
                 && messageName != AuthFirstMessage.MessageNameConstant
                 && messageName != AuthSecondMessage.MessageNameConstant
@@ -312,7 +340,8 @@ namespace Happimeter.Watch.Droid.Workers
 
             if (!isInitialMessage)
             {
-                if (!context.CanAddMessagePart(value)) {
+                if (!context.CanAddMessagePart(value))
+                {
                     Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Failure, offset, Encoding.UTF8.GetBytes("wrong pass phrase!"));
                     return;
                 }
@@ -332,7 +361,8 @@ namespace Happimeter.Watch.Droid.Workers
             //let's be open for new write requests
             WriteReceiverContextForDevice.Remove((device.Address, characteristic.Uuid.ToString()));
 
-            if (messageJson == null) {
+            if (messageJson == null)
+            {
                 Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Failure, offset, Encoding.UTF8.GetBytes("malformated gzip"));
                 return;
             }
@@ -384,9 +414,12 @@ namespace Happimeter.Watch.Droid.Workers
             if (descriptor.Uuid.ToString() == UUID.FromString("00002902-0000-1000-8000-00805f9b34fb").ToString())
             {
                 List<byte> valueToReturn;
-                if (Worker.SubscribedDevices.ContainsKey(device.Address)) {
+                if (Worker.SubscribedDevices.ContainsKey(device.Address))
+                {
                     valueToReturn = BluetoothGattDescriptor.EnableNotificationValue.ToList<byte>();
-                } else {
+                }
+                else
+                {
                     valueToReturn = BluetoothGattDescriptor.DisableNotificationValue.ToList<byte>();
                 }
                 Worker.GattServer.SendResponse(device,
@@ -458,7 +491,9 @@ namespace Happimeter.Watch.Droid.Workers
             if (!Worker.DevicesMtu.ContainsKey(device.Address))
             {
                 Worker.DevicesMtu.Add(device.Address, mtu);
-            } else {
+            }
+            else
+            {
                 Worker.DevicesMtu[device.Address] = mtu;
             }
         }
@@ -478,7 +513,8 @@ namespace Happimeter.Watch.Droid.Workers
         {
             base.OnConnectionStateChange(gatt, status, newState);
             Console.WriteLine("device is now connected: watch as client");
-            if (newState == ProfileState.Connected) {
+            if (newState == ProfileState.Connected)
+            {
                 var success = gatt.RequestMtu(512);
             }
         }
