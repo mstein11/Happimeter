@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using Happimeter.Interfaces;
 using UIKit;
+using Happimeter.Services;
+using Happimeter.Core.Helper;
 
 namespace Happimeter.iOS.Services
 {
@@ -36,6 +38,7 @@ namespace Happimeter.iOS.Services
             {
                 //when time is up and task has not finished, call this method to finish the task to prevent the app from being terminated
                 Console.WriteLine($"Background task '{name}' got killed");
+                ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.BackgroundTaskExpired);
                 taskEnded = true;
                 UIApplication.SharedApplication.EndBackgroundTask(taskId);
             });

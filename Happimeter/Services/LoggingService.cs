@@ -15,6 +15,7 @@ namespace Happimeter.Services
         public const string DataExchangeEnd = "DataExchangeEnd";
         public const string DataExchangeFailure = "DataExchangeFailure";
         public const string BeaconRegionEnteredEvent = "BeaconRegionEnteredEvent";
+        public const string BackgroundTaskExpired = "BackgroundTaskExpired";
         public const string BeaconRegionLeftEvent = "BeaconRegionLeftEvent";
         public const string CouldNotUploadSensorNewFormat = "CouldNotUploadSensorNewFormat";
         public const string CouldNotUploadSensorOldFormat = "CouldNotUploadSensorOldFormat";

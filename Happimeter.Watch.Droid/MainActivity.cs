@@ -44,29 +44,36 @@ namespace Happimeter.Watch.Droid
 
 
             var pairing = ServiceLocator.Instance.Get<IDatabaseContext>().GetCurrentBluetoothPairing();
-            if (pairing != null) {
+            if (pairing != null)
+            {
 
-            } else {
+            }
+            else
+            {
                 var intent = new Intent(this, typeof(PairingActivity));
                 StartActivity(intent);
                 Finish();
             }
 
-            FindViewById<Button>(Resource.Id.removePairingButton).Click += delegate {
+            FindViewById<Button>(Resource.Id.removePairingButton).Click += delegate
+            {
                 ServiceLocator.Instance.Get<IDeviceService>().RemovePairing();
                 var intent = new Intent(this, typeof(PairingActivity));
                 StartActivity(intent);
                 Finish();
             };
-            FindViewById<Button>(Resource.Id.surveyButton).Click += (sender, e) => {
+            FindViewById<Button>(Resource.Id.surveyButton).Click += (sender, e) =>
+            {
                 var intent = new Intent(this, typeof(SurveyActivity));
                 StartActivity(intent);
             };
-            if (!IsMyServiceRunning(typeof(BackgroundService))) {
+            if (!IsMyServiceRunning(typeof(BackgroundService)))
+            {
                 StartService(new Intent(this, typeof(BackgroundService)));
             }
-            if (!IsMyServiceRunning(typeof(BeaconService))) {
-                StartService(new Intent(this, typeof(BeaconService)));    
+            if (!IsMyServiceRunning(typeof(BeaconService)))
+            {
+                StartService(new Intent(this, typeof(BeaconService)));
             }
         }
 

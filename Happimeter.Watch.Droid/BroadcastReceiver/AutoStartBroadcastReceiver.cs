@@ -21,21 +21,14 @@ namespace Happimeter.Watch.Droid
     {
         public override void OnReceive(Context context, Intent intent)
         {
-            //Log.Info("TEST", "HELLO FROM THE RECEIVER");
             Toast.MakeText(context, "Received intent!", ToastLength.Long).Show();
-            var intend = new Intent(context, typeof(BackgroundService));
-            intend.AddFlags(ActivityFlags.NewTask);
-            Console.WriteLine("Hello");
-            Log.Error("TEST", "HALLO");
-            context.StartService(intend);
+            var backgroundIntend = new Intent(context, typeof(BackgroundService));
+            //backgroundIntend.AddFlags(ActivityFlags.NewTask);
+            context.StartService(backgroundIntend);
 
-            /*
-            var preferences = context.GetSharedPreferences("TEST", FileCreationMode.Append);
-            var editor = preferences.Edit();
-
-            editor.PutString("StartEvent", DateTime.UtcNow.ToString());
-            editor.Commit();
-            */
+            var beaconIntend = new Intent(context, typeof(BeaconService));
+            //beaconIntend.AddFlags(ActivityFlags.NewTask);
+            context.StartService(beaconIntend);
         }
     }
 }
