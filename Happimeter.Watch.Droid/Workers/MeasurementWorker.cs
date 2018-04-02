@@ -183,35 +183,37 @@ namespace Happimeter.Watch.Droid.Workers
 
             var hearRateMeasuresToSave = HeartRateMeasures.ToList();
             HeartRateMeasures.Clear();
-            if (hearRateMeasuresToSave.Any())
+            if (hearRateMeasuresToSave.Any(x => Math.Abs(x) > 0.1))
             {
                 sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
                 {
                     Type = MeasurementItemTypes.HeartRate,
                     NumberOfMeasures = hearRateMeasuresToSave.Count(),
-                    Average = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 0.1).Average(),
-                    StdDev = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 0.1).StdDev(),
-                    Magnitude = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 0.1).Sum(),
-                    Quantile1 = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 0.1).Quantile1(),
-                    Quantile2 = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 0.1).Quantile2(),
-                    Quantile3 = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 0.1).Quantile3(),
-                    Min = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 0.1).Min(),
-                    Max = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 0.1).Max()
+                    Average = hearRateMeasuresToSave.Where(x => Math.Abs(x) > 0.1).Average(),
+                    StdDev = hearRateMeasuresToSave.Where(x => Math.Abs(x) > 0.1).StdDev(),
+                    Magnitude = hearRateMeasuresToSave.Where(x => Math.Abs(x) > 0.1).Sum(),
+                    Quantile1 = hearRateMeasuresToSave.Where(x => Math.Abs(x) > 0.1).Quantile1(),
+                    Quantile2 = hearRateMeasuresToSave.Where(x => Math.Abs(x) > 0.1).Quantile2(),
+                    Quantile3 = hearRateMeasuresToSave.Where(x => Math.Abs(x) > 0.1).Quantile3(),
+                    Min = hearRateMeasuresToSave.Where(x => Math.Abs(x) > 0.1).Min(),
+                    Max = hearRateMeasuresToSave.Where(x => Math.Abs(x) > 0.1).Max()
                 });
-
-                sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+                if (hearRateMeasuresToSave.Any(x => Math.Abs(x) > 25))
                 {
-                    Type = MeasurementItemTypes.HeartRateClean,
-                    NumberOfMeasures = hearRateMeasuresToSave.Count(),
-                    Average = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 25).Average(),
-                    StdDev = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 25).StdDev(),
-                    Magnitude = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 25).Sum(),
-                    Quantile1 = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 25).Quantile1(),
-                    Quantile2 = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 25).Quantile2(),
-                    Quantile3 = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 25).Quantile3(),
-                    Min = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 25).Min(),
-                    Max = hearRateMeasuresToSave.Where(x => Math.Abs(x) < 0.1).Max()
-                });
+                    sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+                    {
+                        Type = MeasurementItemTypes.HeartRateClean,
+                        NumberOfMeasures = hearRateMeasuresToSave.Count(),
+                        Average = hearRateMeasuresToSave.Where(x => Math.Abs(x) > 25).Average(),
+                        StdDev = hearRateMeasuresToSave.Where(x => Math.Abs(x) > 25).StdDev(),
+                        Magnitude = hearRateMeasuresToSave.Where(x => Math.Abs(x) > 25).Sum(),
+                        Quantile1 = hearRateMeasuresToSave.Where(x => Math.Abs(x) > 25).Quantile1(),
+                        Quantile2 = hearRateMeasuresToSave.Where(x => Math.Abs(x) > 25).Quantile2(),
+                        Quantile3 = hearRateMeasuresToSave.Where(x => Math.Abs(x) > 25).Quantile3(),
+                        Min = hearRateMeasuresToSave.Where(x => Math.Abs(x) > 25).Min(),
+                        Max = hearRateMeasuresToSave.Where(x => Math.Abs(x) > 25).Max()
+                    });
+                }
             }
 
             var stepMeasuresToSave = StepMeasures.ToList();
@@ -223,6 +225,7 @@ namespace Happimeter.Watch.Droid.Workers
                 {
                     Type = MeasurementItemTypes.Step,
                     NumberOfMeasures = stepMeasuresToSave.Count(),
+                    Magnitude = stepMeasuresToSave.Sum(),
                 });
             }
 

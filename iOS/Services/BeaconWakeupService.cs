@@ -15,7 +15,11 @@ namespace Happimeter.iOS.Services
         {
         }
 
-        public void StartWakeupForBeacon() {
+        public void StartWakeupForBeacon()
+        {
+
+            //NSOperationQueue.MainQueue.AddOperation(() =>
+            //{
             string message = "";
             CLProximity previousProximity = CLProximity.Far;
             var userId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId();
@@ -34,6 +38,7 @@ namespace Happimeter.iOS.Services
 
             LocationManager.RegionEntered += (object sender, CLRegionEventArgs e) =>
             {
+                Console.WriteLine("region entered");
                 var btService = ServiceLocator.Instance.Get<IBluetoothService>();
                 ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.BeaconRegionEnteredEvent);
                 btService.ExchangeData();
@@ -41,12 +46,14 @@ namespace Happimeter.iOS.Services
 
             LocationManager.RegionLeft += (object sender, CLRegionEventArgs e) =>
             {
+                Console.WriteLine("region left");
                 ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.BeaconRegionLeftEvent);
             };
 
 
 
-            LocationManager.DidDetermineState += (object sender, CLRegionStateDeterminedEventArgs e) => {
+            LocationManager.DidDetermineState += (object sender, CLRegionStateDeterminedEventArgs e) =>
+            {
 
                 switch (e.State)
                 {
@@ -64,12 +71,14 @@ namespace Happimeter.iOS.Services
                         break;
                 }
             };
-            LocationManager.DidStartMonitoringForRegion += (object sender, CLRegionEventArgs e) => {
+            LocationManager.DidStartMonitoringForRegion += (object sender, CLRegionEventArgs e) =>
+            {
                 LocationManager.RequestState(e.Region);
                 string t_region = e.Region.Identifier.ToString();
                 Console.WriteLine(t_region);
             };
-            LocationManager.DidRangeBeacons += (object sender, CLRegionBeaconsRangedEventArgs e) => {
+            LocationManager.DidRangeBeacons += (object sender, CLRegionBeaconsRangedEventArgs e) =>
+            {
                 if (e.Beacons.Length > 0)
                 {
                     CLBeacon beacon = e.Beacons[0];
@@ -101,11 +110,14 @@ namespace Happimeter.iOS.Services
                     Console.WriteLine("nothing");
                 }
             };
+            LocationManager.StopMonitoring(BeaconRegion);
             LocationManager.StartMonitoring(BeaconRegion);
-            LocationManager.MonitoringFailed += (sender, e) => {
+            LocationManager.MonitoringFailed += (sender, e) =>
+            {
                 System.Diagnostics.Debug.WriteLine("Failed monitoring");
             };
-            LocationManager.StartRangingBeacons(BeaconRegion);
+            //LocationManager.StartRangingBeacons(BeaconRegion);
+            //});
         }
     }
 }

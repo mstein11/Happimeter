@@ -159,56 +159,63 @@ namespace Happimeter.Services
             //todo: not be reliable on name
             if (connectedDevices.Any(x => x.Name?.Contains("Happimeter") ?? false))
             {
-                Console.WriteLine("Device already connected");
-                var device = connectedDevices.FirstOrDefault(x => x.Name.Contains("Happimeter"));
-                return device;
+                var innerDevice = connectedDevices.FirstOrDefault(x => x.Name.Contains("Happimeter"));
+                if (innerDevice.Status == ConnectionStatus.Connected)
+                {
+                    Console.WriteLine("Device already connected");
+                    return innerDevice;
+                }
             }
-            else
-            {
-                if (!CrossBleAdapter.Current.IsScanning)
-                {
-                    Console.WriteLine("Not connected, not scanning, starting scanning");
-                    var replaySubj = StartScan(UuidHelper.AndroidWatchServiceUuidString);
-                }
-                var userId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId();
-                var userIdBytes = System.Text.Encoding.UTF8.GetBytes(userId.ToString());
-                //we skip 2 because the first two bytes are not relevant to us. the actual advertisement data start at position 3
-                var device = await ScanReplaySubject.Where(scanRes => scanRes?.AdvertisementData?.ServiceData?.FirstOrDefault()?.Skip(2)?.SequenceEqual(userIdBytes) ?? false)
-                                                    .Select(result => result.Device)
-                                                    .Take(1)
-                                                    .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
-                                                    .Catch((Exception arg) =>
-                                                    {
-                                                        Console.WriteLine(arg.Message);
-                                                        return Observable.Return<IDevice>(null);
-                                                    })
-                                                    .DefaultIfEmpty();
-                if (device == null)
-                {
-                    return null;
-                }
 
-                bool connectionResult = true;
-                await device.Connect(
-                    new GattConnectionConfig
-                    {
-                        AutoConnect = false,
-                        Priority = ConnectionPriority.High
-                    })
-                    .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
+            if (!CrossBleAdapter.Current.IsScanning)
+            {
+                Console.WriteLine("Not connected, not scanning, starting scanning");
+                var replaySubj = StartScan(UuidHelper.AndroidWatchServiceUuidString);
+            }
+            var userId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId();
+            var userIdBytes = System.Text.Encoding.UTF8.GetBytes(userId.ToString());
+            //we skip 2 because the first two bytes are not relevant to us. the actual advertisement data start at position 3
+            var device = await ScanReplaySubject.Where(scanRes => scanRes?.AdvertisementData?.ServiceData?.FirstOrDefault()?.Skip(2)?.SequenceEqual(userIdBytes) ?? false)
+                                                .Select(result => result.Device)
+                                                .Take(1)
+                                                .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
                                                 .Catch((Exception arg) =>
                                                 {
-                                                    connectionResult = false;
-                                                    return Observable.Return<object>(null);
-                                                });
-
-                if (!connectionResult)
-                {
-                    //connection was not successful!
-                    return null;
-                }
-                return device;
+                                                    Console.WriteLine(arg.Message);
+                                                    return Observable.Return<IDevice>(null);
+                                                })
+                                                .DefaultIfEmpty();
+            if (device == null)
+            {
+                return null;
             }
+
+            bool connectionResult = true;
+            await device.Connect(
+                new GattConnectionConfig
+                {
+                    AutoConnect = false,
+                    Priority = ConnectionPriority.High
+                })
+                .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
+                                            .Catch((Exception arg) =>
+                                            {
+                                                connectionResult = false;
+                                                return Observable.Return<object>(null);
+                                            });
+
+            if (!connectionResult)
+            {
+                //connection was not successful!
+                return null;
+            }
+
+            device.WhenStatusChanged().Subscribe(x =>
+            {
+                Debug.WriteLine($"Connection Status Changed: {x}");
+            });
+            return device;
+
         }
 
 
@@ -260,35 +267,45 @@ namespace Happimeter.Services
         private Dictionary<Guid, bool> IsBusy = new Dictionary<Guid, bool>();
         public async void ExchangeData()
         {
-
-            DataExchangeStatusUpdate?.Invoke(this,
-                                             new AndroidWatchExchangeDataEventArgs
-                                             {
-                                                 EventType = AndroidWatchExchangeDataStates.SearchingForDevice
-                                             });
-            var device = await GetConnectedDevice();
-            if (device == null)
+            var deviceInfoServic = ServiceLocator.Instance.Get<IDeviceInformationService>();
+            await deviceInfoServic.RunCodeInBackgroundMode(async () =>
             {
                 DataExchangeStatusUpdate?.Invoke(this,
-                                 new AndroidWatchExchangeDataEventArgs
-                                 {
-                                     EventType = AndroidWatchExchangeDataStates.DeviceNotFound
-                                 });
-                return;
-            }
+                                                 new AndroidWatchExchangeDataEventArgs
+                                                 {
+                                                     EventType = AndroidWatchExchangeDataStates.SearchingForDevice
+                                                 });
+                var device = await GetConnectedDevice();
+                if (device == null)
+                {
+                    DataExchangeStatusUpdate?.Invoke(this,
+                                     new AndroidWatchExchangeDataEventArgs
+                                     {
+                                         EventType = AndroidWatchExchangeDataStates.DeviceNotFound
+                                     });
+                    return;
+                }
 
-            var characteristic = await device.WhenAnyCharacteristicDiscovered()
-                                             .Where(charac => charac.Uuid == UuidHelper.DataExchangeCharacteristicUuid)
-                                             .Take(1)
-                                             .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
-                                             .Catch((Exception e) => Observable.Return<IGattCharacteristic>(null));
+                var characteristic = await device.WhenAnyCharacteristicDiscovered()
+                                                 .Where(charac => charac.Uuid == UuidHelper.DataExchangeCharacteristicUuid)
+                                                 .Take(1)
+                                                 .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
+                                                 .Catch((Exception e) => Observable.Return<IGattCharacteristic>(null));
 
-            if (characteristic == null)
-            {
-                return;
-            }
+                if (characteristic == null)
+                {
+                    DataExchangeStatusUpdate?.Invoke(this,
+                                     new AndroidWatchExchangeDataEventArgs
+                                     {
+                                         EventType = AndroidWatchExchangeDataStates.CouldNotDiscoverCharacteristic
+                                     });
+                    Debug.WriteLine("Could not discover");
+                    device.CancelConnection();
+                    return;
+                }
 
-            CharacteristicDiscoveredForDataExchange(characteristic);
+                CharacteristicDiscoveredForDataExchange(characteristic);
+            }, "data_exchange_task");
         }
 
         private async void CharacteristicDiscoveredForDataExchange(IGattCharacteristic characteristic)
@@ -333,72 +350,70 @@ namespace Happimeter.Services
                                  {
                                      EventType = AndroidWatchExchangeDataStates.DidWrite
                                  });
-                var deviceInfoServic = ServiceLocator.Instance.Get<IDeviceInformationService>();
-                await deviceInfoServic.RunCodeInBackgroundMode(async () =>
+
+                //FROM HERE ON WE RUN IT IN A BACKGROUND THREAD
+                try
                 {
-                    //FROM HERE ON WE RUN IT IN A BACKGROUND THREAD
-                    try
+                    var stopWatch = new Stopwatch();
+                    stopWatch.Start();
+                    var result = await ReadAsync(characteristic, (read, total) =>
                     {
-                        var stopWatch = new Stopwatch();
-                        stopWatch.Start();
-                        var result = await ReadAsync(characteristic, (read, total) =>
-                        {
-                            DataExchangeStatusUpdate?.Invoke(this,
-                                 new AndroidWatchExchangeDataEventArgs
-                                 {
-                                     EventType = AndroidWatchExchangeDataStates.ReadUpdate,
-                                     BytesRead = read,
-                                     TotalBytes = total
-                                 });
-                        });
-                        if (result == null)
-                        {
-                            //we throw an exception and let the catch block handle it
-                            throw new ArgumentException("Error during read process");
-                        }
-                        stopWatch.Stop();
-                        Console.WriteLine($"Took {stopWatch.Elapsed.TotalSeconds} seconds to receive {result.Count()} bytes");
-
-                        //get the read data and save it to db
-                        var data = Newtonsoft.Json.JsonConvert.DeserializeObject<DataExchangeMessage>(result);
-                        ServiceLocator.Instance.Get<IMeasurementService>().AddMeasurements(data);
-
-                        //update timestamp for last pairing
-                        var pairing = ServiceLocator.Instance.Get<ISharedDatabaseContext>().Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive);
-                        pairing.LastDataSync = DateTime.UtcNow;
-                        ServiceLocator.Instance.Get<ISharedDatabaseContext>().Update(pairing);
-
-                        //inform watch that we stored his data. In turn it will delete the data on the watch.
-                        await WriteAsync(characteristic, new DataExchangeConfirmationMessage());
-                        //As last step we upload the data to the server 
-                        await ServiceLocator.Instance.Get<IHappimeterApiService>().UploadMood();
-                        await ServiceLocator.Instance.Get<IHappimeterApiService>().UploadSensor();
-
-                        Console.WriteLine("Succesfully finished data exchange");
-                        IsBusy.Remove(characteristic.Service.Device.Uuid);
                         DataExchangeStatusUpdate?.Invoke(this,
-                            new AndroidWatchExchangeDataEventArgs
-                            {
-                                EventType = AndroidWatchExchangeDataStates.Complete,
-                            });
-                        var eventData = new Dictionary<string, string> {
+                             new AndroidWatchExchangeDataEventArgs
+                             {
+                                 EventType = AndroidWatchExchangeDataStates.ReadUpdate,
+                                 BytesRead = read,
+                                 TotalBytes = total
+                             });
+                    });
+                    if (result == null)
+                    {
+                        //we throw an exception and let the catch block handle it
+                        throw new ArgumentException("Error during read process");
+                    }
+                    stopWatch.Stop();
+                    Console.WriteLine($"Took {stopWatch.Elapsed.TotalSeconds} seconds to receive {result.Count()} bytes");
+
+                    //get the read data and save it to db
+                    var data = Newtonsoft.Json.JsonConvert.DeserializeObject<DataExchangeMessage>(result);
+                    ServiceLocator.Instance.Get<IMeasurementService>().AddMeasurements(data);
+
+                    //update timestamp for last pairing
+                    var pairing = ServiceLocator.Instance.Get<ISharedDatabaseContext>().Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive);
+                    pairing.LastDataSync = DateTime.UtcNow;
+                    ServiceLocator.Instance.Get<ISharedDatabaseContext>().Update(pairing);
+
+                    //inform watch that we stored his data. In turn it will delete the data on the watch.
+                    await WriteAsync(characteristic, new DataExchangeConfirmationMessage());
+                    //As last step we upload the data to the server 
+                    await ServiceLocator.Instance.Get<IHappimeterApiService>().UploadMood();
+                    await ServiceLocator.Instance.Get<IHappimeterApiService>().UploadSensor();
+
+                    Console.WriteLine("Succesfully finished data exchange");
+                    IsBusy.Remove(characteristic.Service.Device.Uuid);
+                    DataExchangeStatusUpdate?.Invoke(this,
+                        new AndroidWatchExchangeDataEventArgs
+                        {
+                            EventType = AndroidWatchExchangeDataStates.Complete,
+                        });
+                    var eventData = new Dictionary<string, string> {
                             {"durationSeconds", stopWatch.Elapsed.TotalSeconds.ToString()},
                             {"bytesTransfered", result.Count().ToString()}
                         };
-                        ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.DataExchangeEnd, eventData);
-                    }
-                    catch (Exception e)
-                    {
-                        DataExchangeStatusUpdate?.Invoke(this,
-                            new AndroidWatchExchangeDataEventArgs
-                            {
-                                EventType = AndroidWatchExchangeDataStates.ErrorOnExchange,
-                            });
-                        Console.WriteLine($"Exception on Dataexchange after starting the exchange: {e.Message}");
-                        ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.DataExchangeFailure);
-                        IsBusy.Remove(characteristic.Service.Device.Uuid);
-                    }
-                }, "data_exchange_task");
+                    ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.DataExchangeEnd, eventData);
+                }
+                catch (Exception e)
+                {
+                    DataExchangeStatusUpdate?.Invoke(this,
+                        new AndroidWatchExchangeDataEventArgs
+                        {
+                            EventType = AndroidWatchExchangeDataStates.ErrorOnExchange,
+                        });
+                    Console.WriteLine($"Exception on Dataexchange after starting the exchange: {e.Message}");
+                    ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.DataExchangeFailure);
+                    IsBusy.Remove(characteristic.Service.Device.Uuid);
+                }
+
             }
         }
 

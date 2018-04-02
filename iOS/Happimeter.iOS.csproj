@@ -189,12 +189,6 @@
     <Reference Include="SQLitePCLRaw.batteries_v2">
       <HintPath>..\packages\SQLitePCLRaw.bundle_green.1.1.9\lib\Xamarin.iOS10\SQLitePCLRaw.batteries_v2.dll</HintPath>
     </Reference>
-    <Reference Include="Plugin.BluetoothLE.Abstractions">
-      <HintPath>..\packages\Plugin.BluetoothLE.5.3.4\lib\Xamarin.iOS10\Plugin.BluetoothLE.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Plugin.BluetoothLE">
-      <HintPath>..\packages\Plugin.BluetoothLE.5.3.4\lib\Xamarin.iOS10\Plugin.BluetoothLE.dll</HintPath>
-    </Reference>
     <Reference Include="CommonServiceLocator">
       <HintPath>..\packages\Unity.5.7.3\lib\netstandard2.0\CommonServiceLocator.dll</HintPath>
     </Reference>
@@ -221,6 +215,12 @@
     </Reference>
     <Reference Include="SkiaSharp.Views.Forms">
       <HintPath>..\packages\SkiaSharp.Views.Forms.1.60.0\lib\XamariniOS\SkiaSharp.Views.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.BluetoothLE.Abstractions">
+      <HintPath>..\packages\Plugin.BluetoothLE.5.3.5\lib\Xamarin.iOS10\Plugin.BluetoothLE.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.BluetoothLE">
+      <HintPath>..\packages\Plugin.BluetoothLE.5.3.5\lib\Xamarin.iOS10\Plugin.BluetoothLE.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
