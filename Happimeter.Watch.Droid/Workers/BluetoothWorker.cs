@@ -329,7 +329,8 @@ namespace Happimeter.Watch.Droid.Workers
                 && messageName != DataExchangeConfirmationMessage.MessageNameConstant
                 && messageName != AuthFirstMessage.MessageNameConstant
                 && messageName != AuthSecondMessage.MessageNameConstant
-                && messageName != GenericQuestionMessage.MessageNameConstant)
+                && messageName != GenericQuestionMessage.MessageNameConstant
+                && messageName != SwitchMeasurementModeMessage.MessageNameConstant)
             {
                 //Error we can't handle message
                 System.Diagnostics.Debug.WriteLine($"Device {device.Address} wrote something which I don't know how to handle to data characteristic!");
@@ -397,6 +398,18 @@ namespace Happimeter.Watch.Droid.Workers
             {
                 //dataCharac.HandleWriteAsync(device, requestId, preparedWrite, responseNeeded, offset, value, Worker);
                 questionCharac.HandleWriteJson(messageJson, device.Address);
+                if (responseNeeded)
+                {
+                    Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
+                }
+                return;
+            }
+
+            var measurementCharac = characteristic as HappimeterMeasurementModeCharacteristic;
+            if (measurementCharac != null)
+            {
+                //dataCharac.HandleWriteAsync(device, requestId, preparedWrite, responseNeeded, offset, value, Worker);
+                measurementCharac.HandleWriteJson(messageJson, device.Address);
                 if (responseNeeded)
                 {
                     Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);

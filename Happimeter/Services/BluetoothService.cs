@@ -218,7 +218,42 @@ namespace Happimeter.Services
 
         }
 
+        public async void SendMeasurementMode(int? interval = null, Action<BluetoothWriteEvent> statusUpdate = null)
+        {
+            statusUpdate?.Invoke(BluetoothWriteEvent.Initialized);
+            var device = await GetConnectedDevice();
+            if (device == null)
+            {
+                //device could either not be found or not be connected to
+                statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnConnectingToDevice);
+                return;
+            }
+            statusUpdate?.Invoke(BluetoothWriteEvent.Connected);
+            var characteristic = await device.WhenAnyCharacteristicDiscovered()
+                                             .Where(charac => charac.Uuid == UuidHelper.MeasurementModeCharacteristicUuid)
+                                             .Take(1)
+                                             .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
+                                             .Catch((Exception e) => Observable.Return<IGattCharacteristic>(null));
 
+            if (characteristic == null)
+            {
+                //we did not find the characteristic within the give timeframe
+                statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnConnectingToDevice);
+                return;
+            }
+
+            var message = new SwitchMeasurementModeMessage(interval);
+
+            var result = await WriteAsync(characteristic, message);
+            if (result)
+            {
+                statusUpdate?.Invoke(BluetoothWriteEvent.Complete);
+            }
+            else
+            {
+                statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnWrite);
+            }
+        }
 
         public async void SendGenericQuestions(Action<BluetoothWriteEvent> statusUpdate = null)
         {

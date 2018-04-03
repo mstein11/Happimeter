@@ -5,6 +5,7 @@ using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Watch.Droid.ServicesBusinessLogic;
 using Happimeter.Watch.Droid.Workers;
 using Java.Util;
+using Happimeter.Core.Services;
 
 namespace Happimeter.Watch.Droid.Bluetooth
 {
@@ -32,7 +33,8 @@ namespace Happimeter.Watch.Droid.Bluetooth
                 //already has a readhostcontext, just go on
                 return ReadHostContextForDevice[address];
             }
-            if(!AuthenticationDeviceDidGreat.ContainsKey(address)) {
+            if (!AuthenticationDeviceDidGreat.ContainsKey(address))
+            {
                 System.Diagnostics.Debug.WriteLine($"Device {address} read from auth characteristic without greeting first!");
                 return null;
             }
@@ -58,19 +60,14 @@ namespace Happimeter.Watch.Droid.Bluetooth
             }
 
             //initiate auth process
-            if (message.MessageName == AuthFirstMessage.MessageNameConstant) {
+            if (message.MessageName == AuthFirstMessage.MessageNameConstant)
+            {
                 System.Diagnostics.Debug.WriteLine($"Device {address} started authentication procedure");
                 if (!AuthenticationDeviceDidGreat.ContainsKey(address))
                 {
                     AuthenticationDeviceDidGreat.Add(address, true);
                 }
                 var messageData = Newtonsoft.Json.JsonConvert.DeserializeObject<AuthFirstMessage>(json);
-                /*
-                var timer = new System.Threading.Timer((obj) =>
-                {
-                    BluetoothWorker.GetInstance().SendNotifiation(null, new AuthNotificationMessage(true));
-                }, null, 5000, System.Threading.Timeout.Infinite);
-                */
                 ServiceLocator.Instance.Get<IDeviceService>().NavigateToPairingRequestPage(messageData.DeviceName);
                 return;
             }
@@ -81,7 +78,13 @@ namespace Happimeter.Watch.Droid.Bluetooth
                 var messageData = Newtonsoft.Json.JsonConvert.DeserializeObject<AuthSecondMessage>(json);
                 System.Diagnostics.Debug.WriteLine($"Device {address} finalized authentication procedure");
 
+                //the default after pairing is, that we have battery safer mode enabled.
+                //also imporant to note is that we don't use the IDeviceService to Set the measurement mode.
+                //The IDeviceService would also start restart the worker with the appropriate config, however, those workers are started anyway after pairing.
+                ServiceLocator.Instance.Get<IConfigService>().SetBatterySaferMeasurementMode();
+                //I think it is important to have the two lines here in that order. Orderwise the background worker is initialized without knowing which which measurement mode to use.
                 ServiceLocator.Instance.Get<IDeviceService>().AddPairing(messageData);
+
                 return;
             }
         }

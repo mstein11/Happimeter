@@ -7,6 +7,7 @@ using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Interfaces;
 using Happimeter.Services;
 using Plugin.BluetoothLE;
+using Happimeter.Core.Services;
 
 namespace Happimeter.Models
 {
@@ -29,9 +30,9 @@ namespace Happimeter.Models
 
     public class AndroidWatch : BluetoothDevice
     {
-        public AndroidWatch(IDevice device) : base(device) 
+        public AndroidWatch(IDevice device) : base(device)
         {
-            
+
         }
 
         public static readonly Guid ServiceUuid = Guid.Parse("2f234454-cf6d-4a0f-adf2-f4911ba9ffa6");//maybe instead : 00000009-0000-3512-2118-0009af100700
@@ -46,8 +47,10 @@ namespace Happimeter.Models
             WhenDeviceReady().Take(1).Subscribe(success =>
             {
                 OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.BtConnected, null);
-                if (success) {
-                    try {
+                if (success)
+                {
+                    try
+                    {
                         Device.WhenAnyCharacteristicDiscovered().Where(x => x.Uuid == AuthCharacteristic).Take(1).Subscribe(async characteristic =>
                         {
                             Debug.WriteLine("Found our AuthCharacteristic");
@@ -58,7 +61,8 @@ namespace Happimeter.Models
                             var deviceName = ServiceLocator.Instance.Get<IDeviceInformationService>().GetDeviceName();
 
                             var writeResult = await btService.WriteAsync(characteristic, new AuthFirstMessage(deviceName));
-                            if (!writeResult) {
+                            if (!writeResult)
+                            {
                                 //we got an error here
                                 OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorOnFirstWrite, null);
                                 return;
@@ -81,7 +85,8 @@ namespace Happimeter.Models
                                 return;
                             }
                             var message = Newtonsoft.Json.JsonConvert.DeserializeObject<AuthNotificationMessage>(notification.Item2);
-                            if(!message.Accepted) {
+                            if (!message.Accepted)
+                            {
                                 OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.UserDeclined, null);
                                 return;
                             }
@@ -98,7 +103,8 @@ namespace Happimeter.Models
 
 
                             var writeResult2 = await btService.WriteAsync(characteristic, dataToSend);
-                            if (!writeResult2) {
+                            if (!writeResult2)
+                            {
                                 //we got an error here!
                                 OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorOnSecondWrite, null);
                                 return;
@@ -115,33 +121,41 @@ namespace Happimeter.Models
                             };
                             ServiceLocator.Instance.Get<ISharedDatabaseContext>().Add(paring);
 
+                            //the default after pairing is, that we have battery safer mode enabled.
+                            ServiceLocator.Instance.Get<IConfigService>().SetBatterySaferMeasurementMode();
                             //Lets wait for his beacon signal
                             ServiceLocator.Instance.Get<IBeaconWakeupService>().StartWakeupForBeacon();
                             OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.Complete, null);
                             ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.PairEvent);
 
                         });
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e)
+                    {
                         Console.WriteLine("Something went wrong during authentication. Error: " + e.Message);
                         ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.PairFailureEvent);
                         OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorBeforeComplete, null);
                     }
                 }
-            }, error => {
+            }, error =>
+            {
                 OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorOnBtConnection, null);
             });
 
             return connection;
         }
 
-        public void ExchangeData() {
+        public void ExchangeData()
+        {
             Device.WhenAnyCharacteristicDiscovered().Subscribe(characteristic =>
             {
                 if (characteristic.Uuid == UuidHelper.DataExchangeCharacteristicUuid)
                 {
                     Debug.WriteLine("DataCharacteristic found");
-                    characteristic.Write(System.Text.Encoding.UTF8.GetBytes("pass")).Subscribe(writeResult => {
-                        characteristic.Read().Subscribe(readResult => {
+                    characteristic.Write(System.Text.Encoding.UTF8.GetBytes("pass")).Subscribe(writeResult =>
+                    {
+                        characteristic.Read().Subscribe(readResult =>
+                        {
                             //readResult should hold the data
                             Debug.WriteLine("Read data: " + string.Concat(readResult.Data));
                         });

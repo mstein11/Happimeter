@@ -41,6 +41,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Database\ModelsNotMappedToDb\SensorMeasurementsAndItems.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\DatabaseChangedEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Bluetooth\AuthNotificationMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Bluetooth\SwitchMeasurementModeMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Models\" />

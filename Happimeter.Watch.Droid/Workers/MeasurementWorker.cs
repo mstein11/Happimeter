@@ -16,6 +16,8 @@ using Happimeter.Core.ExtensionMethods;
 using Happimeter.Core.Helper;
 using Happimeter.Watch.Droid.Database;
 using Happimeter.Watch.Droid.Services;
+using System.Threading;
+using Android.OS;
 
 namespace Happimeter.Watch.Droid.Workers
 {
@@ -34,6 +36,21 @@ namespace Happimeter.Watch.Droid.Workers
         private SensorListener _stepListener { get; set; }
         private SensorListener _lightListener { get; set; }
 
+        private CancellationTokenSource _cancelationTokenSource { get; set; }
+
+        private Context _context;
+        public Context Context
+        {
+            get
+            {
+                return _context != null ? _context : BackgroundService.ServiceContext;
+            }
+            set
+            {
+                _context = value;
+            }
+        }
+
         private bool _playServicesReady = false;
         private FusedLocationProviderClient fusedLocationProviderClient;
         private ActivityRecognitionClient activityRecognitionClient;
@@ -42,34 +59,36 @@ namespace Happimeter.Watch.Droid.Workers
         {
             get
             {
-                var intent = new Intent(BackgroundService.ServiceContext, typeof(DetectedActivityIntentService));
-                return PendingIntent.GetService(BackgroundService.ServiceContext, 0, intent, PendingIntentFlags.UpdateCurrent);
+                var intent = new Intent(Context, typeof(DetectedActivityIntentService));
+                return PendingIntent.GetService(Context, 0, intent, PendingIntentFlags.UpdateCurrent);
             }
         }
 
-        private MeasurementWorker()
+        private MeasurementWorker(Context context = null)
         {
+            Context = context;
             _playServicesReady = IsGooglePlayServicesInstalled();
             if (_playServicesReady)
             {
-                fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(BackgroundService.ServiceContext);
-                activityRecognitionClient = ActivityRecognition.GetClient(BackgroundService.ServiceContext);
+                fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(Context);
+                activityRecognitionClient = ActivityRecognition.GetClient(Context);
             }
         }
 
         private static MeasurementWorker Instance { get; set; }
 
-        public static MeasurementWorker GetInstance()
+        public static MeasurementWorker GetInstance(Context context = null)
         {
             if (Instance == null)
             {
-                Instance = new MeasurementWorker();
+                Instance = new MeasurementWorker(context);
             }
             return Instance;
         }
-
+        /*
         public async Task StartOnce()
         {
+            _cancelationTokenSource = new CancellationTokenSource();
             IsRunning = true;
             await StartSensors();
             //await Task.Delay(TimeSpan.FromSeconds(450));
@@ -78,22 +97,46 @@ namespace Happimeter.Watch.Droid.Workers
             await StopSensors();
             IsRunning = false;
         }
+*/
+        public async void StartFor(int seconds)
+        {
+            _cancelationTokenSource = new CancellationTokenSource();
+            await StartSensors();
+            try
+            {
+                await Task.Delay(TimeSpan.FromSeconds(seconds), _cancelationTokenSource.Token);
+            }
+            catch (System.OperationCanceledException)
+            {
+                Console.WriteLine("Measurement service was cancelled");
+                //do not collect sensors
+                return;
+            }
+
+            await CollectMeasurements();
+            Stop();
+        }
 
         public async override void Start()
         {
+            _cancelationTokenSource = new CancellationTokenSource();
             IsRunning = true;
             await StartSensors();
             while (IsRunning)
             {
                 //StartSensors();
-                await Task.Delay(TimeSpan.FromSeconds(45));
-                //StopSensors();
+                try
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(45), _cancelationTokenSource.Token);
+                    await CollectMeasurements();
+                    await Task.Delay(TimeSpan.FromSeconds(45), _cancelationTokenSource.Token);
+                    Console.WriteLine("Saved new Sensormeasurement");
+                }
+                catch (System.OperationCanceledException)
+                {
+                    Console.WriteLine("Measurement service was cancelled");
+                }
 
-                await CollectMeasurements();
-
-
-                await Task.Delay(TimeSpan.FromSeconds(45));
-                Console.WriteLine("Saved new Sensormeasurement");
             }
         }
 
@@ -130,7 +173,7 @@ namespace Happimeter.Watch.Droid.Workers
             }
             else
             {
-                Toast.MakeText(BackgroundService.ServiceContext, $"Google Play Service not working, we don't get Locations and activities", ToastLength.Long).Show();
+                Toast.MakeText(Context, $"Google Play Service not working, we don't get Locations and activities", ToastLength.Long).Show();
             }
 
 
@@ -300,6 +343,7 @@ namespace Happimeter.Watch.Droid.Workers
         public override void Stop()
         {
             IsRunning = false;
+            _cancelationTokenSource?.Cancel();
             StopSensors();
         }
 
@@ -369,7 +413,7 @@ namespace Happimeter.Watch.Droid.Workers
 
         bool IsGooglePlayServicesInstalled()
         {
-            var queryResult = Android.Gms.Common.GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable(BackgroundService.ServiceContext);
+            var queryResult = Android.Gms.Common.GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable(Context);
             if (queryResult == Android.Gms.Common.ConnectionResult.Success)
             {
                 Console.WriteLine("Google Play Services is installed on this device.");
@@ -381,7 +425,7 @@ namespace Happimeter.Watch.Droid.Workers
                 // Check if there is a way the user can resolve the issue
                 var errorString = GoogleApiAvailability.Instance.GetErrorString(queryResult);
                 Console.WriteLine($"There is a problem with Google Play Services on this device: {queryResult} - {errorString}");
-                Toast.MakeText(BackgroundService.ServiceContext, $"There is a problem with Google Play Services on this device: {queryResult} - {errorString}", ToastLength.Long).Show();
+                Toast.MakeText(Context, $"There is a problem with Google Play Services on this device: {queryResult} - {errorString}", ToastLength.Long).Show();
                 // Alternately, display the error to the user.
             }
 

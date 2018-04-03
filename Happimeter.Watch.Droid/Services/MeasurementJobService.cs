@@ -26,20 +26,22 @@ namespace Happimeter.Watch.Droid.Services
         public override bool OnStartJob(JobParameters @params)
         {
             System.Diagnostics.Debug.WriteLine($"Job started at: {DateTime.UtcNow}");
-            var task1 = Task.Factory.StartNew(async () => {
+            var task1 = Task.Factory.StartNew(async () =>
+            {
                 System.Diagnostics.Debug.WriteLine($"Measurement started at: {DateTime.UtcNow}");
-                await MeasurementWorker.GetInstance().StartOnce();
+                //await MeasurementWorker.GetInstance().StartOnce();
                 System.Diagnostics.Debug.WriteLine($"Measurement ended at: {DateTime.UtcNow}");
             });
 
             var task2 = Task.Factory.StartNew(() =>
             {
                 System.Diagnostics.Debug.WriteLine($"Micro started at: {DateTime.UtcNow}");
-                MicrophoneWorker.GetInstance().StartOnce();
+                //MicrophoneWorker.GetInstance().StartOnce();
                 System.Diagnostics.Debug.WriteLine($"Micro ended at: {DateTime.UtcNow}");
             });
 
-            Task.WhenAll(task1,task2).ContinueWith((Task) => {
+            Task.WhenAll(task1, task2).ContinueWith((Task) =>
+            {
                 System.Diagnostics.Debug.WriteLine($"job finished at: {DateTime.UtcNow}");
                 JobFinished(@params, false);
             });

@@ -7,6 +7,8 @@ using Android.Media;
 using Happimeter.Core.Database;
 using Happimeter.Watch.Droid.Database;
 using System.Diagnostics;
+using Java.Lang;
+using System.Threading;
 
 namespace Happimeter.Watch.Droid.Workers
 {
@@ -20,6 +22,8 @@ namespace Happimeter.Watch.Droid.Workers
         private const int RecordingDurationSecSample = 1;
         private const int RecordingDurationSecRunning = 60;
         private const int RecordingDurationSecPausing = 60;
+
+        private CancellationTokenSource _cancelationTokenSource { get; set; }
 
         private static MicrophoneWorker Instance;
 
@@ -40,69 +44,37 @@ namespace Happimeter.Watch.Droid.Workers
 
         }
 
-        public override void Start()
+        public async void StartFor(int seconds)
         {
+            _cancelationTokenSource = new CancellationTokenSource();
             IsRunning = true;
-            RunAsync();
+            await RunAsync(seconds);
         }
 
-        public void StartOnce()
+        public override void Start()
         {
+            _cancelationTokenSource = new CancellationTokenSource();
             IsRunning = true;
-            try
-            {
-                int bufferSize = AudioRecord.GetMinBufferSize(SampleRate,
-                          Channel,
-                          AudioEncoding);
-
-                if (bufferSize == 0)
-                {
-                    bufferSize = SampleRate * 2;
-                }
-                short[] audioBuffer = new short[bufferSize / 2];
-                AudioRecord record = new AudioRecord(AudioSource.Default,
-                                                     SampleRate,
-                                                     Channel,
-                                                     AudioEncoding,
-                                                     bufferSize);
-
-
-                record.StartRecording();
-                var bytesRead = 0;
-                var bigAudioBuffer = new List<short>();
-                while (bytesRead < SampleRate * RecordingDurationSecSample)
-                {
-
-                    int numberOfShort = record.Read(audioBuffer, 0, audioBuffer.Count());
-                    bytesRead += numberOfShort;
-                    for (var i = 0; i < numberOfShort; i++)
-                    {
-                        bigAudioBuffer.Add(audioBuffer[i]);
-                    }
-                }
-                var volume = CalculateVolumeForData(bigAudioBuffer.ToArray());
-                var measure = new MicrophoneMeasurement
-                {
-                    Volumne = volume,
-                    TimeStamp = DateTime.UtcNow
-                };
-                MicrophoneMeasures.Add(volume);
-                record.Stop();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Error while Getting Microphone measurement. Stopping the worker. Error Message {e.Message}");
-                IsRunning = false;
-            }
+            RunAsync();
         }
 
         public override void Stop()
         {
             IsRunning = false;
+            _cancelationTokenSource.Cancel();
         }
 
-        private async Task RunAsync()
+        private async Task RunAsync(int? seconds = null)
         {
+            int runFor = RecordingDurationSecRunning;
+            var stopAfterSeconds = false;
+            if (seconds != null)
+            {
+                runFor = seconds.Value;
+                stopAfterSeconds = true;
+            }
+
+
             try
             {
                 int bufferSize = AudioRecord.GetMinBufferSize(SampleRate,
@@ -123,11 +95,15 @@ namespace Happimeter.Watch.Droid.Workers
                 var stopwatch = new Stopwatch();
                 while (IsRunning)
                 {
-                    if (stopwatch.Elapsed.Seconds > RecordingDurationSecRunning)
+                    if (stopwatch.Elapsed.Seconds > runFor)
                     {
                         stopwatch.Stop();
                         stopwatch.Reset();
-                        await Task.Delay(TimeSpan.FromSeconds(RecordingDurationSecPausing));
+                        if (stopAfterSeconds)
+                        {
+                            break;
+                        }
+                        await Task.Delay(TimeSpan.FromSeconds(RecordingDurationSecPausing), _cancelationTokenSource.Token);
                     }
                     if (!stopwatch.IsRunning)
                     {
@@ -146,25 +122,32 @@ namespace Happimeter.Watch.Droid.Workers
                         {
                             bigAudioBuffer.Add(audioBuffer[i]);
                         }
+                        _cancelationTokenSource.Token.ThrowIfCancellationRequested();
                     }
                     var volume = CalculateVolumeForData(bigAudioBuffer.ToArray());
-                    //System.Diagnostics.Debug.WriteLine("Volume: " + volume);
                     var measure = new MicrophoneMeasurement
                     {
                         Volumne = volume,
                         TimeStamp = DateTime.UtcNow
                     };
-                    //ServiceLocator.Instance.Get<IDatabaseContext>().Add(measure);
                     MicrophoneMeasures.Add(volume);
                     record.Stop();
-                    await Task.Delay(TimeSpan.FromSeconds(RecordingDurationSecSample));
+                    await Task.Delay(TimeSpan.FromSeconds(RecordingDurationSecSample), _cancelationTokenSource.Token);
                 }
             }
-            catch (Exception e)
+            catch (OperationCanceledException)
+            {
+                Debug.WriteLine("Operation was cancelled");
+                //return without further doing
+                return;
+            }
+            catch (System.Exception e)
             {
                 Console.WriteLine($"Error while Getting Microphone measurement. Stopping the worker. Error Message {e.Message}");
                 IsRunning = false;
             }
+
+            Stop();
         }
 
         private double CalculateVolumeForData(short[] data)
@@ -176,7 +159,7 @@ namespace Happimeter.Watch.Droid.Workers
                 totalSquare += sample * sample;
             }
             double meanSquare = 2 * totalSquare / data.Length;
-            var rms = Math.Sqrt(meanSquare);
+            var rms = System.Math.Sqrt(meanSquare);
             var volume = rms / 32768.0;
 
             return volume;

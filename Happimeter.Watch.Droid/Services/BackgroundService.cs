@@ -12,6 +12,9 @@ using Android.OS;
 using Android.Util;
 using Android.Widget;
 using Happimeter.Watch.Droid.Workers;
+using Happimeter.Core.Helper;
+using Happimeter.Core.Services;
+using Happimeter.Watch.Droid.ServicesBusinessLogic;
 
 namespace Happimeter.Watch.Droid.Services
 {
@@ -39,29 +42,54 @@ namespace Happimeter.Watch.Droid.Services
 
         public override StartCommandResult OnStartCommand(Android.Content.Intent intent, StartCommandFlags flags, int startId)
         {
-            
-            if (!MicrophoneWorker.GetInstance().IsRunning) {
-                Task.Factory.StartNew(() =>
+            if (ServiceLocator.Instance.Get<IDeviceService>().IsPaired())
+            {
+                var deviceService = ServiceLocator.Instance.Get<IDeviceService>();
+                var useLifeMode = deviceService.IsContinousMeasurementMode();
+
+                if (useLifeMode)
                 {
-                    MicrophoneWorker.GetInstance().Start();
-                });    
+                    System.Diagnostics.Debug.WriteLine("Starting in continous mode");
+                    if (!MicrophoneWorker.GetInstance().IsRunning)
+                    {
+                        Task.Factory.StartNew(() =>
+                        {
+                            MicrophoneWorker.GetInstance().Start();
+                        });
+                    }
+
+                    if (!MeasurementWorker.GetInstance().IsRunning)
+                    {
+                        Task.Factory.StartNew(() =>
+                        {
+                            MeasurementWorker.GetInstance(this).Start();
+                        });
+                    }
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("Starting in battery safer mode!");
+                    var context = Application.Context;
+                    var alarmManager = (AlarmManager)context.GetSystemService(Context.AlarmService);
+                    Intent alarmIntent = new Intent(context, typeof(BroadcastReceiver.AlarmBroadcastReceiver));
+                    var pendingIntent = PendingIntent.GetBroadcast(context, 0, alarmIntent, 0);
+
+
+                    alarmManager.SetExact(AlarmType.ElapsedRealtimeWakeup,
+                                          SystemClock.ElapsedRealtime() +
+                                          2 * 1000, pendingIntent);
+                }
             }
 
-            if (!MeasurementWorker.GetInstance().IsRunning) {
-                Task.Factory.StartNew(() =>
-                {
-                    MeasurementWorker.GetInstance().Start();
-                });    
-            }
-
-            if (!BluetoothWorker.GetInstance().IsRunning) {
+            if (!BluetoothWorker.GetInstance().IsRunning)
+            {
                 if (BluetoothAdapter.DefaultAdapter.IsEnabled)
                 {
                     Task.Factory.StartNew(() =>
                     {
                         BluetoothWorker.GetInstance().Start();
                     });
-                }    
+                }
             }
             return StartCommandResult.StickyCompatibility;
         }

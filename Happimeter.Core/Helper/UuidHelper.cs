@@ -21,6 +21,9 @@ namespace Happimeter.Core.Helper
         public const string GenericQuestionCharacteristicUuidString = "679a39d2-1d7c-11e8-b467-0ed5f89f718b";
         public static Guid GenericQuestionCharacteristicUuid => Guid.Parse(GenericQuestionCharacteristicUuidString);
 
+        public const string MeasurementModeCharacteristicUuidString = "347b6858-dfb1-49bf-a615-3320ecaf6920";
+        public static Guid MeasurementModeCharacteristicUuid => Guid.Parse(MeasurementModeCharacteristicUuidString);
+
         public const byte BeaconManufacturerId = 0x004C;
         public const int TxPowerLevel = -56;
         //Layout for iBeacon

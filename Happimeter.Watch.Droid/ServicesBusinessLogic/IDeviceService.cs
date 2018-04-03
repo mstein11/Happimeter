@@ -9,5 +9,9 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
         void RemovePairing();
         bool IsPaired();
         void NavigateToPairingRequestPage(string deviceName);
+        int? GetMeasurementMode();
+        bool IsContinousMeasurementMode();
+        void SetBatterySaferMeasurementMode(int measurementInterval = 600);
+        void SetContinousMeasurementMode();
     }
 }
