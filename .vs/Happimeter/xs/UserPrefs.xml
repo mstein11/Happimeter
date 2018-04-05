@@ -1,11 +1,11 @@
-﻿<Properties StartupConfiguration="{B926B5BC-5FAA-4225-BAC6-BA1BDABB67E9}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Happimeter.Watch.Droid/Workers/BluetoothWorker.cs">
+﻿<Properties StartupConfiguration="{A206867A-1792-4275-9C38-842623227972}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Happimeter/Views/SignInPage.xaml">
     <Files>
       <File FileName="Happimeter.Watch.Droid/BroadcastReceiver/AutoStartBroadcastReceiver.cs" Line="29" Column="75" />
-      <File FileName="Happimeter.Watch.Droid/Services/BackgroundService.cs" Line="71" Column="88" />
+      <File FileName="Happimeter.Watch.Droid/Services/BackgroundService.cs" Line="88" Column="22" />
       <File FileName="Happimeter.Watch.Droid/BroadcastReceiver/BluetoothBroadcastReceiver.cs" Line="36" Column="60" />
       <File FileName="Happimeter.Watch.Droid/Services/MeasurementJobService.cs" Line="53" Column="10" />
-      <File FileName="Happimeter.Watch.Droid/MainActivity.cs" Line="49" Column="17" />
+      <File FileName="Happimeter.Watch.Droid/MainActivity.cs" Line="77" Column="58" />
       <File FileName="Happimeter.Watch.Droid/Services/DetectedActivityIntentService.cs" Line="18" Column="9" />
       <File FileName="Happimeter.Watch.Droid/Workers/MeasurementWorker.cs" Line="39" Column="9" />
       <File FileName="Happimeter.Watch.Droid/Workers/MicrophoneWorker.cs" Line="23" Column="60" />
@@ -18,8 +18,8 @@
       <File FileName="Happimeter/ViewModels/Forms/SettingsPageViewModel.cs" Line="51" Column="42" />
       <File FileName="Happimeter.Watch.Droid/Workers/BeaconWorker.cs" Line="70" Column="64" />
       <File FileName="Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" Line="207" Column="82" />
-      <File FileName="Happimeter.Watch.Droid/BroadcastReceiver/AlarmBroadcastReceiver.cs" Line="44" Column="37" />
-      <File FileName="Happimeter/Views/BluetoothMainPage.xaml" Line="57" Column="1" />
+      <File FileName="Happimeter.Watch.Droid/BroadcastReceiver/AlarmBroadcastReceiver.cs" Line="12" Column="40" />
+      <File FileName="Happimeter/Views/BluetoothMainPage.xaml" Line="11" Column="63" />
       <File FileName="Happimeter/Services/BluetoothService.cs" Line="18" Column="43" />
       <File FileName="Happimeter.Watch.Droid/ServicesBusinessLogic/DeviceService.cs" Line="60" Column="51" />
       <File FileName="Happimeter.Core/Services/ConfigService.cs" Line="19" Column="14" />
@@ -35,10 +35,15 @@
       <File FileName="Happimeter.Core/Services/IConfigService.cs" Line="11" Column="43" />
       <File FileName="Happimeter/Models/AndroidWatch.cs" Line="124" Column="101" />
       <File FileName="Happimeter.Watch.Droid/Bluetooth/HappimeterAuthCharacteristic.cs" Line="83" Column="159" />
+      <File FileName="Droid/MainApplication.cs" Line="35" Column="1" />
+      <File FileName="Happimeter/App.cs" Line="32" Column="39" />
+      <File FileName="Happimeter/Views/SignInPage.xaml.cs" Line="18" Column="1" />
+      <File FileName="Droid/obj/Debug/Happimeter.Droid.Views.SignInPage.xaml.g.cs" Line="20" Column="1" />
+      <File FileName="Happimeter/Views/SignInPage.xaml" Line="26" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
-  <MonoDevelop.Ide.ItemProperties.Happimeter.Droid AndroidDesignerPreferredTheme="Theme.DeviceDefault.NoActionBar.Fullscreen" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Happimeter.Droid PreferredExecutionTarget="Android.329F76369FB2" AndroidDesignerPreferredTheme="Theme.DeviceDefault.NoActionBar.Fullscreen" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter.Watch.Droid/Services/WakeupAlarmIntentService.cs" relfile="Happimeter.Watch.Droid/Services/WakeupAlarmIntentService.cs" line="18" column="1" />

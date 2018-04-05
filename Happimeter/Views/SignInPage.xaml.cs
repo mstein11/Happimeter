@@ -9,6 +9,7 @@ namespace Happimeter.Views
     {
         public SignInPage()
         {
+            Resources = App.ResourceDict;
             InitializeComponent();
             BindingContext = new SignInViewModel();
         }

@@ -17,7 +17,8 @@
                     <Entry Placeholder="Username" Text="{Binding UserName}"></Entry>
                     <Entry Placeholder="Password" Text="{Binding Password}" IsPassword="true"></Entry>
                     <Label FontSize="12" Text="{Binding ErrorText}" IsVisible="{Binding ErrorTextVisible}" />
-                    <Button IsEnabled="{Binding LoginButtonIsEnabled}" Text="{Binding LoginButtonText}" Command="{Binding LoginCommand}"></Button>
+                    <!--<Button IsEnabled="{Binding LoginButtonIsEnabled}" Text="{Binding LoginButtonText}" Command="{Binding LoginCommand}" Style="{StaticResource ButtonWithBackground}"></Button>-->
+                    <Button IsEnabled="{Binding LoginButtonIsEnabled}" Text="{Binding LoginButtonText}" Command="{Binding LoginCommand}" BackgroundColor="Transparent"></Button>
                 </StackLayout>
             </StackLayout>
         </ScrollView>

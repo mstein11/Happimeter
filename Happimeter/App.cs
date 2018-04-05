@@ -16,6 +16,23 @@ namespace Happimeter
         public static bool UseMockDataStore = true;
         public static string BackendUrl = "http://localhost:5000";
 
+        private static ResourceDictionary _resourceDict;
+        public static ResourceDictionary ResourceDict
+        {
+            get
+            {
+                if (_resourceDict == null)
+                {
+                    InitResourceDict();
+                }
+                return _resourceDict;
+            }
+            set
+            {
+                _resourceDict = value;
+            }
+        }
+
         public static void Initialize()
         {
             if (UseMockDataStore)
@@ -46,6 +63,21 @@ namespace Happimeter
                     Application.Current.MainPage.DisplayAlert("Bluetooth deactivated", "Please enable Bluetooth", "Ok");
                 }
             }
+        }
+
+        private static void InitResourceDict()
+        {
+            var dict = new ResourceDictionary();
+
+
+            dict.Add("ButtonWithBackground", new Style(typeof(Button))
+            {
+                Setters = {
+                    new Setter {Property = VisualElement.BackgroundColorProperty, Value = Color.Red}
+                }
+            });
+
+            ResourceDict = dict;
         }
     }
 }
