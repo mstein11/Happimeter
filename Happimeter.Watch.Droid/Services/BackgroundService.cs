@@ -68,16 +68,24 @@ namespace Happimeter.Watch.Droid.Services
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("Starting in battery safer mode!");
-                    var context = Application.Context;
-                    var alarmManager = (AlarmManager)context.GetSystemService(Context.AlarmService);
-                    Intent alarmIntent = new Intent(context, typeof(BroadcastReceiver.AlarmBroadcastReceiver));
-                    var pendingIntent = PendingIntent.GetBroadcast(context, 0, alarmIntent, 0);
+
+                    if (BroadcastReceiver.AlarmBroadcastReceiver.IsScheduled)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Starting in battery safer mode!");
+                        var context = Application.Context;
+                        var alarmManager = (AlarmManager)context.GetSystemService(Context.AlarmService);
+                        Intent alarmIntent = new Intent(context, typeof(BroadcastReceiver.AlarmBroadcastReceiver));
+                        var pendingIntent = PendingIntent.GetBroadcast(context, 0, alarmIntent, 0);
 
 
-                    alarmManager.SetExact(AlarmType.ElapsedRealtimeWakeup,
-                                          SystemClock.ElapsedRealtime() +
-                                          2 * 1000, pendingIntent);
+                        alarmManager.SetExact(AlarmType.ElapsedRealtimeWakeup,
+                                              SystemClock.ElapsedRealtime() +
+                                              2 * 1000, pendingIntent);
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("already scheduled - do not start again!");
+                    }
                 }
             }
 

@@ -15,6 +15,9 @@ using Android.Views;
 using Happimeter.Watch.Droid.DependencyInjection;
 using Happimeter.Core.Helper;
 using Happimeter.Watch.Droid.ServicesBusinessLogic;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace Happimeter.Watch.Droid
 {
@@ -35,6 +38,8 @@ namespace Happimeter.Watch.Droid
         {
             base.OnCreate(savedInstanceState);
             Container.RegisterElements();
+            AppCenter.Start("a614a5b2-5aeb-47ac-a4e9-1256a337a0b7",
+                typeof(Analytics), typeof(Crashes));
 
             RequestWindowFeature(WindowFeatures.NoTitle);
             //Remove notification bar
