@@ -14,14 +14,14 @@
                             <RowDefinition Height="*"></RowDefinition>
                         </Grid.RowDefinitions>
                         <Image Opacity="0.4" Source="happinessfactory.png" Aspect="AspectFill" />
-                        <Label FontSize="24" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="0" TextColor="White" Text="Happimeter" />
+                        <Label Style="{StaticResource HeaderOnBackground}" Grid.Row="0" Text="Happimeter" />
                     </Grid>
 
                 <StackLayout Padding="25, 25, 25, 50" Spacing="15" VerticalOptions="FillAndExpand">
                     <Label Text="Please use the form below to login or sign up:" />
                     <xfx:XfxEntry FontSize="12" ErrorDisplay="None" Placeholder="Username" Text="{Binding UserName}" ActivePlaceholderColor="#b71c1c"/>
                     <xfx:XfxEntry FontSize="12" Placeholder="Password" Text="{Binding Password}" ErrorText="{Binding ErrorText}" IsPassword="true" ActivePlaceholderColor="#b71c1c"/>
-                    <local:MyButton VerticalOptions="EndAndExpand" IsEnabled="{Binding LoginButtonIsEnabled}" Text="{Binding LoginButtonText}" Command="{Binding LoginCommand}" Style="{StaticResource ButtonWithBackground}"></local:MyButton>
+                    <local:MyButton Style="{StaticResource ButtonWithBackground}" VerticalOptions="EndAndExpand" IsEnabled="{Binding LoginButtonIsEnabled}" Text="{Binding LoginButtonText}" Command="{Binding LoginCommand}"></local:MyButton>
                 </StackLayout>
             </StackLayout>
         </ScrollView>

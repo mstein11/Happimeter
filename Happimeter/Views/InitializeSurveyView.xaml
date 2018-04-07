@@ -37,8 +37,8 @@
                         <RowDefinition Height="*"></RowDefinition>
                         <RowDefinition Height="*"></RowDefinition>
                     </Grid.RowDefinitions>
-                    <Label FontSize="24" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="0" TextColor="White" Text="Please click the button below to start the survey. " />
-                    <Label FontSize="14" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="1" TextColor="White" Text="All survey responses will be transferred to our server where they are safely stored. We will not share any of your personal data with any third party. Data may be pusblished in aggregated format." />
+                    <Label Style="{StaticResource HeaderOnBackground}" Grid.Row="0" Text="Please click the button below to start the survey. " />
+                    <Label Style="{StaticResource TextOnBackground}" Grid.Row="1" Text="All survey responses will be transferred to our server where they are safely stored. We will not share any of your personal data with any third party. Data may be pusblished in aggregated format." />
                 </Grid>
             </RelativeLayout>
             <StackLayout Spacing="20" Padding="20" VerticalOptions="FillAndExpand">

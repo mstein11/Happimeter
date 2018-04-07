@@ -38,14 +38,14 @@
                             <RowDefinition Height="Auto"></RowDefinition>
                             <RowDefinition Height="Auto"></RowDefinition>
                         </Grid.RowDefinitions>
-                        <Label FontSize="24" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="0" TextColor="White" Text="Settings" />
+                        <Label Style="{StaticResource HeaderOnBackground}" Grid.Row="0" Text="Settings" />
                         <StackLayout Grid.Row="1"  VerticalOptions="CenterAndExpand" Spacing="0">
-                            <Label IsVisible="{Binding UnsyncronizedChangedVisible}" FontSize="14" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" TextColor="White" Text="You have unsyncronized changes. Press the button below to upload the changes to our server." />
-                            <Button VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" TextColor="White" Text="Synchronize with server" Command="{Binding UploadCommand}" Style="{StaticResource ButtonWithoutBackground}" /> 
-                            <Label FontSize="14" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" TextColor="White" IsVisible="{Binding SynchronizingStatusIsVisible}" Text="{Binding SynchronizingStatus}" /> 
+                            <Label Style="{StaticResource TextOnBackground}" IsVisible="{Binding UnsyncronizedChangedVisible}" Text="You have unsyncronized changes. Press the button below to upload the changes to our server." />
+                            <Button Style="{StaticResource ButtonWithoutBackground}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Text="Synchronize with server" Command="{Binding UploadCommand}"  /> 
+                            <Label Style="{StaticResource TextOnBackground}" IsVisible="{Binding SynchronizingStatusIsVisible}" Text="{Binding SynchronizingStatus}" /> 
                         </StackLayout>
                         <StackLayout Grid.Row="2"  VerticalOptions="CenterAndExpand" Spacing="0">
-                            <Label FontSize="14" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" TextColor="White" Text="{Binding UserEmail, StringFormat='LoggedIn as: {0}'}" />
+                            <Label Style="{StaticResource TextOnBackground}" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Text="{Binding UserEmail, StringFormat='LoggedIn as: {0}'}" />
                             <local:MyButton VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" TextColor="White" Text="Logout" Command="{Binding Logout}" Style="{StaticResource ButtonWithoutBackground}" />    
                         </StackLayout>
                     </Grid>

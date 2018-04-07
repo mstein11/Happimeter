@@ -44,21 +44,21 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <StackLayout Grid.ColumnSpan="2" Spacing="25" Padding="20">
-                            <Label TextColor="White" HorizontalOptions="CenterAndExpand" FontSize="22">Overall</Label>
+                            <Label Style="{StaticResource HeaderOnBackground}">Overall</Label>
                             <StackLayout Orientation="Horizontal">
                                 <StackLayout Spacing="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
-                                    <Label FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding NumberOfResponses}"/>
-                                    <Label TextColor="White" HorizontalTextAlignment="Center">Responses</Label>
+                                    <Label Style="{StaticResource TextOnBackground}" FontAttributes="Bold" Text="{Binding NumberOfResponses}"/>
+                                    <Label Style="{StaticResource TextOnBackground}">Responses</Label>
                                 </StackLayout>
                                 <StackLayout Spacing="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
-                                    <Label FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding OverallAverageResponse, StringFormat='{0:0.00}'}"/>
-                                    <Label TextColor="White" HorizontalTextAlignment="Center">Avg. Response</Label>
+                                    <Label Style="{StaticResource TextOnBackground}" FontAttributes="Bold" Text="{Binding OverallAverageResponse, StringFormat='{0:0.00}'}" />
+                                    <Label Style="{StaticResource TextOnBackground}">Avg. Response</Label>
                                 </StackLayout>
                             </StackLayout>
                             <StackLayout Spacing="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
-                                <Label FontSize="12" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding LastResponse, StringFormat='{0:MMMM dd, yyyy}'}" />
-                                <Label FontSize="12" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding LastResponse, StringFormat='{0:HH:mm}'}" />
-                                <Label TextColor="White" HorizontalTextAlignment="Center">Last Response</Label>
+                                <Label Style="{StaticResource TextOnBackground}" FontAttributes="Bold" Text="{Binding LastResponse, StringFormat='{0:MMMM dd, yyyy}'}" />
+                                <Label Style="{StaticResource TextOnBackground}" FontAttributes="Bold" Text="{Binding LastResponse, StringFormat='{0:HH:mm}'}" />
+                                <Label Style="{StaticResource TextOnBackground}">Last Response</Label>
                             </StackLayout>
                         </StackLayout>
                         <local:MyButton Grid.Row="1" Grid.Column="0" TextColor="White" Text="Pleasance" Clicked="Handle_Pleasance_Clicked" Style="{StaticResource ButtonWithoutBackground}" />

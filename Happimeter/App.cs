@@ -82,7 +82,26 @@ namespace Happimeter
             {
                 Setters = {
                     new Setter {Property = VisualElement.BackgroundColorProperty, Value = Color.Transparent},
+                    new Setter {Property = Button.TextColorProperty, Value = Color.White},
                 }
+            });
+
+            dict.Add("TextOnBackground", new Style(typeof(Label))
+            {
+                Setters = {
+                    new Setter {Property = Label.FontSizeProperty, Value = 14},
+                    new Setter {Property = Label.TextColorProperty, Value = Color.White},
+                    new Setter {Property = Label.HorizontalTextAlignmentProperty, Value = TextAlignment.Center},
+                },
+            });
+
+            dict.Add("HeaderOnBackground", new Style(typeof(Label))
+            {
+                Setters = {
+                    new Setter {Property = Label.FontSizeProperty, Value = 24},
+                    new Setter {Property = Label.TextColorProperty, Value = Color.White},
+                    new Setter {Property = Label.HorizontalTextAlignmentProperty, Value = TextAlignment.Center},
+                },
             });
 
             ResourceDict = dict;

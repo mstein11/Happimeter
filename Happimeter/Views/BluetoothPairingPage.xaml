@@ -38,9 +38,9 @@
                         <RowDefinition Height="*"></RowDefinition>
                         <RowDefinition Height="*"></RowDefinition>
                     </Grid.RowDefinitions>
-                    <Label FontSize="24" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="0" TextColor="White" Text="Pair BT Device" />
-                    <Label FontSize="14" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="1" TextColor="White" Text="Here you can Pair with and Android Watch Device that is running the Happimeter app. Click the Button below to start Scanning." />
-                    <local:MyButton Grid.Row="2" TextColor="White" Text="{Binding StartScanButtonText}" Command="{Binding StartScanCommand}" Style="{StaticResource ButtonWithoutBackground}" />
+                    <Label Style="{StaticResource HeaderOnBackground}" Grid.Row="0" Text="Pair BT Device" />
+                    <Label Style="{StaticResource TextOnBackground}" Grid.Row="1" Text="Here you can Pair with and Android Watch Device that is running the Happimeter app. Click the Button below to start Scanning." />
+                    <local:MyButton Grid.Row="2" Text="{Binding StartScanButtonText}" Command="{Binding StartScanCommand}" Style="{StaticResource ButtonWithoutBackground}" />
                 </Grid>
                 </RelativeLayout>
             <ListView ItemsSource="{Binding Items}" ItemSelected="Handle_ItemSelected">

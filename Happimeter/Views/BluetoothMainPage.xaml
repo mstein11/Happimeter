@@ -44,24 +44,24 @@
                         <ColumnDefinition Width="*"></ColumnDefinition>
                         <ColumnDefinition Width="*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-                    <Label FontSize="24" Grid.ColumnSpan="2" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="0" TextColor="White" Text="Bluetooth Pairing" />
+                    <Label Style="{StaticResource HeaderOnBackground}" Grid.ColumnSpan="2" Grid.Row="0" Text="Bluetooth Pairing" />
 
                     <StackLayout Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
-                        <Label FontAttributes="Bold" VerticalOptions="CenterAndExpand" TextColor="White" >Paired At:</Label>
-                        <Label VerticalOptions="CenterAndExpand" TextColor="White" Text="{Binding PairedAt, StringFormat='{0:MMMM dd, yyyy HH:mm}'}"/>
+                        <Label Style="{StaticResource TextOnBackground}" FontAttributes="Bold">Paired At:</Label>
+                        <Label Style="{StaticResource TextOnBackground}" Text="{Binding PairedAt, StringFormat='{0:MMMM dd, yyyy HH:mm}'}" />
                     </StackLayout>
 
                     <StackLayout Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
-                        <Label FontAttributes="Bold" VerticalOptions="CenterAndExpand" TextColor="White" Text="Sync. At:"></Label>
-                    <Label VerticalOptions="CenterAndExpand" TextColor="White" Text="{Binding SynchronizedAt, StringFormat='{0:MMMM dd, yyyy HH:mm}'}"/>
+                        <Label Style="{StaticResource TextOnBackground}" FontAttributes="Bold" Text="Sync. At:"></Label>
+                        <Label Style="{StaticResource TextOnBackground}" Text="{Binding SynchronizedAt, StringFormat='{0:MMMM dd, yyyy HH:mm}'}" />
                     </StackLayout>
 
-                    <local:MyButton TextColor="White" Grid.Row="3" Grid.Column="0" Text="Exchange Data" Command="{Binding ExchangeDataCommand}" Style="{StaticResource ButtonWithoutBackground}" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />
-                    <local:MyButton TextColor="White" Grid.Row="3" Grid.Column="1" Text="Remove Pairing" Command="{Binding RemovePairingCommand}" Style="{StaticResource ButtonWithoutBackground}" />
+                    <local:MyButton  Grid.Row="3" Grid.Column="0" Text="Exchange Data" Command="{Binding ExchangeDataCommand}" Style="{StaticResource ButtonWithoutBackground}" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />
+                    <local:MyButton  Grid.Row="3" Grid.Column="1" Text="Remove Pairing" Command="{Binding RemovePairingCommand}" Style="{StaticResource ButtonWithoutBackground}" />
 
                     <StackLayout Grid.Row="4" Grid.ColumnSpan="2" HorizontalOptions="CenterAndExpand" VerticalOptions="FillAndExpand" Orientation="Horizontal">
-                        <Label IsVisible="{Binding DataExchangeStatusIsVisible}" FontSize="12" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding DataExchangeStatus}"></Label>
-                        <Label IsVisible="{Binding DataExchangeProgressIsVisible}" FontSize="12" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding DataExchangeProgress, StringFormat='Got {0} bytes'}"></Label>
+                        <Label Style="{StaticResource TextOnBackground}" IsVisible="{Binding DataExchangeStatusIsVisible}" FontSize="12" Text="{Binding DataExchangeStatus}"></Label>
+                        <Label Style="{StaticResource TextOnBackground}" IsVisible="{Binding DataExchangeProgressIsVisible}" FontSize="12" Text="{Binding DataExchangeProgress, StringFormat='Got {0} bytes'}"></Label>
                     </StackLayout>
                 </Grid>
             </RelativeLayout>
