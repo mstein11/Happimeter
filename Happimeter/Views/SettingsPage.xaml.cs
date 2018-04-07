@@ -9,6 +9,7 @@ namespace Happimeter.Views
     {
         public SettingsPage()
         {
+            Resources = App.ResourceDict;
             InitializeComponent();
 
             BindingContext = new SettingsPageViewModel();

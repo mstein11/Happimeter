@@ -3,37 +3,68 @@
     xmlns="http://xamarin.com/schemas/2014/forms" 
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
     x:Class="Happimeter.Views.BluetoothMainPage"
+    xmlns:local="clr-namespace:Happimeter.Controls"
     Title="Bluetooth">
 	<ContentPage.Content>
         <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-            <Grid HeightRequest="260" RowSpacing="10" Padding="20" ColumnSpacing="10" BackgroundColor="#307AEA">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="*"></RowDefinition>
-                    <RowDefinition Height="*"></RowDefinition>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                <Label FontSize="24" Grid.ColumnSpan="2" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="0" TextColor="White" Text="Bluetooth Pairing" />
+            <RelativeLayout HeightRequest="220">
+                <Image 
+                       Aspect="AspectFill" 
+                       RelativeLayout.WidthConstraint="{ConstraintExpression  
+                       Type=RelativeToParent,  
+                       Property=Width,  
+                       Factor=1}"
+                       RelativeLayout.HeightConstraint="{ConstraintExpression  
+                       Type=RelativeToParent,  
+                       Property=Height,  
+                       Factor=1}">
+                        <Image.Source>
+                            <OnPlatform x:TypeArguments="ImageSource"
+                                        iOS="happinessfactory"
+                                        Android="happinessfactory.png" />
+                        </Image.Source>
+                    </Image>
+                <Grid RowSpacing="10" Padding="10, 20, 10, 0" ColumnSpacing="20" BackgroundColor="#B2307AEA"
+                      RelativeLayout.WidthConstraint="{ConstraintExpression  
+                      Type=RelativeToParent,  
+                      Property=Width,  
+                      Factor=1}"
+                      RelativeLayout.HeightConstraint="{ConstraintExpression  
+                      Type=RelativeToParent,  
+                      Property=Height,  
+                      Factor=1}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Label FontSize="24" Grid.ColumnSpan="2" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="0" TextColor="White" Text="Bluetooth Pairing" />
 
-                <Label FontAttributes="Bold" VerticalOptions="CenterAndExpand" TextColor="White" HorizontalTextAlignment="End" Grid.Row="1" Grid.Column="0">Paired At:</Label>
-                <Label VerticalOptions="CenterAndExpand" TextColor="White" Grid.Row="1" Grid.Column="1" Text="{Binding PairedAt, StringFormat='{0:MMMM dd, yyyy HH:mm}'}"/>
+                    <StackLayout Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
+                        <Label FontAttributes="Bold" VerticalOptions="CenterAndExpand" TextColor="White" >Paired At:</Label>
+                        <Label VerticalOptions="CenterAndExpand" TextColor="White" Text="{Binding PairedAt, StringFormat='{0:MMMM dd, yyyy HH:mm}'}"/>
+                    </StackLayout>
 
-                <Label FontAttributes="Bold" VerticalOptions="CenterAndExpand" TextColor="White" HorizontalTextAlignment="End" Grid.Row="2" Grid.Column="0" Text="Sync. At:"></Label>
-                <Label VerticalOptions="CenterAndExpand" TextColor="White" Grid.Row="2" Grid.Column="1" Text="{Binding SynchronizedAt, StringFormat='{0:MMMM dd, yyyy HH:mm}'}"/>
+                    <StackLayout Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
+                        <Label FontAttributes="Bold" VerticalOptions="CenterAndExpand" TextColor="White" Text="Sync. At:"></Label>
+                    <Label VerticalOptions="CenterAndExpand" TextColor="White" Text="{Binding SynchronizedAt, StringFormat='{0:MMMM dd, yyyy HH:mm}'}"/>
+                    </StackLayout>
 
-                <Button TextColor="White" Grid.Row="3" Grid.Column="0" Text="Exchange Data" Command="{Binding ExchangeDataCommand}"></Button>
-                <Button TextColor="White" Grid.Row="3" Grid.Column="1" Text="Remove Pairing" Command="{Binding RemovePairingCommand}"></Button>
+                    <local:MyButton TextColor="White" Grid.Row="3" Grid.Column="0" Text="Exchange Data" Command="{Binding ExchangeDataCommand}" Style="{StaticResource ButtonWithoutBackground}" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />
+                    <local:MyButton TextColor="White" Grid.Row="3" Grid.Column="1" Text="Remove Pairing" Command="{Binding RemovePairingCommand}" Style="{StaticResource ButtonWithoutBackground}" />
 
-                <StackLayout Grid.Row="4" Grid.ColumnSpan="2" HorizontalOptions="CenterAndExpand" VerticalOptions="FillAndExpand" Orientation="Horizontal">
-                    <Label IsVisible="{Binding DataExchangeStatusIsVisible}" FontSize="12" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding DataExchangeStatus}"></Label>
-                    <Label IsVisible="{Binding DataExchangeProgressIsVisible}" FontSize="12" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding DataExchangeProgress, StringFormat='Got {0} bytes'}"></Label>
-                </StackLayout>
-            </Grid>
+                    <StackLayout Grid.Row="4" Grid.ColumnSpan="2" HorizontalOptions="CenterAndExpand" VerticalOptions="FillAndExpand" Orientation="Horizontal">
+                        <Label IsVisible="{Binding DataExchangeStatusIsVisible}" FontSize="12" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding DataExchangeStatus}"></Label>
+                        <Label IsVisible="{Binding DataExchangeProgressIsVisible}" FontSize="12" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding DataExchangeProgress, StringFormat='Got {0} bytes'}"></Label>
+                    </StackLayout>
+                </Grid>
+            </RelativeLayout>
             <ListView ItemsSource="{Binding Items}" Refreshing="ListItems_Refreshing" IsPullToRefreshEnabled="true" x:Name="ListView" ItemAppearing="Handle_ItemAppearing">
                 <ListView.ItemTemplate>
                     <DataTemplate>

@@ -92,6 +92,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\TestPage.xaml.cs">
       <DependentUpon>TestPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\MyButton.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />
@@ -102,6 +103,7 @@
     <Folder Include="$(MSBuildThisFileDirectory)ViewModels\Forms\" />
     <Folder Include="$(MSBuildThisFileDirectory)Views\MoodOverview\" />
     <Folder Include="$(MSBuildThisFileDirectory)Events\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Controls\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\SurveyPage.xaml">

@@ -2,23 +2,26 @@
 <ContentPage 
     xmlns="http://xamarin.com/schemas/2014/forms" 
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    xmlns:xfx="clr-namespace:Xfx;assembly=Xfx.Controls"
+    xmlns:local="clr-namespace:Happimeter.Controls"
     x:Class="Happimeter.Views.SignInPage"
     Title="Sigin up / Login">
 	<ContentPage.Content>
         <ScrollView>
             <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
-                <Grid HeightRequest="260" RowSpacing="0" Padding="20" ColumnSpacing="0" BackgroundColor="#307AEA">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <Label FontSize="24" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="0" TextColor="White" Text="Please use the form below to login or sign up " />
-                </Grid>
-                <StackLayout Spacing="20" Padding="20" VerticalOptions="FillAndExpand">
-                    <Entry Placeholder="Username" Text="{Binding UserName}"></Entry>
-                    <Entry Placeholder="Password" Text="{Binding Password}" IsPassword="true"></Entry>
-                    <Label FontSize="12" Text="{Binding ErrorText}" IsVisible="{Binding ErrorTextVisible}" />
-                    <!--<Button IsEnabled="{Binding LoginButtonIsEnabled}" Text="{Binding LoginButtonText}" Command="{Binding LoginCommand}" Style="{StaticResource ButtonWithBackground}"></Button>-->
-                    <Button IsEnabled="{Binding LoginButtonIsEnabled}" Text="{Binding LoginButtonText}" Command="{Binding LoginCommand}" BackgroundColor="Transparent"></Button>
+                    <Grid HeightRequest="200" RowSpacing="0" ColumnSpacing="0" BackgroundColor="#307AEA">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Image Opacity="0.4" Source="happinessfactory.png" Aspect="AspectFill" />
+                        <Label FontSize="24" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="0" TextColor="White" Text="Happimeter" />
+                    </Grid>
+
+                <StackLayout Padding="25, 25, 25, 50" Spacing="15" VerticalOptions="FillAndExpand">
+                    <Label Text="Please use the form below to login or sign up:" />
+                    <xfx:XfxEntry FontSize="12" ErrorDisplay="None" Placeholder="Username" Text="{Binding UserName}" ActivePlaceholderColor="#b71c1c"/>
+                    <xfx:XfxEntry FontSize="12" Placeholder="Password" Text="{Binding Password}" ErrorText="{Binding ErrorText}" IsPassword="true" ActivePlaceholderColor="#b71c1c"/>
+                    <local:MyButton VerticalOptions="EndAndExpand" IsEnabled="{Binding LoginButtonIsEnabled}" Text="{Binding LoginButtonText}" Command="{Binding LoginCommand}" Style="{StaticResource ButtonWithBackground}"></local:MyButton>
                 </StackLayout>
             </StackLayout>
         </ScrollView>

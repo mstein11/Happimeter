@@ -4,44 +4,69 @@
     xmlns="http://xamarin.com/schemas/2014/forms" 
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
     x:Class="Happimeter.Views.MoodOverview.SurveyOverviewListPage"
+    xmlns:local="clr-namespace:Happimeter.Controls"
     Title="Overview">
 	<ContentPage.Content>
         <ListView x:Name="SurveyListView" RowHeight="150" ItemsSource="{Binding Items}" IsPullToRefreshEnabled="True" Refreshing="ListItems_Refreshing">
             <ListView.Header>
-                <Grid HeightRequest="280" RowSpacing="0" ColumnSpacing="0" BackgroundColor="#307AEA">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <StackLayout Grid.ColumnSpan="2" Spacing="25" Padding="20">
-                        <Label TextColor="White" HorizontalOptions="CenterAndExpand" FontSize="22">Overall</Label>
-                        <StackLayout Orientation="Horizontal">
-                            <StackLayout Spacing="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
-                                <Label FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding NumberOfResponses}"/>
-                                <Label TextColor="White" HorizontalTextAlignment="Center">Responses</Label>
+                <RelativeLayout HeightRequest="240">
+                <Image 
+                       Aspect="AspectFill" 
+                       RelativeLayout.WidthConstraint="{ConstraintExpression  
+                       Type=RelativeToParent,  
+                       Property=Width,  
+                       Factor=1}"
+                       RelativeLayout.HeightConstraint="{ConstraintExpression  
+                       Type=RelativeToParent,  
+                       Property=Height,  
+                       Factor=1}">
+                        <Image.Source>
+                            <OnPlatform x:TypeArguments="ImageSource"
+                                        iOS="happinessfactory"
+                                        Android="happinessfactory.png" />
+                        </Image.Source>
+                    </Image>
+                    <Grid RowSpacing="0" ColumnSpacing="0" BackgroundColor="#B2307AEA"
+                       RelativeLayout.WidthConstraint="{ConstraintExpression  
+                       Type=RelativeToParent,  
+                       Property=Width,  
+                       Factor=1}"
+                       RelativeLayout.HeightConstraint="{ConstraintExpression  
+                       Type=RelativeToParent,  
+                       Property=Height,  
+                       Factor=1}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackLayout Grid.ColumnSpan="2" Spacing="25" Padding="20">
+                            <Label TextColor="White" HorizontalOptions="CenterAndExpand" FontSize="22">Overall</Label>
+                            <StackLayout Orientation="Horizontal">
+                                <StackLayout Spacing="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                                    <Label FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding NumberOfResponses}"/>
+                                    <Label TextColor="White" HorizontalTextAlignment="Center">Responses</Label>
+                                </StackLayout>
+                                <StackLayout Spacing="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                                    <Label FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding OverallAverageResponse, StringFormat='{0:0.00}'}"/>
+                                    <Label TextColor="White" HorizontalTextAlignment="Center">Avg. Response</Label>
+                                </StackLayout>
                             </StackLayout>
                             <StackLayout Spacing="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
-                                <Label FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding OverallAverageResponse, StringFormat='{0:0.00}'}"/>
-                                <Label TextColor="White" HorizontalTextAlignment="Center">Avg. Response</Label>
+                                <Label FontSize="12" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding LastResponse, StringFormat='{0:MMMM dd, yyyy}'}" />
+                                <Label FontSize="12" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding LastResponse, StringFormat='{0:HH:mm}'}" />
+                                <Label TextColor="White" HorizontalTextAlignment="Center">Last Response</Label>
                             </StackLayout>
                         </StackLayout>
-                        <StackLayout Spacing="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
-                            <Label FontSize="12" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding LastResponse, StringFormat='{0:MMMM dd, yyyy}'}" />
-                            <Label FontSize="12" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Text="{Binding LastResponse, StringFormat='{0:HH:mm}'}" />
-                            <Label TextColor="White" HorizontalTextAlignment="Center">Last Response</Label>
-                        </StackLayout>
-                    </StackLayout>
-                    <Button Grid.Row="1" Grid.Column="0" TextColor="White" Text="Pleasance" Clicked="Handle_Pleasance_Clicked">
-                    </Button>
-                    <BoxView Grid.Row="1" Grid.Column="0" VerticalOptions="End" BackgroundColor="White" HeightRequest="3" IsVisible="{Binding PleasanceIsActive}" />
-                    <Button Grid.Row="1" Grid.Column="1" TextColor="White" Text="Activation" Clicked="Handle_Activation_Clicked">
-                    </Button>
-                    <BoxView Grid.Row="1" Grid.Column="1" VerticalOptions="End" BackgroundColor="White" HeightRequest="3" IsVisible="{Binding ActivationIsActive}" />
-                </Grid>
+                        <local:MyButton Grid.Row="1" Grid.Column="0" TextColor="White" Text="Pleasance" Clicked="Handle_Pleasance_Clicked" Style="{StaticResource ButtonWithoutBackground}" />
+                        <BoxView Grid.Row="1" Grid.Column="0" VerticalOptions="End" BackgroundColor="White" HeightRequest="3" IsVisible="{Binding PleasanceIsActive}" />
+                        <Button Grid.Row="1" Grid.Column="1" TextColor="White" Text="Activation" Clicked="Handle_Activation_Clicked" Style="{StaticResource ButtonWithoutBackground}"/>
+                        <BoxView Grid.Row="1" Grid.Column="1" VerticalOptions="End" BackgroundColor="White" HeightRequest="3" IsVisible="{Binding ActivationIsActive}" />
+                    </Grid>
+                </RelativeLayout>
             </ListView.Header>
         <ListView.ItemTemplate>
             <DataTemplate>

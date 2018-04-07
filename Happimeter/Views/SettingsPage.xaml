@@ -3,45 +3,70 @@
     xmlns="http://xamarin.com/schemas/2014/forms" 
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
     x:Class="Happimeter.Views.SettingsPage"
+    xmlns:local="clr-namespace:Happimeter.Controls"
     Title="Settings">
 	<ContentPage.Content>
         <ScrollView>
             <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                <Grid HeightRequest="260" RowSpacing="0" Padding="20" ColumnSpacing="0" BackgroundColor="#307AEA">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"></RowDefinition>
-                        <RowDefinition Height="*"></RowDefinition>
-                        <RowDefinition Height="*"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <Label FontSize="24" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="0" TextColor="White" Text="Here you can logout and change other settings" />
-                    <StackLayout Grid.Row="1"  VerticalOptions="CenterAndExpand" Spacing="0">
-                        <Label IsVisible="{Binding UnsyncronizedChangedVisible}" FontSize="14" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" TextColor="White" Text="You have unsyncronized changes. Press the button below to upload the changes to our server." />
-                        <Button VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" TextColor="White" Text="Synchronize with server" Command="{Binding UploadCommand}" /> 
-                        <Label FontSize="14" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" TextColor="White" IsVisible="{Binding SynchronizingStatusIsVisible}" Text="{Binding SynchronizingStatus}" /> 
-                    </StackLayout>
-                    <StackLayout Grid.Row="2"  VerticalOptions="CenterAndExpand" Spacing="0">
-                        <Label FontSize="14" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" TextColor="White" Text="{Binding UserEmail, StringFormat='LoggedIn as: {0}'}" />
-                        <Button VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" TextColor="White" Text="Logout" Command="{Binding Logout}" />    
-                    </StackLayout>
-                </Grid>
-                <StackLayout Padding="20" Spacing="15">
+                <RelativeLayout HeightRequest="220" VerticalOptions="Start">
+                    <Image Aspect="AspectFill" 
+                       RelativeLayout.WidthConstraint="{ConstraintExpression  
+                       Type=RelativeToParent,  
+                       Property=Width,  
+                       Factor=1}"
+                       RelativeLayout.HeightConstraint="{ConstraintExpression  
+                       Type=RelativeToParent,  
+                       Property=Height,  
+                       Factor=1}">
+                        <Image.Source>
+                            <OnPlatform x:TypeArguments="ImageSource"
+                                        iOS="happinessfactory"
+                                        Android="happinessfactory.png" />
+                        </Image.Source>
+                    </Image>
+                    <Grid RowSpacing="10" Padding="10, 20, 10, 0" ColumnSpacing="20" BackgroundColor="#B2307AEA"
+                          RelativeLayout.WidthConstraint="{ConstraintExpression  
+                          Type=RelativeToParent,  
+                          Property=Width,  
+                          Factor=1}"
+                          RelativeLayout.HeightConstraint="{ConstraintExpression  
+                          Type=RelativeToParent,  
+                          Property=Height,  
+                          Factor=1}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Label FontSize="24" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="0" TextColor="White" Text="Settings" />
+                        <StackLayout Grid.Row="1"  VerticalOptions="CenterAndExpand" Spacing="0">
+                            <Label IsVisible="{Binding UnsyncronizedChangedVisible}" FontSize="14" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" TextColor="White" Text="You have unsyncronized changes. Press the button below to upload the changes to our server." />
+                            <Button VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" TextColor="White" Text="Synchronize with server" Command="{Binding UploadCommand}" Style="{StaticResource ButtonWithoutBackground}" /> 
+                            <Label FontSize="14" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" TextColor="White" IsVisible="{Binding SynchronizingStatusIsVisible}" Text="{Binding SynchronizingStatus}" /> 
+                        </StackLayout>
+                        <StackLayout Grid.Row="2"  VerticalOptions="CenterAndExpand" Spacing="0">
+                            <Label FontSize="14" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" TextColor="White" Text="{Binding UserEmail, StringFormat='LoggedIn as: {0}'}" />
+                            <local:MyButton VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" TextColor="White" Text="Logout" Command="{Binding Logout}" Style="{StaticResource ButtonWithoutBackground}" />    
+                        </StackLayout>
+                    </Grid>
+                </RelativeLayout>
+                <StackLayout Padding="20" Spacing="15" VerticalOptions="FillAndExpand">
                     <Label Text="Download Questions from Server"/>
                     <Label FontSize="12" Text="Here you can download questions from our Server."/>
                     <Label FontSize="12" Text="{Binding NumberOfGenericQuestions, StringFormat='You have {0} additional Questions in your survey.' }" />
-                    <StackLayout Spacing="0">
-                        <Button Text="{Binding GenericGroupButtonText}" IsEnabled="{Binding SaveGenericGroupButtonEnabled}" Command="{Binding ChangeGenericQuestionGroupId}"></Button>
-                        <Button Text="{Binding PushGenericQuestionToWatchButtonText}" IsEnabled="{Binding PushQuestionsToWatchButtonEnabled}" IsVisible="{Binding ShowPushQuestionsToWatchButton}" Command="{Binding PushGenericQuestionsToWatchCommand}"></Button>
+                    <StackLayout>
+                        <local:MyButton Text="{Binding GenericGroupButtonText}" IsEnabled="{Binding SaveGenericGroupButtonEnabled}" Command="{Binding ChangeGenericQuestionGroupId}" Style="{StaticResource ButtonWithBackground}"></local:MyButton>
+                        <local:MyButton Text="{Binding PushGenericQuestionToWatchButtonText}" IsEnabled="{Binding PushQuestionsToWatchButtonEnabled}" IsVisible="{Binding ShowPushQuestionsToWatchButton}" Command="{Binding PushGenericQuestionsToWatchCommand}" Style="{StaticResource ButtonWithBackground}"></local:MyButton>
                     </StackLayout>
                 </StackLayout>
-                <StackLayout Padding="20, 0, 20 ,20" Spacing="15" IsVisible="{Binding ShowPushQuestionsToWatchButton}">
+                <StackLayout Padding="20, 0, 20 ,20" Spacing="15" IsVisible="{Binding ShowPushQuestionsToWatchButton}" VerticalOptions="FillAndExpand">
                     <Label Text="Measurement Mode"/>
                     <Label FontSize="12" Text="Here you can switch between the battery safer and continous mode. In battery safer mode, the device will save the sensor data every 10 minutes, in continous mode every minute."/>
                     <StackLayout Spacing="0" Orientation="Horizontal" VerticalOptions="CenterAndExpand">
                         <Label FontSize="14" FontAttributes="Bold" Text="Activate continous mode" />
                         <Switch IsToggled="{Binding ContinousModeIsOn}" HorizontalOptions="EndAndExpand"/>
                     </StackLayout>
-                    <Button Text="{Binding PushMeasurementModeToWatchText}" IsEnabled="{Binding PushMeasurementModeToWatchIsEnabled}"  Command="{Binding PushMeasurementModeToWatchCommand}"></Button>
-                    
+                    <local:MyButton Text="{Binding PushMeasurementModeToWatchText}" IsEnabled="{Binding PushMeasurementModeToWatchIsEnabled}" Command="{Binding PushMeasurementModeToWatchCommand}" Style="{StaticResource ButtonWithBackground}"></local:MyButton>
                 </StackLayout>
             </StackLayout>
         </ScrollView>

@@ -3,19 +3,46 @@
     xmlns="http://xamarin.com/schemas/2014/forms" 
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
     x:Class="Happimeter.Views.BluetoothPairingPage"
+    xmlns:local="clr-namespace:Happimeter.Controls"
     Title="Bluetooth">
 	<ContentPage.Content>
         <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-            <Grid HeightRequest="260" RowSpacing="10" Padding="20" ColumnSpacing="10" BackgroundColor="#307AEA">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"></RowDefinition>
-                    <RowDefinition Height="*"></RowDefinition>
-                    <RowDefinition Height="*"></RowDefinition>
-                </Grid.RowDefinitions>
-                <Label FontSize="24" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="0" TextColor="White" Text="Pair BT Device" />
-                <Label HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="1" TextColor="White" Text="Here you can Pair with and Android Watch Device that is running the Happimeter app. Click the Button below to start Scanning." />
-                <Button Grid.Row="2" TextColor="White" Text="{Binding StartScanButtonText}" Command="{Binding StartScanCommand}"></Button>
-            </Grid>
+            <RelativeLayout HeightRequest="220">
+                <Image
+                       Aspect="AspectFill" 
+                       RelativeLayout.WidthConstraint="{ConstraintExpression  
+                       Type=RelativeToParent,  
+                       Property=Width,  
+                       Factor=1}"
+                       RelativeLayout.HeightConstraint="{ConstraintExpression  
+                       Type=RelativeToParent,  
+                       Property=Height,  
+                       Factor=1}">
+                        <Image.Source>
+                            <OnPlatform x:TypeArguments="ImageSource"
+                                        iOS="happinessfactory"
+                                        Android="happinessfactory.png" />
+                        </Image.Source>
+                    </Image>
+                <Grid RowSpacing="10" Padding="20" ColumnSpacing="10" BackgroundColor="#B2307AEA"
+                      RelativeLayout.WidthConstraint="{ConstraintExpression  
+                          Type=RelativeToParent,  
+                          Property=Width,  
+                          Factor=1}"
+                          RelativeLayout.HeightConstraint="{ConstraintExpression  
+                          Type=RelativeToParent,  
+                          Property=Height,  
+                          Factor=1}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Label FontSize="24" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="0" TextColor="White" Text="Pair BT Device" />
+                    <Label FontSize="14" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="1" TextColor="White" Text="Here you can Pair with and Android Watch Device that is running the Happimeter app. Click the Button below to start Scanning." />
+                    <local:MyButton Grid.Row="2" TextColor="White" Text="{Binding StartScanButtonText}" Command="{Binding StartScanCommand}" Style="{StaticResource ButtonWithoutBackground}" />
+                </Grid>
+                </RelativeLayout>
             <ListView ItemsSource="{Binding Items}" ItemSelected="Handle_ItemSelected">
                 <ListView.ItemTemplate>
                     <DataTemplate>

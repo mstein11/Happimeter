@@ -69,7 +69,7 @@ namespace Happimeter.Watch.Droid.Services
                 else
                 {
 
-                    if (BroadcastReceiver.AlarmBroadcastReceiver.IsScheduled)
+                    if (!BroadcastReceiver.AlarmBroadcastReceiver.IsScheduled)
                     {
                         System.Diagnostics.Debug.WriteLine("Starting in battery safer mode!");
                         var context = Application.Context;

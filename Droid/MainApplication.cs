@@ -8,6 +8,7 @@ using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Plugin.CurrentActivity;
+using Xfx;
 
 namespace Happimeter.Droid
 {
@@ -45,6 +46,7 @@ namespace Happimeter.Droid
             CrossCurrentActivity.Current.Activity = activity;
             if (!_isInitialized)
             {
+                XfxControls.Init();
                 Xamarin.Forms.Forms.Init(this, savedInstanceState);
                 App.Initialize();
                 _isInitialized = true;

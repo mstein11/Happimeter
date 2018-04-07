@@ -8,6 +8,7 @@ namespace Happimeter.Views
     {
         public InitializeSurveyView()
         {
+            Resources = App.ResourceDict;
             InitializeComponent();
 
             Title = "Survey";

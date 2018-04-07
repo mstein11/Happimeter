@@ -2,6 +2,7 @@
 <ContentPage 
     xmlns="http://xamarin.com/schemas/2014/forms" 
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    xmlns:local="clr-namespace:Happimeter.Controls"
     x:Class="Happimeter.Views.SurveyPage">
 	<ContentPage.Content>
         <ScrollView >
@@ -11,7 +12,8 @@
                         <StackLayout x:Name="QuestionsContainer" Spacing="0">
                         </StackLayout>
                     </StackLayout>
-                <Button Text="Confirm" Clicked="Handle_Confirm_Clicked"></Button>
+                <Button  ></Button>
+                <local:MyButton Text="Confirm" Clicked="Handle_Confirm_Clicked" Style="{StaticResource ButtonWithBackground}"></local:MyButton>
             </StackLayout>
         </ScrollView>
 	</ContentPage.Content>

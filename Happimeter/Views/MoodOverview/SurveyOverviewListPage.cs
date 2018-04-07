@@ -11,6 +11,7 @@ namespace Happimeter.Views.MoodOverview
     {
         public SurveyOverviewListPage()
         {
+            Resources = App.ResourceDict;
             InitializeComponent();
             BindingContext = new SurveyOverviewViewModel();
         }
@@ -27,7 +28,8 @@ namespace Happimeter.Views.MoodOverview
             vm.Initialize(Helpers.SurveyHardcodedEnumeration.Activation);
         }
 
-        void ListItems_Refreshing(object sender, EventArgs e) {
+        void ListItems_Refreshing(object sender, EventArgs e)
+        {
             var vm = (SurveyOverviewViewModel)BindingContext;
             vm.RefreshData();
             SurveyListView.EndRefresh();

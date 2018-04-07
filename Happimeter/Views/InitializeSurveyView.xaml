@@ -3,20 +3,47 @@
     xmlns="http://xamarin.com/schemas/2014/forms" 
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
     x:Class="Happimeter.Views.InitializeSurveyView"
+    xmlns:local="clr-namespace:Happimeter.Controls"
     Title="Survey">
 	<ContentPage.Content>
         <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
-            <Grid HeightRequest="260" RowSpacing="0" Padding="20" ColumnSpacing="0" BackgroundColor="#307AEA">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"></RowDefinition>
-                    <RowDefinition Height="*"></RowDefinition>
-                </Grid.RowDefinitions>
-                <Label FontSize="24" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="0" TextColor="White" Text="Please click the button below to start the survey. " />
-                <Label HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="1" TextColor="White" Text="All survey responses will be transferred to our server where they are safely stored. We will not share any of your personal data with any third party. Data may be pusblished in aggregated format." />
-            </Grid>
+            <RelativeLayout HeightRequest="220" VerticalOptions="Start">
+                <Image 
+                       Aspect="AspectFill" 
+                       RelativeLayout.WidthConstraint="{ConstraintExpression  
+                       Type=RelativeToParent,  
+                       Property=Width,  
+                       Factor=1}"
+                       RelativeLayout.HeightConstraint="{ConstraintExpression  
+                       Type=RelativeToParent,  
+                       Property=Height,  
+                       Factor=1}">
+                        <Image.Source>
+                            <OnPlatform x:TypeArguments="ImageSource"
+                                        iOS="happinessfactory"
+                                        Android="happinessfactory.png" />
+                        </Image.Source>
+                    </Image>
+                <Grid RowSpacing="0" Padding="20" ColumnSpacing="0" BackgroundColor="#B2307AEA"
+                      RelativeLayout.WidthConstraint="{ConstraintExpression  
+                           Type=RelativeToParent,  
+                           Property=Width,  
+                           Factor=1}"
+                           RelativeLayout.HeightConstraint="{ConstraintExpression  
+                           Type=RelativeToParent,  
+                           Property=Height,  
+                           Factor=1}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Label FontSize="24" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="0" TextColor="White" Text="Please click the button below to start the survey. " />
+                    <Label FontSize="14" HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Grid.Row="1" TextColor="White" Text="All survey responses will be transferred to our server where they are safely stored. We will not share any of your personal data with any third party. Data may be pusblished in aggregated format." />
+                </Grid>
+            </RelativeLayout>
             <StackLayout Spacing="20" Padding="20" VerticalOptions="FillAndExpand">
                 <Label FontAttributes="Bold" HorizontalTextAlignment="Center"> By partaking in this survey, you agree that your survey responses may be used for scientific purposes.</Label>
-                <Button Text="Start Survey" Clicked="Handle_Clicked"></Button>
+                <local:MyButton Text="Start Survey" Clicked="Handle_Clicked" Style="{StaticResource ButtonWithBackground}"></local:MyButton>
             </StackLayout>
         </StackLayout>
 	</ContentPage.Content>

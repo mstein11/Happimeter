@@ -222,6 +222,12 @@
     <Reference Include="Plugin.BluetoothLE">
       <HintPath>..\packages\Plugin.BluetoothLE.5.3.5\lib\Xamarin.iOS10\Plugin.BluetoothLE.dll</HintPath>
     </Reference>
+    <Reference Include="Xfx.Controls">
+      <HintPath>..\packages\Xfx.Controls.1.1.3\lib\Xamarin.iOS10\Xfx.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="Xfx.Controls.iOS">
+      <HintPath>..\packages\Xfx.Controls.1.1.3\lib\Xamarin.iOS10\Xfx.Controls.iOS.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
@@ -249,6 +255,10 @@
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-App-60x60%402x.png" />
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-App-60x60%403x.png" />
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\ItunesArtwork%402x.png" />
+    <ImageAsset Include="Assets.xcassets\happinessfactory.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\happinessfactory.imageset\happinessfactory.png" />
+    <ImageAsset Include="Assets.xcassets\happinessfactory.imageset\happinessfactory%402x.png" />
+    <ImageAsset Include="Assets.xcassets\happinessfactory.imageset\happinessfactory%403x.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ViewControllers\DetailViewControllers\BrowseItemDetailViewController.cs" />
@@ -312,6 +322,7 @@
     <Compile Include="ViewControllers\SignInViewController.designer.cs">
       <DependentUpon>SignInViewController.cs</DependentUpon>
     </Compile>
+    <Compile Include="Renderers\MyButtonRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Entitlements.plist" />
@@ -327,6 +338,9 @@
     <Folder Include="Assets.xcassets\HappimeterLogo.imageset\" />
     <Folder Include="Services\" />
     <Folder Include="DependencyInjection\" />
+    <Folder Include="Renderers\" />
+    <Folder Include="Assets.xcassets\happinessfactury.imageset\" />
+    <Folder Include="Assets.xcassets\happinessfactory.imageset\" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />

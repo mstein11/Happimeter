@@ -1,12 +1,11 @@
-﻿using System;
-using Happimeter.Core.Database;
+﻿using Happimeter.Core.Database;
 using Happimeter.Core.Helper;
 using Happimeter.DependencyInjection;
 using Happimeter.Interfaces;
 using Plugin.BluetoothLE;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using System.Xml.Serialization;
+using Happimeter.Controls;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace Happimeter
@@ -70,10 +69,19 @@ namespace Happimeter
             var dict = new ResourceDictionary();
 
 
-            dict.Add("ButtonWithBackground", new Style(typeof(Button))
+            dict.Add("ButtonWithBackground", new Style(typeof(MyButton))
             {
                 Setters = {
-                    new Setter {Property = VisualElement.BackgroundColorProperty, Value = Color.Red}
+                    new Setter {Property = VisualElement.BackgroundColorProperty, Value = Color.FromHex("#b71c1c")},
+                    new Setter {Property = MyButton.DisabledColorProperty, Value = Color.FromHex("#A9A9A9")},
+                    new Setter {Property = Button.TextColorProperty, Value = Color.White}
+                }
+            });
+
+            dict.Add("ButtonWithoutBackground", new Style(typeof(MyButton))
+            {
+                Setters = {
+                    new Setter {Property = VisualElement.BackgroundColorProperty, Value = Color.Transparent},
                 }
             });
 

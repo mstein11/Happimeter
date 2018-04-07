@@ -11,17 +11,20 @@ namespace Happimeter.Views
     {
         public BluetoothMainPage()
         {
+            Resources = App.ResourceDict;
             InitializeComponent();
             BindingContext = new BluetoothMainPageViewModel();
         }
 
         void ListItems_Refreshing(object sender, EventArgs e)
         {
-            Task.Factory.StartNew(() => {
+            Task.Factory.StartNew(() =>
+            {
                 var vm = (BluetoothMainPageViewModel)BindingContext;
                 vm.RefreshData();
-                Device.BeginInvokeOnMainThread(() => {
-                    ListView.EndRefresh();        
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    ListView.EndRefresh();
                 });
             });
 
@@ -35,7 +38,8 @@ namespace Happimeter.Views
                 return;
             }
 
-            if(((BluetoothMainItemViewModel)e.Item).TimeStamp == vm.Items.LastOrDefault().TimeStamp) {
+            if (((BluetoothMainItemViewModel)e.Item).TimeStamp == vm.Items.LastOrDefault().TimeStamp)
+            {
                 Task.Factory.StartNew(() =>
                 {
                     vm.LoadMoreData();

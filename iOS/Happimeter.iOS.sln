@@ -1,0 +1,23 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Happimeter.iOS", "Happimeter.iOS.csproj", "{B926B5BC-5FAA-4225-BAC6-BA1BDABB67E9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|iPhoneSimulator = Debug|iPhoneSimulator
+		Release|iPhone = Release|iPhone
+		Release|iPhoneSimulator = Release|iPhoneSimulator
+		Debug|iPhone = Debug|iPhone
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B926B5BC-5FAA-4225-BAC6-BA1BDABB67E9}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{B926B5BC-5FAA-4225-BAC6-BA1BDABB67E9}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{B926B5BC-5FAA-4225-BAC6-BA1BDABB67E9}.Release|iPhone.ActiveCfg = Release|iPhone
+		{B926B5BC-5FAA-4225-BAC6-BA1BDABB67E9}.Release|iPhone.Build.0 = Release|iPhone
+		{B926B5BC-5FAA-4225-BAC6-BA1BDABB67E9}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{B926B5BC-5FAA-4225-BAC6-BA1BDABB67E9}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{B926B5BC-5FAA-4225-BAC6-BA1BDABB67E9}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{B926B5BC-5FAA-4225-BAC6-BA1BDABB67E9}.Debug|iPhone.Build.0 = Debug|iPhone
+	EndGlobalSection
+EndGlobal

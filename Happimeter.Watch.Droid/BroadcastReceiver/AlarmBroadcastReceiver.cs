@@ -23,6 +23,8 @@ namespace Happimeter.Watch.Droid.BroadcastReceiver
             var duration = deviceService.GetMeasurementMode();
             System.Diagnostics.Debug.WriteLine("Received alarm");
 
+            duration = 900;
+
             if (duration == null)
             {
                 //do not reschedule alarm. do not start the workers! We are actually in continous mode already.

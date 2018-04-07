@@ -12,6 +12,7 @@ namespace Happimeter.Views
         private SurveyViewModel ViewModel { get; set; }
         public SurveyPage()
         {
+            Resources = App.ResourceDict;
             InitializeComponent();
 
 
@@ -19,7 +20,8 @@ namespace Happimeter.Views
             var questions = measurementService.GetSurveyQuestions();
 
             var idx = 0;
-            foreach (var question in questions.SurveyItems) {
+            foreach (var question in questions.SurveyItems)
+            {
                 QuestionsContainer.Children.Add(new SurveyItemView(question, idx % 2 == 1));
                 idx++;
             }

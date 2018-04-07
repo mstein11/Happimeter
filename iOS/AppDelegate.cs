@@ -10,6 +10,7 @@ using Microsoft.AppCenter.Crashes;
 using Plugin.BluetoothLE;
 using UIKit;
 using Xamarin.Forms;
+using Xfx;
 
 namespace Happimeter.iOS
 {
@@ -36,6 +37,7 @@ namespace Happimeter.iOS
 
 
             Happimeter.iOS.DependencyInjection.Container.RegisterElements();
+            XfxControls.Init();
             Forms.Init();
             App.Initialize();
             CrossBleAdapter.Init(BleAdapterConfiguration.DefaultBackgroudingConfig);
