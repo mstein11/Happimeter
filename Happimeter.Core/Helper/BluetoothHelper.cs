@@ -9,7 +9,8 @@ namespace Happimeter.Core.Helper
     public static class BluetoothHelper
     {
 
-        public static byte[] GetMessageHeader(BaseBluetoothMessage message, byte[] jsonBytes = null) {
+        public static byte[] GetMessageHeader(BaseBluetoothMessage message, byte[] jsonBytes = null)
+        {
             var header = new byte[20];
             var messageNameBytes = System.Text.Encoding.UTF8.GetBytes(message.MessageName);
             if (messageNameBytes.Count() > 10)
@@ -27,8 +28,9 @@ namespace Happimeter.Core.Helper
                     header[i] = 0x00;
                 }
             }
-            if (jsonBytes == null) {
-                jsonBytes = GetMessageJson(message);     
+            if (jsonBytes == null)
+            {
+                jsonBytes = GetMessageJson(message);
             }
 
             var sizeOfMessage = jsonBytes.Count();
@@ -52,16 +54,18 @@ namespace Happimeter.Core.Helper
             return header;
         }
 
-        public static (byte[], byte[]) GetHeaderAndContent(BaseBluetoothMessage message) {
+        public static (byte[], byte[]) GetHeaderAndContent(BaseBluetoothMessage message)
+        {
             var json = GetMessageJson(message);
             var header = GetMessageHeader(message, json);
 
             return (header, json);
         }
 
-        public static (string messageName, int messageSize) GetMessageHeaderContent(byte[] header) {
+        public static (string messageName, int messageSize) GetMessageHeaderContent(byte[] header)
+        {
             var messageNamebytes = header.Take(10).ToList();
-            var removed = messageNamebytes.RemoveAll(x => x == (byte) 0x00);
+            var removed = messageNamebytes.RemoveAll(x => x == (byte)0x00);
             var messageName = System.Text.Encoding.UTF8.GetString(messageNamebytes.ToArray());
 
             var messageSizeBytes = header.Skip(10).Take(10).ToList();
@@ -71,7 +75,8 @@ namespace Happimeter.Core.Helper
             return (messageName, messageSize);
         }
 
-        public static byte[] GetMessageJson(BaseBluetoothMessage message) {
+        public static byte[] GetMessageJson(BaseBluetoothMessage message)
+        {
             var json = message.GetAsJson();
             var compressed = json.Zip().ToList();
             var lastBytes = compressed.TakeLast(3);
@@ -86,7 +91,8 @@ namespace Happimeter.Core.Helper
             return compressed.ToArray();
         }
 
-        public static string GetMessageJsonFromBytes(byte[] bytes) {
+        public static string GetMessageJsonFromBytes(byte[] bytes)
+        {
             var bytesList = bytes.ToList();
             var lastBytesBase64Encoded = bytes.TakeLast(4);
             var lastBytesAsAscii = System.Text.Encoding.ASCII.GetString(lastBytesBase64Encoded.ToArray());
@@ -111,5 +117,8 @@ namespace Happimeter.Core.Helper
             return new string(Enumerable.Repeat(chars, 4)
                               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
+
+        //20 minutes
+        public const int BeaconPeriodInSeconds = 1200;
     }
 }

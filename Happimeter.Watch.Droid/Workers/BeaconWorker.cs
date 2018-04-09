@@ -7,6 +7,7 @@ using Android.Bluetooth;
 using Android.Widget;
 using Happimeter.Core.Helper;
 using Happimeter.Watch.Droid.Database;
+using Happimeter.Watch.Droid.ServicesBusinessLogic;
 
 namespace Happimeter.Watch.Droid.Workers
 {
@@ -30,12 +31,45 @@ namespace Happimeter.Watch.Droid.Workers
             return Instance;
         }
 
-        public override void Start()
+        public void StartContinously()
         {
-            if (IsRunning)
+            (BeaconTransmitter beaconTransmitter, Beacon beacon) = GetBeaconTransmitterAndBeacon();
+            BeaconTransmitter = beaconTransmitter;
+
+            Task.Factory.StartNew(async () =>
             {
-                Stop();
-            }
+                while (IsRunning)
+                {
+                    //BluetoothAdapter.DefaultAdapter.SetName("Happimeter");
+                    BeaconTransmitter.StartAdvertising(beacon, new CallbackAd());
+                    System.Diagnostics.Debug.WriteLine("Started Beacon");
+
+                    await Task.Delay(TimeSpan.FromMinutes(BluetoothHelper.BeaconPeriodInSeconds));
+                    BeaconTransmitter.StopAdvertising();
+                    await Task.Delay(TimeSpan.FromMinutes(BluetoothHelper.BeaconPeriodInSeconds));
+
+                    System.Diagnostics.Debug.WriteLine("Stopped Beacon");
+                }
+                BeaconTransmitter.Dispose();
+                Console.WriteLine($"Stopen Worker: {nameof(BeaconWorker)} because is running became false.");
+            }, TokenSource.Token);
+        }
+
+        public void StartOnce()
+        {
+            (BeaconTransmitter beaconTransmitter, Beacon beacon) = GetBeaconTransmitterAndBeacon();
+            BeaconTransmitter = beaconTransmitter;
+
+            Task.Factory.StartNew(() =>
+            {
+                IsRunning = true;
+                BeaconTransmitter.StartAdvertising(beacon, new CallbackAd());
+                System.Diagnostics.Debug.WriteLine("Started Beacon once");
+            }, TokenSource.Token);
+        }
+
+        private (BeaconTransmitter, Beacon) GetBeaconTransmitterAndBeacon()
+        {
             var userId = ServiceLocator.Instance.Get<IDatabaseContext>().Get<BluetoothPairing>(x => x.IsPairingActive)?.PairedWithUserId ?? 0;
             (var major, var minor) = UtilHelper.GetMajorMinorFromUserId(userId);
             var beaconUuid = UuidHelper.BeaconUuidString;
@@ -49,38 +83,62 @@ namespace Happimeter.Watch.Droid.Workers
                                    .Build();
             var beaconParser = new BeaconParser().SetBeaconLayout(UuidHelper.BeaconLayout);
             BeaconTransmitter = new BeaconTransmitter(Application.Context, beaconParser);
+            return (BeaconTransmitter, beacon);
+        }
 
-            TokenSource = new CancellationTokenSource();
+        public void Start()
+        {
+            if (IsRunning)
+            {
+                Stop();
+            }
+            var user = ServiceLocator.Instance.Get<IDatabaseContext>().Get<BluetoothPairing>(x => x.IsPairingActive == true);
             if (!BluetoothAdapter.DefaultAdapter.IsEnabled)
             {
                 Toast.MakeText(Application.Context, "Bluetooth is not activated", ToastLength.Long).Show();
+                //we can not start Beacon without BT
                 return;
             }
-            Task.Factory.StartNew(async () =>
+            if (user == null)
             {
-                IsRunning = true;
-                while (IsRunning)
-                {
-                    //BluetoothAdapter.DefaultAdapter.SetName("Happimeter");
-                    BeaconTransmitter.StartAdvertising(beacon, new CallbackAd());
-                    System.Diagnostics.Debug.WriteLine("Started Beacon");
-
-                    await Task.Delay(TimeSpan.FromMinutes(20));
-                    BeaconTransmitter.StopAdvertising();
-                    await Task.Delay(TimeSpan.FromMinutes(20));
-
-                    System.Diagnostics.Debug.WriteLine("Stopped Beacon");
-                }
-                BeaconTransmitter.Dispose();
-                Console.WriteLine($"Stopen Worker: {nameof(BeaconWorker)} because is running became false.");
-            }, TokenSource.Token);
+                Console.WriteLine("We are not paired, so we should not start beacon");
+                //we don't want to start the beacon if not paired
+                return;
+            }
+            TokenSource = new CancellationTokenSource();
+            var deviceService = ServiceLocator.Instance.Get<IDeviceService>();
+            var isContinous = deviceService.IsContinousMeasurementMode();
+            IsRunning = true;
+            if (isContinous)
+            {
+                StartContinously();
+            }
+            else
+            {
+                StartOnce();
+            }
         }
 
-        public override void Stop()
+        public void Stop()
         {
-            TokenSource.Cancel(false);
-            BeaconTransmitter.StopAdvertising();
-            BeaconTransmitter.Dispose();
+            TokenSource?.Cancel(false);
+            if (IsRunning)
+            {
+                try
+                {
+                    BeaconTransmitter.StopAdvertising();
+                    BeaconTransmitter.Dispose();
+                }
+                catch (System.ArgumentException)
+                {
+                    //catch handle must be valid exception
+                }
+                catch (ObjectDisposedException)
+                {
+                    //catch object disposed exception
+                }
+            }
+
             IsRunning = false;
             Console.WriteLine($"Stopen Worker: {nameof(BeaconWorker)} in Stop method.");
         }

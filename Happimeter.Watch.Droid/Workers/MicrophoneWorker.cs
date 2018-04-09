@@ -51,14 +51,14 @@ namespace Happimeter.Watch.Droid.Workers
             await RunAsync(seconds);
         }
 
-        public override void Start()
+        public void Start()
         {
             _cancelationTokenSource = new CancellationTokenSource();
             IsRunning = true;
             RunAsync();
         }
 
-        public override void Stop()
+        public void Stop()
         {
             IsRunning = false;
             _cancelationTokenSource.Cancel();

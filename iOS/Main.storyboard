@@ -79,6 +79,7 @@
                     <connections/>
                     <tabBarItem key="tabBarItem" title="Item" id="91402"/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <extendedEdge key="edgesForExtendedLayout" top="YES"/>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="91404" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -98,6 +99,7 @@
                     <connections/>
                     <tabBarItem key="tabBarItem" title="Item" id="95835"/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <extendedEdge key="edgesForExtendedLayout" top="YES"/>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="95837" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

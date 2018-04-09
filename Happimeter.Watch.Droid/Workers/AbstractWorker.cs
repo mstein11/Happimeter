@@ -7,8 +7,8 @@ namespace Happimeter.Watch.Droid.Workers
         {
         }
 
-        public abstract void Start();
-        public abstract void Stop();
+        //public abstract void Start();
+        //public abstract void Stop();
         public bool IsRunning { get; protected set; }
 
 

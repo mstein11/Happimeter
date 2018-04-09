@@ -117,7 +117,7 @@ namespace Happimeter.Watch.Droid.Workers
             Stop();
         }
 
-        public async override void Start()
+        public async void Start()
         {
             _cancelationTokenSource = new CancellationTokenSource();
             IsRunning = true;
@@ -340,7 +340,7 @@ namespace Happimeter.Watch.Droid.Workers
             ServiceLocator.Instance.Get<IDatabaseContext>().AddGraph(sensorMeasurement);
         }
 
-        public override void Stop()
+        public void Stop()
         {
             IsRunning = false;
             _cancelationTokenSource?.Cancel();

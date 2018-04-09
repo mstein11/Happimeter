@@ -83,6 +83,7 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
 
             MeasurementWorker.GetInstance().Stop();
             MicrophoneWorker.GetInstance().Stop();
+            BeaconWorker.GetInstance().Stop();
             System.Diagnostics.Debug.WriteLine("Stopped battery safer mode - Started contious mode");
             if (!MicrophoneWorker.GetInstance().IsRunning)
             {
@@ -99,6 +100,14 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
                     MeasurementWorker.GetInstance(Application.Context).Start();
                 });
             }
+
+            if (!BeaconWorker.GetInstance().IsRunning)
+            {
+                Task.Factory.StartNew(() =>
+                {
+                    BeaconWorker.GetInstance().Start();
+                });
+            }
         }
 
         /// <summary>
@@ -113,6 +122,7 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
 
             MeasurementWorker.GetInstance().Stop();
             MicrophoneWorker.GetInstance().Stop();
+            BeaconWorker.GetInstance().Stop();
 
             System.Diagnostics.Debug.WriteLine("Stopped Continous mode - Started battery safer mode");
 
@@ -124,6 +134,12 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
             alarmManager.SetExact(AlarmType.ElapsedRealtimeWakeup,
                                   SystemClock.ElapsedRealtime() +
                                   2 * 1000, pendingIntent);
+
+            var alarmIntentBeacon = new Intent(Application.Context, typeof(BroadcastReceiver.BeaconAlarmBroadcastReceiver));
+            var pendingIntentBeacon = PendingIntent.GetBroadcast(Application.Context, 0, alarmIntentBeacon, 0);
+            alarmManager.SetExact(AlarmType.ElapsedRealtimeWakeup,
+                                  SystemClock.ElapsedRealtime() +
+                                  2 * 1000, pendingIntentBeacon);
         }
 
         /// <summary>

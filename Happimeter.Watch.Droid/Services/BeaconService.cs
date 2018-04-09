@@ -7,7 +7,9 @@ using Android.OS;
 using Android.Widget;
 using Happimeter.Core.Helper;
 using Happimeter.Watch.Droid.Database;
+using Happimeter.Watch.Droid.ServicesBusinessLogic;
 using Happimeter.Watch.Droid.Workers;
+using Happimeter.Watch.Droid.BroadcastReceiver;
 
 namespace Happimeter.Watch.Droid.Services
 {
@@ -27,17 +29,39 @@ namespace Happimeter.Watch.Droid.Services
             if (!BluetoothAdapter.DefaultAdapter.IsEnabled)
             {
                 Toast.MakeText(Application.Context, "Bluetooth is not activated", ToastLength.Long).Show();
-                return base.OnStartCommand(intent, flags, startId);;
+                return base.OnStartCommand(intent, flags, startId); ;
             }
             if (user == null)
             {
                 //we don't want to start the beacon if not paired
                 return base.OnStartCommand(intent, flags, startId);
             }
-            Task.Factory.StartNew(() =>
+
+            var deviceService = ServiceLocator.Instance.Get<IDeviceService>();
+            var useLifeMode = deviceService.IsContinousMeasurementMode();
+            if (useLifeMode)
             {
-                BeaconWorker.GetInstance().Start();
-            });
+                Task.Factory.StartNew(() =>
+                {
+                    BeaconWorker.GetInstance().Start();
+                });
+            }
+            else
+            {
+                if (!BeaconAlarmBroadcastReceiver.IsScheduled)
+                {
+                    System.Diagnostics.Debug.WriteLine("Starting in battery safer mode!");
+                    var context = Application.Context;
+                    var alarmManager = (AlarmManager)context.GetSystemService(Context.AlarmService);
+                    Intent alarmIntent = new Intent(context, typeof(BroadcastReceiver.BeaconAlarmBroadcastReceiver));
+                    var pendingIntent = PendingIntent.GetBroadcast(context, 0, alarmIntent, 0);
+
+
+                    alarmManager.SetExact(AlarmType.ElapsedRealtimeWakeup,
+                                          SystemClock.ElapsedRealtime() +
+                                          2 * 1000, pendingIntent);
+                }
+            }
 
             return base.OnStartCommand(intent, flags, startId);
 

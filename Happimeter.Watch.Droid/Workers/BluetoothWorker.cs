@@ -57,7 +57,7 @@ namespace Happimeter.Watch.Droid.Workers
         }
         #endregion
 
-        public override void Start()
+        public void Start()
         {
             //we don't need to test for bt, its done before calling this method
             TokenSource = new CancellationTokenSource();
@@ -82,7 +82,7 @@ namespace Happimeter.Watch.Droid.Workers
             System.Diagnostics.Debug.WriteLine("Gatt initialized");
         }
 
-        public override void Stop()
+        public void Stop()
         {
             TokenSource?.Cancel(false);
             if (GattServer != null)
