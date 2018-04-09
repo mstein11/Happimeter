@@ -87,8 +87,15 @@ namespace Happimeter.Watch.Droid.Workers
             TokenSource?.Cancel(false);
             if (GattServer != null)
             {
-                GattServer.Close();
-                GattServer.Dispose();
+                try
+                {
+                    GattServer.Close();
+                    GattServer.Dispose();
+                }
+                catch (ObjectDisposedException)
+                {
+                    //just catch, do nothing
+                }
             }
             Manager.Adapter.BluetoothLeAdvertiser?.StopAdvertising(AdvertisementCallback);
             Manager.Adapter.BluetoothLeAdvertiser?.Dispose();
