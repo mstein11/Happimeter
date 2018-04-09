@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -23,8 +24,6 @@ namespace Happimeter.Watch.Droid.BroadcastReceiver
             var duration = deviceService.GetMeasurementMode();
             System.Diagnostics.Debug.WriteLine("Received alarm");
 
-            duration = 900;
-
             if (duration == null)
             {
                 //do not reschedule alarm. do not start the workers! We are actually in continous mode already.
@@ -41,11 +40,14 @@ namespace Happimeter.Watch.Droid.BroadcastReceiver
                                   SystemClock.ElapsedRealtime() +
                                   duration.Value * 1000, pendingIntent);
 
+            //if we dont have this code, the ui tread is blocked by the microphone worker
+            Task.Factory.StartNew(() =>
+            {
+                var measurementWorker = MeasurementWorker.GetInstance(context);
+                MicrophoneWorker.GetInstance().StartFor((int)duration.Value / 2);
+                measurementWorker.StartFor((int)duration.Value / 2);
+            });
 
-
-            var measurementWorker = MeasurementWorker.GetInstance(context);
-            MicrophoneWorker.GetInstance().StartFor((int)duration.Value / 2);
-            measurementWorker.StartFor((int)duration.Value / 2);
             IsScheduled = true;
 
 
