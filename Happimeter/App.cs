@@ -6,6 +6,8 @@ using Plugin.BluetoothLE;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Happimeter.Controls;
+using System.Threading.Tasks;
+using Happimeter.Views.Converters;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace Happimeter
@@ -32,7 +34,7 @@ namespace Happimeter
             }
         }
 
-        public static void Initialize()
+        public static async void Initialize()
         {
             if (UseMockDataStore)
                 ServiceLocator.Instance.Register<IDataStore<Item>, MockDataStore>();
@@ -46,11 +48,13 @@ namespace Happimeter
             {
                 ServiceLocator.Instance.Get<IBeaconWakeupService>().StartWakeupForBeacon();
             }
+            await DownloadPredictions();
         }
 
-        public static void AppResumed()
+        public static async void AppResumed()
         {
             BluetoothAlertIfNeeded();
+            await DownloadPredictions();
         }
 
         public static void BluetoothAlertIfNeeded()
@@ -61,6 +65,14 @@ namespace Happimeter
                 {
                     Application.Current.MainPage.DisplayAlert("Bluetooth deactivated", "Please enable Bluetooth", "Ok");
                 }
+            }
+        }
+
+        public static async Task DownloadPredictions()
+        {
+            if (ServiceLocator.Instance.Get<IAccountStoreService>().IsAuthenticated())
+            {
+                await ServiceLocator.Instance.Get<IPredictionService>().DownloadAndSavePrediction();
             }
         }
 
@@ -103,6 +115,8 @@ namespace Happimeter
                     new Setter {Property = Label.HorizontalTextAlignmentProperty, Value = TextAlignment.Center},
                 },
             });
+
+            //dict.Add("notConverter", new NotConverter());
 
             ResourceDict = dict;
         }

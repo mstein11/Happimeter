@@ -14,14 +14,14 @@ namespace Happimeter.ViewModels.Forms
         {
         }
 
-        public SurveyOverviewItemViewModel(IGrouping<DateTime, SurveyMeasurement> data, SurveyHardcodedEnumeration type)
+        public SurveyOverviewItemViewModel(IGrouping<DateTime, SurveyMeasurement> data, Core.Helpers.SurveyHardcodedEnumeration type)
         {
 
             MoodChart = new LineChart
             {
                 Entries = data.SelectMany(x => x.SurveyItemMeasurement.Where(y => y.QuestionId == (int)type).Select(y => new Entry((float)y.Answer)
                 {
-                    Color = ColorHelper.GetColorRelatingToScale(y.Answer, 100,  SKColors.OrangeRed, SKColors.LimeGreen),
+                    Color = ColorHelper.GetColorRelatingToScale(y.Answer, 100, SKColors.OrangeRed, SKColors.LimeGreen),
                     Label = y.SurveyMeasurement.Timestamp.ToLocalTime().ToString("HH:mm"),
                     ValueLabel = y.AnswerDisplay.ToString()
                 })),
@@ -41,7 +41,8 @@ namespace Happimeter.ViewModels.Forms
         }
 
         private DateTime _date;
-        public DateTime Date {
+        public DateTime Date
+        {
             get => _date;
             set => SetProperty(ref _date, value);
         }
@@ -54,14 +55,14 @@ namespace Happimeter.ViewModels.Forms
         }
 
         private Chart _moodChart;
-        public Chart MoodChart  
+        public Chart MoodChart
         {
             get => _moodChart;
             set => SetProperty(ref _moodChart, value);
         }
 
         private double _avgMood;
-        public double AvgMood 
+        public double AvgMood
         {
             get => _avgMood;
             set => SetProperty(ref _avgMood, value);
@@ -80,6 +81,6 @@ namespace Happimeter.ViewModels.Forms
             get => _maxMood;
             set => SetProperty(ref _maxMood, value);
         }
-            
+
     }
 }

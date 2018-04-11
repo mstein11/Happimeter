@@ -171,10 +171,6 @@ namespace Happimeter.Watch.Droid.Workers
                     });
                 }
             }
-            else
-            {
-                Toast.MakeText(Context, $"Google Play Service not working, we don't get Locations and activities", ToastLength.Long).Show();
-            }
 
 
             var accMeasuresToSave = AccelerometerMeasures.ToList();
@@ -425,7 +421,7 @@ namespace Happimeter.Watch.Droid.Workers
                 // Check if there is a way the user can resolve the issue
                 var errorString = GoogleApiAvailability.Instance.GetErrorString(queryResult);
                 Console.WriteLine($"There is a problem with Google Play Services on this device: {queryResult} - {errorString}");
-                Toast.MakeText(Context, $"There is a problem with Google Play Services on this device: {queryResult} - {errorString}", ToastLength.Long).Show();
+                //Toast.MakeText(Context, $"There is a problem with Google Play Services on this device: {queryResult} - {errorString}", ToastLength.Long).Show();
                 // Alternately, display the error to the user.
             }
 

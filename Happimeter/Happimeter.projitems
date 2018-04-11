@@ -60,7 +60,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\SurveyOverviewViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\SurveyOverviewItemViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\ColorHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Helpers\SurveyHardcodedEnumeration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
@@ -93,6 +92,10 @@
       <DependentUpon>TestPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Controls\MyButton.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\GetPredictionsResultModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\PredictionService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IPredictionService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Converters\NotConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />
@@ -104,6 +107,7 @@
     <Folder Include="$(MSBuildThisFileDirectory)Views\MoodOverview\" />
     <Folder Include="$(MSBuildThisFileDirectory)Events\" />
     <Folder Include="$(MSBuildThisFileDirectory)Controls\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Views\Converters\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\SurveyPage.xaml">

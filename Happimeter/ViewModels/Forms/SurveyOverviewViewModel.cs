@@ -6,6 +6,8 @@ using Happimeter.Core.Database;
 using Happimeter.Core.Helper;
 using Happimeter.Helpers;
 using Happimeter.Interfaces;
+using System.Diagnostics;
+using Happimeter.Core.Helpers;
 
 namespace Happimeter.ViewModels.Forms
 {
@@ -13,10 +15,10 @@ namespace Happimeter.ViewModels.Forms
     {
         private List<SurveyMeasurement> _measurements;
 
-        public SurveyHardcodedEnumeration CurrentType = SurveyHardcodedEnumeration.Pleasance;
+        public Core.Helpers.SurveyHardcodedEnumeration CurrentType = Core.Helpers.SurveyHardcodedEnumeration.Pleasance;
 
         private bool _pleasanceIsActive;
-        public bool PleasanceIsActive 
+        public bool PleasanceIsActive
         {
             get => _pleasanceIsActive;
             set => SetProperty(ref _pleasanceIsActive, value);
@@ -50,6 +52,32 @@ namespace Happimeter.ViewModels.Forms
             set => SetProperty(ref _overallAverageResponse, value);
         }
 
+        public bool _displayLastResponse;
+        public bool DisplayLastResponse
+        {
+            get => _displayLastResponse;
+            set => SetProperty(ref _displayLastResponse, value);
+        }
+
+        public string _predictionValue;
+        public string PredictionValue
+        {
+            get => _predictionValue;
+            set => SetProperty(ref _predictionValue, value);
+        }
+        public string _predictionDateTime;
+        public string PredictionDateTime
+        {
+            get => _predictionDateTime;
+            set => SetProperty(ref _predictionDateTime, value);
+        }
+        public bool _hasPredictions;
+        public bool HasPredictions
+        {
+            get => _hasPredictions;
+            set => SetProperty(ref _hasPredictions, value);
+        }
+
         private DateTime _lastResponse;
         public DateTime LastResponse
         {
@@ -58,8 +86,8 @@ namespace Happimeter.ViewModels.Forms
         }
 
         private ObservableCollection<SurveyOverviewItemViewModel> _items;
-        public ObservableCollection<SurveyOverviewItemViewModel> Items 
-        { 
+        public ObservableCollection<SurveyOverviewItemViewModel> Items
+        {
             get => _items;
             set => SetProperty(ref _items, value);
         }
@@ -68,23 +96,56 @@ namespace Happimeter.ViewModels.Forms
         public SurveyOverviewViewModel()
         {
             RefreshData();
+            ServiceLocator.Instance.Get<ISharedDatabaseContext>().WhenEntryAdded<PredictionEntry>().Subscribe(x =>
+            {
+                SetPredictionInView(x.Entites.Cast<PredictionEntry>().ToList());
+            });
+            if (HasPredictions)
+            {
+                DisplayLastResponse = false;
+            }
+            else
+            {
+                DisplayLastResponse = true;
+            }
         }
 
-        public void RefreshData() {
+        public void RefreshData()
+        {
             _measurements = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyData();
             Items = new ObservableCollection<SurveyOverviewItemViewModel>();
             Initialize(CurrentType);
         }
 
-        public void Initialize(SurveyHardcodedEnumeration type) {
+        private void SetPredictionInView(IList<PredictionEntry> predictions)
+        {
+            var lastPrediction = predictions?.FirstOrDefault(x => x != null && x.QuestionId == (int)CurrentType) ?? null;
+            if (lastPrediction != null)
+            {
+                HasPredictions = true;
+                PredictionValue = UtilHelper.GetNewScaleFromOldAsString(lastPrediction.PredictedValue, CurrentType);
+                PredictionDateTime = UtilHelper.TimeAgo(lastPrediction.Timestamp);
+            }
+        }
+
+        public void Initialize(Core.Helpers.SurveyHardcodedEnumeration type)
+        {
             SetActiveType(type);
-            if (!_measurements.Any()) {
+            var predictions = ServiceLocator.Instance.Get<IPredictionService>().GetLastPrediction();
+            SetPredictionInView(predictions);
+
+            if (!_measurements.Any())
+            {
                 HasData = false;
                 return;
             }
             HasData = true;
+
+
+
             OverallAverageResponse = _measurements.Where(x => x.SurveyItemMeasurement.Any(y => y.QuestionId == (int)type))
-                                              .Average(measurements => measurements.SurveyItemMeasurement
+                                                  .DefaultIfEmpty()
+                                                  .Average(measurements => measurements.SurveyItemMeasurement
                                                        .FirstOrDefault(item => item.QuestionId == (int)type)?.Answer ?? 0);
 
             NumberOfResponses = _measurements.Count;
@@ -99,11 +160,15 @@ namespace Happimeter.ViewModels.Forms
             }
         }
 
-        private void SetActiveType(SurveyHardcodedEnumeration type) {
-            if (type == SurveyHardcodedEnumeration.Activation) {
+        private void SetActiveType(Core.Helpers.SurveyHardcodedEnumeration type)
+        {
+            if (type == SurveyHardcodedEnumeration.Activation)
+            {
                 ActivationIsActive = true;
                 PleasanceIsActive = false;
-            } else {
+            }
+            else
+            {
                 ActivationIsActive = false;
                 PleasanceIsActive = true;
             }

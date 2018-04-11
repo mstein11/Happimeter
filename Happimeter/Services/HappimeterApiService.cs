@@ -31,6 +31,8 @@ namespace Happimeter.Services
         private const string ApiPathPostSensor = "/v1/sensorslist";
         private const string ApiPathPostSensorV2 = "/v2/sensors";
 
+        private const string ApiPathPredictions = "/v1/classifier/prediction";
+
 
         private static string GetUrlForPath(string path)
         {
@@ -436,6 +438,50 @@ namespace Happimeter.Services
                 methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
             }
 
+            return methodResult;
+        }
+
+        public async Task<GetPredictionsResultModel> GetPredictions()
+        {
+            var url = GetUrlForPath(ApiPathPredictions);
+            var methodResult = new GetPredictionsResultModel();
+            HttpResponseMessage result = null;
+            try
+            {
+                result = await _restService.Get(url);
+            }
+            catch (Exception e) when (
+                e is HttpRequestException
+                || e is WebException
+            )
+            {
+                Debug.WriteLine(e.Message);
+                methodResult.ResultType = HappimeterApiResultInformation.NoInternet;
+                return methodResult;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+                Debug.WriteLine(e.GetType());
+                methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
+                return methodResult;
+            }
+
+            var stringResult = await result.Content.ReadAsStringAsync();
+            var predictions = Newtonsoft.Json.JsonConvert.DeserializeObject<GetPredictionsResultModel>(stringResult);
+            if (result.IsSuccessStatusCode && predictions.IsSuccess)
+            {
+                methodResult = predictions;
+                methodResult.ResultType = HappimeterApiResultInformation.Success;
+            }
+            else if (result.StatusCode == HttpStatusCode.Forbidden)
+            {
+                methodResult.ResultType = HappimeterApiResultInformation.AuthenticationError;
+            }
+            else
+            {
+                methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
+            }
             return methodResult;
         }
     }

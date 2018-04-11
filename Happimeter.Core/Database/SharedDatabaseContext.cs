@@ -25,11 +25,13 @@ namespace Happimeter.Core.Database
         {
         }
 
-        protected virtual string GetDatabasePath() {
+        protected virtual string GetDatabasePath()
+        {
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), DatabaseName);
         }
 
-        protected virtual SQLiteConnection GetConnection() {
+        protected virtual SQLiteConnection GetConnection()
+        {
             return new SQLiteConnection(GetDatabasePath());
         }
 
@@ -38,17 +40,21 @@ namespace Happimeter.Core.Database
         /// </summary>
         /// <returns>The create database.</returns>
         /// <param name="tables">Tables.</param>
-        protected virtual List<Type> BeforeCreateDatabase(List<Type> tables) {
+        protected virtual List<Type> BeforeCreateDatabase(List<Type> tables)
+        {
             return tables;
         }
 
-        protected virtual void EnsureDatabaseCreated() {
-            if (!DatabaseCreated) {
+        protected virtual void EnsureDatabaseCreated()
+        {
+            if (!DatabaseCreated)
+            {
                 CreateDatabase();
             }
         }
 
-        private List<Type> GetDatabaseTables() {
+        private List<Type> GetDatabaseTables()
+        {
             var databaseTables = new List<Type>();
             databaseTables.Add(typeof(MicrophoneMeasurement));
             databaseTables.Add(typeof(SharedBluetoothDevicePairing));
@@ -58,6 +64,8 @@ namespace Happimeter.Core.Database
             databaseTables.Add(typeof(SensorItemMeasurement));
             databaseTables.Add(typeof(ConfigEntry));
             databaseTables.Add(typeof(GenericQuestion));
+            databaseTables.Add(typeof(PredictionEntry));
+
 
             //here we give the possibility to alter the list of tables created by subprojects (e.g. different devices)
             databaseTables = BeforeCreateDatabase(databaseTables);
@@ -65,7 +73,8 @@ namespace Happimeter.Core.Database
             return databaseTables;
         }
 
-        public virtual void CreateDatabase() {
+        public virtual void CreateDatabase()
+        {
             var databasePath = GetDatabasePath();
             try
             {
@@ -95,7 +104,7 @@ namespace Happimeter.Core.Database
             lock (SyncLock)
             {
                 using (var connection = GetConnection())
-                {                    
+                {
                     DeleteAll<ConfigEntry>();
                     DeleteAll<MicrophoneMeasurement>();
                     DeleteAll<SensorItemMeasurement>();
@@ -103,11 +112,13 @@ namespace Happimeter.Core.Database
                     DeleteAll<SharedBluetoothDevicePairing>();
                     DeleteAll<SurveyItemMeasurement>();
                     DeleteAll<SurveyMeasurement>();
+                    DeleteAll<PredictionEntry>();
                 }
             }
         }
 
-        public virtual List<T> GetAll<T>(Expression<Func<T, bool>> whereClause = null) where T: new() {
+        public virtual List<T> GetAll<T>(Expression<Func<T, bool>> whereClause = null) where T : new()
+        {
             EnsureDatabaseCreated();
             lock (SyncLock)
             {
@@ -144,7 +155,8 @@ namespace Happimeter.Core.Database
         /// <param name="skip">Skip.</param>
         /// <param name="take">Take.</param>
         /// <param name="orderDesc">If true, we will order descending before applying skip and take, if false we will order ascending</param>
-        public virtual List<SensorMeasurement> GetSensorMeasurements(int skip = 0, int take = 150, bool orderDesc = false) {
+        public virtual List<SensorMeasurement> GetSensorMeasurements(int skip = 0, int take = 150, bool orderDesc = false)
+        {
             EnsureDatabaseCreated();
             lock (SyncLock)
             {
@@ -152,37 +164,39 @@ namespace Happimeter.Core.Database
                 {
                     var sw = new Stopwatch();
                     sw.Start();
-                    var orderString = orderDesc ? "DESC" : ""; 
-                    var items =  connection.Query<SensorMeasurementsAndItems>($"SELECT * FROM (SELECT * FROM SensorMeasurement as s1 ORDER BY Timestamp {orderString} LIMIT {take} OFFSET {skip}) as s1, SensorItemMeasurement as s2 WHERE s1.Id == s2.SensorMeasurementId").ToList();
+                    var orderString = orderDesc ? "DESC" : "";
+                    var items = connection.Query<SensorMeasurementsAndItems>($"SELECT * FROM (SELECT * FROM SensorMeasurement as s1 ORDER BY Timestamp {orderString} LIMIT {take} OFFSET {skip}) as s1, SensorItemMeasurement as s2 WHERE s1.Id == s2.SensorMeasurementId").ToList();
                     sw.Stop();
                     Debug.WriteLine($"Took {sw.ElapsedMilliseconds} milliseconds to read sensordata");
-                    return items.GroupBy(group => new {group.SensorMeasurementId, group.Timestamp, group.IsUploadedToServer})
-                         .Select(x => new SensorMeasurement{
-                        Id = x.Key.SensorMeasurementId,
-                        Timestamp = x.Key.Timestamp,
-                        IsUploadedToServer = x.Key.IsUploadedToServer,
-                        SensorItemMeasures = x.Select(item => {
-                            return new SensorItemMeasurement
-                            {
-                                Average = item.Average,
-                                Max = item.Max,
-                                Min = item.Min,
-                                Magnitude = item.Magnitude,
-                                NumberOfMeasures = item.NumberOfMeasures,
-                                Quantile1 = item.Quantile1,
-                                Quantile2 = item.Quantile2,
-                                Quantile3 = item.Quantile3,
-                                StdDev = item.StdDev,
-                                Type = item.Type,
-                                SensorMeasurementId = item.SensorMeasurementId
-                            };
-                        }).ToList()
-                    }).ToList();
+                    return items.GroupBy(group => new { group.SensorMeasurementId, group.Timestamp, group.IsUploadedToServer })
+                         .Select(x => new SensorMeasurement
+                         {
+                             Id = x.Key.SensorMeasurementId,
+                             Timestamp = x.Key.Timestamp,
+                             IsUploadedToServer = x.Key.IsUploadedToServer,
+                             SensorItemMeasures = x.Select(item =>
+                             {
+                                 return new SensorItemMeasurement
+                                 {
+                                     Average = item.Average,
+                                     Max = item.Max,
+                                     Min = item.Min,
+                                     Magnitude = item.Magnitude,
+                                     NumberOfMeasures = item.NumberOfMeasures,
+                                     Quantile1 = item.Quantile1,
+                                     Quantile2 = item.Quantile2,
+                                     Quantile3 = item.Quantile3,
+                                     StdDev = item.StdDev,
+                                     Type = item.Type,
+                                     SensorMeasurementId = item.SensorMeasurementId
+                                 };
+                             }).ToList()
+                         }).ToList();
                 }
             }
         }
 
-        public virtual T Get<T>(Expression<Func<T,bool>> whereClause) where T : new()
+        public virtual T Get<T>(Expression<Func<T, bool>> whereClause) where T : new()
         {
             EnsureDatabaseCreated();
             lock (SyncLock)
@@ -206,9 +220,11 @@ namespace Happimeter.Core.Database
             }
         }
 
-        public virtual void Add<T>(T entity) where T : new() {
+        public virtual void Add<T>(T entity) where T : new()
+        {
             var btPairing = entity as SharedBluetoothDevicePairing;
-            if (btPairing != null) {
+            if (btPairing != null)
+            {
                 AddBluetoothPairing(btPairing);
                 return;
             }
@@ -255,7 +271,8 @@ namespace Happimeter.Core.Database
             DatabaseEntriesChangedSubject.OnNext(new DatabaseChangedEventArgs(entity, typeof(T), DatabaseChangedEventTypes.Updated));
         }
 
-        public virtual void DeleteAll<T>() where T : new() {
+        public virtual void DeleteAll<T>() where T : new()
+        {
             EnsureDatabaseCreated();
             lock (SyncLock)
             {
@@ -266,7 +283,8 @@ namespace Happimeter.Core.Database
             }
         }
 
-        public virtual void Delete<T>(T entity) where T : new() {
+        public virtual void Delete<T>(T entity) where T : new()
+        {
             EnsureDatabaseCreated();
             lock (SyncLock)
             {
@@ -278,15 +296,19 @@ namespace Happimeter.Core.Database
             DatabaseEntriesChangedSubject.OnNext(new DatabaseChangedEventArgs(entity, entity.GetType(), DatabaseChangedEventTypes.Deleted));
         }
 
-        protected void AddBluetoothPairing(SharedBluetoothDevicePairing pairing) {
+        protected void AddBluetoothPairing(SharedBluetoothDevicePairing pairing)
+        {
             EnsureDatabaseCreated();
             var oldPairings = GetAll<SharedBluetoothDevicePairing>(x => x.IsPairingActive);
-            foreach (var oldPairing in oldPairings) {
+            foreach (var oldPairing in oldPairings)
+            {
                 oldPairing.IsPairingActive = false;
                 Update(oldPairing);
             }
-            if (oldPairings.Any()) {
-                DatabaseEntriesChangedSubject.OnNext(new DatabaseChangedEventArgs {
+            if (oldPairings.Any())
+            {
+                DatabaseEntriesChangedSubject.OnNext(new DatabaseChangedEventArgs
+                {
                     Entites = oldPairings.ToList<object>(),
                     TypeOfEnties = oldPairings.FirstOrDefault().GetType(),
                     TypeOfEvent = DatabaseChangedEventTypes.Updated

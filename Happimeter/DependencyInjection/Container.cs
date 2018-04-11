@@ -10,7 +10,8 @@ namespace Happimeter.DependencyInjection
     public class Container
     {
 
-        public static void RegisterElements() {
+        public static void RegisterElements()
+        {
             ServiceLocator.Instance.Register<IRestService, RestService>();
             ServiceLocator.Instance.Register<IHappimeterApiService, HappimeterApiService>();
             ServiceLocator.Instance.Register<IAccountStoreService, AccountStoreService>();
@@ -19,6 +20,7 @@ namespace Happimeter.DependencyInjection
             ServiceLocator.Instance.Register<IMeasurementService, MeasurementService>();
             ServiceLocator.Instance.Register<IConfigService, ConfigService>();
             ServiceLocator.Instance.Register<ILoggingService, LoggingService>();
+            ServiceLocator.Instance.Register<IPredictionService, PredictionService>();
         }
     }
 }

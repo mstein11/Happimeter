@@ -12,7 +12,6 @@
                         <StackLayout x:Name="QuestionsContainer" Spacing="0">
                         </StackLayout>
                     </StackLayout>
-                <Button  ></Button>
                 <local:MyButton Text="Confirm" Clicked="Handle_Confirm_Clicked" Style="{StaticResource ButtonWithBackground}"></local:MyButton>
             </StackLayout>
         </ScrollView>

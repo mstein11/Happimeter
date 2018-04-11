@@ -8,7 +8,7 @@
 	<ContentPage.Content>
         <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
             <RelativeLayout HeightRequest="220">
-                <Image 
+                <Image
                        Aspect="AspectFill" 
                        RelativeLayout.WidthConstraint="{ConstraintExpression  
                        Type=RelativeToParent,  
