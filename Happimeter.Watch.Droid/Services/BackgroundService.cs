@@ -65,6 +65,14 @@ namespace Happimeter.Watch.Droid.Services
                             MeasurementWorker.GetInstance(this).Start();
                         });
                     }
+
+                    if (!BluetoothScannerWorker.GetInstance().IsRunning)
+                    {
+                        Task.Factory.StartNew(() =>
+                        {
+                            BluetoothScannerWorker.GetInstance().Start();
+                        });
+                    }
                 }
                 else
                 {

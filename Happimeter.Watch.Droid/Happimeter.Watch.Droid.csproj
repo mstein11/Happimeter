@@ -191,6 +191,7 @@
     <Compile Include="Services\DetectedActivityIntentService.cs" />
     <Compile Include="Bluetooth\HappimeterMeasurementModeCharacteristic.cs" />
     <Compile Include="BroadcastReceiver\BeaconAlarmBroadcastReceiver.cs" />
+    <Compile Include="Workers\BluetoothScannerWorker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

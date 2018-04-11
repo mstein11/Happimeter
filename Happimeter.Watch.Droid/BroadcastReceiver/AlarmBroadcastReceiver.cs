@@ -46,6 +46,7 @@ namespace Happimeter.Watch.Droid.BroadcastReceiver
                 var measurementWorker = MeasurementWorker.GetInstance(context);
                 MicrophoneWorker.GetInstance().StartFor((int)duration.Value / 2);
                 measurementWorker.StartFor((int)duration.Value / 2);
+                BluetoothScannerWorker.GetInstance().StartFor((int)duration.Value / 2);
             });
 
             IsScheduled = true;

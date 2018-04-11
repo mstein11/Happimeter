@@ -25,6 +25,7 @@ namespace Happimeter.Core.Helper
         public const string ActivityWalking = "ActivityWalking";
         public const string ActivityRunning = "ActivityRunning";
         public const string ActivityStill = "ActivityStill";
+        public const string ProximityRssi = "ProximityRssi";
 
         public static List<string> ActivityTypes => new List<string>{
             ActivityUnspecific,

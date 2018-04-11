@@ -333,6 +333,29 @@ namespace Happimeter.Watch.Droid.Workers
                 }
             }
             DetectedActivityIntentService.Measures.Clear();
+
+            var proximityMeasures = BluetoothScannerWorker.ProximityMeasures.ToList();
+            var proximityByUserIds = proximityMeasures.GroupBy(x => x.Item1);
+            foreach (var userIdObj in proximityByUserIds)
+            {
+                var userId = userIdObj.Key;
+                var rssiList = userIdObj.Select(x => (double)x.Item2).ToList();
+                sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+                {
+                    Type = $"{MeasurementItemTypes.ProximityRssi}_{userId}",
+                    NumberOfMeasures = rssiList.Count(),
+                    Average = rssiList.Average(),
+                    StdDev = rssiList.StdDev(),
+                    Magnitude = rssiList.Sum(),
+                    Quantile1 = rssiList.Quantile1(),
+                    Quantile2 = rssiList.Quantile2(),
+                    Quantile3 = rssiList.Quantile3(),
+                    Min = rssiList.Min(),
+                    Max = rssiList.Max()
+                });
+            }
+            BluetoothScannerWorker.ProximityMeasures.Clear();
+
             ServiceLocator.Instance.Get<IDatabaseContext>().AddGraph(sensorMeasurement);
         }
 

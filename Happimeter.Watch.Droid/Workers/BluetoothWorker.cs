@@ -161,8 +161,8 @@ namespace Happimeter.Watch.Droid.Workers
             //todo: maybe we have to await the callback
             BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser.StopAdvertising(AdvertisementCallback);
             var settings = new AdvertiseSettings.Builder()
-                                                .SetAdvertiseMode(AdvertiseMode.LowLatency)
-                                                .SetTxPowerLevel(AdvertiseTx.PowerHigh)
+                                                .SetAdvertiseMode(AdvertiseMode.Balanced)
+                                                .SetTxPowerLevel(AdvertiseTx.PowerLow)
                                                 .SetConnectable(true)
                                                 .Build();
             var deviceName = ServiceLocator.Instance.Get<IDeviceService>().GetDeviceName();

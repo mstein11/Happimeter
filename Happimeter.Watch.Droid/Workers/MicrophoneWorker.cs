@@ -95,7 +95,7 @@ namespace Happimeter.Watch.Droid.Workers
                 var stopwatch = new Stopwatch();
                 while (IsRunning)
                 {
-                    if (stopwatch.Elapsed.Seconds > runFor)
+                    if (stopwatch.Elapsed.TotalSeconds > runFor)
                     {
                         stopwatch.Stop();
                         stopwatch.Reset();
