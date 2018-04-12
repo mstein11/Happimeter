@@ -261,43 +261,13 @@
     <ImageAsset Include="Assets.xcassets\happinessfactory.imageset\happinessfactory%403x.png" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ViewControllers\DetailViewControllers\BrowseItemDetailViewController.cs" />
-    <Compile Include="ViewControllers\DetailViewControllers\BrowseItemDetailViewController.designer.cs">
-      <DependentUpon>BrowseItemDetailViewController.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ViewControllers\AboutViewController.cs" />
-    <Compile Include="ViewControllers\AboutViewController.designer.cs">
-      <DependentUpon>AboutViewController.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ViewControllers\BrowseViewController.cs" />
-    <Compile Include="ViewControllers\BrowseViewController.designer.cs">
-      <DependentUpon>BrowseViewController.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ViewControllers\ItemNewViewController.cs" />
-    <Compile Include="ViewControllers\ItemNewViewController.designer.cs">
-      <DependentUpon>ItemNewViewController.cs</DependentUpon>
-    </Compile>
     <Compile Include="ViewControllers\TabBarController.cs" />
     <Compile Include="ViewControllers\TabBarController.designer.cs">
       <DependentUpon>TabBarController.cs</DependentUpon>
     </Compile>
     <Compile Include="AppDelegate.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="LoginViewController.cs" />
-    <Compile Include="LoginViewController.designer.cs">
-      <DependentUpon>LoginViewController.cs</DependentUpon>
-    </Compile>
     <Compile Include="Services\LoginService.cs" />
-    <Compile Include="ViewControllers\AbstractViewController.cs" />
-    <Compile Include="ViewExtension.cs" />
-    <Compile Include="ViewControllers\BluetoothDeviceListViewController.cs" />
-    <Compile Include="ViewControllers\BluetoothDeviceListViewController.designer.cs">
-      <DependentUpon>BluetoothDeviceListViewController.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ViewControllers\DetailViewControllers\BtDeviceDetailViewController.cs" />
-    <Compile Include="ViewControllers\DetailViewControllers\BtDeviceDetailViewController.designer.cs">
-      <DependentUpon>BtDeviceDetailViewController.cs</DependentUpon>
-    </Compile>
     <Compile Include="Services\BeaconWakeupService.cs" />
     <Compile Include="Services\DeviceInformationService.cs" />
     <Compile Include="DependencyInjection\Container.cs" />
@@ -332,7 +302,6 @@
   <ItemGroup>
     <InterfaceDefinition Include="LaunchScreen.storyboard" />
     <InterfaceDefinition Include="Main.storyboard" />
-    <InterfaceDefinition Include="Login.storyboard" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets.xcassets\HappimeterLogo.imageset\" />
