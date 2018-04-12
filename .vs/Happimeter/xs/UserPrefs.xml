@@ -1,13 +1,18 @@
-﻿<Properties StartupConfiguration="{B926B5BC-5FAA-4225-BAC6-BA1BDABB67E9}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="iOS/packages.config">
+﻿<Properties StartupConfiguration="{DE8957FA-3B78-4B43-A5A2-C82830EF665B}|Default">
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="iOS/packages.config" Line="1" Column="1" />
+      <File FileName="iOS/packages.config" Line="24" Column="74" />
+      <File FileName="Happimeter.Watch.Droid/Workers/BluetoothScannerWorker.cs" Line="60" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
+  <MonoDevelop.Ide.ItemProperties.Happimeter.Droid PreferredExecutionTarget="Android.0123456789ABCDEF" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter.Watch.Droid/Workers/BluetoothScannerWorker.cs" relfile="Happimeter.Watch.Droid/Workers/BluetoothScannerWorker.cs" line="60" column="90" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.ItemProperties.Happimeter.Watch.Droid PreferredExecutionTarget="Android.0123456789ABCDEF" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.ItemProperties.Happimeter.iOS PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.63A75A00-18A6-4043-9869-2D3DD3D3B5C7" />
   <MultiItemStartupConfigurations />
