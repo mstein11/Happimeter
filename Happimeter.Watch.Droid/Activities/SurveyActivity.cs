@@ -31,11 +31,16 @@ namespace Happimeter.Watch.Droid.Activities
 
             // Create your application here
             SetContentView(Resource.Layout.Survey);
-            FindViewById<Button>(Resource.Id.surveyConfirmBurron).Click += (sender, e) => {
+            FindViewById<Button>(Resource.Id.surveyConfirmBurron).Click += (sender, e) =>
+            {
                 var currentQuestion = ViewModel.GetCurrentQuestion();
+                if (currentQuestion != null)
+                {
+                    currentQuestion.IsAnswered = true;
+                }
 
-                currentQuestion.IsAnswered = true;
-                if (ViewModel.GetCurrentQuestion() == null) {
+                if (currentQuestion == null || ViewModel.GetCurrentQuestion() == null)
+                {
 
                     var measurementService = ServiceLocator.Instance.Get<IMeasurementService>();
                     //save answers to database
@@ -45,20 +50,22 @@ namespace Happimeter.Watch.Droid.Activities
                     //StartActivity(intent);
                     Finish();
                     return;
-                } 
+                }
                 NavigateToNextQuestion();
             };
 
             // However, if we're being restored from a previous state,
             // then we don't need to do anything and should return or else
             // we could end up with overlapping fragments.
-            if (savedInstanceState == null) {
+            if (savedInstanceState == null)
+            {
                 NavigateToNextQuestion();
             }
 
         }
 
-        private void NavigateToNextQuestion() {
+        private void NavigateToNextQuestion()
+        {
             if (FindViewById(Resource.Id.fragment_container) != null)
             {
                 // Create a new Fragment to be placed in the activity layout

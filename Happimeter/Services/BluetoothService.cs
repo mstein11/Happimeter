@@ -18,8 +18,8 @@ namespace Happimeter.Services
     public class BluetoothService : IBluetoothService
     {
 
-        private const int _messageTimeoutSeconds = 5;
-        private const int _scanTimeoutSeconds = 10;
+        private const int _messageTimeoutSeconds = 15;
+        private const int _scanTimeoutSeconds = 20;
 
         private ReplaySubject<IScanResult> ScanReplaySubject = new ReplaySubject<IScanResult>();
 
@@ -73,7 +73,7 @@ namespace Happimeter.Services
             }
             else
             {
-                scannerObs = CrossBleAdapter.Current.Scan(new ScanConfig { ServiceUuids = new List<Guid> { Guid.Parse(serviceGuid) } });
+                scannerObs = CrossBleAdapter.Current.Scan(new ScanConfig { ServiceUuids = new List<Guid> { Guid.Parse(serviceGuid) }, ScanType = BleScanType.LowLatency });
             }
             ScanReplaySubject = new ReplaySubject<IScanResult>();
             FoundDevices = new List<IScanResult>();

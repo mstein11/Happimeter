@@ -95,5 +95,32 @@ namespace Happimeter.Core.Helper
 
             return result;
         }
+
+        /// <summary>
+        ///     Calculates the next time we poll the user.
+        ///     Two hours later than right now +- 60 minutes based on a random number.
+        ///     If between 10pm and 10 am, we set next time to 10am
+        /// </summary>
+        /// <returns>The next survey prompt time.</returns>
+        public static DateTime GetNextSurveyPromptTime()
+        {
+            var random = new Random();
+            var randNumber = random.Next(0, 120) - 60;
+            var nextTime = DateTime.UtcNow.AddMinutes(120 + randNumber).ToLocalTime();
+
+
+            if (nextTime.Hour < 10)
+            {
+                nextTime = DateTime.UtcNow.Date.ToLocalTime().AddHours(10);
+            }
+            else if (nextTime.Hour >= 22)
+            {
+                nextTime = DateTime.UtcNow.Date.ToLocalTime().AddDays(1).AddHours(10);
+            }
+
+            return nextTime;
+
+
+        }
     }
 }

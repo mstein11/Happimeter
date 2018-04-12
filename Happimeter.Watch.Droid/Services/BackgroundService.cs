@@ -47,6 +47,16 @@ namespace Happimeter.Watch.Droid.Services
                 var deviceService = ServiceLocator.Instance.Get<IDeviceService>();
                 var useLifeMode = deviceService.IsContinousMeasurementMode();
 
+                var nextPollTime = UtilHelper.GetNextSurveyPromptTime() - DateTime.UtcNow.ToLocalTime();
+                var context = Application.Context;
+                var alarmManager = (AlarmManager)context.GetSystemService(Context.AlarmService);
+                Intent surveyAlarmIntent = new Intent(context, typeof(BroadcastReceiver.SurveyAlarmBroadcastReceiver));
+                var surveyPendingIntent = PendingIntent.GetBroadcast(context, 0, surveyAlarmIntent, 0);
+
+                alarmManager.Set(AlarmType.ElapsedRealtimeWakeup,
+                                      SystemClock.ElapsedRealtime() +
+                                 (long)nextPollTime.TotalMilliseconds, surveyPendingIntent);
+                System.Diagnostics.Debug.WriteLine($"Scheduled new survey for: {(DateTime.UtcNow.ToLocalTime() + nextPollTime)}");
                 if (useLifeMode)
                 {
                     System.Diagnostics.Debug.WriteLine("Starting in continous mode");
@@ -80,8 +90,6 @@ namespace Happimeter.Watch.Droid.Services
                     if (!BroadcastReceiver.AlarmBroadcastReceiver.IsScheduled)
                     {
                         System.Diagnostics.Debug.WriteLine("Starting in battery safer mode!");
-                        var context = Application.Context;
-                        var alarmManager = (AlarmManager)context.GetSystemService(Context.AlarmService);
                         Intent alarmIntent = new Intent(context, typeof(BroadcastReceiver.AlarmBroadcastReceiver));
                         var pendingIntent = PendingIntent.GetBroadcast(context, 0, alarmIntent, 0);
 

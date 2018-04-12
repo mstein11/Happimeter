@@ -192,6 +192,7 @@
     <Compile Include="Bluetooth\HappimeterMeasurementModeCharacteristic.cs" />
     <Compile Include="BroadcastReceiver\BeaconAlarmBroadcastReceiver.cs" />
     <Compile Include="Workers\BluetoothScannerWorker.cs" />
+    <Compile Include="BroadcastReceiver\SurveyAlarmBroadcastReceiver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
