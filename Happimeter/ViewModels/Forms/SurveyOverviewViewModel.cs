@@ -109,12 +109,27 @@ namespace Happimeter.ViewModels.Forms
 
         public SurveyOverviewViewModel()
         {
+            TabMenuViewModel = ServiceLocator.Instance.Get<IMeasurementService>().GetQuestionsToDisplayInTabMenu();
+            var first = TabMenuViewModel.Items.FirstOrDefault();
+            first.IsActive = true;
+            CurrentType = first.Id;
             RefreshData();
             OnTabChangedCommand = new Command<int>((index) =>
             {
                 Initialize(index);
             });
-            TabMenuViewModel = ServiceLocator.Instance.Get<IMeasurementService>().GetQuestionsToDisplayInTabMenu();
+            ServiceLocator.Instance.Get<ISharedDatabaseContext>().WhenEntryAdded<GenericQuestion>().Subscribe(x =>
+            {
+                foreach (var newQuestionObj in x.Entites)
+                {
+                    var newQuestion = (GenericQuestion)newQuestionObj;
+                    if (newQuestion.QuestionShort != null && TabMenuViewModel.Items.All(item => item.Id != newQuestion.QuestionId))
+                    {
+                        TabMenuViewModel.Items.Add(new TabMenuItemViewModel { Text = newQuestion.QuestionShort, Id = newQuestion.QuestionId });
+                    }
+                }
+            });
+
             TabMenuViewModel.Items.FirstOrDefault(x => x.Id == (int)CurrentType).IsActive = true;
             ServiceLocator.Instance.Get<ISharedDatabaseContext>().WhenEntryAdded<PredictionEntry>().Subscribe(x =>
                 {

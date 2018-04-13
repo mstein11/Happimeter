@@ -14,6 +14,13 @@ namespace Happimeter.Watch.Droid.ViewModels
             set => SetProperty(ref _question, value);
         }
 
+        private string _questionShort = null;
+        public string QuestionShort
+        {
+            get => _questionShort;
+            set => SetProperty(ref _questionShort, value);
+        }
+
         private int _questionId;
         public int QuestionId
         {
@@ -31,21 +38,22 @@ namespace Happimeter.Watch.Droid.ViewModels
         public int? Answer
         {
             get => _answer;
-            set {
+            set
+            {
                 SetProperty(ref _answer, value);
                 AnswerDisplay = value != null ? (int)(value / (100 / 3)) : 0;
-            } 
+            }
         }
 
         private bool _isAnswered = false;
-        public bool IsAnswered 
+        public bool IsAnswered
         {
             get => _isAnswered;
             set => SetProperty(ref _isAnswered, value);
         }
 
         private int _answerDisplay = 1;
-        public int AnswerDisplay 
+        public int AnswerDisplay
         {
             get => _answerDisplay;
             set => SetProperty(ref _answerDisplay, value);

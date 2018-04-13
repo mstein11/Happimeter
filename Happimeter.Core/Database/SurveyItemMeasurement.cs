@@ -15,6 +15,7 @@ namespace Happimeter.Core.Database
 
         public int QuestionId { get; set; }
         public string Question { get; set; }
+        public string QuestionShort { get; set; }
         public int Answer { get; set; }
         public int AnswerDisplay { get; set; }
 

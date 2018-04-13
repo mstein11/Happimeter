@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Happimeter.Models.ServiceModels
 {
@@ -16,8 +17,11 @@ namespace Happimeter.Models.ServiceModels
         public bool IsSuccess => ResultType == HappimeterApiResultInformation.Success;
     }
 
-    public class GenericQuestionItemApiResult {
+    public class GenericQuestionItemApiResult
+    {
         public int Id { get; set; }
         public string Question { get; set; }
+        [JsonProperty("question_short")]
+        public string QuestionShort { get; set; }
     }
 }

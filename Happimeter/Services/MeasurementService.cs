@@ -33,6 +33,7 @@ namespace Happimeter.Services
             {
                 Question = x.Question,
                 QuestionId = x.QuestionId,
+                QuestionShort = x.QuestionShort,
                 Answer = .5,
             });
 
@@ -42,12 +43,14 @@ namespace Happimeter.Services
                 var question1 = new SurveyItemViewModel
                 {
                     Question = "How Pleasant do you feel?",
+                    QuestionShort = "Pleasance",
                     QuestionId = 2, //QuestionId corresponds to the question id of the server
                     Answer = .5
                 };
                 var question2 = new SurveyItemViewModel
                 {
                     Question = "How Active do you feel?",
+                    QuestionShort = "Activation",
                     QuestionId = 1, //QuestionId corresponds to the question id of the server
                     Answer = .5
                 };
@@ -65,17 +68,33 @@ namespace Happimeter.Services
         public MyTabMenuViewModel GetQuestionsToDisplayInTabMenu()
         {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
-            var surveyitems = context.GetAll<SurveyItemMeasurement>().GroupBy(x => new { x.QuestionId, x.Question });
-            IEnumerable<TabMenuItemViewModel> viewModelItems;
-            if (!surveyitems.Any())
+            var surveyitems = context.GetAll<SurveyItemMeasurement>().Where(x => x.QuestionShort != null).GroupBy(x => new { x.QuestionId, x.QuestionShort });
+            List<TabMenuItemViewModel> viewModelItems;
+            viewModelItems = surveyitems.Select(x => new TabMenuItemViewModel { Text = x.Key.QuestionShort, Id = x.Key.QuestionId }).ToList();
+
+            var questions = GetSurveyQuestions();
+            //merge those that don't have an answer yet
+            foreach (var question in questions.SurveyItems)
             {
-                var questions = GetSurveyQuestions();
-                viewModelItems = questions.SurveyItems.Select(x => new TabMenuItemViewModel { Text = x.Question, Id = x.QuestionId });
+                if (viewModelItems.All(x => x.Id != question.QuestionId))
+                {
+                    viewModelItems.Add(new TabMenuItemViewModel { Text = question.QuestionShort, Id = question.QuestionId });
+                }
             }
-            else
+
+
+
+            /*
+            if (!viewModelItems.Any(x => x.Id == 1))
             {
-                viewModelItems = surveyitems.Select(x => new TabMenuItemViewModel { Text = x.Key.Question, Id = x.Key.QuestionId });
+                viewModelItems.Add(new TabMenuItemViewModel { Text = "Activation", Id = 1 });
             }
+
+            if (!viewModelItems.Any(x => x.Id == 2))
+            {
+                viewModelItems.Add(new TabMenuItemViewModel { Text = "Pleasance", Id = 2 });
+            }
+            */
 
             var observableCollection = new ObservableCollection<TabMenuItemViewModel>(viewModelItems);
 
@@ -356,6 +375,7 @@ namespace Happimeter.Services
             {
                 //GenericQuestionGroupId = groupId,
                 Question = q.Question,
+                QuestionShort = q.QuestionShort,
                 QuestionId = q.Id
             }).ToList();
 

@@ -73,7 +73,7 @@
 
                         </Grid>
                     </RelativeLayout>
-                    <local:MyTabMenu BackgroundColor="#B2307AEA" ViewModel="{Binding TabMenuViewModel}" OnTabChangedCommand="{Binding OnTabChangedCommand}" HorizontalOptions="EndAndExpand"></local:MyTabMenu>
+                    <local:MyTabMenu BackgroundColor="#B2307AEA" ViewModel="{Binding TabMenuViewModel}" OnTabChangedCommand="{Binding OnTabChangedCommand}" HorizontalOptions="FillAndExpand"></local:MyTabMenu>
                 </StackLayout>
             </ListView.Header>
         <ListView.ItemTemplate>

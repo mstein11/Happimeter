@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Happimeter.ViewModels.Forms;
 using System.Linq;
+using Android.Views;
 
 namespace Happimeter.Controls
 {
@@ -55,28 +56,31 @@ namespace Happimeter.Controls
                 scrollView = new ScrollView
                 {
                     Orientation = ScrollOrientation.Horizontal,
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
                 };
             }
-            var children = new List<View>();
+            var children = new List<Xamarin.Forms.View>();
             var stackLayout = new StackLayout
             {
                 Orientation = StackOrientation.Horizontal,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 BackgroundColor = BackgroundColor,
-                Padding = new Thickness(15, 0, 15, 0)
+                Padding = new Thickness(10, 0, 10, 0)
             };
 
             foreach (var item in ViewModel.Items)
             {
-                item.OnTabChangedCommand = new Command<int>(async (questionId) =>
+                item.OnTabChangedCommand = new Command<int>((questionId) =>
                 {
                     OnTabChangedCommand?.Execute(questionId);
                     var newActive = ViewModel.Items.FirstOrDefault(x => x.Id == questionId);
+                    //first set the new tab to true, because otherwise the view resizes and this leads to undesired behavior
                     newActive.IsActive = true;
                     foreach (var innerItem in ViewModel.Items)
                     {
                         if (questionId == innerItem.Id)
                         {
+                            //do not await this, awaiting it leads to buggy behavior
                             scrollView.ScrollToAsync(stackLayout.Children.FirstOrDefault(x => x.BindingContext == innerItem), ScrollToPosition.Center, true);
                         }
                         else
@@ -87,7 +91,7 @@ namespace Happimeter.Controls
                 });
                 var myTabMenuItem = new MyTabMenuItem();
                 myTabMenuItem.BindingContext = item;
-                myTabMenuItem.Padding = new Thickness(15, 0, 15, 0);
+                myTabMenuItem.Padding = new Thickness(10, 0, 10, 0);
                 stackLayout.Children.Add(
                     myTabMenuItem
                 );

@@ -5,9 +5,9 @@
       <File FileName="Happimeter.Watch.Droid/Workers/BluetoothScannerWorker.cs" Line="60" Column="1" />
       <File FileName="Happimeter/Controls/MyButton.cs" Line="9" Column="9" />
       <File FileName="Happimeter/Views/MoodOverview/SurveyOverviewListPage.xaml" Line="106" Column="1" />
-      <File FileName="Happimeter/ViewModels/Forms/SurveyOverviewViewModel.cs" Line="115" Column="23" />
-      <File FileName="Happimeter/ViewModels/Forms/MyTabMenuViewModel.cs" Line="26" Column="14" />
-      <File FileName="Happimeter/Services/MeasurementService.cs" Line="65" Column="65" />
+      <File FileName="Happimeter/ViewModels/Forms/SurveyOverviewViewModel.cs" Line="115" Column="36" />
+      <File FileName="Happimeter/ViewModels/Forms/MyTabMenuViewModel.cs" Line="21" Column="18" />
+      <File FileName="Happimeter/Services/MeasurementService.cs" Line="365" Column="1" />
       <File FileName="Happimeter/Interfaces/IMeasurementService.cs" Line="27" Column="61" />
       <File FileName="Happimeter/Controls/MyTabMenuItem.xaml" Line="12" Column="1" />
       <File FileName="Happimeter/Controls/MyTabMenuItem.xaml.cs" Line="16" Column="1" />
@@ -15,19 +15,28 @@
       <File FileName="Happimeter.Core/Helper/UtilHelper.cs" Line="44" Column="39" />
       <File FileName="Happimeter/ViewModels/Forms/SurveyOverviewItemViewModel.cs" Line="17" Column="89" />
       <File FileName="Happimeter/Helpers/Command.cs" Line="8" Column="1" />
-      <File FileName="Happimeter/ViewModels/Forms/SurveyItemViewModel.cs" Line="1" Column="1" />
+      <File FileName="Happimeter/ViewModels/Forms/SurveyItemViewModel.cs" Line="41" Column="10" />
       <File FileName="Happimeter/Views/BluetoothMainPage.xaml" Line="88" Column="1" />
       <File FileName="Happimeter/ViewModels/ItemDetailViewModel.cs" Line="18" Column="1" />
       <File FileName="Happimeter/App.cs" Line="87" Column="113" />
-      <File FileName="Happimeter/Controls/MyTabMenu.cs" Line="85" Column="10" />
+      <File FileName="Happimeter/Controls/MyTabMenu.cs" Line="64" Column="14" />
+      <File FileName="Happimeter.Core/Database/GenericQuestion.cs" Line="6" Column="18" />
+      <File FileName="Happimeter.Core/Database/ISharedDatabaseContext.cs" Line="22" Column="17" />
+      <File FileName="Happimeter.Core/Database/SurveyItemMeasurement.cs" Line="20" Column="47" />
+      <File FileName="Happimeter.Watch.Droid/Bluetooth/HappimeterGenericQuestionCharacteristic.cs" Line="1" Column="1" />
+      <File FileName="Happimeter.Watch.Droid/Database/BluetoothPairing.cs" Line="1" Column="1" />
+      <File FileName="Happimeter.Watch.Droid/ViewModels/SurveyViewModel.cs" Line="1" Column="1" />
+      <File FileName="Happimeter.Watch.Droid/ViewModels/SurveyFragmentViewModel.cs" Line="21" Column="50" />
+      <File FileName="Happimeter.Watch.Droid/ServicesBusinessLogic/MeasurementService.cs" Line="57" Column="32" />
+      <File FileName="Happimeter/Models/ServiceModels/GetGenericQuestionApiResult.cs" Line="14" Column="51" />
+      <File FileName="Happimeter/Models/ServiceModels/GetPredictionsResultModel.cs" Line="12" Column="9" />
     </Files>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhone" />
-  <MonoDevelop.Ide.ItemProperties.Happimeter.Droid PreferredExecutionTarget="Android.329F76369FB2" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Happimeter.Droid PreferredExecutionTarget="Android.SelectDevice" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter.Watch.Droid/Workers/BluetoothScannerWorker.cs" relfile="Happimeter.Watch.Droid/Workers/BluetoothScannerWorker.cs" line="60" column="90" />
-      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Controls/MyTabMenu.cs" relfile="Happimeter/Controls/MyTabMenu.cs" line="87" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.ItemProperties.Happimeter.Watch.Droid PreferredExecutionTarget="Android.329F76369FB2" />

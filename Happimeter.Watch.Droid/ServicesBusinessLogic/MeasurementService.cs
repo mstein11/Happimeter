@@ -32,6 +32,7 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
                 questions.Questions.Add(new SurveyFragmentViewModel
                 {
                     Question = generic.Question,
+                    QuestionShort = generic.QuestionShort,
                     QuestionId = generic.QuestionId,
                     Answer = 50
                 });
@@ -42,6 +43,7 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
                 var question1 = new SurveyFragmentViewModel
                 {
                     Question = "How Pleasant do you feel?",
+                    QuestionShort = "Pleasance",
                     IsHardcodedQuestion = true,
                     QuestionId = 2,
                     Answer = 50
@@ -49,6 +51,7 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
                 var question2 = new SurveyFragmentViewModel
                 {
                     Question = "How Active do you feel?",
+                    QuestionShort = "Activation",
                     IsHardcodedQuestion = true,
                     QuestionId = 1,
                     Answer = 50
