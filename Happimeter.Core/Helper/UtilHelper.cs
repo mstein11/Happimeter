@@ -18,16 +18,16 @@ namespace Happimeter.Core.Helper
             return new Tuple<int, int>(major, minor);
         }
 
-        public static string GetNewScaleFromOldAsString(int old, Helpers.SurveyHardcodedEnumeration questionType)
+        public static string GetNewScaleFromOldAsString(int old, int questionType)
         {
             if (old == 0)
             {
                 var prefix = "LOW";
-                if ((int)questionType == 2)
+                if (questionType == 2)
                 {
                     prefix = "UNHAPPY";
                 }
-                else if ((int)questionType == 1)
+                else if (questionType == 1)
                 {
                     prefix = "INACTIVE";
                 }
@@ -41,11 +41,11 @@ namespace Happimeter.Core.Helper
             else
             {
                 var prefix = "HIGH";
-                if ((int)questionType == 2)
+                if (questionType == 2)
                 {
                     prefix = "HAPPY";
                 }
-                else if ((int)questionType == 1)
+                else if (questionType == 1)
                 {
                     prefix = "ACTIVE";
                 }

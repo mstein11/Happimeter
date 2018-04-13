@@ -14,7 +14,7 @@ namespace Happimeter.ViewModels.Forms
         {
         }
 
-        public SurveyOverviewItemViewModel(IGrouping<DateTime, SurveyMeasurement> data, Core.Helpers.SurveyHardcodedEnumeration type)
+        public SurveyOverviewItemViewModel(IGrouping<DateTime, SurveyMeasurement> data, int type)
         {
 
             MoodChart = new LineChart

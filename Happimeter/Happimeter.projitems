@@ -96,6 +96,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\PredictionService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IPredictionService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\Converters\NotConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\MyTabMenu.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\MyTabMenuViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\MyTabMenuItem.xaml.cs">
+      <DependentUpon>MyTabMenuItem.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />
@@ -147,6 +152,10 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\TestPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Controls\MyTabMenuItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>

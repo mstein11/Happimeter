@@ -22,13 +22,13 @@ namespace Happimeter.Views.MoodOverview
         void Handle_Pleasance_Clicked(object sender, System.EventArgs e)
         {
             var vm = (SurveyOverviewViewModel)BindingContext;
-            vm.Initialize(SurveyHardcodedEnumeration.Pleasance);
+            vm.Initialize((int)SurveyHardcodedEnumeration.Pleasance);
         }
 
         void Handle_Activation_Clicked(object sender, System.EventArgs e)
         {
             var vm = (SurveyOverviewViewModel)BindingContext;
-            vm.Initialize(SurveyHardcodedEnumeration.Activation);
+            vm.Initialize((int)SurveyHardcodedEnumeration.Activation);
         }
 
         void ListItems_Refreshing(object sender, EventArgs e)

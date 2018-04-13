@@ -11,6 +11,7 @@ using Happimeter.Helpers;
 using Happimeter.Interfaces;
 using Happimeter.Models.ServiceModels;
 using Happimeter.ViewModels.Forms;
+using System.Collections.ObjectModel;
 
 namespace Happimeter.Services
 {
@@ -59,6 +60,28 @@ namespace Happimeter.Services
             }
 
             return questions;
+        }
+
+        public MyTabMenuViewModel GetQuestionsToDisplayInTabMenu()
+        {
+            var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
+            var surveyitems = context.GetAll<SurveyItemMeasurement>().GroupBy(x => new { x.QuestionId, x.Question });
+            IEnumerable<TabMenuItemViewModel> viewModelItems;
+            if (!surveyitems.Any())
+            {
+                var questions = GetSurveyQuestions();
+                viewModelItems = questions.SurveyItems.Select(x => new TabMenuItemViewModel { Text = x.Question, Id = x.QuestionId });
+            }
+            else
+            {
+                viewModelItems = surveyitems.Select(x => new TabMenuItemViewModel { Text = x.Key.Question, Id = x.Key.QuestionId });
+            }
+
+            var observableCollection = new ObservableCollection<TabMenuItemViewModel>(viewModelItems);
+
+            var viewModel = new MyTabMenuViewModel();
+            viewModel.Items = observableCollection;
+            return viewModel;
         }
 
         public void AddMeasurements(DataExchangeMessage message)

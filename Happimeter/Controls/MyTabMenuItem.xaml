@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             x:Class="Happimeter.Controls.MyTabMenuItem"
+             xmlns:local="clr-namespace:Happimeter.Controls">
+    <ContentView.Content>
+        <StackLayout Orientation="Vertical" Spacing="0">
+            <local:MyButton Style="{StaticResource ButtonWithoutBackground}" Text="{Binding Text}" Command="{Binding OnTabChangedCommand}" CommandParameter="{Binding Id}"></local:MyButton>
+            <BoxView VerticalOptions="End" BackgroundColor="White" HeightRequest="3" IsVisible="{Binding IsActive}" />
+        </StackLayout>
+    </ContentView.Content>
+</ContentView>

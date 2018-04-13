@@ -8,6 +8,7 @@ using Happimeter.Helpers;
 using Happimeter.Interfaces;
 using System.Diagnostics;
 using Happimeter.Core.Helpers;
+using System.Runtime.Remoting.Messaging;
 
 namespace Happimeter.ViewModels.Forms
 {
@@ -15,7 +16,7 @@ namespace Happimeter.ViewModels.Forms
     {
         private List<SurveyMeasurement> _measurements;
 
-        public Core.Helpers.SurveyHardcodedEnumeration CurrentType = Core.Helpers.SurveyHardcodedEnumeration.Pleasance;
+        public int CurrentType = (int)Core.Helpers.SurveyHardcodedEnumeration.Pleasance;
 
         private bool _pleasanceIsActive;
         public bool PleasanceIsActive
@@ -92,14 +93,33 @@ namespace Happimeter.ViewModels.Forms
             set => SetProperty(ref _items, value);
         }
 
+        private MyTabMenuViewModel _tabMenuViewModel;
+        public MyTabMenuViewModel TabMenuViewModel
+        {
+            get => _tabMenuViewModel;
+            set => SetProperty(ref _tabMenuViewModel, value);
+        }
+
+        private Command<int> _onTabChangedCommand;
+        public Command<int> OnTabChangedCommand
+        {
+            get => _onTabChangedCommand;
+            set => SetProperty(ref _onTabChangedCommand, value);
+        }
 
         public SurveyOverviewViewModel()
         {
             RefreshData();
-            ServiceLocator.Instance.Get<ISharedDatabaseContext>().WhenEntryAdded<PredictionEntry>().Subscribe(x =>
+            OnTabChangedCommand = new Command<int>((index) =>
             {
-                SetPredictionInView(x.Entites.Cast<PredictionEntry>().ToList());
+                Initialize(index);
             });
+            TabMenuViewModel = ServiceLocator.Instance.Get<IMeasurementService>().GetQuestionsToDisplayInTabMenu();
+            TabMenuViewModel.Items.FirstOrDefault(x => x.Id == (int)CurrentType).IsActive = true;
+            ServiceLocator.Instance.Get<ISharedDatabaseContext>().WhenEntryAdded<PredictionEntry>().Subscribe(x =>
+                {
+                    SetPredictionInView(x.Entites.Cast<PredictionEntry>().ToList());
+                });
             if (HasPredictions)
             {
                 DisplayLastResponse = false;
@@ -123,12 +143,13 @@ namespace Happimeter.ViewModels.Forms
             if (lastPrediction != null)
             {
                 HasPredictions = true;
+                DisplayLastResponse = false;
                 PredictionValue = UtilHelper.GetNewScaleFromOldAsString(lastPrediction.PredictedValue, CurrentType);
                 PredictionDateTime = UtilHelper.TimeAgo(lastPrediction.Timestamp);
             }
         }
 
-        public void Initialize(Core.Helpers.SurveyHardcodedEnumeration type)
+        public void Initialize(int type)
         {
             SetActiveType(type);
             var predictions = ServiceLocator.Instance.Get<IPredictionService>().GetLastPrediction();
@@ -160,9 +181,9 @@ namespace Happimeter.ViewModels.Forms
             }
         }
 
-        private void SetActiveType(Core.Helpers.SurveyHardcodedEnumeration type)
+        private void SetActiveType(int type)
         {
-            if (type == SurveyHardcodedEnumeration.Activation)
+            if (type == (int)SurveyHardcodedEnumeration.Activation)
             {
                 ActivationIsActive = true;
                 PleasanceIsActive = false;
@@ -173,7 +194,7 @@ namespace Happimeter.ViewModels.Forms
                 PleasanceIsActive = true;
             }
 
-            CurrentType = type;
+            CurrentType = (int)type;
         }
     }
 }

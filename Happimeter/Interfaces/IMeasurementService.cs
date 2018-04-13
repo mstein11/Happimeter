@@ -24,5 +24,6 @@ namespace Happimeter.Interfaces
         void SetIsUploadedToServerForSensorData(PostSensorDataServiceModel sensor);
         bool HasUnsynchronizedChanges();
         Task<List<GenericQuestion>> DownloadAndSaveGenericQuestions();
+        MyTabMenuViewModel GetQuestionsToDisplayInTabMenu();
     }
 }

@@ -10,67 +10,71 @@
 	<ContentPage.Content>
         <ListView x:Name="SurveyListView" RowHeight="150" ItemsSource="{Binding Items}" IsPullToRefreshEnabled="True" Refreshing="ListItems_Refreshing">
             <ListView.Header>
-                <RelativeLayout HeightRequest="260">
-                <Image 
-                       Aspect="AspectFill" 
-                       RelativeLayout.WidthConstraint="{ConstraintExpression  
-                       Type=RelativeToParent,  
-                       Property=Width,  
-                       Factor=1}"
-                       RelativeLayout.HeightConstraint="{ConstraintExpression  
-                       Type=RelativeToParent,  
-                       Property=Height,  
-                       Factor=1}">
-                        <Image.Source>
-                            <OnPlatform x:TypeArguments="ImageSource"
-                                        iOS="happinessfactory"
-                                        Android="happinessfactory.png" />
-                        </Image.Source>
-                    </Image>
-                    <Grid RowSpacing="0" ColumnSpacing="0" BackgroundColor="#B2307AEA"
-                       RelativeLayout.WidthConstraint="{ConstraintExpression  
-                       Type=RelativeToParent,  
-                       Property=Width,  
-                       Factor=1}"
-                       RelativeLayout.HeightConstraint="{ConstraintExpression  
-                       Type=RelativeToParent,  
-                       Property=Height,  
-                       Factor=1}">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <StackLayout Grid.ColumnSpan="2" Spacing="25" Padding="20">
-                            <Label Style="{StaticResource HeaderOnBackground}">Overall</Label>
-                            <StackLayout Orientation="Horizontal">
-                                <StackLayout Spacing="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
-                                    <Label Style="{StaticResource TextOnBackground}" FontAttributes="Bold" Text="{Binding NumberOfResponses}"/>
-                                    <Label Style="{StaticResource TextOnBackground}">Responses</Label>
+                <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Spacing="0">
+                    <RelativeLayout HeightRequest="220">
+                        <Image 
+                           Aspect="AspectFill" 
+                           RelativeLayout.WidthConstraint="{ConstraintExpression  
+                           Type=RelativeToParent,  
+                           Property=Width,  
+                           Factor=1}"
+                           RelativeLayout.HeightConstraint="{ConstraintExpression  
+                           Type=RelativeToParent,  
+                           Property=Height,  
+                           Factor=1}">
+                            <Image.Source>
+                                <OnPlatform x:TypeArguments="ImageSource"
+                                            iOS="happinessfactory"
+                                            Android="happinessfactory.png" />
+                            </Image.Source>
+                        </Image>
+                        <Grid RowSpacing="0" ColumnSpacing="0" BackgroundColor="#B2307AEA"
+                           RelativeLayout.WidthConstraint="{ConstraintExpression  
+                           Type=RelativeToParent,  
+                           Property=Width,  
+                           Factor=1}"
+                           RelativeLayout.HeightConstraint="{ConstraintExpression  
+                           Type=RelativeToParent,  
+                           Property=Height,  
+                           Factor=1}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackLayout Grid.ColumnSpan="2" Spacing="25" Padding="20">
+                                <Label Style="{StaticResource HeaderOnBackground}">Overall</Label>
+                                <StackLayout Orientation="Horizontal">
+                                    <StackLayout Spacing="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                                        <Label Style="{StaticResource TextOnBackground}" FontAttributes="Bold" Text="{Binding NumberOfResponses}"/>
+                                        <Label Style="{StaticResource TextOnBackground}">Responses</Label>
+                                    </StackLayout>
+                                    <StackLayout Spacing="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                                        <Label Style="{StaticResource TextOnBackground}" FontAttributes="Bold" Text="{Binding OverallAverageResponse, StringFormat='{0:0.00}'}" />
+                                        <Label Style="{StaticResource TextOnBackground}">Avg. Response</Label>
+                                    </StackLayout>
                                 </StackLayout>
                                 <StackLayout Spacing="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
-                                    <Label Style="{StaticResource TextOnBackground}" FontAttributes="Bold" Text="{Binding OverallAverageResponse, StringFormat='{0:0.00}'}" />
-                                    <Label Style="{StaticResource TextOnBackground}">Avg. Response</Label>
+                                    <Label Style="{StaticResource TextOnBackground}" IsVisible="{Binding DisplayLastResponse}" FontAttributes="Bold" Text="{Binding LastResponse, StringFormat='{0:MMMM dd, yyyy}'}" />
+                                    <Label Style="{StaticResource TextOnBackground}" IsVisible="{Binding DisplayLastResponse}" FontAttributes="Bold" Text="{Binding LastResponse, StringFormat='{0:HH:mm}'}" />
+                                    <Label Style="{StaticResource TextOnBackground}" IsVisible="{Binding DisplayLastResponse}">Last Response</Label>
+                                    <Label Style="{StaticResource TextOnBackground}" IsVisible="{Binding HasPredictions}" FontAttributes="Bold" Text="{Binding PredictionValue}" />
+                                    <Label Style="{StaticResource TextOnBackground}" IsVisible="{Binding HasPredictions}" FontAttributes="Bold" Text="{Binding PredictionDateTime}" />
+                                    <Label Style="{StaticResource TextOnBackground}" IsVisible="{Binding HasPredictions}">Last Prediction</Label>
                                 </StackLayout>
                             </StackLayout>
-                            <StackLayout Spacing="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
-                                <Label Style="{StaticResource TextOnBackground}" IsVisible="{Binding DisplayLastResponse}" FontAttributes="Bold" Text="{Binding LastResponse, StringFormat='{0:MMMM dd, yyyy}'}" />
-                                <Label Style="{StaticResource TextOnBackground}" IsVisible="{Binding DisplayLastResponse}" FontAttributes="Bold" Text="{Binding LastResponse, StringFormat='{0:HH:mm}'}" />
-                                <Label Style="{StaticResource TextOnBackground}" IsVisible="{Binding DisplayLastResponse}">Last Response</Label>
-                                <Label Style="{StaticResource TextOnBackground}" IsVisible="{Binding HasPredictions}" FontAttributes="Bold" Text="{Binding PredictionValue}" />
-                                <Label Style="{StaticResource TextOnBackground}" IsVisible="{Binding HasPredictions}" FontAttributes="Bold" Text="{Binding PredictionDateTime}" />
-                                <Label Style="{StaticResource TextOnBackground}" IsVisible="{Binding HasPredictions}">Last Prediction</Label>
-                            </StackLayout>
-                        </StackLayout>
-                        <local:MyButton Style="{StaticResource ButtonWithoutBackground}" Grid.Row="1" Grid.Column="0" Text="Pleasance" Clicked="Handle_Pleasance_Clicked" />
-                        <BoxView Grid.Row="1" Grid.Column="0" VerticalOptions="End" BackgroundColor="White" HeightRequest="3" IsVisible="{Binding PleasanceIsActive}" />
-                        <local:MyButton Style="{StaticResource ButtonWithoutBackground}" Grid.Row="1" Grid.Column="1" Text="Activation" Clicked="Handle_Activation_Clicked" />
-                        <BoxView Grid.Row="1" Grid.Column="1" VerticalOptions="End" BackgroundColor="White" HeightRequest="3" IsVisible="{Binding ActivationIsActive}" />
-                    </Grid>
-                </RelativeLayout>
+                            <!--
+                            <local:MyButton Style="{StaticResource ButtonWithoutBackground}" Grid.Row="1" Grid.Column="0" Text="Pleasance" Clicked="Handle_Pleasance_Clicked" />
+                            <BoxView Grid.Row="1" Grid.Column="0" VerticalOptions="End" BackgroundColor="White" HeightRequest="3" IsVisible="{Binding PleasanceIsActive}" />
+                            <local:MyButton Style="{StaticResource ButtonWithoutBackground}" Grid.Row="1" Grid.Column="1" Text="Activation" Clicked="Handle_Activation_Clicked" />
+                            <BoxView Grid.Row="1" Grid.Column="1" VerticalOptions="End" BackgroundColor="White" HeightRequest="3" IsVisible="{Binding ActivationIsActive}" />-->
+
+                        </Grid>
+                    </RelativeLayout>
+                    <local:MyTabMenu BackgroundColor="#B2307AEA" ViewModel="{Binding TabMenuViewModel}" OnTabChangedCommand="{Binding OnTabChangedCommand}" HorizontalOptions="EndAndExpand"></local:MyTabMenu>
+                </StackLayout>
             </ListView.Header>
         <ListView.ItemTemplate>
             <DataTemplate>
