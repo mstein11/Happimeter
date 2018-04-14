@@ -1,7 +1,7 @@
 ﻿<Properties StartupConfiguration="{B926B5BC-5FAA-4225-BAC6-BA1BDABB67E9}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Happimeter/ViewModels/Forms/SurveyOverviewItemViewModel.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Happimeter/ViewModels/Forms/BluetoothPairingItemViewModel.cs">
     <Files>
-      <File FileName="Happimeter/Controls/MyTabMenu.cs" Line="103" Column="49" />
+      <File FileName="Happimeter/Controls/MyTabMenu.cs" Line="112" Column="13" />
       <File FileName="Happimeter/Models/BluetoothDevice.cs" Line="47" Column="15" />
       <File FileName="Happimeter/Services/MeasurementService.cs" Line="85" Column="65" />
       <File FileName="Happimeter/ViewModels/Forms/SurveyViewModel.cs" Line="18" Column="10" />
@@ -11,15 +11,18 @@
       <File FileName="Happimeter/Controls/MyTabMenuItem.xaml" Line="7" Column="29" />
       <File FileName="Happimeter/Views/MoodOverview/SurveyOverviewListPage.xaml" Line="48" Column="147" />
       <File FileName="Happimeter/Views/SurveyItemView.xaml" Line="11" Column="1" />
-      <File FileName="Happimeter/ViewModels/Forms/SurveyOverviewItemViewModel.cs" Line="25" Column="91" />
+      <File FileName="Happimeter/ViewModels/Forms/SurveyOverviewItemViewModel.cs" Line="25" Column="1" />
+      <File FileName="Happimeter/Models/AndroidWatch.cs" Line="49" Column="93" />
+      <File FileName="Happimeter/Services/BluetoothService.cs" Line="24" Column="60" />
+      <File FileName="Happimeter/Views/BluetoothPairingPage.xaml" Line="19" Column="42" />
+      <File FileName="Happimeter/ViewModels/Forms/BluetoothPairingPageViewModel.cs" Line="25" Column="47" />
+      <File FileName="Happimeter/ViewModels/Forms/BluetoothPairingItemViewModel.cs" Line="23" Column="30" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhone" />
   <MonoDevelop.Ide.ItemProperties.Happimeter.Droid PreferredExecutionTarget="Android.SelectDevice" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Models/AndroidWatch.cs" relfile="Happimeter/Models/AndroidWatch.cs" line="48" column="1" />
-      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Models/AndroidWatch.cs" relfile="Happimeter/Models/AndroidWatch.cs" line="46" column="1" />
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Models/BluetoothDevice.cs" relfile="Happimeter/Models/BluetoothDevice.cs" line="48" column="1" />
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Models/BluetoothDevice.cs" relfile="Happimeter/Models/BluetoothDevice.cs" line="56" column="1" />
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Models/BluetoothDevice.cs" relfile="Happimeter/Models/BluetoothDevice.cs" line="54" column="1" />
@@ -31,7 +34,6 @@
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" relfile="Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" line="509" column="1" />
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" relfile="Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" line="534" column="1" />
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" relfile="Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" line="544" column="1" />
-      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Models/AndroidWatch.cs" relfile="Happimeter/Models/AndroidWatch.cs" line="55" column="1" />
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService.cs" relfile="Happimeter/Services/BluetoothService.cs" line="653" column="1" />
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService.cs" relfile="Happimeter/Services/BluetoothService.cs" line="658" column="1" />
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService.cs" relfile="Happimeter/Services/BluetoothService.cs" line="660" column="1" />

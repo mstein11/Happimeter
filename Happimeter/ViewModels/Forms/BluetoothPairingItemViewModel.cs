@@ -14,27 +14,27 @@ namespace Happimeter.ViewModels.Forms
         }
 
         private BluetoothDevice _device;
-        public BluetoothDevice Device 
+        public BluetoothDevice Device
         {
             get => _device;
             set => SetProperty(ref _device, value);
         }
 
         private string _name;
-        public string Name 
+        public string Name
         {
             get => _name;
-            set => SetProperty(ref _name, value); 
+            set => SetProperty(ref _name, value);
         }
 
         private string _description;
-        public string Description 
+        public string Description
         {
             get => _description;
             set => SetProperty(ref _description, value);
         }
         private string _indicationText;
-        public string IndicationText 
+        public string IndicationText
         {
             get => _indicationText;
             set => SetProperty(ref _indicationText, value);
@@ -47,10 +47,15 @@ namespace Happimeter.ViewModels.Forms
             set => SetProperty(ref _showIndication, value);
         }
 
-        public void ShowIndicationForState(AndroidWatchConnectingStates state) {
-            switch (state) {
+        public void ShowIndicationForState(AndroidWatchConnectingStates state)
+        {
+            switch (state)
+            {
+                case AndroidWatchConnectingStates.Connecting:
+                    DisplayIndication("Connecting");
+                    break;
                 case AndroidWatchConnectingStates.BtConnected:
-                    DisplayIndication("Connection init");
+                    DisplayIndication("Connected");
                     break;
                 case AndroidWatchConnectingStates.AuthCharacteristicDiscovered:
                     DisplayIndication("Auth discovered");
@@ -88,23 +93,25 @@ namespace Happimeter.ViewModels.Forms
                 case AndroidWatchConnectingStates.ErrorBeforeComplete:
                     DisplayIndication("Error: Sth with db", 2000);
                     break;
-            
+
             }
         }
 
-        private void DisplayIndication(string text, int? milliseconds = null) {
+        private void DisplayIndication(string text, int? milliseconds = null)
+        {
 
             ShowIndication = true;
             IndicationText = text;
             Timer timer = null;
 
-            if (milliseconds != null) {
+            if (milliseconds != null)
+            {
                 timer = new Timer((obj) =>
                 {
                     IndicationText = text;
                     ShowIndication = false;
                     timer.Dispose();
-                }, null, milliseconds.Value, System.Threading.Timeout.Infinite);    
+                }, null, milliseconds.Value, System.Threading.Timeout.Infinite);
             }
         }
     }

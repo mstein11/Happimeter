@@ -13,6 +13,8 @@ namespace Happimeter.Models
 {
     public enum AndroidWatchConnectingStates
     {
+        IsBusy,
+        Connecting,
         BtConnected,
         ErrorOnBtConnection,
         AuthCharacteristicDiscovered,
@@ -39,106 +41,126 @@ namespace Happimeter.Models
         public static readonly Guid AuthCharacteristic = Guid.Parse("68b13553-0c4d-43de-8c1c-2b10d77d2d90");
 
         public event EventHandler OnConnectingStateChanged;
-
+        private static bool IsBusyConnecting = false;
         public override IObservable<object> Connect()
         {
-            var connection = base.Connect();
-            WhenDeviceReady().Take(1).Subscribe(success =>
+            if (IsBusyConnecting)
             {
-                OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.BtConnected, null);
-                if (success)
+                OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.IsBusy, null);
+                return Observable.Return<object>(null);
+            }
+            IsBusyConnecting = true;
+            var connection = base.Connect();
+            WhenDeviceReady().Timeout(TimeSpan.FromSeconds(15)).Catch((Exception arg) =>
+            {
+                OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorOnBtConnection, null);
+                Console.WriteLine(arg.Message);
+                return Observable.Return<bool>(false);
+            }).Take(1).Subscribe(success =>
+            {
+                if (!success)
                 {
-                    try
+                    IsBusyConnecting = false;
+                    return;
+                }
+
+                OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.BtConnected, null);
+                try
+                {
+                    Device.WhenAnyCharacteristicDiscovered().Where(x => x.Uuid == AuthCharacteristic).Take(1).Subscribe(async characteristic =>
                     {
-                        Device.WhenAnyCharacteristicDiscovered().Where(x => x.Uuid == AuthCharacteristic).Take(1).Subscribe(async characteristic =>
+                        Debug.WriteLine("Found our AuthCharacteristic");
+                        OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.AuthCharacteristicDiscovered, null);
+
+                        var btService = ServiceLocator.Instance.Get<IBluetoothService>();
+                        await btService.EnableNotificationsFor(characteristic);
+                        var deviceName = ServiceLocator.Instance.Get<IDeviceInformationService>().GetDeviceName();
+
+                        var writeResult = await btService.WriteAsync(characteristic, new AuthFirstMessage(deviceName));
+                        if (!writeResult)
                         {
-                            Debug.WriteLine("Found our AuthCharacteristic");
-                            OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.AuthCharacteristicDiscovered, null);
+                            //we got an error here
+                            OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorOnFirstWrite, null);
+                            IsBusyConnecting = false;
+                            return;
+                        }
+                        OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.WaitingForNotification, null);
 
-                            var btService = ServiceLocator.Instance.Get<IBluetoothService>();
-                            await btService.EnableNotificationsFor(characteristic);
-                            var deviceName = ServiceLocator.Instance.Get<IDeviceInformationService>().GetDeviceName();
+                        //item one is message name item two  is message json
+                        var notification = await btService.WhenNotificationReceived()
+                                                      .Where((arg) => arg.Item1 == AuthNotificationMessage.MessageNameConstant)
+                                                      .Timeout(TimeSpan.FromMinutes(1))
+                                                      .Take(1)
+                                                      .Catch<(string, string), Exception>((arg) =>
+                                                      {
+                                                          return Observable.Return<(string, string)>((null, null));
+                                                      });
 
-                            var writeResult = await btService.WriteAsync(characteristic, new AuthFirstMessage(deviceName));
-                            if (!writeResult)
-                            {
-                                //we got an error here
-                                OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorOnFirstWrite, null);
-                                return;
-                            }
-                            OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.WaitingForNotification, null);
+                        if (notification.Item2 == null)
+                        {
+                            OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.NotificationTimeout, null);
+                            IsBusyConnecting = false;
+                            return;
+                        }
+                        var message = Newtonsoft.Json.JsonConvert.DeserializeObject<AuthNotificationMessage>(notification.Item2);
+                        if (!message.Accepted)
+                        {
+                            OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.UserDeclined, null);
+                            IsBusyConnecting = false;
+                            return;
+                        }
+                        OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.UserAccepted, null);
+                        //todo: validate data from gattservice
 
-                            //item one is message name item two  is message json
-                            var notification = await btService.WhenNotificationReceived()
-                                                              .Where((arg) => arg.Item1 == AuthNotificationMessage.MessageNameConstant)
-                                                              .Timeout(TimeSpan.FromMinutes(1))
-                                                              .Take(1)
-                                                              .Catch<(string, string), Exception>((arg) =>
-                                                              {
-                                                                  return Observable.Return<(string, string)>((null, null));
-                                                              });
-
-                            if (notification.Item2 == null)
-                            {
-                                OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.NotificationTimeout, null);
-                                return;
-                            }
-                            var message = Newtonsoft.Json.JsonConvert.DeserializeObject<AuthNotificationMessage>(notification.Item2);
-                            if (!message.Accepted)
-                            {
-                                OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.UserDeclined, null);
-                                return;
-                            }
-                            OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.UserAccepted, null);
-                            //todo: validate data from gattservice
-
-                            var dataToSend = new AuthSecondMessage
-                            {
-                                //Service that the watch will later advertise
-                                Password = Guid.NewGuid().ToString(),
-                                PhoneOs = ServiceLocator.Instance.Get<IDeviceInformationService>().GetPhoneOs(),
-                                HappimeterUserId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId()
-                            };
+                        var dataToSend = new AuthSecondMessage
+                        {
+                            //Service that the watch will later advertise
+                            Password = Guid.NewGuid().ToString(),
+                            PhoneOs = ServiceLocator.Instance.Get<IDeviceInformationService>().GetPhoneOs(),
+                            HappimeterUserId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId()
+                        };
 
 
-                            var writeResult2 = await btService.WriteAsync(characteristic, dataToSend);
-                            if (!writeResult2)
-                            {
-                                //we got an error here!
-                                OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorOnSecondWrite, null);
-                                return;
-                            }
+                        var writeResult2 = await btService.WriteAsync(characteristic, dataToSend);
+                        if (!writeResult2)
+                        {
+                            //we got an error here!
+                            OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorOnSecondWrite, null);
+                            IsBusyConnecting = false;
+                            return;
+                        }
 
-                            OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.SecondWriteSuccessfull, null);
-                            var paring = new SharedBluetoothDevicePairing
-                            {
-                                IsPairingActive = true,
-                                PairedAt = DateTime.UtcNow,
-                                PairedDeviceName = characteristic.Service.Device.Name,
-                                Password = dataToSend.Password,
-                                PhoneOs = "Android"
-                            };
-                            ServiceLocator.Instance.Get<ISharedDatabaseContext>().Add(paring);
+                        OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.SecondWriteSuccessfull, null);
+                        var paring = new SharedBluetoothDevicePairing
+                        {
+                            IsPairingActive = true,
+                            PairedAt = DateTime.UtcNow,
+                            PairedDeviceName = characteristic.Service.Device.Name,
+                            Password = dataToSend.Password,
+                            PhoneOs = "Android"
+                        };
+                        ServiceLocator.Instance.Get<ISharedDatabaseContext>().Add(paring);
 
-                            //the default after pairing is, that we have battery safer mode enabled.
-                            ServiceLocator.Instance.Get<IConfigService>().SetBatterySaferMeasurementMode();
-                            //Lets wait for his beacon signal
-                            ServiceLocator.Instance.Get<IBeaconWakeupService>().StartWakeupForBeacon();
-                            OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.Complete, null);
-                            ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.PairEvent);
+                        //the default after pairing is, that we have battery safer mode enabled.
+                        ServiceLocator.Instance.Get<IConfigService>().SetBatterySaferMeasurementMode();
+                        //Lets wait for his beacon signal
+                        ServiceLocator.Instance.Get<IBeaconWakeupService>().StartWakeupForBeacon();
+                        OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.Complete, null);
+                        ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.PairEvent);
 
-                        });
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine("Something went wrong during authentication. Error: " + e.Message);
-                        ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.PairFailureEvent);
-                        OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorBeforeComplete, null);
-                    }
+                    });
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Something went wrong during authentication. Error: " + e.Message);
+                    ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.PairFailureEvent);
+                    OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorBeforeComplete, null);
+                    IsBusyConnecting = false;
                 }
             }, error =>
             {
                 OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorOnBtConnection, null);
+                IsBusyConnecting = false;
             });
 
             return connection;
