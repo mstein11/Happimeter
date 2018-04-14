@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Happimeter.ViewModels.Forms;
 using System.Linq;
-using Android.Views;
 
 namespace Happimeter.Controls
 {
@@ -42,10 +41,21 @@ namespace Happimeter.Controls
             set => SetValue(OnTabChangedCommandProperty, value);
         }
 
+        /// <summary>
+        ///     Gets called when the view is instatiated or the view model changes.
+        /// </summary>
+        /// <param name="bindable">Bindable.</param>
+        /// <param name="oldValue">Old value.</param>
+        /// <param name="newValue">New value.</param>
         private static void OnItemsSourceChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            var layout = (MyTabMenu)bindable;
-            layout.SetupLayout();
+            var view = (MyTabMenu)bindable;
+            view.SetupLayout();
+            //update layout when collection of menu items changes
+            view.ViewModel.Items.CollectionChanged += (obj, args) =>
+            {
+                view.SetupLayout();
+            };
         }
 
         private void SetupLayout()
@@ -72,6 +82,7 @@ namespace Happimeter.Controls
             {
                 item.OnTabChangedCommand = new Command<int>((questionId) =>
                 {
+                    CurrentIndex = questionId;
                     OnTabChangedCommand?.Execute(questionId);
                     var newActive = ViewModel.Items.FirstOrDefault(x => x.Id == questionId);
                     //first set the new tab to true, because otherwise the view resizes and this leads to undesired behavior
@@ -91,6 +102,7 @@ namespace Happimeter.Controls
                 });
                 var myTabMenuItem = new MyTabMenuItem();
                 myTabMenuItem.BindingContext = item;
+                myTabMenuItem.HorizontalOptions = LayoutOptions.CenterAndExpand;
                 myTabMenuItem.Padding = new Thickness(10, 0, 10, 0);
                 stackLayout.Children.Add(
                     myTabMenuItem

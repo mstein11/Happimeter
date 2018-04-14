@@ -16,15 +16,20 @@ namespace Happimeter.ViewModels.Forms
 
         public SurveyOverviewItemViewModel(IGrouping<DateTime, SurveyMeasurement> data, int type)
         {
-
+            var entries = data.SelectMany(x => x.SurveyItemMeasurement.Where(y => y.QuestionId == (int)type).Select(y => new Entry((float)y.Answer)
+            {
+                Color = ColorHelper.GetColorRelatingToScale(y.Answer, 100, SKColors.OrangeRed, SKColors.LimeGreen),
+                Label = y.SurveyMeasurement.Timestamp.ToLocalTime().ToString("HH:mm"),
+                ValueLabel = y.AnswerDisplay.ToString()
+            })).ToList();
+            if (entries.Count() == 1)
+            {
+                //if we only have one, lets copy that one so that the graph has 2 points to work with
+                entries.Add(entries.FirstOrDefault());
+            }
             MoodChart = new LineChart
             {
-                Entries = data.SelectMany(x => x.SurveyItemMeasurement.Where(y => y.QuestionId == (int)type).Select(y => new Entry((float)y.Answer)
-                {
-                    Color = ColorHelper.GetColorRelatingToScale(y.Answer, 100, SKColors.OrangeRed, SKColors.LimeGreen),
-                    Label = y.SurveyMeasurement.Timestamp.ToLocalTime().ToString("HH:mm"),
-                    ValueLabel = y.AnswerDisplay.ToString()
-                })),
+                Entries = entries,
                 LineMode = LineMode.Straight,
                 Margin = 10,
                 LineSize = 2,

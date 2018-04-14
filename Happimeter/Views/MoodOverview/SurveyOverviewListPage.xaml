@@ -45,7 +45,7 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <StackLayout Grid.ColumnSpan="2" Spacing="25" Padding="20">
-                                <Label Style="{StaticResource HeaderOnBackground}">Overall</Label>
+                                <Label Style="{StaticResource HeaderOnBackground}" Text="{Binding CurrentTypeName, StringFormat='Overall {0}'}" />
                                 <StackLayout Orientation="Horizontal">
                                     <StackLayout Spacing="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
                                         <Label Style="{StaticResource TextOnBackground}" FontAttributes="Bold" Text="{Binding NumberOfResponses}"/>

@@ -18,6 +18,13 @@ namespace Happimeter.ViewModels.Forms
 
         public int CurrentType = (int)Core.Helpers.SurveyHardcodedEnumeration.Pleasance;
 
+        public string _currentTypeName;
+        public string CurrentTypeName
+        {
+            get => _currentTypeName;
+            set => SetProperty(ref _currentTypeName, value);
+        }
+
         private bool _pleasanceIsActive;
         public bool PleasanceIsActive
         {
@@ -66,6 +73,9 @@ namespace Happimeter.ViewModels.Forms
             get => _predictionValue;
             set => SetProperty(ref _predictionValue, value);
         }
+
+
+        private int CurrentPredictionAreFor { get; set; }
         public string _predictionDateTime;
         public string PredictionDateTime
         {
@@ -161,6 +171,13 @@ namespace Happimeter.ViewModels.Forms
                 DisplayLastResponse = false;
                 PredictionValue = UtilHelper.GetNewScaleFromOldAsString(lastPrediction.PredictedValue, CurrentType);
                 PredictionDateTime = UtilHelper.TimeAgo(lastPrediction.Timestamp);
+                CurrentPredictionAreFor = CurrentType;
+            }
+            else if (lastPrediction == null && CurrentType != CurrentPredictionAreFor)
+            {
+                HasPredictions = false;
+                DisplayLastResponse = true;
+                CurrentPredictionAreFor = 0;
             }
         }
 
@@ -198,18 +215,9 @@ namespace Happimeter.ViewModels.Forms
 
         private void SetActiveType(int type)
         {
-            if (type == (int)SurveyHardcodedEnumeration.Activation)
-            {
-                ActivationIsActive = true;
-                PleasanceIsActive = false;
-            }
-            else
-            {
-                ActivationIsActive = false;
-                PleasanceIsActive = true;
-            }
 
-            CurrentType = (int)type;
+            CurrentType = type;
+            CurrentTypeName = ServiceLocator.Instance.Get<ISharedDatabaseContext>().Get<GenericQuestion>(x => x.QuestionId == type)?.QuestionShort ?? "";
         }
     }
 }

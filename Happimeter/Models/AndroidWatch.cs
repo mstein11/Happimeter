@@ -43,7 +43,6 @@ namespace Happimeter.Models
         public override IObservable<object> Connect()
         {
             var connection = base.Connect();
-
             WhenDeviceReady().Take(1).Subscribe(success =>
             {
                 OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.BtConnected, null);

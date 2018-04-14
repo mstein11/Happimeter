@@ -33,42 +33,57 @@ namespace Happimeter.Models
 
         public IObservable<ConnectionStatus> OnStatusChanged() => Device.WhenStatusChanged();
 
-        public virtual IObservable<bool> WhenDeviceReady() {
+        public virtual IObservable<bool> WhenDeviceReady()
+        {
             return InitializedReplaySubject.AsObservable();
         }
 
-        public virtual IObservable<object> Connect() {
+        public virtual IObservable<object> Connect()
+        {
+            //var tmp = CrossBleAdapter.Current.GetConnectedDevices();
+            //var tmp2 = CrossBleAdapter.Current.GetKnownDevice();
+            //var tmp3 = CrossBleAdapter.Current.GetPairedDevices();
+            //var tmp4 = CrossBleAdapter.AndroidOperationPause;
+            //CrossBleAdapter.AndroidOperationPause = CrossBleAdapter.AndroidOperationPause.Value.Add(TimeSpan.FromMilliseconds(2000));
             var connection = Device.Connect(new GattConnectionConfig
             {
 
                 AutoConnect = false,
-                Priority = ConnectionPriority.High
+                //Priority = ConnectionPriority.High
             });
-            connection.Subscribe(res => {
+            connection.Subscribe(res =>
+            {
                 InitializedReplaySubject.OnNext(true);
-            }, error => {
-                InitializedReplaySubject.OnError(new Exception("Exception while establishing connection to device"));
+            }, error =>
+            {
+                //InitializedReplaySubject.OnError(new Exception("Exception while establishing connection to device"));
             });
 
-            Device.WhenStatusChanged().Subscribe((x) => {
+            Device.WhenStatusChanged().Subscribe((x) =>
+            {
                 Debug.WriteLine(x);
-            }, (err) => {
+            }, (err) =>
+            {
                 Debug.WriteLine(err);
             });
 
             return connection;
         }
 
-        public virtual void SendNotification() {
+        public virtual void SendNotification()
+        {
             Debug.WriteLine("Nothin to do here");
         }
 
-        public static BluetoothDevice Create(IDevice device) {
-            if (device?.Name?.Contains("MI Band") ?? false) {                
+        public static BluetoothDevice Create(IDevice device)
+        {
+            if (device?.Name?.Contains("MI Band") ?? false)
+            {
                 return new MiBand2Device(device);
             }
 
-            if (device?.Name?.Contains("Happimeter") ?? false) {
+            if (device?.Name?.Contains("Happimeter") ?? false)
+            {
                 return new AndroidWatch(device);
             }
 

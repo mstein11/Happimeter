@@ -113,6 +113,7 @@ namespace Happimeter.Core.Database
                     DeleteAll<SurveyItemMeasurement>();
                     DeleteAll<SurveyMeasurement>();
                     DeleteAll<PredictionEntry>();
+                    DeleteAll<GenericQuestion>();
                 }
             }
         }

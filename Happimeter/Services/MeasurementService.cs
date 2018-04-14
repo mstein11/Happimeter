@@ -74,7 +74,7 @@ namespace Happimeter.Services
 
             var questions = GetSurveyQuestions();
             //merge those that don't have an answer yet
-            foreach (var question in questions.SurveyItems)
+            foreach (var question in questions.SurveyItems.Where(x => x.QuestionShort != null))
             {
                 if (viewModelItems.All(x => x.Id != question.QuestionId))
                 {
@@ -82,9 +82,7 @@ namespace Happimeter.Services
                 }
             }
 
-
-
-            /*
+            //if we don't have the two basic ones, lets add them
             if (!viewModelItems.Any(x => x.Id == 1))
             {
                 viewModelItems.Add(new TabMenuItemViewModel { Text = "Activation", Id = 1 });
@@ -94,7 +92,6 @@ namespace Happimeter.Services
             {
                 viewModelItems.Add(new TabMenuItemViewModel { Text = "Pleasance", Id = 2 });
             }
-            */
 
             var observableCollection = new ObservableCollection<TabMenuItemViewModel>(viewModelItems);
 

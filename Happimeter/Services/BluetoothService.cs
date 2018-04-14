@@ -21,6 +21,8 @@ namespace Happimeter.Services
         private const int _messageTimeoutSeconds = 15;
         private const int _scanTimeoutSeconds = 20;
 
+        private bool RescanEvenIfConnectedNextTime = false;
+
         private ReplaySubject<IScanResult> ScanReplaySubject = new ReplaySubject<IScanResult>();
 
         public BluetoothDevice PairedDevice { get; set; }
@@ -160,11 +162,12 @@ namespace Happimeter.Services
             if (connectedDevices.Any(x => x.Name?.Contains("Happimeter") ?? false))
             {
                 var innerDevice = connectedDevices.FirstOrDefault(x => x.Name.Contains("Happimeter"));
-                if (innerDevice.Status == ConnectionStatus.Connected)
+                if (innerDevice.Status == ConnectionStatus.Connected && RescanEvenIfConnectedNextTime)
                 {
                     Console.WriteLine("Device already connected");
                     return innerDevice;
                 }
+                RescanEvenIfConnectedNextTime = false;
             }
 
             if (!CrossBleAdapter.Current.IsScanning)
@@ -325,7 +328,12 @@ namespace Happimeter.Services
                                                  .Where(charac => charac.Uuid == UuidHelper.DataExchangeCharacteristicUuid)
                                                  .Take(1)
                                                  .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
-                                                 .Catch((Exception e) => Observable.Return<IGattCharacteristic>(null));
+                                                 .Catch((Exception e) =>
+                                                 {
+                                                     //device.CancelConnection();
+                                                     RescanEvenIfConnectedNextTime = true;
+                                                     return Observable.Return<IGattCharacteristic>(null);
+                                                 });
 
                 if (characteristic == null)
                 {
@@ -641,7 +649,12 @@ namespace Happimeter.Services
 
         public async Task EnableNotificationsFor(IGattCharacteristic characteristic)
         {
-            var res = await characteristic.EnableNotifications();
+            await Task.Delay(1000);
+            var res = await characteristic.EnableNotifications().Catch((Exception arg) =>
+            {
+                Console.WriteLine(arg.Message);
+                return Observable.Return<bool>(true);
+            });
             if (!res)
             {
                 throw new Exception("Could not enable Notifications");
