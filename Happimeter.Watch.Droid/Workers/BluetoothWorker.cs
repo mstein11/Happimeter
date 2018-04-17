@@ -465,11 +465,11 @@ namespace Happimeter.Watch.Droid.Workers
             {
                 if (value.SequenceEqual(BluetoothGattDescriptor.EnableNotificationValue))
                 {
-                    if (!Worker.SubscribedDevices.ContainsKey(device.Address))
+                    if (Worker.SubscribedDevices.ContainsKey(device.Address))
                     {
-                        Worker.SubscribedDevices.Add(device.Address, device);
+                        Worker.SubscribedDevices.Remove(device.Address);
                     }
-
+                    Worker.SubscribedDevices.Add(device.Address, device);
                 }
                 else if (value.SequenceEqual(BluetoothGattDescriptor.DisableNotificationValue))
                 {

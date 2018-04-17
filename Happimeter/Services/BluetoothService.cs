@@ -120,14 +120,6 @@ namespace Happimeter.Services
             obs.Subscribe(success =>
             {
                 PairedDevice = device;
-                if (PairedDevice.Device.IsPairingAvailable() && false)
-                {
-                    Console.WriteLine("Pairing is available");
-                    PairedDevice.Device.PairingRequest().Subscribe(result =>
-                    {
-                        Console.WriteLine("Paired: " + result);
-                    });
-                }
                 PairedDevice.Device.WhenStatusChanged().Subscribe(status =>
                 {
                     Console.WriteLine("Status changed: " + status);
@@ -139,12 +131,13 @@ namespace Happimeter.Services
                 });
             });
 
+            /*
             CrossBleAdapter.Current.WhenDeviceStateRestored().Subscribe(restoredDevice =>
             {
                 Console.WriteLine("RESTORED DEVICE");
                 // will return the device(s) that are reconnecting
             });
-
+            */
             return obs;
         }
 
@@ -156,13 +149,14 @@ namespace Happimeter.Services
         /// <returns>The connected device.</returns>
         private async Task<IDevice> GetConnectedDevice()
         {
+
             var connectedDevices = CrossBleAdapter.Current.GetConnectedDevices();
 
             //todo: not be reliable on name
             if (connectedDevices.Any(x => x.Name?.Contains("Happimeter") ?? false))
             {
                 var innerDevice = connectedDevices.FirstOrDefault(x => x.Name.Contains("Happimeter"));
-                if (innerDevice.Status == ConnectionStatus.Connected && RescanEvenIfConnectedNextTime)
+                if (innerDevice.Status == ConnectionStatus.Connected && !RescanEvenIfConnectedNextTime)
                 {
                     Console.WriteLine("Device already connected");
                     return innerDevice;
@@ -647,20 +641,32 @@ namespace Happimeter.Services
             return NotificationSubject as IObservable<(string, string)>;
         }
 
-        public async Task EnableNotificationsFor(IGattCharacteristic characteristic)
+
+        private Dictionary<Guid, IDisposable> NotificationSubscription = new Dictionary<Guid, IDisposable>();
+        public async Task<bool> EnableNotificationsFor(IGattCharacteristic characteristic)
         {
             await Task.Delay(1000);
-            var res = await characteristic.EnableNotifications().Catch((Exception arg) =>
+            var res = await characteristic.EnableNotifications().Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds)).Catch((Exception arg) =>
             {
                 Console.WriteLine(arg.Message);
-                return Observable.Return<bool>(true);
+                return Observable.Return<bool>(false);
             });
             if (!res)
             {
-                throw new Exception("Could not enable Notifications");
+                //todo:implement
+                return false;
             }
             WriteReceiverContext context = null;
-            characteristic.WhenNotificationReceived().Subscribe(result =>
+
+            //make sure we have only one WhenNotificationReceived by releasing old subscriptions
+            if (NotificationSubscription.ContainsKey(characteristic.Uuid))
+            {
+                var oldSubscription = NotificationSubscription[characteristic.Uuid];
+                oldSubscription.Dispose();
+                NotificationSubscription.Remove(characteristic.Uuid);
+            }
+
+            var subscription = characteristic.WhenNotificationReceived().Subscribe(result =>
             {
                 if (result.Data == null)
                 {
@@ -685,6 +691,8 @@ namespace Happimeter.Services
                     NotificationSubject.OnNext((name, json));
                 }
             });
+            NotificationSubscription.Add(characteristic.Uuid, subscription);
+            return true;
         }
     }
 }

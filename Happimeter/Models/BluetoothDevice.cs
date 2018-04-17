@@ -49,13 +49,14 @@ namespace Happimeter.Models
             {
 
                 AutoConnect = false,
-                //Priority = ConnectionPriority.High
+                Priority = ConnectionPriority.High
             });
             connection.Subscribe(res =>
             {
                 InitializedReplaySubject.OnNext(true);
             }, error =>
             {
+                Debug.WriteLine(error.Message);
                 //InitializedReplaySubject.OnError(new Exception("Exception while establishing connection to device"));
             });
 

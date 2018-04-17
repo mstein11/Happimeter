@@ -106,16 +106,16 @@ namespace Happimeter.Core.Helper
         {
             var random = new Random();
             var randNumber = random.Next(0, 120) - 60;
-            var nextTime = DateTime.UtcNow.AddMinutes(120 + randNumber).ToLocalTime();
+            var nextTime = DateTime.UtcNow.ToLocalTime().AddMinutes(120 + randNumber);
 
 
             if (nextTime.Hour < 10)
             {
-                nextTime = DateTime.UtcNow.Date.ToLocalTime().AddHours(10);
+                nextTime = nextTime.Date.AddHours(10);
             }
             else if (nextTime.Hour >= 22)
             {
-                nextTime = DateTime.UtcNow.Date.ToLocalTime().AddDays(1).AddHours(10);
+                nextTime = nextTime.Date.AddDays(1).AddHours(10);
             }
 
             return nextTime;

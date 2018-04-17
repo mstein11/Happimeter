@@ -49,11 +49,17 @@ namespace Happimeter.Models
                 OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.IsBusy, null);
                 return Observable.Return<object>(null);
             }
+            OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.Connecting, null);
             IsBusyConnecting = true;
             var connection = base.Connect();
             WhenDeviceReady().Timeout(TimeSpan.FromSeconds(15)).Catch((Exception arg) =>
             {
                 OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorOnBtConnection, null);
+                IsBusyConnecting = false;
+                if (Device.Status == ConnectionStatus.Connected)
+                {
+                    Device.CancelConnection();
+                }
                 Console.WriteLine(arg.Message);
                 return Observable.Return<bool>(false);
             }).Take(1).Subscribe(success =>
@@ -61,19 +67,51 @@ namespace Happimeter.Models
                 if (!success)
                 {
                     IsBusyConnecting = false;
+                    if (Device.Status == ConnectionStatus.Connected)
+                    {
+                        Device.CancelConnection();
+                    }
+                    OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorOnBtConnection, null);
                     return;
                 }
 
                 OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.BtConnected, null);
                 try
                 {
-                    Device.WhenAnyCharacteristicDiscovered().Where(x => x.Uuid == AuthCharacteristic).Take(1).Subscribe(async characteristic =>
+                    Device.WhenAnyCharacteristicDiscovered().Where(x => x.Uuid == AuthCharacteristic)
+                          .Timeout(TimeSpan.FromSeconds(15))
+                          .Catch((Exception e) =>
+                          {
+                              if (Device.Status == ConnectionStatus.Connected)
+                              {
+                                  Device.CancelConnection();
+                              }
+                              IsBusyConnecting = false;
+                              return Observable.Return<IGattCharacteristic>(null);
+                          })
+                          .Take(1)
+                          .Subscribe(async characteristic =>
                     {
+                        if (characteristic == null)
+                        {
+                            OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorOnAuthCharacteristicDiscovered, null);
+                            return;
+                        }
                         Debug.WriteLine("Found our AuthCharacteristic");
                         OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.AuthCharacteristicDiscovered, null);
 
                         var btService = ServiceLocator.Instance.Get<IBluetoothService>();
-                        await btService.EnableNotificationsFor(characteristic);
+                        var result = await btService.EnableNotificationsFor(characteristic);
+                        if (!result)
+                        {
+                            OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorOnFirstWrite, null);
+                            if (Device.Status == ConnectionStatus.Connected)
+                            {
+                                Device.CancelConnection();
+                            }
+                            IsBusyConnecting = false;
+                            return;
+                        }
                         var deviceName = ServiceLocator.Instance.Get<IDeviceInformationService>().GetDeviceName();
 
                         var writeResult = await btService.WriteAsync(characteristic, new AuthFirstMessage(deviceName));
@@ -81,6 +119,10 @@ namespace Happimeter.Models
                         {
                             //we got an error here
                             OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.ErrorOnFirstWrite, null);
+                            if (Device.Status == ConnectionStatus.Connected)
+                            {
+                                Device.CancelConnection();
+                            }
                             IsBusyConnecting = false;
                             return;
                         }
@@ -99,6 +141,10 @@ namespace Happimeter.Models
                         if (notification.Item2 == null)
                         {
                             OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.NotificationTimeout, null);
+                            if (Device.Status == ConnectionStatus.Connected)
+                            {
+                                Device.CancelConnection();
+                            }
                             IsBusyConnecting = false;
                             return;
                         }
@@ -106,6 +152,10 @@ namespace Happimeter.Models
                         if (!message.Accepted)
                         {
                             OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.UserDeclined, null);
+                            if (Device.Status == ConnectionStatus.Connected)
+                            {
+                                Device.CancelConnection();
+                            }
                             IsBusyConnecting = false;
                             return;
                         }
@@ -140,7 +190,7 @@ namespace Happimeter.Models
                             PhoneOs = "Android"
                         };
                         ServiceLocator.Instance.Get<ISharedDatabaseContext>().Add(paring);
-
+                        IsBusyConnecting = false;
                         //the default after pairing is, that we have battery safer mode enabled.
                         ServiceLocator.Instance.Get<IConfigService>().SetBatterySaferMeasurementMode();
                         //Lets wait for his beacon signal

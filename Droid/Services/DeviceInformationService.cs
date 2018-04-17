@@ -5,6 +5,8 @@ using Android.Content;
 using Android.OS;
 using Happimeter.Interfaces;
 using System.Diagnostics;
+using Plugin.BluetoothLE;
+using Android.Bluetooth;
 
 namespace Happimeter.Droid.Services
 {

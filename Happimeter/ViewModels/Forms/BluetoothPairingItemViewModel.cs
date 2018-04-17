@@ -69,6 +69,9 @@ namespace Happimeter.ViewModels.Forms
                 case AndroidWatchConnectingStates.UserDeclined:
                     DisplayIndication("User Declined", 2000);
                     break;
+                case AndroidWatchConnectingStates.IsBusy:
+                    DisplayIndication("Busy, try again or restart app", 2000);
+                    break;
                 case AndroidWatchConnectingStates.SecondWriteSuccessfull:
                     DisplayIndication("Wrote twice");
                     break;
@@ -76,7 +79,7 @@ namespace Happimeter.ViewModels.Forms
                     DisplayIndication("Pairing successful", 2000);
                     break;
                 case AndroidWatchConnectingStates.ErrorOnBtConnection:
-                    DisplayIndication("Error: Device not in Range?", 2000);
+                    DisplayIndication("Not in range or restart phone", 2000);
                     break;
                 case AndroidWatchConnectingStates.ErrorOnAuthCharacteristicDiscovered:
                     DisplayIndication("Error: Restart App on Watch?", 2000);

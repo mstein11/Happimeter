@@ -266,6 +266,7 @@
     <Compile Include="Activities\SignInActivity.cs" />
     <Compile Include="Services\NativeNavigationService.cs" />
     <Compile Include="Renderers\MyButtonRenderer.cs" />
+    <Compile Include="Helpers\IDeviceExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\AboutAssets.txt" />
