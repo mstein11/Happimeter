@@ -45,10 +45,10 @@ namespace Happimeter.Models
             //var tmp3 = CrossBleAdapter.Current.GetPairedDevices();
             //var tmp4 = CrossBleAdapter.AndroidOperationPause;
             //CrossBleAdapter.AndroidOperationPause = CrossBleAdapter.AndroidOperationPause.Value.Add(TimeSpan.FromMilliseconds(2000));
-            var connection = Device.Connect(new GattConnectionConfig
+            var connection = Device.ConnectWait(new GattConnectionConfig
             {
 
-                AutoConnect = false,
+                AndroidAutoConnect = false,
                 Priority = ConnectionPriority.High
             });
             connection.Subscribe(res =>

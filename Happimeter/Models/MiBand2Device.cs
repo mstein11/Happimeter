@@ -33,11 +33,13 @@ namespace Happimeter.Models
 
         public override IObservable<object> Connect()
         {
-            var connection = Device.Connect();
+            var connection = Device.ConnectWait();
 
-            connection.Subscribe(emptyObj => {
+            connection.Subscribe(emptyObj =>
+            {
 
-                Device.WhenAnyCharacteristicDiscovered().Subscribe(anyDis => {
+                Device.WhenAnyCharacteristicDiscovered().Subscribe(anyDis =>
+                {
                     Debug.WriteLine("Characteristic UUid: " + anyDis.Uuid.ToString() + " Service UUid " + anyDis.Service.Uuid + " Service Descr: " + anyDis.Service.Description);
                     if (anyDis.Uuid == MiAuthCharacteristic)
                     {
@@ -50,7 +52,8 @@ namespace Happimeter.Models
                         }
                     }
 
-                    if(!Characteristics.ContainsKey(anyDis.Uuid)) {
+                    if (!Characteristics.ContainsKey(anyDis.Uuid))
+                    {
                         Characteristics.Add(anyDis.Uuid, anyDis);
                     }
                 });
@@ -64,39 +67,46 @@ namespace Happimeter.Models
             return InitializedReplaySubject.AsObservable();
         }
 
-        public override void SendNotification() {
+        public override void SendNotification()
+        {
             var notificationCharacteristic = Characteristics[NotificationCharacteristic];
 
             var testString = System.Text.Encoding.ASCII.GetBytes("Test"); //shoud be 84, 101, 115, 116
             var moodString = System.Text.Encoding.ASCII.GetBytes("Mood?");
 
-            notificationCharacteristic.Write(new byte[] { 5, 1 }.Concat(moodString).ToArray()).Subscribe(res => {
+            notificationCharacteristic.Write(new byte[] { 5, 1 }.Concat(moodString).ToArray()).Subscribe(res =>
+            {
                 Debug.WriteLine("Send Sms");
             });
         }
 
-        public void QueryUserMood() {
+        public void QueryUserMood()
+        {
             var moodQuestion = System.Text.Encoding.ASCII.GetBytes("Mood?");
             var activationQuestion = System.Text.Encoding.ASCII.GetBytes("Activation?");
 
             Device.WhenAnyCharacteristicDiscovered()
                   .Where(charac => { return charac.Uuid == NotificationCharacteristic; })
-                  .Subscribe(charac => {
+                  .Subscribe(charac =>
+                  {
 
-                charac.Write(SmsNotificationByte.Concat(moodQuestion).ToArray()).Subscribe();
-                Device.WhenAnyCharacteristicDiscovered()
-                      .Where(buttonCharac => { return charac.Uuid == ButtonTouch; })
-                      .Subscribe(buttonCharac => {
-                    buttonCharac.EnableNotifications();
-                    buttonCharac.WhenNotificationReceived().Subscribe(noti => {
-                        
-                    });
-                });
-                
-            });
+                      charac.Write(SmsNotificationByte.Concat(moodQuestion).ToArray()).Subscribe();
+                      Device.WhenAnyCharacteristicDiscovered()
+                            .Where(buttonCharac => { return charac.Uuid == ButtonTouch; })
+                            .Subscribe(buttonCharac =>
+                            {
+                                buttonCharac.EnableNotifications();
+                                buttonCharac.WhenNotificationReceived().Subscribe(noti =>
+                                {
+
+                                });
+                            });
+
+                  });
         }
 
-        private void AuthMiBand2() {
+        private void AuthMiBand2()
+        {
             var device = Device;
 
             var authCharacteristic = Characteristics[MiAuthCharacteristic];
@@ -106,12 +116,14 @@ namespace Happimeter.Models
 
             //tell Miband about our with to authenticate
             var byteArr = new byte[] { 0x01, 0x8 }.Concat(MiBandSecret).ToArray();
-            authCharacteristic.Write(byteArr).Subscribe(writeREsponse => {
+            authCharacteristic.Write(byteArr).Subscribe(writeREsponse =>
+            {
                 Debug.WriteLine("AUTH: wrote first Time");
             });
 
             //listen to the notifications
-            authCharacteristic.WhenNotificationReceived().Subscribe(notification => {
+            authCharacteristic.WhenNotificationReceived().Subscribe(notification =>
+            {
                 if (notification.Data == null)
                 {
                     //notification has no data, continue
@@ -123,7 +135,8 @@ namespace Happimeter.Models
                     //MIband has accept our first write attempt
 
                     //don't really know the meaning of the bytes we send
-                    notification.Characteristic.Write(new byte[] { 0x02, 0x8 }).Subscribe(notiRes => {
+                    notification.Characteristic.Write(new byte[] { 0x02, 0x8 }).Subscribe(notiRes =>
+                    {
                         //we wrote for the second time and the response should arrive in the method above
                         Debug.WriteLine("Wrote second time");
                     });
@@ -145,7 +158,8 @@ namespace Happimeter.Models
                         var encrypted = encrypt.TransformFinalBlock(messageToEncrypt.ToArray(), 0, 16);
                         var toSend = new byte[] { 0x03, 0x8 }.Concat(encrypted).ToArray();
 
-                        notification.Characteristic.Write(toSend).Subscribe(x => {
+                        notification.Characteristic.Write(toSend).Subscribe(x =>
+                        {
                             Debug.WriteLine("Wrote last message");
                             //SendSms(device);
                             InitializedReplaySubject.OnNext(true);

@@ -29,7 +29,6 @@
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
     <AotAssemblies>false</AotAssemblies>
     <EnableLLVM>false</EnableLLVM>
   </PropertyGroup>
@@ -42,7 +41,6 @@
     <WarningLevel>4</WarningLevel>
     <AndroidManagedSymbols>true</AndroidManagedSymbols>
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
-    <AndroidLinkMode>None</AndroidLinkMode>
     <EnableProguard>true</EnableProguard>
   </PropertyGroup>
   <ItemGroup>
@@ -240,11 +238,13 @@
     <Reference Include="Xfx.Controls.Droid">
       <HintPath>..\packages\Xfx.Controls.1.1.3\lib\MonoAndroid\Xfx.Controls.Droid.dll</HintPath>
     </Reference>
-    <Reference Include="Plugin.BluetoothLE.Abstractions">
-      <HintPath>..\packages\Plugin.BluetoothLE.5.3.5\lib\MonoAndroid10\Plugin.BluetoothLE.Abstractions.dll</HintPath>
+    <Reference Include="Acr.Core">
+      <HintPath>..\packages\Acr.Core.1.2.2\lib\monoandroid70\Acr.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Java.Interop" />
+    <Reference Include="System.Runtime" />
     <Reference Include="Plugin.BluetoothLE">
-      <HintPath>..\packages\Plugin.BluetoothLE.5.3.5\lib\MonoAndroid10\Plugin.BluetoothLE.dll</HintPath>
+      <HintPath>..\packages\Plugin.BluetoothLE.6.0.0-beta4\lib\monoandroid70\Plugin.BluetoothLE.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -188,10 +188,11 @@ namespace Happimeter.Services
             }
 
             bool connectionResult = true;
-            await device.Connect(
+            await device.ConnectWait(
                 new GattConnectionConfig
                 {
-                    AutoConnect = false,
+                    AndroidAutoConnect = false,
+                    //AutoConnect = false,
                     Priority = ConnectionPriority.High
                 })
                 .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
@@ -468,7 +469,7 @@ namespace Happimeter.Services
             var nullByteSeq = new byte[3] { 0x00, 0x00, 0x00 };
             var reseted = await characteristic.Write(nullByteSeq)
                 .Timeout(TimeSpan.FromSeconds(5))
-                .Catch<CharacteristicResult, Exception>((arg) =>
+                .Catch<CharacteristicGattResult, Exception>((arg) =>
                 {
                     if (arg is TimeoutException)
                     {
@@ -478,7 +479,7 @@ namespace Happimeter.Services
                     {
                         Console.WriteLine("Got error while writing reset!");
                     }
-                    return Observable.Return<CharacteristicResult>(null);
+                    return Observable.Return<CharacteristicGattResult>(null);
                 });
             if (reseted == null)
             {
@@ -490,7 +491,7 @@ namespace Happimeter.Services
             var header = BluetoothHelper.GetMessageHeader(message);
             var written = await characteristic.Write(header)
                 .Timeout(TimeSpan.FromSeconds(5))
-                .Catch<CharacteristicResult, Exception>((arg) =>
+                                              .Catch<CharacteristicGattResult, Exception>((arg) =>
                 {
                     if (arg is TimeoutException)
                     {
@@ -500,7 +501,7 @@ namespace Happimeter.Services
                     {
                         Console.WriteLine("Got error on write, while writing header");
                     }
-                    return Observable.Return<CharacteristicResult>(null);
+                    return Observable.Return<CharacteristicGattResult>(null);
                 });
             if (written == null)
             {
@@ -516,7 +517,7 @@ namespace Happimeter.Services
                 var toSend = messageJson.Skip(bytesSentCounter).Take(mtu).ToArray();
                 var sent = await characteristic.Write(toSend)
                    .Timeout(TimeSpan.FromSeconds(8))
-                   .Catch<CharacteristicResult, Exception>((arg) =>
+                                               .Catch<CharacteristicGattResult, Exception>((arg) =>
                    {
                        if (arg is TimeoutException)
                        {
@@ -526,7 +527,7 @@ namespace Happimeter.Services
                        {
                            Console.WriteLine("Got error on write, while transfering data");
                        }
-                       return Observable.Return<CharacteristicResult>(null);
+                       return Observable.Return<CharacteristicGattResult>(null);
                    });
                 if (sent == null)
                 {
@@ -551,7 +552,7 @@ namespace Happimeter.Services
             //from the first read request we assume to get an header, which contains information what and how much is sent
             var headerResult = await characteristic.Read()
                     .Timeout(TimeSpan.FromSeconds(10))
-                    .Catch<CharacteristicResult, Exception>((arg) =>
+                                                   .Catch<CharacteristicGattResult, Exception>((arg) =>
                     {
                         if (arg is TimeoutException)
                         {
@@ -561,7 +562,7 @@ namespace Happimeter.Services
                         {
                             Console.WriteLine("Got error while reading header!");
                         }
-                        return Observable.Return<CharacteristicResult>(null);
+                        return Observable.Return<CharacteristicGattResult>(null);
                     });
             if (headerResult == null)
             {
@@ -574,7 +575,7 @@ namespace Happimeter.Services
                 //here we receive the actual data until we got the complete message
                 var nextBytes = await characteristic.Read()
                     .Timeout(TimeSpan.FromSeconds(10))
-                    .Catch<CharacteristicResult, Exception>((arg) =>
+                    .Catch<CharacteristicGattResult, Exception>((arg) =>
                     {
                         if (arg is TimeoutException)
                         {
@@ -584,7 +585,7 @@ namespace Happimeter.Services
                         {
                             Console.WriteLine("Got error on reading data!");
                         }
-                        return Observable.Return<CharacteristicResult>(null);
+                        return Observable.Return<CharacteristicGattResult>(null);
                     });
                 if (nextBytes == null || nextBytes.Data.Length == 3 && nextBytes.Data.All(x => x == 0x00))
                 {
@@ -610,7 +611,7 @@ namespace Happimeter.Services
             {
                 await EnableNotificationsFor(characteristic);
             }
-            var notificationSubject = CharacteristicNotifiationSubjects[characteristic.Uuid.ToString()] as IObservable<CharacteristicResult>;
+            var notificationSubject = CharacteristicNotifiationSubjects[characteristic.Uuid.ToString()] as IObservable<CharacteristicGattResult>;
             var headerNotificationResult = await notificationSubject.FirstAsync();
             var context = new WriteReceiverContext(headerNotificationResult.Data);
             while (true)
@@ -633,7 +634,7 @@ namespace Happimeter.Services
             return context.GetMessageAsJson();
         }
 
-        private Dictionary<string, ReplaySubject<CharacteristicResult>> CharacteristicNotifiationSubjects = new Dictionary<string, ReplaySubject<CharacteristicResult>>();
+        private Dictionary<string, ReplaySubject<CharacteristicGattResult>> CharacteristicNotifiationSubjects = new Dictionary<string, ReplaySubject<CharacteristicGattResult>>();
         //first string is message name, second string is message json
         private ReplaySubject<(string, string)> NotificationSubject = new ReplaySubject<(string, string)>(TimeSpan.FromSeconds(2));
         public IObservable<(string, string)> WhenNotificationReceived()
@@ -649,9 +650,9 @@ namespace Happimeter.Services
             var res = await characteristic.EnableNotifications().Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds)).Catch((Exception arg) =>
             {
                 Console.WriteLine(arg.Message);
-                return Observable.Return<bool>(false);
+                return Observable.Return<CharacteristicGattResult>(null);
             });
-            if (!res)
+            if (res == null)
             {
                 //todo:implement
                 return false;

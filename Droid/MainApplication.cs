@@ -7,6 +7,7 @@ using Happimeter.DependencyInjection;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using Plugin.BluetoothLE;
 using Plugin.CurrentActivity;
 using Xfx;
 
