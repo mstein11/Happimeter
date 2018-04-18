@@ -11,7 +11,7 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
         void NavigateToPairingRequestPage(string deviceName);
         int? GetMeasurementMode();
         bool IsContinousMeasurementMode();
-        void SetBatterySaferMeasurementMode(int measurementInterval = 600);
+        void SetBatterySaferMeasurementMode(int measurementInterval = 300);
         void SetContinousMeasurementMode();
     }
 }

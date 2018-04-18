@@ -61,7 +61,7 @@ namespace Happimeter.Watch.Droid.Workers
         public void Stop()
         {
             IsRunning = false;
-            _cancelationTokenSource.Cancel();
+            _cancelationTokenSource?.Cancel();
         }
 
         private async Task RunAsync(int? seconds = null)

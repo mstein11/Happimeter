@@ -58,7 +58,7 @@ namespace Happimeter.ViewModels.Forms
                 PushMeasurementModeToWatchText = "Loading...";
                 PushMeasurementModeToWatchIsEnabled = false;
 
-                int? valueToSend = ContinousModeIsOn ? null : (int?)600;
+                int? valueToSend = ContinousModeIsOn ? null : (int?)300;
 
                 ServiceLocator.Instance.Get<IBluetoothService>().SendMeasurementMode(valueToSend, (connectionUpdate) =>
                 {
