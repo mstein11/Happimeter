@@ -15,6 +15,7 @@ using Happimeter.Droid.Activities;
 using Happimeter.Droid.Helpers;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
+using Plugin.Threading;
 
 namespace Happimeter.Droid.Fragments
 {

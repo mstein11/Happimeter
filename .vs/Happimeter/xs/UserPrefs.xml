@@ -1,8 +1,8 @@
 ﻿<Properties StartupConfiguration="{A206867A-1792-4275-9C38-842623227972}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Happimeter.Watch.Droid/Workers/BluetoothWorker.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Droid/Fragments/FragmentContainer.cs">
     <Files>
       <File FileName="Happimeter/Views/BluetoothMainPage.xaml" Line="28" Column="72" />
-      <File FileName="Happimeter/Services/BluetoothService.cs" Line="654" Column="1" />
+      <File FileName="Happimeter/Services/BluetoothService.cs" Line="636" Column="50" />
       <File FileName="Happimeter.Core/Database/SharedDatabaseContext.cs" Line="67" Column="54" />
       <File FileName="Happimeter.Core/Database/GenericQuestion.cs" Line="8" Column="22" />
       <File FileName="Happimeter.Core/Database/ISharedDatabaseContext.cs" Line="35" Column="2" />
@@ -13,7 +13,7 @@
       <File FileName="Happimeter.Core/Database/SensorMeasurement.cs" Line="22" Column="31" />
       <File FileName="Happimeter.Core/Database/SensorItemMeasurement.cs" Line="34" Column="1" />
       <File FileName="Happimeter/Models/BluetoothDevice.cs" Line="59" Column="1" />
-      <File FileName="Happimeter/Models/AndroidWatch.cs" Line="154" Column="1" />
+      <File FileName="Happimeter/Models/AndroidWatch.cs" Line="95" Column="1" />
       <File FileName="Happimeter.Watch.Droid/BroadcastReceiver/SurveyAlarmBroadcastReceiver.cs" Line="31" Column="54" />
       <File FileName="Happimeter.Core/Helper/UtilHelper.cs" Line="106" Column="1" />
       <File FileName="Happimeter.Core/Helper/BluetoothHelper.cs" Line="73" Column="1" />
@@ -22,7 +22,12 @@
       <File FileName="Happimeter/Interfaces/IBluetoothService.cs" Line="23" Column="20" />
       <File FileName="Source Not Available" />
       <File FileName="Happimeter/ViewModels/Forms/BluetoothPairingItemViewModel.cs" Line="100" Column="14" />
-      <File FileName="Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" Line="462" Column="1" />
+      <File FileName="Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" Line="489" Column="14" />
+      <File FileName="Happimeter/Models/MiBand2Device.cs" Line="1" Column="1" />
+      <File FileName="Droid/MainApplication.cs" Line="1" Column="1" />
+      <File FileName="Happimeter/App.cs" Line="62" Column="1" />
+      <File FileName="iOS/AppDelegate.cs" Line="43" Column="28" />
+      <File FileName="Droid/Fragments/FragmentContainer.cs" Line="85" Column="48" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
@@ -37,13 +42,9 @@
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Models/AndroidWatch.cs" relfile="Happimeter/Models/AndroidWatch.cs" line="204" column="1" />
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Models/AndroidWatch.cs" relfile="Happimeter/Models/AndroidWatch.cs" line="205" column="1" />
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Models/BluetoothDevice.cs" relfile="Happimeter/Models/BluetoothDevice.cs" line="59" column="1" />
-      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService.cs" relfile="Happimeter/Services/BluetoothService.cs" line="649" column="1" />
-      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService.cs" relfile="Happimeter/Services/BluetoothService.cs" line="654" column="1" />
-      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" relfile="Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" line="466" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.ItemProperties.Happimeter.Watch.Droid PreferredExecutionTarget="Android.SelectDevice" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.ItemProperties.Happimeter.iOS PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.63A75A00-18A6-4043-9869-2D3DD3D3B5C7" />
   <MultiItemStartupConfigurations />
 </Properties>
