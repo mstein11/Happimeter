@@ -19,39 +19,48 @@ namespace Happimeter.Watch.Droid.Services
         public static ConcurrentDictionary<int, ConcurrentBag<int>> Measures = new ConcurrentDictionary<int, ConcurrentBag<int>>();
         protected override void OnHandleIntent(Intent intent)
         {
-            var result = ActivityRecognitionResult.ExtractResult(intent);
-
-            IList<DetectedActivity> detectedActivities = result.ProbableActivities;
-
-            for (var i = 0; i < 9; i++)
+            //ugly way to prevent a multithreading issue here.
+            //if the measurement worker cleanses The Measures dict after ContainsKey and before Add, the exception is thrown
+            try
             {
-                if (i == 5 || i == 6)
+                var result = ActivityRecognitionResult.ExtractResult(intent);
+
+                IList<DetectedActivity> detectedActivities = result.ProbableActivities;
+
+                for (var i = 0; i < 9; i++)
                 {
-                    //5 is tilting and 6 shouldn't occur, we skip for those activities
-                    continue;
-                }
-                if (!Measures.ContainsKey(i))
-                {
-                    var res = Measures.TryAdd(i, new ConcurrentBag<int>());
-                    if (!res)
+                    if (i == 5 || i == 6)
                     {
+                        //5 is tilting and 6 shouldn't occur, we skip for those activities
                         continue;
                     }
+                    if (!Measures.ContainsKey(i))
+                    {
+                        var res = Measures.TryAdd(i, new ConcurrentBag<int>());
+                        if (!res)
+                        {
+                            continue;
+                        }
+                    }
+                    if (!detectedActivities.Any(x => x.Type == i))
+                    {
+                        Measures[i].Add(0);
+                    }
+                    else
+                    {
+                        Measures[i].Add(detectedActivities.FirstOrDefault(x => x.Type == i).Confidence);
+                    }
                 }
-                if (!detectedActivities.Any(x => x.Type == i))
+
+                Console.WriteLine("activities detected");
+                foreach (DetectedActivity da in detectedActivities)
                 {
-                    Measures[i].Add(0);
-                }
-                else
-                {
-                    Measures[i].Add(detectedActivities.FirstOrDefault(x => x.Type == i).Confidence);
+                    Console.WriteLine($"activity: {da.Type} with string: {da.ToString()}: with confidence: {da.Confidence}");
                 }
             }
-
-            Console.WriteLine("activities detected");
-            foreach (DetectedActivity da in detectedActivities)
+            catch (KeyNotFoundException)
             {
-                Console.WriteLine($"activity: {da.Type} with string: {da.ToString()}: with confidence: {da.Confidence}");
+
             }
         }
 

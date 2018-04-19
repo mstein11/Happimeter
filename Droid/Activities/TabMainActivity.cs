@@ -33,7 +33,7 @@ namespace Happimeter.Droid.Activities
     {
 
         protected override int LayoutResource => Resource.Layout.tab_main_activity;
-         
+
         public static TabMainActivity Instance = null;
 
         ViewPager pager;
@@ -72,14 +72,22 @@ namespace Happimeter.Droid.Activities
             var currentFrag = adapter.FragmentsWithPosition[pager.CurrentItem] as OnBackPressListener;
             if (currentFrag != null)
             {
-                currentFrag.OnBackPressed();
+                var didHandle = currentFrag.OnBackPressed();
+                if (!didHandle)
+                {
+                    base.OnBackPressed();
+                }
+            }
+            else
+            {
+                base.OnBackPressed();
             }
         }
     }
 
     class TabsAdapter : FragmentStatePagerAdapter
     {
-        
+
         string[] titles;
         public override int Count => titles.Length;
         public Dictionary<int, Android.Support.V4.App.Fragment> FragmentsWithPosition = new Dictionary<int, Android.Support.V4.App.Fragment>();
@@ -94,21 +102,22 @@ namespace Happimeter.Droid.Activities
 
         public override Android.Support.V4.App.Fragment GetItem(int position)
         {
-            if (!FragmentsWithPosition.Any()) {
+            if (!FragmentsWithPosition.Any())
+            {
                 ServiceLocator.Instance.Get<ISharedDatabaseContext>();
                 var initSurvey = new InitializeSurveyView();
                 var overviewPage = new SurveyOverviewListPage();
                 ContentPage btPage = null;
                 var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
                 var hasPairing = context.Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive) != null;
-                                    
+
                 if (hasPairing)
                 {
                     btPage = new BluetoothMainPage();
                 }
                 else
                 {
-                    btPage = new BluetoothPairingPage();    
+                    btPage = new BluetoothPairingPage();
                 }
 
                 var settingPage = new SettingsPage();
@@ -117,7 +126,8 @@ namespace Happimeter.Droid.Activities
                 var fragmentContainer1 = new Fragments.FragmentContainer(initSurvey);
 
                 //var initSurveyFrag = initSurvey.CreateSupportFragment(TabMainActivity.Instance);
-                initSurvey.StartSurveyClickedEvent += (sender, e) => {
+                initSurvey.StartSurveyClickedEvent += (sender, e) =>
+                {
                     var surveyPage = new SurveyPage();
                     fragmentContainer1.TransitionToPage(surveyPage, true);
                     EventHandler finishedSurveyHandler = null;
@@ -143,7 +153,8 @@ namespace Happimeter.Droid.Activities
 
                 EventHandler removePairingHandler = null;
                 EventHandler addPairingHandler = null;
-                removePairingHandler = (sender, e) => {
+                removePairingHandler = (sender, e) =>
+                {
                     var oldBtMainPage = fragmentContainer3.ChildPage;
                     var btPairingPage = new BluetoothPairingPage();
                     fragmentContainer3.TransitionToPage(btPairingPage);
@@ -154,7 +165,8 @@ namespace Happimeter.Droid.Activities
                     var oldVm = (oldBtMainPage.BindingContext as BluetoothMainPageViewModel);
                     oldVm.OnRemovedPairing -= removePairingHandler;
                 };
-                addPairingHandler = (sender, e) => {
+                addPairingHandler = (sender, e) =>
+                {
                     var oldBtPairingPage = fragmentContainer3.ChildPage;
                     var btMainPage = new BluetoothMainPage();
                     fragmentContainer3.TransitionToPage(btMainPage);
@@ -166,10 +178,13 @@ namespace Happimeter.Droid.Activities
                     oldVm.OnPairedDevice -= addPairingHandler;
                 };
 
-                if (hasPairing) {
+                if (hasPairing)
+                {
                     var vm = ((btPage as BluetoothMainPage).BindingContext as BluetoothMainPageViewModel);
                     vm.OnRemovedPairing += removePairingHandler;
-                } else {
+                }
+                else
+                {
                     var vm = ((btPage as BluetoothPairingPage).BindingContext as BluetoothPairingPageViewModel);
                     vm.OnPairedDevice += addPairingHandler;
                 }

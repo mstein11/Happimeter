@@ -14,7 +14,7 @@
                             <RowDefinition Height="*"></RowDefinition>
                         </Grid.RowDefinitions>
                         <Image Opacity="0.4" Source="happinessfactory.png" Aspect="AspectFill" />
-                        <Label Style="{StaticResource HeaderOnBackground}" Grid.Row="0" Text="Happimeter" />
+                        <Label Style="{StaticResource HeaderOnBackground}" Grid.Row="0" Text="Happimeter" VerticalOptions="CenterAndExpand" />
                     </Grid>
 
                 <StackLayout Padding="25, 25, 25, 50" Spacing="15" VerticalOptions="FillAndExpand">
