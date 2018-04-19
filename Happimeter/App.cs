@@ -48,13 +48,13 @@ namespace Happimeter
             {
                 ServiceLocator.Instance.Get<IBeaconWakeupService>().StartWakeupForBeacon();
             }
-            await DownloadPredictions();
+            await ServerSync();
         }
 
         public static async void AppResumed()
         {
             BluetoothAlertIfNeeded();
-            await DownloadPredictions();
+            await ServerSync();
         }
 
         public static void BluetoothAlertIfNeeded()
@@ -68,11 +68,12 @@ namespace Happimeter
             }
         }
 
-        public static async Task DownloadPredictions()
+        public static async Task ServerSync()
         {
             if (ServiceLocator.Instance.Get<IAccountStoreService>().IsAuthenticated())
             {
                 await ServiceLocator.Instance.Get<IPredictionService>().DownloadAndSavePrediction();
+                await ServiceLocator.Instance.Get<IProximityService>().DownloadAndSaveProximity();
             }
         }
 

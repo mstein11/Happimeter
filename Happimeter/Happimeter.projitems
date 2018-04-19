@@ -101,6 +101,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Controls\MyTabMenuItem.xaml.cs">
       <DependentUpon>MyTabMenuItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\GetProximityResultModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ProximityService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IProximityService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />

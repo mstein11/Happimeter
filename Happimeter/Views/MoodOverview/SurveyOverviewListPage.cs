@@ -6,6 +6,8 @@ using Xamarin.Forms;
 using Microcharts.Forms;
 using Happimeter.Views.Converters;
 using Happimeter.Core.Helpers;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Happimeter.Views.MoodOverview
 {
@@ -36,6 +38,23 @@ namespace Happimeter.Views.MoodOverview
             var vm = (SurveyOverviewViewModel)BindingContext;
             vm.RefreshData();
             SurveyListView.EndRefresh();
+        }
+
+        void Handle_ItemAppearing(object sender, Xamarin.Forms.ItemVisibilityEventArgs e)
+        {
+            var vm = (SurveyOverviewViewModel)BindingContext;
+            if (!vm.Items.Any() || SurveyListView.IsRefreshing)
+            {
+                return;
+            }
+
+            if (((SurveyOverviewItemViewModel)e.Item).Date == vm.Items.LastOrDefault().Date)
+            {
+                Task.Factory.StartNew(() =>
+                {
+                    vm.LoadMoreData();
+                });
+            }
         }
     }
 }

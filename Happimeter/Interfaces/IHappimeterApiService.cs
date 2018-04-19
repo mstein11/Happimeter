@@ -16,5 +16,6 @@ namespace Happimeter.Interfaces
         event EventHandler<SynchronizeDataEventArgs> UploadSensorStatusUpdate;
         Task<GetGenericQuestionApiResult> GetGenericQuestions();
         Task<GetPredictionsResultModel> GetPredictions();
+        Task<GetProximityResultModel> GetProximityData(DateTime since);
     }
 }

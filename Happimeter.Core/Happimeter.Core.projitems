@@ -44,6 +44,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\Bluetooth\SwitchMeasurementModeMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Database\PredictionEntry.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helper\SurveyHardcodedEnumeration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Database\ProximityEntry.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Models\" />

@@ -32,6 +32,7 @@ namespace Happimeter.Services
         private const string ApiPathPostSensorV2 = "/v2/sensors";
 
         private const string ApiPathPredictions = "/v1/classifier/prediction";
+        private const string ApiPathProximity = "/v1/proximity";
 
 
         private static string GetUrlForPath(string path)
@@ -439,6 +440,59 @@ namespace Happimeter.Services
             }
 
             return methodResult;
+        }
+
+        public async Task<GetProximityResultModel> GetProximityData(DateTime since)
+        {
+            var url = GetUrlForPath(ApiPathProximity);
+
+            url += $"/{since.ToString("yyyy-MM-dd HH:mm:ss")}";
+            var methodResult = new GetProximityResultModel();
+            HttpResponseMessage result = null;
+            try
+            {
+                result = await _restService.Get(url);
+            }
+            catch (Exception e) when (
+                e is HttpRequestException
+                || e is WebException
+            )
+            {
+                Debug.WriteLine(e.Message);
+                methodResult.ResultType = HappimeterApiResultInformation.NoInternet;
+                return methodResult;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+                Debug.WriteLine(e.GetType());
+                methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
+                return methodResult;
+            }
+            try
+            {
+                var stringResult = await result.Content.ReadAsStringAsync();
+                var proximity = Newtonsoft.Json.JsonConvert.DeserializeObject<GetProximityResultModel>(stringResult);
+                if (result.IsSuccessStatusCode && proximity.IsSuccess)
+                {
+                    methodResult = proximity;
+                    methodResult.ResultType = HappimeterApiResultInformation.Success;
+                }
+                else if (result.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    methodResult.ResultType = HappimeterApiResultInformation.AuthenticationError;
+                }
+                else
+                {
+                    methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
+                }
+                return methodResult;
+            }
+            catch (Exception)
+            {
+                methodResult.ResultType = HappimeterApiResultInformation.NoInternet;
+                return methodResult;
+            }
         }
 
         public async Task<GetPredictionsResultModel> GetPredictions()

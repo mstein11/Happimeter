@@ -8,7 +8,7 @@
     xmlns:converters="clr-namespace:Happimeter.Views.Converters"
     Title="Overview">
 	<ContentPage.Content>
-        <ListView x:Name="SurveyListView" RowHeight="150" ItemsSource="{Binding Items}" IsPullToRefreshEnabled="True" Refreshing="ListItems_Refreshing">
+        <ListView x:Name="SurveyListView" RowHeight="170" ItemsSource="{Binding Items}" IsPullToRefreshEnabled="True" Refreshing="ListItems_Refreshing" ItemAppearing="Handle_ItemAppearing">
             <ListView.Header>
                 <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Spacing="0">
                     <RelativeLayout HeightRequest="220">
@@ -84,18 +84,24 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
                             <Label Grid.Row="0" Text="{Binding Date, StringFormat='{0:MMMM dd, yyyy}'}" TextColor="Black" FontSize="18" />
-                            <StackLayout Grid.Row="1" Orientation="Horizontal" HorizontalOptions="StartAndExpand">
+                            <StackLayout Grid.Row="1" Orientation="Horizontal" HorizontalOptions="StartAndExpand" IsVisible="{Binding HasSurveyData}">
                                 <Label FontSize="12" Text="{Binding MinMood, StringFormat='Min: {0}'}"/>
                                 <Label FontSize="12" Text="{Binding MaxMood, StringFormat='Max: {0}'}"/>
                                 <Label FontSize="12" Text="{Binding AvgMood, StringFormat='Avg: {0:0.00}'}"/> 
                             </StackLayout>
-                            <StackLayout VerticalOptions="FillAndExpand" Padding="5" Grid.Row="2">
+                            <StackLayout VerticalOptions="FillAndExpand" Padding="5" Grid.Row="2" IsVisible="{Binding HasSurveyData}">
                                 <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Chart="{Binding MoodChart}" />
                             </StackLayout>
-                        
+                            <StackLayout VerticalOptions="FillAndExpand" Padding="5" Grid.Row="2" IsVisible="{Binding DoesNotHaveSurveyData}">
+                                <Label FontSize="16" TextColor="Silver" Text="No Survey Data Available" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"></Label>
+                            </StackLayout>
+                            <StackLayout Grid.Row="3" Orientation="Horizontal" HorizontalOptions="StartAndExpand">
+                                <Label FontSize="12" Text="{Binding CloseToPeople, StringFormat='{0} person(s) influenced your mood'}"></Label>
+                            </StackLayout>
                     </Grid> 
                 </ViewCell>
             </DataTemplate>

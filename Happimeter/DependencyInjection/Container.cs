@@ -21,6 +21,7 @@ namespace Happimeter.DependencyInjection
             ServiceLocator.Instance.Register<IConfigService, ConfigService>();
             ServiceLocator.Instance.Register<ILoggingService, LoggingService>();
             ServiceLocator.Instance.Register<IPredictionService, PredictionService>();
+            ServiceLocator.Instance.Register<IProximityService, ProximityService>();
         }
     }
 }

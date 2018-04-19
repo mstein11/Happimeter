@@ -15,6 +15,10 @@ namespace Happimeter.ViewModels.Forms
     public class SurveyOverviewViewModel : BaseViewModel
     {
         private List<SurveyMeasurement> _measurements;
+        private List<ProximityEntry> _proximity;
+
+
+        private DateTime LastDateLoaded = DateTime.UtcNow.Date;
 
         public int CurrentType = (int)Core.Helpers.SurveyHardcodedEnumeration.Pleasance;
 
@@ -158,7 +162,9 @@ namespace Happimeter.ViewModels.Forms
         public void RefreshData()
         {
             _measurements = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyData();
+            _proximity = ServiceLocator.Instance.Get<IProximityService>().GetProximityEntries();
             Items = new ObservableCollection<SurveyOverviewItemViewModel>();
+            LastDateLoaded = DateTime.UtcNow.Date;
             Initialize(CurrentType);
         }
 
@@ -203,14 +209,7 @@ namespace Happimeter.ViewModels.Forms
 
             NumberOfResponses = _measurements.Count;
             LastResponse = _measurements.OrderByDescending(x => x.Timestamp).FirstOrDefault()?.Timestamp.ToLocalTime() ?? new DateTime();
-
-            var groupedByDate = _measurements.GroupBy(x => x.Timestamp.Date).OrderByDescending(x => x.Key);
-
-            Items.Clear();
-            foreach (var group in groupedByDate)
-            {
-                Items.Add(new SurveyOverviewItemViewModel(group, type));
-            }
+            LoadMoreData();
         }
 
         private void SetActiveType(int type)
@@ -218,6 +217,30 @@ namespace Happimeter.ViewModels.Forms
 
             CurrentType = type;
             CurrentTypeName = ServiceLocator.Instance.Get<ISharedDatabaseContext>().Get<GenericQuestion>(x => x.QuestionId == type)?.QuestionShort ?? "";
+        }
+
+        public void LoadMoreData()
+        {
+            var groupedByDate = _measurements.GroupBy(x => x.Timestamp.Date).OrderByDescending(x => x.Key);
+            var groupedByDateProximity = _proximity.GroupBy(x => x.Timestamp.Date).OrderByDescending(x => x.Key);
+
+            var days = new List<DateTime>();
+            for (var i = 0; i < 14; i++)
+            {
+                days.Add(LastDateLoaded.Subtract(TimeSpan.FromDays(i)).Date);
+            }
+            LastDateLoaded = days.LastOrDefault();
+            if (LastDateLoaded == default(DateTime))
+            {
+                return;
+            }
+
+            foreach (var day in days)
+            {
+                var surveysOnDay = groupedByDate.FirstOrDefault(x => x.Key == day)?.ToList() ?? new List<SurveyMeasurement>();
+                var proximityOnDay = groupedByDateProximity.FirstOrDefault(x => x.Key == day)?.ToList() ?? new List<ProximityEntry>();
+                Items.Add(new SurveyOverviewItemViewModel(day, surveysOnDay, proximityOnDay, CurrentType));
+            }
         }
     }
 }

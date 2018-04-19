@@ -65,6 +65,7 @@ namespace Happimeter.Core.Database
             databaseTables.Add(typeof(ConfigEntry));
             databaseTables.Add(typeof(GenericQuestion));
             databaseTables.Add(typeof(PredictionEntry));
+            databaseTables.Add(typeof(ProximityEntry));
 
 
             //here we give the possibility to alter the list of tables created by subprojects (e.g. different devices)
@@ -114,6 +115,7 @@ namespace Happimeter.Core.Database
                     DeleteAll<SurveyMeasurement>();
                     DeleteAll<PredictionEntry>();
                     DeleteAll<GenericQuestion>();
+                    DeleteAll<ProximityEntry>();
                 }
             }
         }
