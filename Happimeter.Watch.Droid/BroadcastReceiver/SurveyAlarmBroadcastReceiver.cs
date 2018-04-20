@@ -29,6 +29,11 @@ namespace Happimeter.Watch.Droid.BroadcastReceiver
             context.StartActivity(activityIntent);
 
             var nextPollTime = UtilHelper.GetNextSurveyPromptTime() - DateTime.UtcNow.ToLocalTime();
+            //if for some reason we have a negative timespan, lets simply set it to 2 hours
+            if (nextPollTime < TimeSpan.Zero)
+            {
+                nextPollTime = TimeSpan.FromHours(2);
+            }
             var alarmManager = (AlarmManager)context.GetSystemService(Context.AlarmService);
             Intent surveyAlarmIntent = new Intent(context, typeof(BroadcastReceiver.SurveyAlarmBroadcastReceiver));
             var surveyPendingIntent = PendingIntent.GetBroadcast(context, 0, surveyAlarmIntent, 0);
