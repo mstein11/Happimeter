@@ -2,14 +2,24 @@
 using System.Collections.Generic;
 
 using Xamarin.Forms;
+using Happimeter.ViewModels.Forms;
 
 namespace Happimeter.Views.MoodOverview
 {
-    public partial class MoodOverviewDetailCloseToPersonView : ContentPage
+    public partial class MoodOverviewDetailCloseToPersonView : ContentView
     {
-        public MoodOverviewDetailCloseToPersonView()
+        public MoodOverviewDetailCloseToPersonView(SurveyOverviewDetailCloseToPersonViewModel viewModel)
         {
+            BindingContext = viewModel;
             InitializeComponent();
+
+
+        }
+
+        public async void OnApearing()
+        {
+            await ScrollView.ScrollToAsync(chart, ScrollToPosition.End, true);
+            await ScrollView.ScrollToAsync(chart, ScrollToPosition.Start, true);
         }
     }
 }

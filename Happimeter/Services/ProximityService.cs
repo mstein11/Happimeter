@@ -31,7 +31,7 @@ namespace Happimeter.Services
                                              CloseToUserId = x.CloseToUserId,
                                              Average = x.Average,
                                              Timestamp = x.Timestamp,
-                                             CloseToUserIdentifier = x.Name ?? x.Mail
+                                             CloseToUserIdentifier = string.IsNullOrEmpty(x.Name) ? x.Mail : x.Name
                                          });
             foreach (var entry in dbObjs)
             {
@@ -39,9 +39,18 @@ namespace Happimeter.Services
             }
         }
 
-        public List<ProximityEntry> GetProximityEntries()
+        public List<ProximityEntry> GetProximityEntries(DateTime? forDay = null)
         {
-            return ServiceLocator.Instance.Get<ISharedDatabaseContext>().GetAll<ProximityEntry>();
+
+            if (forDay == null)
+            {
+                return ServiceLocator.Instance.Get<ISharedDatabaseContext>().GetAll<ProximityEntry>();
+            }
+
+            var forDayLocalTime = new DateTime(forDay.Value.Year, forDay.Value.Month, forDay.Value.Day);
+            var from = forDayLocalTime.Date.ToUniversalTime();
+            var to = forDayLocalTime.Date.AddHours(24).ToUniversalTime();
+            return ServiceLocator.Instance.Get<ISharedDatabaseContext>().GetAll<ProximityEntry>(x => x.Timestamp >= from && x.Timestamp <= to);
         }
     }
 }

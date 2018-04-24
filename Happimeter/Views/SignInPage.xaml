@@ -8,7 +8,7 @@
     Title="Sigin up / Login">
 	<ContentPage.Content>
         <ScrollView>
-            <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
+            <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                     <Grid HeightRequest="200" RowSpacing="0" ColumnSpacing="0" BackgroundColor="#307AEA">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"></RowDefinition>

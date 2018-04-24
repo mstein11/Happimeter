@@ -122,14 +122,27 @@ namespace Happimeter.Watch.Droid.Workers
             _cancelationTokenSource = new CancellationTokenSource();
             IsRunning = true;
             await StartSensors();
+            var currentTime = DateTime.UtcNow;
+            if (currentTime.Second < 29)
+            {
+
+                var delayToBeSureWeCollectDataAt30Seconds = 30 - DateTime.UtcNow.Second;
+                await Task.Delay(delayToBeSureWeCollectDataAt30Seconds * 1000);
+            }
+            else if (currentTime.Second > 31)
+            {
+                var delayToBeSureWeCollectDataAt30Seconds = 60 - DateTime.UtcNow.Second;
+                delayToBeSureWeCollectDataAt30Seconds += 30;
+                await Task.Delay(delayToBeSureWeCollectDataAt30Seconds * 1000);
+            }
             while (IsRunning)
             {
                 //StartSensors();
                 try
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(45), _cancelationTokenSource.Token);
+                    await Task.Delay(TimeSpan.FromSeconds(60), _cancelationTokenSource.Token);
                     await CollectMeasurements();
-                    await Task.Delay(TimeSpan.FromSeconds(45), _cancelationTokenSource.Token);
+                    //await Task.Delay(TimeSpan.FromSeconds(30), _cancelationTokenSource.Token);
                     Console.WriteLine("Saved new Sensormeasurement");
                 }
                 catch (System.OperationCanceledException)

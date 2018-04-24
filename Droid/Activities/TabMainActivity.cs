@@ -148,6 +148,16 @@ namespace Happimeter.Droid.Activities
                 };
 
                 var fragmentContainer2 = new Fragments.FragmentContainer(overviewPage);
+                overviewPage.ItemSelectedEvent += (sender, e) =>
+                {
+                    var vm = sender as SurveyOverviewItemViewModel;
+                    if (vm != null)
+                    {
+                        var detailPage = new SurveyOverviewDetailPage(vm.Date);
+                        fragmentContainer2.TransitionToPage(detailPage, true);
+                    }
+                };
+
                 var fragmentContainer3 = new Fragments.FragmentContainer(btPage);
 
 

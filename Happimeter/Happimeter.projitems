@@ -104,6 +104,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\GetProximityResultModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\ProximityService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IProximityService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\MoodOverview\SurveyOverviewDetailPage.xaml.cs">
+      <DependentUpon>SurveyOverviewDetailPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\MoodOverview\MoodOverviewDetailCloseToPersonView.xaml.cs">
+      <DependentUpon>MoodOverviewDetailCloseToPersonView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\SurveyOverviewDetailPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\SurveyOverviewDetailCloseToPersonViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />
@@ -159,6 +167,14 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Controls\MyTabMenuItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\MoodOverview\SurveyOverviewDetailPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\MoodOverview\MoodOverviewDetailCloseToPersonView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>

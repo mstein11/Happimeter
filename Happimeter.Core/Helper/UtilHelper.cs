@@ -111,11 +111,11 @@ namespace Happimeter.Core.Helper
 
             if (nextTime.Hour < 10)
             {
-                nextTime = nextTime.Date.AddHours(10);
+                nextTime = nextTime.ToLocalTime().Date.AddHours(10);
             }
             else if (nextTime.Hour >= 22)
             {
-                nextTime = nextTime.Date.AddDays(1).AddHours(10);
+                nextTime = nextTime.ToLocalTime().Date.AddDays(1).AddHours(10);
             }
 
             return nextTime;

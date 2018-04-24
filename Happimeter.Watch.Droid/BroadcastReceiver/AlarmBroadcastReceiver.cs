@@ -13,12 +13,20 @@ namespace Happimeter.Watch.Droid.BroadcastReceiver
     public class AlarmBroadcastReceiver : Android.Content.BroadcastReceiver
     {
         public static bool IsScheduled = false;
+        private static DateTime? NextScheuleTime;
         public AlarmBroadcastReceiver()
         {
         }
 
         public override void OnReceive(Context context, Intent intent)
         {
+            if (NextScheuleTime != null && NextScheuleTime > DateTime.UtcNow)
+            {
+                //we don't need to do something, this is not the alarm we are listening for.
+                //Alarms are retained until the device is rebooted, so if the app stops and is restarted, we might have two alarm which we don't want.
+                System.Diagnostics.Debug.WriteLine("RECEIVED MEASUREMENT ALARM BEFORE SCHEDULE... IGNORING");
+                return;
+            }
             IsScheduled = false;
             var deviceService = ServiceLocator.Instance.Get<IDeviceService>();
             var duration = deviceService.GetMeasurementMode();
@@ -27,6 +35,7 @@ namespace Happimeter.Watch.Droid.BroadcastReceiver
             if (duration == null)
             {
                 //do not reschedule alarm. do not start the workers! We are actually in continous mode already.
+                System.Diagnostics.Debug.WriteLine("RECEIVED MEASUREMENT ALARM BUT WE ARE IN CONTINOUS MODE... IGNORING");
                 return;
             }
 
@@ -35,10 +44,24 @@ namespace Happimeter.Watch.Droid.BroadcastReceiver
             Intent alarmIntent = new Intent(context, typeof(AlarmBroadcastReceiver));
             var pendingIntent = PendingIntent.GetBroadcast(context, 0, alarmIntent, 0);
 
+            var durationAsTimespan = TimeSpan.FromSeconds(duration.Value);
 
+            var next = DateTime.UtcNow.Add(durationAsTimespan);
+            while (next.Minute % durationAsTimespan.Minutes != 0)
+            {
+                next = next.AddMinutes(1);
+            }
+            next = next.AddSeconds(next.Second * -1);
+            //store when the next alarm is scheduled, so that we stop alarm that are from previous start of the app.
+            NextScheuleTime = next;
+            //we want to start every measurement around the 30th second.
+            next = next.AddSeconds(30);
+
+            System.Diagnostics.Debug.WriteLine(next);
+            var nextAsTimeSpan = next - DateTime.UtcNow;
             alarmManager.SetExact(AlarmType.ElapsedRealtimeWakeup,
                                   SystemClock.ElapsedRealtime() +
-                                  duration.Value * 1000, pendingIntent);
+                                  (int)nextAsTimeSpan.TotalSeconds * 1000, pendingIntent);
 
             //if we dont have this code, the ui tread is blocked by the microphone worker
             Task.Factory.StartNew(() =>

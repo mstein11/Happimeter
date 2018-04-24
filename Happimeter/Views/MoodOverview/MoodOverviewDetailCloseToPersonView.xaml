@@ -1,5 +1,17 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Happimeter.Views.MoodOverview.MoodOverviewDetailCloseToPersonView">
-    <ContentPage.Content>
-    </ContentPage.Content>
-</ContentPage>
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentView 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    x:Class="Happimeter.Views.MoodOverview.MoodOverviewDetailCloseToPersonView"
+    xmlns:microcharts="clr-namespace:Microcharts.Forms;assembly=Microcharts.Forms" VerticalOptions="FillAndExpand">
+    <ContentView.Content>
+        <StackLayout>
+            <Label Text="{Binding PersonName}"></Label>
+            <ScrollView x:Name="ScrollView" Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" HeightRequest="150">
+                    <microcharts:ChartView x:Name="chart" HeightRequest="50" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Chart="{Binding ClosenessChart}" />
+                </StackLayout>
+            </ScrollView>
+        </StackLayout>
+    </ContentView.Content>
+</ContentView>

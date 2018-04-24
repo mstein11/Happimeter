@@ -130,7 +130,8 @@ namespace Happimeter.ViewModels.Forms
             RefreshData();
             OnTabChangedCommand = new Command<int>((index) =>
             {
-                Initialize(index);
+                CurrentType = index;
+                RefreshData();
             });
             ServiceLocator.Instance.Get<ISharedDatabaseContext>().WhenEntryAdded<GenericQuestion>().Subscribe(x =>
             {
@@ -189,6 +190,7 @@ namespace Happimeter.ViewModels.Forms
 
         public void Initialize(int type)
         {
+            //reset lastDateLoaded, so that on tab change, the right data is loaded
             SetActiveType(type);
             var predictions = ServiceLocator.Instance.Get<IPredictionService>().GetLastPrediction();
             SetPredictionInView(predictions);
@@ -221,8 +223,8 @@ namespace Happimeter.ViewModels.Forms
 
         public void LoadMoreData()
         {
-            var groupedByDate = _measurements.GroupBy(x => x.Timestamp.Date).OrderByDescending(x => x.Key);
-            var groupedByDateProximity = _proximity.GroupBy(x => x.Timestamp.Date).OrderByDescending(x => x.Key);
+            var groupedByDate = _measurements.GroupBy(x => x.Timestamp.ToLocalTime().Date).OrderByDescending(x => x.Key);
+            var groupedByDateProximity = _proximity.GroupBy(x => x.Timestamp.ToLocalTime().Date).OrderByDescending(x => x.Key);
 
             var days = new List<DateTime>();
             for (var i = 0; i < 14; i++)

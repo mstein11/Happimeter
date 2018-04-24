@@ -56,5 +56,13 @@ namespace Happimeter.Views.MoodOverview
                 });
             }
         }
+
+        void Handle_ItemSelected(object sender, Xamarin.Forms.SelectedItemChangedEventArgs e)
+        {
+            var selectedItem = ((SurveyOverviewItemViewModel)e.SelectedItem);
+            ItemSelectedEvent?.Invoke(selectedItem, null);
+            ((ListView)sender).SelectedItem = null;
+        }
+        public event EventHandler ItemSelectedEvent;
     }
 }

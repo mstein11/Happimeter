@@ -81,6 +81,7 @@ namespace Happimeter.Watch.Droid.Workers
                 bluetoothLeScanner.StartScan(new List<ScanFilter> { scanFilter }, settings, callBack);
                 await Task.Delay(30 * 1000);
                 bluetoothLeScanner.StopScan(callBack);
+                await Task.Delay(30 * 1000);
             }
         }
 

@@ -1,5 +1,19 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Happimeter.Views.MoodOverview.SurveyOverviewDetailPage">
     <ContentPage.Content>
+        <StackLayout>
+            <Grid HeightRequest="200" RowSpacing="0" ColumnSpacing="0" BackgroundColor="#307AEA">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Image Opacity="0.4" Source="happinessfactory.png" Aspect="AspectFill" />
+                <Label Style="{StaticResource HeaderOnBackground}" Grid.Row="0" Text="Happimeter" VerticalOptions="CenterAndExpand" />
+            </Grid>
+            <ScrollView Padding="0, 0, 0, 50">
+                <StackLayout Padding="20" x:Name="PersonContainer">
+                    <!-- Content generated in Backing Class-->
+                </StackLayout>
+            </ScrollView>
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>

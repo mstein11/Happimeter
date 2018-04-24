@@ -20,8 +20,8 @@ namespace Happimeter.Watch.Droid.Workers
         private const ChannelIn Channel = ChannelIn.Mono;
         private const Encoding AudioEncoding = Encoding.Pcm16bit;
         private const int RecordingDurationSecSample = 1;
-        private const int RecordingDurationSecRunning = 60;
-        private const int RecordingDurationSecPausing = 60;
+        private const int RecordingDurationSecRunning = 30;
+        private const int RecordingDurationSecPausing = 30;
 
         private CancellationTokenSource _cancelationTokenSource { get; set; }
 

@@ -8,7 +8,7 @@
     xmlns:converters="clr-namespace:Happimeter.Views.Converters"
     Title="Overview">
 	<ContentPage.Content>
-        <ListView x:Name="SurveyListView" RowHeight="170" ItemsSource="{Binding Items}" IsPullToRefreshEnabled="True" Refreshing="ListItems_Refreshing" ItemAppearing="Handle_ItemAppearing">
+        <ListView x:Name="SurveyListView" RowHeight="170" ItemsSource="{Binding Items}" IsPullToRefreshEnabled="True" Refreshing="ListItems_Refreshing" ItemAppearing="Handle_ItemAppearing" ItemSelected="Handle_ItemSelected">
             <ListView.Header>
                 <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Spacing="0">
                     <RelativeLayout HeightRequest="220">
