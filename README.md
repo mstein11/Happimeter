@@ -16,6 +16,8 @@ This repository is part of the happimeter project. Within this repository you wi
 6. On the terminal run: `adb install <Path to Apk>` (If the app is already installed on the watch, you have to add the option -r)
 7. Start the app
 
+# Affiliation
+This Project was developed as part of the Happimeter project at MIT Center for Collective Intelligence.
 
 # Build and Test
 TODO: Describe and show how to build your code and run the tests. 
