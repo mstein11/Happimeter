@@ -22,18 +22,8 @@ using Microsoft.AppCenter.Crashes;
 namespace Happimeter.Watch.Droid
 {
     [Activity(Label = "Happimeter.Watch.Droid", MainLauncher = true, Icon = "@mipmap/icon")]
-    public class MainActivity : Activity, ISensorEventListener
+    public class MainActivity : Activity
     {
-        public void OnAccuracyChanged(Sensor sensor, [GeneratedEnum] SensorStatus accuracy)
-        {
-            System.Diagnostics.Debug.WriteLine(accuracy);
-        }
-
-        public void OnSensorChanged(SensorEvent e)
-        {
-            Console.WriteLine(e.Values.FirstOrDefault());
-        }
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);

@@ -79,7 +79,7 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
         /// </summary>
         public void SetContinousMeasurementMode()
         {
-            ServiceLocator.Instance.Get<IConfigService>().SetBatterySaferMeasurementMode();
+            ServiceLocator.Instance.Get<IConfigService>().SetContinousMeasurementMode();
 
             MeasurementWorker.GetInstance().Stop();
             MicrophoneWorker.GetInstance().Stop();
