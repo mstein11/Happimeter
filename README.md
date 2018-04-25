@@ -3,13 +3,18 @@ This repository is part of the happimeter project. Within this repository you wi
 
 # Getting Started Android Watch
 
-1.	Get the edu.mit.android_watch.apk file
-2.	Install Adb on your computer
-3.	Activate USB-Debugging on your watch (On Home Screen Swipe to the right -> Navigate to Settings -> Navigate to About Watch -> Navigate to Developer Options -> Activate USB Debugging)
-4.	Connect the watch to your laptop
-5.  If this is the first time you connect the Watch, you might need to add the computer to the list of Trusted Devices (A Dialog will pop-up, you have to accept)
-6.  On the terminal run: 'adb install <Path to Apk>' (If the app is already installed on the watch, you have to add the option -r)
-7.  Start Watch
+1. Get the edu.mit.android_watch.apk file
+2. Install Adb on your computer
+3. Activate USB-Debugging on your watch
+   - On Home Screen Swipe to the right
+   - Navigate to Settings
+   - Navigate to About Watch
+   - Navigate to Developer Options
+   - Activate USB Debugging
+4. Connect the watch to your laptop
+5. If this is the first time you connect the Watch, you might need to add the computer to the list of Trusted Devices (A Dialog will pop-up, you have to accept)
+6. On the terminal run: `adb install <Path to Apk>` (If the app is already installed on the watch, you have to add the option -r)
+7. Start the app
 
 
 # Build and Test
