@@ -368,6 +368,8 @@ namespace Happimeter.Services
                         return HappimeterApiResultInformation.UnknownError;
                     }
                 }
+                //after we upload date we might have new proximity info, lets download them
+                await ServiceLocator.Instance.Get<IProximityService>().DownloadAndSaveProximity();
 
                 //if we arrive here, than at least one method did work.
                 UploadSensorStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs

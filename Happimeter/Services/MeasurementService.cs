@@ -235,8 +235,6 @@ namespace Happimeter.Services
             var toUpdate = context.Get<SensorMeasurement>(x => x.Id == sensor.Id);
             toUpdate.IsUploadedToServer = true;
             context.Update(toUpdate);
-            //after we upload date we might have new proximity info, lets download them
-            ServiceLocator.Instance.Get<IProximityService>().DownloadAndSaveProximity();
         }
 
         /// <summary>
