@@ -8,6 +8,8 @@ namespace Happimeter.Models.ServiceModels
     {
         public GetSignalsModel()
         {
+            Data = new List<SynchronizationItemModel>();
+            DataTurnTaking = new List<TurnTakingItemModel>();
         }
 
         public List<SynchronizationItemModel> Data { get; set; }

@@ -75,6 +75,9 @@
                         <textAttributes key="titleTextAttributes">
                             <color key="textColor" colorSpace="calibratedWhite" white="1" alpha="1"/>
                         </textAttributes>
+                        <textAttributes key="largeTitleTextAttributes">
+                            <color key="textColor" colorSpace="calibratedWhite" white="1" alpha="1"/>
+                        </textAttributes>
                     </navigationBar>
                     <connections/>
                     <tabBarItem key="tabBarItem" title="Item" id="91402"/>

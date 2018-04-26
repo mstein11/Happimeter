@@ -5,18 +5,22 @@
             <Grid HeightRequest="200" RowSpacing="0" ColumnSpacing="0" BackgroundColor="#307AEA">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"></RowDefinition>
-                    <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
-                <Image Grid.RowSpan="2" Opacity="0.4" Source="happinessfactory.png" Aspect="AspectFill" />
+                <Image Opacity="0.4" Source="happinessfactory.png" Aspect="AspectFill" />
+                <Label Style="{StaticResource HeaderOnBackground}" Grid.Row="0" Text="Proximity and Turntaking" VerticalOptions="CenterAndExpand" />
             </Grid>
             <ScrollView Padding="0, 0, 0, 50">
-                <StackLayout>
-                    <StackLayout Padding="20" x:Name="PersonContainer">
+                <StackLayout Padding="20">
+                    <Label Text="Proximity"></Label>
+                    <StackLayout Padding="5" x:Name="PersonContainer">
                         <!-- Content generated in Backing Class-->
                     </StackLayout>
+                    <Label HorizontalTextAlignment="Center" TextColor="Gray" FontSize="12" Text="We could not find any Proximity Data for that day" IsVisible="{Binding NoProximityData}"></Label>
                     <Label Text="TurnTaking"></Label>
-                    <microcharts:ChartView Grid.Row="0" HeightRequest="250" WidthRequest="250" x:Name="chart" Chart="{Binding TurnTakingChart}" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" />
-                    <local:MyButton  Text="Load TurnTaking" Command="{Binding LoadTurnTakingCommand}" Style="{StaticResource ButtonWithBackground}" />
+                    <StackLayout Padding="5"></StackLayout>
+                    <Label HorizontalTextAlignment="Center" TextColor="Gray" FontSize="12" Text="We could not find any Turntaking Data for that day" IsVisible="{Binding ShowNoTurnTakingData}"></Label>
+                    <microcharts:ChartView Grid.Row="0" IsVisible="{Binding HasTurnTakingChart}" HeightRequest="250" WidthRequest="250" x:Name="chart" Chart="{Binding TurnTakingChart}" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" />
+                    <local:MyButton  Text="{Binding LoadTurnTakingText}" IsEnabled="{Binding LoadTurnTakingDataIsEnabled}" Command="{Binding LoadTurnTakingCommand}" Style="{StaticResource ButtonWithBackground}" />
                 </StackLayout>
             </ScrollView>
         </StackLayout>

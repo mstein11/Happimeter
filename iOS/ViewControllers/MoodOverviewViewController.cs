@@ -27,6 +27,8 @@ namespace Happimeter.iOS
                     return;
                 }
             };
+
+            NavigationBar.TintColor = UIColor.White;
         }
     }
 }

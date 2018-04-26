@@ -1,19 +1,31 @@
 ﻿<Properties StartupConfiguration="{B926B5BC-5FAA-4225-BAC6-BA1BDABB67E9}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Happimeter/App.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Happimeter/ViewModels/Forms/SurveyOverviewItemViewModel.cs">
     <Files>
-      <File FileName="Happimeter/Views/MoodOverview/SurveyOverviewDetailPage.xaml" Line="18" Column="94" />
-      <File FileName="Happimeter/ViewModels/Forms/SurveyOverviewDetailPageViewModel.cs" Line="49" Column="1" />
+      <File FileName="Happimeter/Views/MoodOverview/SurveyOverviewDetailPage.xaml" Line="7" Column="48" />
+      <File FileName="Happimeter/ViewModels/Forms/SurveyOverviewDetailPageViewModel.cs" Line="24" Column="1" />
       <File FileName="Happimeter.Watch.Droid/Bluetooth/HappimeterService.cs" Line="1" Column="1" />
-      <File FileName="Happimeter/Services/HappimeterApiService.cs" Line="512" Column="1" />
+      <File FileName="Happimeter/Services/HappimeterApiService.cs" Line="510" Column="1" />
       <File FileName="Happimeter/ViewModels/Forms/SurveyViewModel.cs" Line="1" Column="1" />
       <File FileName="Happimeter/App.cs" Line="1" Column="1" />
+      <File FileName="Happimeter/ViewModels/BluetoothDeviceListViewModel.cs" Line="1" Column="1" />
+      <File FileName="Happimeter/Services/MeasurementService.cs" Line="249" Column="108" />
+      <File FileName="iOS/Main.cs" Line="12" Column="1" />
+      <File FileName="Happimeter/ViewModels/Forms/SurveyOverviewDetailCloseToPersonViewModel.cs" Line="1" Column="1" />
+      <File FileName="Happimeter/Interfaces/IHappimeterApiService.cs" Line="20" Column="31" />
+      <File FileName="Happimeter/Models/ServiceModels/GetSignalsModel.cs" Line="12" Column="62" />
+      <File FileName="iOS/Main.storyboard" />
+      <File FileName="iOS/ViewControllers/SurveyViewController.cs" Line="36" Column="13" />
+      <File FileName="iOS/ViewControllers/BluetoothPageViewController.cs" Line="1" Column="1" />
+      <File FileName="iOS/ViewControllers/MoodOverviewViewController.cs" Line="31" Column="53" />
+      <File FileName="Happimeter/Views/SignInPage.xaml" Line="17" Column="143" />
+      <File FileName="Happimeter/Views/MoodOverview/SurveyOverviewListPage.xaml" Line="112" Column="1" />
+      <File FileName="Happimeter/ViewModels/Forms/SurveyOverviewItemViewModel.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhone" />
+  <MonoDevelop.Ide.ItemProperties.Happimeter.Droid PreferredExecutionTarget="Android.SelectDevice" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/HappimeterApiService.cs" relfile="Happimeter/Services/HappimeterApiService.cs" line="512" column="1" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.ItemProperties.Happimeter.iOS PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneDeviceTarget.121ae86dc29ab0207e48c6186659c33998870175" />
