@@ -7,13 +7,16 @@
                     <RowDefinition Height="*"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
-                <Image Opacity="0.4" Source="happinessfactory.png" Aspect="AspectFill" />
-                <microcharts:ChartView Grid.Row="0"  x:Name="chart" Chart="{Binding TurnTakingChart}" />
-                <local:MyButton  Text="Load TurnTaking" Command="{Binding LoadTurnTakingCommand}" Style="{StaticResource ButtonWithoutBackground}" />
+                <Image Grid.RowSpan="2" Opacity="0.4" Source="happinessfactory.png" Aspect="AspectFill" />
             </Grid>
             <ScrollView Padding="0, 0, 0, 50">
-                <StackLayout Padding="20" x:Name="PersonContainer">
-                    <!-- Content generated in Backing Class-->
+                <StackLayout>
+                    <StackLayout Padding="20" x:Name="PersonContainer">
+                        <!-- Content generated in Backing Class-->
+                    </StackLayout>
+                    <Label Text="TurnTaking"></Label>
+                    <microcharts:ChartView Grid.Row="0" HeightRequest="250" WidthRequest="250" x:Name="chart" Chart="{Binding TurnTakingChart}" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" />
+                    <local:MyButton  Text="Load TurnTaking" Command="{Binding LoadTurnTakingCommand}" Style="{StaticResource ButtonWithBackground}" />
                 </StackLayout>
             </ScrollView>
         </StackLayout>

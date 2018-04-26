@@ -508,7 +508,7 @@ namespace Happimeter.Services
         public async Task<GetSignalsModel> GetSignals(DateTime forDay)
         {
             var url = GetUrlForPath(ApiPathSignals);
-            var from = forDay.Date.ToLocalTime();
+            var from = forDay.Date.ToUniversalTime();
             var until = from.AddDays(1);
             url += $"?timestamps[]={from.ToString("yyyy-MM-dd HH:mm:ss")}&timestamps[]={until.ToString("yyyy-MM-dd HH:mm:ss")}";
             var methodResult = new GetSignalsModel();
