@@ -24,6 +24,7 @@ namespace Happimeter.Watch.Droid.Workers
     public class MeasurementWorker : AbstractWorker
     {
         public ConcurrentBag<(double, double, double)> AccelerometerMeasures = new ConcurrentBag<(double, double, double)>();
+        public ConcurrentBag<(double, double, double)> AccelerometerMagnitudeMeasures = new ConcurrentBag<(double, double, double)>();
         public ConcurrentBag<double> HeartRateMeasures = new ConcurrentBag<double>();
         public ConcurrentBag<double> StepMeasures = new ConcurrentBag<double>();
         public ConcurrentBag<double> LightMeasures = new ConcurrentBag<double>();
@@ -230,6 +231,52 @@ namespace Happimeter.Watch.Droid.Workers
                     Max = accMeasuresToSave.Select(x => x.Item3).Max()
                 });
             }
+
+            var accMagMeasuresToSave = AccelerometerMagnitudeMeasures.ToList();
+            AccelerometerMagnitudeMeasures.Clear();
+            if (accMeasuresToSave.Any())
+            {
+                sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+                {
+                    Type = MeasurementItemTypes.AccelerometerMagX,
+                    NumberOfMeasures = accMagMeasuresToSave.Count,
+                    Average = accMagMeasuresToSave.Select(x => x.Item1).Average(),
+                    StdDev = accMagMeasuresToSave.Select(x => x.Item1).StdDev(),
+                    Magnitude = accMagMeasuresToSave.Select(x => x.Item1).Sum(),
+                    Quantile1 = accMagMeasuresToSave.Select(x => x.Item1).Quantile1(),
+                    Quantile2 = accMagMeasuresToSave.Select(x => x.Item1).Quantile2(),
+                    Quantile3 = accMagMeasuresToSave.Select(x => x.Item1).Quantile3(),
+                    Min = accMagMeasuresToSave.Select(x => x.Item1).Min(),
+                    Max = accMagMeasuresToSave.Select(x => x.Item1).Max()
+                });
+                sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+                {
+                    Type = MeasurementItemTypes.AccelerometerMagY,
+                    NumberOfMeasures = accMagMeasuresToSave.Count,
+                    Average = accMagMeasuresToSave.Select(x => x.Item2).Average(),
+                    StdDev = accMagMeasuresToSave.Select(x => x.Item2).StdDev(),
+                    Magnitude = accMagMeasuresToSave.Select(x => x.Item2).Sum(),
+                    Quantile1 = accMagMeasuresToSave.Select(x => x.Item2).Quantile1(),
+                    Quantile2 = accMagMeasuresToSave.Select(x => x.Item2).Quantile2(),
+                    Quantile3 = accMagMeasuresToSave.Select(x => x.Item2).Quantile3(),
+                    Min = accMagMeasuresToSave.Select(x => x.Item2).Min(),
+                    Max = accMagMeasuresToSave.Select(x => x.Item2).Max()
+                });
+                sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+                {
+                    Type = MeasurementItemTypes.AccelerometerMagZ,
+                    NumberOfMeasures = accMagMeasuresToSave.Count,
+                    Average = accMagMeasuresToSave.Select(x => x.Item3).Average(),
+                    StdDev = accMagMeasuresToSave.Select(x => x.Item3).StdDev(),
+                    Magnitude = accMagMeasuresToSave.Select(x => x.Item3).Sum(),
+                    Quantile1 = accMagMeasuresToSave.Select(x => x.Item3).Quantile1(),
+                    Quantile2 = accMagMeasuresToSave.Select(x => x.Item3).Quantile2(),
+                    Quantile3 = accMagMeasuresToSave.Select(x => x.Item3).Quantile3(),
+                    Min = accMagMeasuresToSave.Select(x => x.Item3).Min(),
+                    Max = accMagMeasuresToSave.Select(x => x.Item3).Max()
+                });
+            }
+
 
 
             var hearRateMeasuresToSave = HeartRateMeasures.ToList();
@@ -509,6 +556,7 @@ namespace Happimeter.Watch.Droid.Workers
             if (e.Sensor.Type == SensorType.Accelerometer)
             {
                 _worker.AccelerometerMeasures.Add((e.Values[0], e.Values[1], e.Values[2]));
+                _worker.AccelerometerMagnitudeMeasures.Add((Math.Sqrt(Math.Pow(e.Values[0], 2)), Math.Sqrt(Math.Pow(e.Values[1], 2)), Math.Sqrt(Math.Pow(e.Values[2], 2))));
             }
             else if (e.Sensor.Type == SensorType.HeartRate)
             {

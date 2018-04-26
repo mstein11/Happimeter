@@ -13,6 +13,9 @@ namespace Happimeter.Core.Helper
         public const string AccelerometerX = "AccelerometerX";
         public const string AccelerometerY = "AccelerometerY";
         public const string AccelerometerZ = "AccelerometerZ";
+        public const string AccelerometerMagX = "AccelerometerMagX";
+        public const string AccelerometerMagY = "AccelerometerMagY";
+        public const string AccelerometerMagZ = "AccelerometerMagZ";
         public const string Microphone = "Microphone";
         public const string LocationLat = "LocationLat";
         public const string LocationLon = "LocationLon";

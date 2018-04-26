@@ -44,30 +44,18 @@
     <Commandlineparameters></Commandlineparameters>
     <RunWithWarnings>true</RunWithWarnings>
     <MandroidExtraArgs></MandroidExtraArgs>
-    <AndroidLinkSkip></AndroidLinkSkip>
     <AndroidLinkMode></AndroidLinkMode>
-    <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
-    <BundleAssemblies></BundleAssemblies>
-    <AndroidStoreUncompressedFileExtensions></AndroidStoreUncompressedFileExtensions>
     <MandroidI18n></MandroidI18n>
     <AndroidHttpClientHandlerType></AndroidHttpClientHandlerType>
     <JavaMaximumHeapSize></JavaMaximumHeapSize>
-    <JavaOptions></JavaOptions>
     <AndroidKeyStore></AndroidKeyStore>
     <AndroidSigningKeyStore></AndroidSigningKeyStore>
     <AndroidSigningStorePass></AndroidSigningStorePass>
     <AndroidSigningKeyAlias></AndroidSigningKeyAlias>
     <AndroidSigningKeyPass></AndroidSigningKeyPass>
-    <AotAssemblies></AotAssemblies>
-    <EnableLLVM>false</EnableLLVM>
     <AndroidEnableSGenConcurrent>false</AndroidEnableSGenConcurrent>
-    <EnableProguard>false</EnableProguard>
-    <AndroidEnableMultiDex></AndroidEnableMultiDex>
     <AndroidFastDeploymentType></AndroidFastDeploymentType>
     <AndroidTlsProvider></AndroidTlsProvider>
-    <AssemblyName></AssemblyName>
-    <SignAssembly>false</SignAssembly>
-    <DelaySign>false</DelaySign>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

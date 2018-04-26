@@ -10,7 +10,7 @@ namespace Happimeter.Core.Database
         void CreateDatabase();
 
         void Add<T>(T entity) where T : new();
-        void AddGraph<T>(T entity)where T : new();
+        void AddGraph<T>(T entity) where T : new();
         void Update<T>(T entity) where T : new();
         void Delete<T>(T entity) where T : new();
         void DeleteAll<T>() where T : new();
@@ -21,7 +21,7 @@ namespace Happimeter.Core.Database
         T Get<T>(Expression<Func<T, bool>> whereClause) where T : new();
         List<T> GetAll<T>(Expression<Func<T, bool>> whereClause = null) where T : new();
         List<T> GetAllWithChildren<T>(Expression<Func<T, bool>> whereClause = null) where T : new();
-        List<SensorMeasurement> GetSensorMeasurements(int skip = 0, int take = 150, bool orderDesc = false);
+        List<SensorMeasurement> GetSensorMeasurements(int skip = 0, int take = 100, bool orderDesc = false);
 
         IObservable<DatabaseChangedEventArgs> WhenEntryAdded();
         IObservable<DatabaseChangedEventArgs> WhenEntryAdded<T>();

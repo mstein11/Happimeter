@@ -158,7 +158,7 @@ namespace Happimeter.Core.Database
         /// <param name="skip">Skip.</param>
         /// <param name="take">Take.</param>
         /// <param name="orderDesc">If true, we will order descending before applying skip and take, if false we will order ascending</param>
-        public virtual List<SensorMeasurement> GetSensorMeasurements(int skip = 0, int take = 150, bool orderDesc = false)
+        public virtual List<SensorMeasurement> GetSensorMeasurements(int skip = 0, int take = 100, bool orderDesc = false)
         {
             EnsureDatabaseCreated();
             lock (SyncLock)

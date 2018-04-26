@@ -332,12 +332,19 @@ namespace Happimeter.Services
                     {
                         //if it did not work, lets log this.
                         ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.CouldNotUploadSensorNewFormat);
+                        UploadSensorStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
+                        {
+                            EventType = SyncronizeDataStates.UploadingError
+                        });
+                        //if the new format upload does not work, we want to abort here, so the next time we can try again
+                        return HappimeterApiResultInformation.UnknownError;
                     }
                     var resultOldFormat = await _restService.Post(url, toSend);
-                    if (!result.IsSuccessStatusCode)
+                    if (!resultOldFormat.IsSuccessStatusCode)
                     {
                         //if it did not work, lets log this.
                         ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.CouldNotUploadSensorOldFormat);
+                        //we don't care so much if the old upload does not work
                     }
 
                     if (resultOldFormat.IsSuccessStatusCode || result.IsSuccessStatusCode)
