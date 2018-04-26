@@ -6,6 +6,8 @@ using Microcharts;
 using System.Linq;
 using SkiaSharp;
 using System.Diagnostics;
+using Happimeter.Core.Helper;
+using Happimeter.Interfaces;
 
 namespace Happimeter.ViewModels.Forms
 {
@@ -63,7 +65,13 @@ namespace Happimeter.ViewModels.Forms
                 BackgroundColor = SKColors.Transparent,
 
             };
+
+
+
+
         }
+
+
 
         private string _personName;
         public string PersonName

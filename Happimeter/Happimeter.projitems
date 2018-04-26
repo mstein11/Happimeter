@@ -112,6 +112,7 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\SurveyOverviewDetailPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\SurveyOverviewDetailCloseToPersonViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\GetSignalsModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />

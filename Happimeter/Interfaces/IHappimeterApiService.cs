@@ -17,5 +17,6 @@ namespace Happimeter.Interfaces
         Task<GetGenericQuestionApiResult> GetGenericQuestions();
         Task<GetPredictionsResultModel> GetPredictions();
         Task<GetProximityResultModel> GetProximityData(DateTime since);
+        Task<GetSignalsModel> GetSignals(DateTime forDay);
     }
 }

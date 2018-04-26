@@ -1,5 +1,5 @@
-﻿<Properties StartupConfiguration="{DE8957FA-3B78-4B43-A5A2-C82830EF665B}|Default">
-  <MonoDevelop.Ide.Workbench>
+﻿<Properties StartupConfiguration="{B926B5BC-5FAA-4225-BAC6-BA1BDABB67E9}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Happimeter/Models/ServiceModels/GetProximityResultModel.cs">
     <Files>
       <File FileName="Happimeter/Views/BluetoothMainPage.xaml" Line="88" Column="1" />
       <File FileName="Happimeter/Services/BluetoothService.cs" Line="427" Column="85" />
@@ -7,7 +7,7 @@
       <File FileName="Happimeter.Core/Database/GenericQuestion.cs" Line="8" Column="22" />
       <File FileName="Happimeter.Core/Database/ISharedDatabaseContext.cs" Line="24" Column="40" />
       <File FileName="Happimeter/DependencyInjection/Container.cs" Line="24" Column="81" />
-      <File FileName="Happimeter/Services/MeasurementService.cs" Line="251" Column="108" />
+      <File FileName="Happimeter/Services/MeasurementService.cs" Line="249" Column="108" />
       <File FileName="Happimeter.Core/Database/SurveyMeasurement.cs" Line="18" Column="33" />
       <File FileName="Happimeter.Core/Database/SurveyItemMeasurement.cs" Line="19" Column="29" />
       <File FileName="Happimeter.Core/Database/SensorMeasurement.cs" Line="22" Column="31" />
@@ -51,8 +51,8 @@
       <File FileName="Happimeter.Watch.Droid/BroadcastReceiver/BeaconAlarmBroadcastReceiver.cs" Line="1" Column="1" />
       <File FileName="Happimeter.Watch.Droid/Services/DetectedActivityIntentService.cs" Line="23" Column="115" />
       <File FileName="Happimeter/Services/RestService.cs" Line="1" Column="1" />
-      <File FileName="Happimeter/Services/HappimeterApiService.cs" Line="343" Column="41" />
-      <File FileName="Happimeter/Models/ServiceModels/GetProximityResultModel.cs" Line="11" Column="54" />
+      <File FileName="Happimeter/Services/HappimeterApiService.cs" Line="519" Column="14" />
+      <File FileName="Happimeter/Models/ServiceModels/GetProximityResultModel.cs" Line="17" Column="87" />
       <File FileName="Happimeter/Models/ServiceModels/GetMeResultModel.cs" Line="1" Column="1" />
       <File FileName="Happimeter/Models/ServiceModels/GetGenericQuestionApiResult.cs" Line="14" Column="1" />
       <File FileName="Happimeter/Models/ServiceModels/GetPredictionsResultModel.cs" Line="12" Column="9" />
@@ -76,14 +76,14 @@
       <File FileName="iOS/ViewControllers/SettingsPageViewController.cs" Line="1" Column="1" />
       <File FileName="iOS/ViewControllers/BluetoothPageViewController.cs" Line="1" Column="1" />
       <File FileName="iOS/ViewControllers/MoodOverviewViewController.cs" Line="22" Column="25" />
-      <File FileName="Happimeter/Views/MoodOverview/SurveyOverviewDetailPage.xaml" Line="20" Column="1" />
+      <File FileName="Happimeter/Views/MoodOverview/SurveyOverviewDetailPage.xaml" Line="22" Column="1" />
       <File FileName="Happimeter/Views/MoodOverview/SurveyOverviewDetailPage.xaml.cs" Line="35" Column="39" />
       <File FileName="Happimeter/Views/BluetoothPairingPage.xaml" Line="66" Column="1" />
       <File FileName="Happimeter/Views/SurveyPage.xaml" Line="20" Column="1" />
       <File FileName="Happimeter/Views/MoodOverview/MoodOverviewDetailCloseToPersonView.xaml" Line="18" Column="1" />
       <File FileName="Happimeter/Views/MoodOverview/MoodOverviewDetailCloseToPersonView.xaml.cs" Line="21" Column="1" />
-      <File FileName="Happimeter/ViewModels/Forms/SurveyOverviewDetailPageViewModel.cs" Line="13" Column="84" />
-      <File FileName="Happimeter/ViewModels/Forms/SurveyOverviewDetailCloseToPersonViewModel.cs" Line="42" Column="86" />
+      <File FileName="Happimeter/ViewModels/Forms/SurveyOverviewDetailPageViewModel.cs" Line="13" Column="10" />
+      <File FileName="Happimeter/ViewModels/Forms/SurveyOverviewDetailCloseToPersonViewModel.cs" Line="42" Column="30" />
       <File FileName="Happimeter/ViewModels/Forms/SurveyItemViewModel.cs" Line="1" Column="1" />
       <File FileName="Happimeter/ViewModels/Forms/MyTabMenuViewModel.cs" Line="1" Column="1" />
       <File FileName="Happimeter/ViewModels/Forms/SurveyViewModel.cs" Line="1" Column="1" />
@@ -95,6 +95,7 @@
       <File FileName="Happimeter.Core/Services/IConfigService.cs" Line="9" Column="48" />
       <File FileName="Happimeter.Core/Helper/MeasurementItemTypes.cs" Line="18" Column="45" />
       <File FileName="Happimeter.Watch.Droid/ServicesBusinessLogic/MeasurementService.cs" Line="85" Column="82" />
+      <File FileName="Happimeter/Models/ServiceModels/GetSignalsModel.cs" Line="8" Column="10" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
