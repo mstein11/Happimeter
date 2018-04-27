@@ -55,7 +55,8 @@ namespace Happimeter.Watch.Droid.Workers
         private bool _playServicesReady = false;
         private FusedLocationProviderClient fusedLocationProviderClient;
         private ActivityRecognitionClient activityRecognitionClient;
-
+        private LocationManager locationManager;
+        private string locationProvider;
         private PendingIntent ActivityDetectionPendingIntent
         {
             get
@@ -73,6 +74,21 @@ namespace Happimeter.Watch.Droid.Workers
             {
                 fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(Context);
                 activityRecognitionClient = ActivityRecognition.GetClient(Context);
+            }
+            locationManager = (LocationManager)Application.Context.GetSystemService(Context.LocationService);
+            Criteria criteriaForLocationService = new Criteria
+            {
+                Accuracy = Accuracy.Fine
+            };
+            IList<string> acceptableLocationProviders = locationManager.GetProviders(criteriaForLocationService, true);
+
+            if (acceptableLocationProviders.Any())
+            {
+                locationProvider = acceptableLocationProviders.First();
+            }
+            else
+            {
+                locationProvider = string.Empty;
             }
         }
 
@@ -184,6 +200,11 @@ namespace Happimeter.Watch.Droid.Workers
                         Magnitude = location.Altitude,
                     });
                 }
+            }
+            else
+            {
+                location = locationManager.GetLastKnownLocation(locationProvider);
+                System.Diagnostics.Debug.WriteLine(location);
             }
 
 
@@ -488,6 +509,11 @@ namespace Happimeter.Watch.Droid.Workers
                 await activityRecognitionClient.RequestActivityUpdatesAsync(60 * 1000, ActivityDetectionPendingIntent);
             }
 
+            if (locationManager != null)
+            {
+                locationManager.RequestLocationUpdates(locationProvider, 0, 0, new LocationListener(), Looper.MainLooper);
+            }
+
         }
 
         bool IsGooglePlayServicesInstalled()
@@ -533,6 +559,29 @@ namespace Happimeter.Watch.Droid.Workers
                     //6 is unspecific, 5 is tilting which we don't use
                     return MeasurementItemTypes.ActivityUnspecific;
             }
+        }
+    }
+
+    public class LocationListener : Java.Lang.Object, Android.Locations.ILocationListener
+    {
+        public void OnLocationChanged(Location location)
+        {
+            System.Diagnostics.Debug.WriteLine(location);
+        }
+
+        public void OnProviderDisabled(string provider)
+        {
+            //throw new NotImplementedException();
+        }
+
+        public void OnProviderEnabled(string provider)
+        {
+            //throw new NotImplementedException();
+        }
+
+        public void OnStatusChanged(string provider, [GeneratedEnum] Availability status, Bundle extras)
+        {
+            //throw new NotImplementedException();
         }
     }
 
