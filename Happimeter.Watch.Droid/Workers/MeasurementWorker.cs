@@ -55,7 +55,7 @@ namespace Happimeter.Watch.Droid.Workers
         private bool _playServicesReady = false;
         private FusedLocationProviderClient fusedLocationProviderClient;
         private ActivityRecognitionClient activityRecognitionClient;
-        private LocationManager locationManager;
+        private LocationManager _locationManager;
         private string locationProvider;
         private PendingIntent ActivityDetectionPendingIntent
         {
@@ -75,21 +75,6 @@ namespace Happimeter.Watch.Droid.Workers
                 fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(Context);
                 activityRecognitionClient = ActivityRecognition.GetClient(Context);
             }
-            locationManager = (LocationManager)Application.Context.GetSystemService(Context.LocationService);
-            Criteria criteriaForLocationService = new Criteria
-            {
-                Accuracy = Accuracy.Fine
-            };
-            IList<string> acceptableLocationProviders = locationManager.GetProviders(criteriaForLocationService, true);
-
-            if (acceptableLocationProviders.Any())
-            {
-                locationProvider = acceptableLocationProviders.First();
-            }
-            else
-            {
-                locationProvider = string.Empty;
-            }
         }
 
         private static MeasurementWorker Instance { get; set; }
@@ -102,19 +87,28 @@ namespace Happimeter.Watch.Droid.Workers
             }
             return Instance;
         }
-        /*
-        public async Task StartOnce()
+
+        private Location GetLastKnownLocation()
         {
-            _cancelationTokenSource = new CancellationTokenSource();
-            IsRunning = true;
-            await StartSensors();
-            //await Task.Delay(TimeSpan.FromSeconds(450));
-            await Task.Delay(TimeSpan.FromSeconds(120));
-            await CollectMeasurements();
-            await StopSensors();
-            IsRunning = false;
+            _locationManager = (LocationManager)Application.Context.GetSystemService(Context.LocationService);
+            var providers = _locationManager.GetProviders(true);
+            Location bestLocation = null;
+            foreach (var provider in providers)
+            {
+                Location l = _locationManager.GetLastKnownLocation(provider);
+                if (l == null)
+                {
+                    continue;
+                }
+                if (bestLocation == null || l.Accuracy < bestLocation.Accuracy)
+                {
+                    // Found best last known location: %s", l);
+                    bestLocation = l;
+                }
+            }
+            return bestLocation;
         }
-*/
+
         public async void StartFor(int seconds)
         {
             _cancelationTokenSource = new CancellationTokenSource();
@@ -182,29 +176,30 @@ namespace Happimeter.Watch.Droid.Workers
             if (_playServicesReady)
             {
                 location = await fusedLocationProviderClient.GetLastLocationAsync();
-                if (location != null)
-                {
-                    sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
-                    {
-                        Type = MeasurementItemTypes.LocationLat,
-                        Magnitude = location.Latitude,
-                    });
-                    sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
-                    {
-                        Type = MeasurementItemTypes.LocationLon,
-                        Magnitude = location.Longitude,
-                    });
-                    sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
-                    {
-                        Type = MeasurementItemTypes.LocationAlt,
-                        Magnitude = location.Altitude,
-                    });
-                }
             }
-            else
+
+            if (location == null)
             {
-                location = locationManager.GetLastKnownLocation(locationProvider);
-                System.Diagnostics.Debug.WriteLine(location);
+                location = GetLastKnownLocation();
+            }
+
+            if (location != null)
+            {
+                sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+                {
+                    Type = MeasurementItemTypes.LocationLat,
+                    Magnitude = location.Latitude,
+                });
+                sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+                {
+                    Type = MeasurementItemTypes.LocationLon,
+                    Magnitude = location.Longitude,
+                });
+                sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+                {
+                    Type = MeasurementItemTypes.LocationAlt,
+                    Magnitude = location.Altitude,
+                });
             }
 
 
@@ -508,12 +503,6 @@ namespace Happimeter.Watch.Droid.Workers
             {
                 await activityRecognitionClient.RequestActivityUpdatesAsync(60 * 1000, ActivityDetectionPendingIntent);
             }
-
-            if (locationManager != null)
-            {
-                locationManager.RequestLocationUpdates(locationProvider, 0, 0, new LocationListener(), Looper.MainLooper);
-            }
-
         }
 
         bool IsGooglePlayServicesInstalled()

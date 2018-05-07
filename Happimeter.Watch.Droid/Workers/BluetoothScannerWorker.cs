@@ -14,6 +14,7 @@ using Android.OS;
 using Happimeter.Core.Helper;
 using System.Text;
 using System.Collections.Concurrent;
+using Microsoft.AppCenter.Crashes;
 
 namespace Happimeter.Watch.Droid.Workers
 {
@@ -42,46 +43,69 @@ namespace Happimeter.Watch.Droid.Workers
 
         public async void StartFor(int seconds)
         {
-            IsRunning = true;
-            var bluetoothManager = (BluetoothManager)Application.Context.GetSystemService(Context.BluetoothService);
-            var BluetoothAdapter = bluetoothManager.Adapter;
-            var bluetoothLeScanner = bluetoothManager.Adapter.BluetoothLeScanner;
-            if (bluetoothLeScanner == null)
+            try
             {
-                return;
-            }
-            var callBack = new CallBack();
-            var scanFilterBuilder = new ScanFilter.Builder();
-            scanFilterBuilder.SetServiceUuid(ParcelUuid.FromString(UuidHelper.AndroidWatchServiceUuidString));
-            var scanFilter = scanFilterBuilder.Build();
-            var settingsBuilder = new ScanSettings.Builder();
-            settingsBuilder.SetScanMode(Android.Bluetooth.LE.ScanMode.LowPower);
-            var settings = settingsBuilder.Build();
-            bluetoothLeScanner.StartScan(new List<ScanFilter> { scanFilter }, settings, callBack);
-            await Task.Delay(seconds * 1000);
-            bluetoothLeScanner.StopScan(callBack);
-        }
-
-        public async void Start()
-        {
-            IsRunning = true;
-            var bluetoothManager = (BluetoothManager)Application.Context.GetSystemService(Context.BluetoothService);
-            var BluetoothAdapter = bluetoothManager.Adapter;
-            var bluetoothLeScanner = bluetoothManager.Adapter.BluetoothLeScanner;
-            while (IsRunning)
-            {
-
+                System.Diagnostics.Debug.WriteLine("Starting Scan in Battery Safer Mode");
+                IsRunning = true;
+                var bluetoothManager = (BluetoothManager)Application.Context.GetSystemService(Context.BluetoothService);
+                var BluetoothAdapter = bluetoothManager.Adapter;
+                var bluetoothLeScanner = bluetoothManager.Adapter.BluetoothLeScanner;
+                if (bluetoothLeScanner == null)
+                {
+                    return;
+                }
                 var callBack = new CallBack();
                 var scanFilterBuilder = new ScanFilter.Builder();
                 scanFilterBuilder.SetServiceUuid(ParcelUuid.FromString(UuidHelper.AndroidWatchServiceUuidString));
                 var scanFilter = scanFilterBuilder.Build();
                 var settingsBuilder = new ScanSettings.Builder();
-                settingsBuilder.SetScanMode(Android.Bluetooth.LE.ScanMode.LowPower);
+                settingsBuilder.SetScanMode(Android.Bluetooth.LE.ScanMode.LowLatency);
+                //settingsBuilder.SetMatchMode(BluetoothScanMatchMode.Aggressive);
                 var settings = settingsBuilder.Build();
                 bluetoothLeScanner.StartScan(new List<ScanFilter> { scanFilter }, settings, callBack);
-                await Task.Delay(30 * 1000);
+                await Task.Delay(seconds * 1000);
                 bluetoothLeScanner.StopScan(callBack);
-                await Task.Delay(30 * 1000);
+                IsRunning = false;
+            }
+            catch (Exception e)
+            {
+                Crashes.TrackError(e);
+                Console.WriteLine("There was an error during BT scanning: " + e.Message);
+                IsRunning = false;
+            }
+        }
+
+        public async void Start()
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("Starting Scan in Life Mode");
+                IsRunning = true;
+                var bluetoothManager = (BluetoothManager)Application.Context.GetSystemService(Context.BluetoothService);
+                var BluetoothAdapter = bluetoothManager.Adapter;
+                var bluetoothLeScanner = bluetoothManager.Adapter.BluetoothLeScanner;
+                while (IsRunning)
+                {
+
+                    var callBack = new CallBack();
+                    var scanFilterBuilder = new ScanFilter.Builder();
+                    scanFilterBuilder.SetServiceUuid(ParcelUuid.FromString(UuidHelper.AndroidWatchServiceUuidString));
+                    var scanFilter = scanFilterBuilder.Build();
+                    var settingsBuilder = new ScanSettings.Builder();
+                    settingsBuilder.SetScanMode(Android.Bluetooth.LE.ScanMode.LowLatency);
+                    //settingsBuilder.SetMatchMode(BluetoothScanMatchMode.Aggressive);
+                    var settings = settingsBuilder.Build();
+                    bluetoothLeScanner.StartScan(new List<ScanFilter> { scanFilter }, settings, callBack);
+                    await Task.Delay(30 * 1000);
+                    bluetoothLeScanner.StopScan(callBack);
+                    await Task.Delay(1 * 1000);
+                }
+            }
+            catch (Exception e)
+            {
+                Crashes.TrackError(e);
+                Console.WriteLine("There was an error during BT scanning: " + e.Message);
+                IsRunning = false;
             }
         }
 
@@ -95,6 +119,12 @@ namespace Happimeter.Watch.Droid.Workers
     {
         public override void OnScanResult([GeneratedEnum] ScanCallbackType callbackType, ScanResult result)
         {
+            System.Diagnostics.Debug.WriteLine(result.ScanRecord.DeviceName);
+            if (!result.ScanRecord?.ServiceUuids?.Select(x => x.Uuid.ToString().ToLower()).Any(x => x == UuidHelper.AndroidWatchServiceUuidString.ToLower()) ?? true)
+            {
+                base.OnScanResult(callbackType, result);
+                return;
+            }
             var userId = Encoding.UTF8.GetString(result.ScanRecord.ServiceData.FirstOrDefault().Value);
             int userIdInt;
             if (int.TryParse(userId, out userIdInt))
@@ -102,7 +132,6 @@ namespace Happimeter.Watch.Droid.Workers
                 BluetoothScannerWorker.ProximityMeasures.Add((userIdInt, result.Rssi));
             }
             base.OnScanResult(callbackType, result);
-
         }
     }
 }

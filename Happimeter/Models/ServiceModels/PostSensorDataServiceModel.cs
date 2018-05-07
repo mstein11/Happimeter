@@ -35,11 +35,11 @@ namespace Happimeter.Models.ServiceModels
     public class PositionModel
     {
         [JsonProperty("lat")]
-        public double Latitude { get; set; }
+        public double? Latitude { get; set; }
         [JsonProperty("lon")]
-        public double Longitude { get; set; }
+        public double? Longitude { get; set; }
         [JsonProperty("alt")]
-        public double Altitude { get; set; }
+        public double? Altitude { get; set; }
     }
     public class AccelerometerModel
     {

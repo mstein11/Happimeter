@@ -162,7 +162,7 @@ namespace Happimeter.Watch.Droid.Workers
             BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser.StopAdvertising(AdvertisementCallback);
             var settings = new AdvertiseSettings.Builder()
                                                 .SetAdvertiseMode(AdvertiseMode.Balanced)
-                                                .SetTxPowerLevel(AdvertiseTx.PowerLow)
+                                                .SetTxPowerLevel(AdvertiseTx.PowerMedium)
                                                 .SetConnectable(true)
                                                 .Build();
             var deviceName = ServiceLocator.Instance.Get<IDeviceService>().GetDeviceName();

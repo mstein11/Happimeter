@@ -268,9 +268,9 @@ namespace Happimeter.Services
                     },
                     Position = new PositionModel
                     {
-                        Altitude = entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.LocationAlt)?.Magnitude ?? 0,
-                        Latitude = entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.LocationLat)?.Magnitude ?? 0,
-                        Longitude = entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.LocationLon)?.Magnitude ?? 0,
+                        Altitude = entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.LocationAlt)?.Magnitude ?? null,
+                        Latitude = entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.LocationLat)?.Magnitude ?? null,
+                        Longitude = entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.LocationLon)?.Magnitude ?? null,
                     },
                     Activity = GetOldActivityScaleValue(entry.SensorItemMeasures),
                     Vmc = entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.Vmc)?.Magnitude ?? 0,
