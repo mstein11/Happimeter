@@ -140,7 +140,8 @@ namespace Happimeter.Services
                     Answer = (int)(item.Answer * 100),
                     Question = item.Question,
                     QuestionId = item.QuestionId,//identifier for server
-                    AnswerDisplay = item.AnswerDisplay
+                    AnswerDisplay = item.AnswerDisplay,
+                    QuestionShort = item.QuestionShort
                 });
             }
 

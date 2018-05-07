@@ -86,7 +86,6 @@ namespace Happimeter.Watch.Droid.Workers
                 var bluetoothLeScanner = bluetoothManager.Adapter.BluetoothLeScanner;
                 while (IsRunning)
                 {
-
                     var callBack = new CallBack();
                     var scanFilterBuilder = new ScanFilter.Builder();
                     scanFilterBuilder.SetServiceUuid(ParcelUuid.FromString(UuidHelper.AndroidWatchServiceUuidString));

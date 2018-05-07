@@ -54,7 +54,7 @@ namespace Happimeter.ViewModels.Forms
         public SurveyOverviewItemViewModel(DateTime date, List<SurveyMeasurement> data, List<ProximityEntry> proximityData, int type)
         {
             Date = date;
-            if (!data.Any())
+            if (!data.Any(x => x.SurveyItemMeasurement.Any(y => y.QuestionId == type)))
             {
                 HasSurveyData = false;
                 DoesNotHaveSurveyData = true;

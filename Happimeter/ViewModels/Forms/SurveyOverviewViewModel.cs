@@ -206,8 +206,8 @@ namespace Happimeter.ViewModels.Forms
 
             OverallAverageResponse = _measurements.Where(x => x.SurveyItemMeasurement.Any(y => y.QuestionId == (int)type))
                                                   .DefaultIfEmpty()
-                                                  .Average(measurements => measurements.SurveyItemMeasurement
-                                                       .FirstOrDefault(item => item.QuestionId == (int)type)?.Answer ?? 0);
+                                                  .Average(measurements => measurements?.SurveyItemMeasurement
+                                                       ?.FirstOrDefault(item => item.QuestionId == (int)type)?.Answer ?? 0);
 
             NumberOfResponses = _measurements.Count;
             LastResponse = _measurements.OrderByDescending(x => x.Timestamp).FirstOrDefault()?.Timestamp.ToLocalTime() ?? new DateTime();
