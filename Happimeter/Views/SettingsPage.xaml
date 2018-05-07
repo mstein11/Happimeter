@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:Happimeter.Controls"
     Title="Settings">
 	<ContentPage.Content>
-        <ScrollView>
+        <ScrollView Padding="0, 0, 0, 50">
             <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                 <RelativeLayout HeightRequest="220" VerticalOptions="Start">
                     <Image Aspect="AspectFill" 

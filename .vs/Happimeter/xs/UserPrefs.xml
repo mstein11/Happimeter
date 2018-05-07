@@ -1,5 +1,5 @@
 ﻿<Properties StartupConfiguration="{B926B5BC-5FAA-4225-BAC6-BA1BDABB67E9}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Happimeter/ViewModels/Forms/SurveyOverviewItemViewModel.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Happimeter/Views/SettingsPage.xaml">
     <Files>
       <File FileName="Happimeter.Watch.Droid/Workers/AbstractWorker.cs" Line="1" Column="1" />
       <File FileName="Happimeter.Watch.Droid/Workers/MeasurementWorker.cs" Line="168" Column="1" />
@@ -24,7 +24,8 @@
       <File FileName="Happimeter.Core/Database/SurveyItemMeasurement.cs" Line="7" Column="18" />
       <File FileName="Happimeter.Core/Database/ISharedDatabaseContext.cs" Line="22" Column="17" />
       <File FileName="Happimeter/ViewModels/Forms/SurveyOverviewViewModel.cs" Line="211" Column="13" />
-      <File FileName="Happimeter/ViewModels/Forms/SurveyOverviewItemViewModel.cs" Line="24" Column="17" />
+      <File FileName="Happimeter/ViewModels/Forms/SurveyOverviewItemViewModel.cs" Line="64" Column="1" />
+      <File FileName="Happimeter/Views/SettingsPage.xaml" Line="9" Column="21" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.ItemProperties.Happimeter.Wear.Droid FirstBuild="True" />
