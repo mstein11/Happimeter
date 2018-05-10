@@ -120,9 +120,6 @@ namespace Happimeter.Droid.Activities
                     btPage = new BluetoothPairingPage();
                 }
 
-                var settingPage = new SettingsPage();
-
-
                 var fragmentContainer1 = new Fragments.FragmentContainer(initSurvey);
 
                 //var initSurveyFrag = initSurvey.CreateSupportFragment(TabMainActivity.Instance);
@@ -199,7 +196,16 @@ namespace Happimeter.Droid.Activities
                     vm.OnPairedDevice += addPairingHandler;
                 }
 
+                var settingPage = new SettingsPage();
                 var fragmentContainer4 = new Fragments.FragmentContainer(settingPage);
+                settingPage.ViewModel.ListMenuItemSelected += (sender, e) =>
+                {
+                    var selectedPage = sender as ContentPage;
+                    if (selectedPage != null)
+                    {
+                        fragmentContainer4.TransitionToPage(selectedPage, true);
+                    }
+                };
 
                 FragmentsWithPosition.Add(0, fragmentContainer1);
                 FragmentsWithPosition.Add(1, fragmentContainer2);

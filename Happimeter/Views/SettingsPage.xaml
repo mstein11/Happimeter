@@ -50,48 +50,11 @@
                         </StackLayout>
                     </Grid>
                 </RelativeLayout>
-                <StackLayout Padding="20" Spacing="15" VerticalOptions="Fill">
-                    <Label Text="Download Questions from Server"/>
-                    <Label FontSize="12" Text="Here you can download questions from our Server."/>
-                    <Label FontSize="12" Text="{Binding NumberOfGenericQuestions, StringFormat='You have {0} additional Questions in your survey.' }" />
-                    <StackLayout>
-                        <local:MyButton Text="{Binding GenericGroupButtonText}" IsEnabled="{Binding SaveGenericGroupButtonEnabled}" Command="{Binding ChangeGenericQuestionGroupId}" Style="{StaticResource ButtonWithBackground}"></local:MyButton>
-                        <local:MyButton Text="{Binding PushGenericQuestionToWatchButtonText}" IsEnabled="{Binding PushQuestionsToWatchButtonEnabled}" IsVisible="{Binding ShowPushQuestionsToWatchButton}" Command="{Binding PushGenericQuestionsToWatchCommand}" Style="{StaticResource ButtonWithBackground}"></local:MyButton>
-                    </StackLayout>
+                <StackLayout Padding="20">
+                    <Label>Further Settings</Label>
+                    <local:ListMenuView ListMenuItems="{Binding ListMenuItems}"></local:ListMenuView>    
                 </StackLayout>
-                <StackLayout Padding="20, 0, 20 ,20" Spacing="15" IsVisible="{Binding ShowPushQuestionsToWatchButton}" VerticalOptions="Fill">
-                    <Label Text="Measurement Mode"/>
-                    <Label FontSize="12" Text="Here you can switch between the battery safer and continous mode. In battery safer mode, the device will save the sensor data every 10 minutes, in continous mode every minute."/>
-                    <StackLayout Spacing="0" Orientation="Horizontal" VerticalOptions="CenterAndExpand">
-                        <Label FontSize="14" FontAttributes="Bold" Text="Activate continous mode" />
-                        <Switch IsToggled="{Binding ContinousModeIsOn}" HorizontalOptions="EndAndExpand"/>
-                    </StackLayout>
-                    <local:MyButton Text="{Binding PushMeasurementModeToWatchText}" IsEnabled="{Binding PushMeasurementModeToWatchIsEnabled}" Command="{Binding PushMeasurementModeToWatchCommand}" Style="{StaticResource ButtonWithBackground}"></local:MyButton>
-                </StackLayout>
-                <!-- <Grid Padding="10, 5, 10 , 5" BackgroundColor="Silver" RowSpacing="1">
-                    <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"></ColumnDefinition>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
-                            <ColumnDefinition Width="Auto"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"></RowDefinition>
-                        <RowDefinition Height="Auto"></RowDefinition>
-                        <RowDefinition Height="Auto"></RowDefinition>
-                        <RowDefinition Height="Auto"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <StackLayout Grid.Column="0" Padding="5">
-                        <StackLayout HeightRequest="25" WidthRequest="25" BackgroundColor="Purple"></StackLayout>
-                    </StackLayout>
-                    <Label VerticalOptions="CenterAndExpand" Grid.Column="1" Text="Manage Teams"></Label>
-                    <Label VerticalOptions="CenterAndExpand" Grid.Column="2" Text=">"></Label>
-                    <BoxView Grid.Row="1" Grid.ColumnSpan="3" BackgroundColor="White" HeightRequest="2"></BoxView>
-                    <StackLayout Grid.Row="2"  Grid.Column="0" Padding="5">
-                        <StackLayout HeightRequest="25" WidthRequest="25" BackgroundColor="Purple"></StackLayout>
-                    </StackLayout>
-                    <Label Grid.Row="2" VerticalOptions="CenterAndExpand" Grid.Column="1" Text="Survey Questions"></Label>
-                    <Label Grid.Row="2" VerticalOptions="CenterAndExpand" Grid.Column="2" Text=">"></Label>
-                </Grid> -->
+
             </StackLayout>
         </ScrollView>
 	</ContentPage.Content>

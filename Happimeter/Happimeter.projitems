@@ -113,6 +113,18 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\SurveyOverviewDetailPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\SurveyOverviewDetailCloseToPersonViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\GetSignalsModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\ListMenuView.xaml.cs">
+      <DependentUpon>ListMenuView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\ListMenuItemViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\SettingsGenericQuestionPage.xaml.cs">
+      <DependentUpon>SettingsGenericQuestionPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\SettingsGenericQuestionPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\SettingsWatchConfigPage.xaml.cs">
+      <DependentUpon>SettingsWatchConfigPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\SettingsPageWatchConfigViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />
@@ -176,6 +188,18 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\MoodOverview\MoodOverviewDetailCloseToPersonView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Controls\ListMenuView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\SettingsGenericQuestionPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\SettingsWatchConfigPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>

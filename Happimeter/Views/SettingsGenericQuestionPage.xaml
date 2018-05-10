@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    x:Class="Happimeter.Views.SettingsGenericQuestionPage"
+    xmlns:local="clr-namespace:Happimeter.Controls">
+    <ContentPage.Content>
+        <ScrollView Padding="0, 0, 0, 50">
+            <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                    <RelativeLayout HeightRequest="110" VerticalOptions="Start">
+                    <Image Aspect="AspectFill" 
+                       RelativeLayout.WidthConstraint="{ConstraintExpression  
+                       Type=RelativeToParent,  
+                       Property=Width,  
+                       Factor=1}"
+                       RelativeLayout.HeightConstraint="{ConstraintExpression  
+                       Type=RelativeToParent,  
+                       Property=Height,  
+                       Factor=1}">
+                        <Image.Source>
+                            <OnPlatform x:TypeArguments="ImageSource"
+                                        iOS="happinessfactory"
+                                        Android="happinessfactory.png" />
+                        </Image.Source>
+                    </Image>
+                    <Grid RowSpacing="10" Padding="10, 0, 10, 0" ColumnSpacing="20" BackgroundColor="#B2307AEA"
+                          RelativeLayout.WidthConstraint="{ConstraintExpression  
+                          Type=RelativeToParent,  
+                          Property=Width,  
+                          Factor=1}"
+                          RelativeLayout.HeightConstraint="{ConstraintExpression  
+                          Type=RelativeToParent,  
+                          Property=Height,  
+                          Factor=1}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Label Style="{StaticResource HeaderOnBackground}" Grid.Row="0" Text="Generic Questions" VerticalTextAlignment="Center" />
+                    </Grid>
+                </RelativeLayout>
+                <StackLayout Padding="20" Spacing="15" VerticalOptions="Fill">
+                    <Label Text="Download Questions from Server"/>
+                    <Label FontSize="12" Text="Here you can download questions from our Server."/>
+                    <Label FontSize="12" Text="{Binding NumberOfGenericQuestions, StringFormat='You have {0} additional Questions in your survey.' }" />
+                    <StackLayout>
+                        <local:MyButton Text="{Binding GenericGroupButtonText}" IsEnabled="{Binding SaveGenericGroupButtonEnabled}" Command="{Binding DownloadGenericQuestions}" Style="{StaticResource ButtonWithBackground}"></local:MyButton>
+                        <local:MyButton Text="{Binding PushGenericQuestionToWatchButtonText}" IsEnabled="{Binding PushQuestionsToWatchButtonEnabled}" IsVisible="{Binding ShowPushQuestionsToWatchButton}" Command="{Binding PushGenericQuestionsToWatchCommand}" Style="{StaticResource ButtonWithBackground}"></local:MyButton>
+                    </StackLayout>
+                </StackLayout>
+                <StackLayout Padding="20" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                    <Label Text="Configure for Survey"></Label>
+                    <Label FontSize="12" Text="Here you can deactivate some of the questions in your survey. If you deactivate all questions, the two basic questions will appear in the survey. You need to push the changes made here to the watch."/>
+                    <StackLayout x:Name="QuestionContainer" VerticalOptions="Fill" HorizontalOptions="FillAndExpand" Spacing="5" Padding="10">
+                        
+                    </StackLayout>
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

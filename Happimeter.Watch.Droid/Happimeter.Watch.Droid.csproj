@@ -46,7 +46,6 @@
     <MandroidExtraArgs></MandroidExtraArgs>
     <AndroidLinkMode></AndroidLinkMode>
     <MandroidI18n></MandroidI18n>
-    <AndroidHttpClientHandlerType></AndroidHttpClientHandlerType>
     <JavaMaximumHeapSize></JavaMaximumHeapSize>
     <AndroidKeyStore></AndroidKeyStore>
     <AndroidSigningKeyStore></AndroidSigningKeyStore>
@@ -55,7 +54,6 @@
     <AndroidSigningKeyPass></AndroidSigningKeyPass>
     <AndroidEnableSGenConcurrent>false</AndroidEnableSGenConcurrent>
     <AndroidFastDeploymentType></AndroidFastDeploymentType>
-    <AndroidTlsProvider></AndroidTlsProvider>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
