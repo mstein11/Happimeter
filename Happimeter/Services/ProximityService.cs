@@ -8,49 +8,91 @@ using System.Collections.Generic;
 
 namespace Happimeter.Services
 {
-    public class ProximityService : IProximityService
-    {
-        public ProximityService()
-        {
-        }
+	public class ProximityService : IProximityService
+	{
+		private bool IsDownloadingAndSaving = false;
+		public ProximityService()
+		{
+		}
 
-        public async Task DownloadAndSaveProximity()
-        {
-            var lastEntry = ServiceLocator.Instance.Get<ISharedDatabaseContext>().GetAll<ProximityEntry>().OrderBy(x => x.Timestamp).LastOrDefault();
-            var lastEntryDate = lastEntry?.Timestamp ?? default(DateTime);
-            var proximity = await ServiceLocator.Instance.Get<IHappimeterApiService>().GetProximityData(lastEntryDate);
-            if (!proximity.IsSuccess)
-            {
-                return;
-            }
 
-            var dbObjs = proximity.Data
-                                 .Select(x =>
-                                         new ProximityEntry
-                                         {
-                                             CloseToUserId = x.CloseToUserId,
-                                             Average = x.Average,
-                                             Timestamp = x.Timestamp,
-                                             CloseToUserIdentifier = string.IsNullOrEmpty(x.Name) ? x.Mail : x.Name
-                                         });
-            foreach (var entry in dbObjs)
-            {
-                ServiceLocator.Instance.Get<ISharedDatabaseContext>().Add(entry);
-            }
-        }
+		public async Task DownloadAndSaveProximity()
+		{
+			//this operation might take a few seconds, we lock this method so that the user does not download the stuff multiple times
+			if (IsDownloadingAndSaving)
+			{
+				return;
+			}
+			IsDownloadingAndSaving = true;
+			try
+			{
+				var lastEntry = ServiceLocator.Instance.Get<ISharedDatabaseContext>().GetAll<ProximityEntry>().OrderBy(x => x.Timestamp).LastOrDefault();
+				var lastEntryDate = lastEntry?.Timestamp ?? default(DateTime);
+				var proximity = await ServiceLocator.Instance.Get<IHappimeterApiService>().GetProximityData(lastEntryDate);
+				if (!proximity.IsSuccess)
+				{
+					return;
+				}
 
-        public List<ProximityEntry> GetProximityEntries(DateTime? forDay = null)
-        {
+				var dbObjs = proximity.Data
+									 .Select(x =>
+											 new ProximityEntry
+											 {
+												 CloseToUserId = x.CloseToUserId,
+												 Average = x.Average,
+												 Timestamp = x.Timestamp,
+												 CloseToUserIdentifier = string.IsNullOrEmpty(x.Name) ? x.Mail : x.Name
 
-            if (forDay == null)
-            {
-                return ServiceLocator.Instance.Get<ISharedDatabaseContext>().GetAll<ProximityEntry>();
-            }
+											 });
+				await Task.Factory.StartNew(() =>
+				{
+					foreach (var entry in dbObjs)
+					{
+						ServiceLocator.Instance.Get<ISharedDatabaseContext>().Add(entry);
+					}
+				});
+			}
+			finally
+			{
+				IsDownloadingAndSaving = false;
+			}
+		}
 
-            var forDayLocalTime = new DateTime(forDay.Value.Year, forDay.Value.Month, forDay.Value.Day);
-            var from = forDayLocalTime.Date.ToUniversalTime();
-            var to = forDayLocalTime.Date.AddHours(24).ToUniversalTime();
-            return ServiceLocator.Instance.Get<ISharedDatabaseContext>().GetAll<ProximityEntry>(x => x.Timestamp >= from && x.Timestamp <= to);
-        }
-    }
+		public List<ProximityEntry> GetProximityEntries(DateTime? forDay = null)
+		{
+			var result = GetProximityCm(forDay);
+			if (!result.Any())
+			{
+				if (forDay != null)
+				{
+					var forDayLocalTime = new DateTime(forDay.Value.Year, forDay.Value.Month, forDay.Value.Day);
+					var from = forDayLocalTime.Date.ToUniversalTime();
+					var to = forDayLocalTime.Date.AddHours(24).ToUniversalTime();
+					return ServiceLocator.Instance.Get<ISharedDatabaseContext>().GetAll<ProximityEntry>(x => x.Timestamp >= from && x.Timestamp <= to);
+				}
+				else
+				{
+					return ServiceLocator.Instance.Get<ISharedDatabaseContext>().GetAll<ProximityEntry>();
+				}
+			}
+			var resultObj = new List<ProximityEntry>();
+			foreach (var item in result)
+			{
+				var proximities = item.SensorItemMeasures.GroupBy(x => x.Type).Select(x => new ProximityEntry
+				{
+					Timestamp = item.Timestamp,
+					CloseToUserId = int.Parse(x.Key.Replace(MeasurementItemTypes.ProximityCm + "_", "")),
+					Average = x.Select(y => y.Average).Average(),
+					CloseToUserIdentifier = x.Key.Replace(MeasurementItemTypes.ProximityCm + "_", "")
+				});
+				resultObj.AddRange(proximities);
+			}
+			return resultObj;
+		}
+
+		public IList<SensorMeasurement> GetProximityCm(DateTime? forDay = null)
+		{
+			return ServiceLocator.Instance.Get<ISharedDatabaseContext>().GetProximity(forDay);
+		}
+	}
 }

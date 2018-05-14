@@ -206,6 +206,8 @@
     <Compile Include="BroadcastReceiver\BeaconAlarmBroadcastReceiver.cs" />
     <Compile Include="Workers\BluetoothScannerWorker.cs" />
     <Compile Include="BroadcastReceiver\SurveyAlarmBroadcastReceiver.cs" />
+    <Compile Include="Services\BeaconListenerService.cs" />
+    <Compile Include="MainApplication.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
