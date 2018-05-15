@@ -57,7 +57,7 @@ namespace Happimeter.Watch.Droid.Services
 
 		public void StartListeningForBeacons()
 		{
-
+			BeaconManager.SetDebug(true);
 			BeaconManager = BeaconManager.GetInstanceForApplication(Application.Context);
 			var iBeaconParser = new BeaconParser();
 			//  ibeacon layout
@@ -77,12 +77,19 @@ namespace Happimeter.Watch.Droid.Services
 
 		void _rangeNotifier_DidRangeBeaconsInRegionComplete(object sender, RangeEventArgs e)
 		{
-			Console.WriteLine("Did Range yo");
-			foreach (var beacon in e.Beacons)
+			try
 			{
-				var userId = UtilHelper.GetUserIdFromMajorMinor(beacon.Id2.ToInt(), beacon.Id3.ToInt());
-				Console.WriteLine($"userId {userId}; Distance {beacon.Distance}");
-				ProximityMeasures.Add((userId, beacon.Distance));
+				Console.WriteLine("Did Range yo");
+				foreach (var beacon in e.Beacons)
+				{
+					var userId = UtilHelper.GetUserIdFromMajorMinor(beacon.Id2.ToInt(), beacon.Id3.ToInt());
+					Console.WriteLine($"userId {userId}; Distance {beacon.Distance}");
+					ProximityMeasures.Add((userId, beacon.Distance));
+				}
+			}
+			catch (Exception)
+			{
+				Console.WriteLine("Caught error in ranging");
 			}
 		}
 
