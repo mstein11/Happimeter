@@ -124,8 +124,11 @@ namespace Happimeter.Core.Helper
 			}
 
 			return nextTime;
+		}
 
-
+		public static int GetUnixTimestamp(DateTime datetime)
+		{
+			return (Int32)(datetime.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
 		}
 	}
 }

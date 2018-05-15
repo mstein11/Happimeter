@@ -10,8 +10,8 @@ namespace Happimeter.Interfaces
 	public interface IMeasurementService
 	{
 		SurveyViewModel GetSurveyQuestions();
-		void AddMeasurements(DataExchangeMessage message);
-		void AddSurveyData(SurveyViewModel model);
+		Task AddMeasurements(DataExchangeMessage message);
+		Task AddSurveyData(SurveyViewModel model);
 		List<SurveyMeasurement> GetSurveyData();
 		List<SurveyMeasurement> GetSurveyMeasurements();
 		List<PostMoodServiceModel> GetSurveyModelForServer();

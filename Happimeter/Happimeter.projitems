@@ -125,6 +125,8 @@
       <DependentUpon>SettingsWatchConfigPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\SettingsPageWatchConfigViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\GeoLocationService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IGeoLocationService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />

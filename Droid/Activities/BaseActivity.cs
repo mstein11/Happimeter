@@ -4,36 +4,42 @@ using Android.Support.V7.Widget;
 
 namespace Happimeter.Droid
 {
-    public class BaseActivity : AppCompatActivity
-    {
-        protected override void OnCreate(Bundle savedInstanceState)
-        {
-            base.OnCreate(savedInstanceState);
-            SetContentView(LayoutResource);
-            Toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
-            if (Toolbar != null)
-            {
-                SetSupportActionBar(Toolbar);
-                SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-                SupportActionBar.SetHomeButtonEnabled(true);
+	public class BaseActivity : AppCompatActivity
+	{
+		protected override void OnCreate(Bundle savedInstanceState)
+		{
+			base.OnCreate(savedInstanceState);
+			SetContentView(LayoutResource);
+			Toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
+			if (Toolbar != null)
+			{
+				SetSupportActionBar(Toolbar);
+				SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+				SupportActionBar.SetHomeButtonEnabled(true);
 
-            }
-        }
+			}
+		}
 
-        public Toolbar Toolbar
-        {
-            get;
-            set;
-        }
+		public Toolbar Toolbar
+		{
+			get;
+			set;
+		}
 
-        protected virtual int LayoutResource
-        {
-            get;
-        }
+		protected virtual int LayoutResource
+		{
+			get;
+		}
 
-        protected int ActionBarIcon
-        {
-            set { Toolbar?.SetNavigationIcon(value); }
-        }
-    }
+		protected int ActionBarIcon
+		{
+			set { Toolbar?.SetNavigationIcon(value); }
+		}
+
+		public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Android.Content.PM.Permission[] grantResults)
+		{
+			Plugin.Permissions.PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+			base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+		}
+	}
 }

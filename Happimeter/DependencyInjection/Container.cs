@@ -7,21 +7,22 @@ using Happimeter.Services;
 
 namespace Happimeter.DependencyInjection
 {
-    public class Container
-    {
+	public class Container
+	{
 
-        public static void RegisterElements()
-        {
-            ServiceLocator.Instance.Register<IRestService, RestService>();
-            ServiceLocator.Instance.Register<IHappimeterApiService, HappimeterApiService>();
-            ServiceLocator.Instance.Register<IAccountStoreService, AccountStoreService>();
-            ServiceLocator.Instance.Register<IBluetoothService, BluetoothService>();
-            ServiceLocator.Instance.Register<ISharedDatabaseContext, SharedDatabaseContext>();
-            ServiceLocator.Instance.Register<IMeasurementService, MeasurementService>();
-            ServiceLocator.Instance.Register<IConfigService, ConfigService>();
-            ServiceLocator.Instance.Register<ILoggingService, LoggingService>();
-            ServiceLocator.Instance.Register<IPredictionService, PredictionService>();
-            ServiceLocator.Instance.Register<IProximityService, ProximityService>();
-        }
-    }
+		public static void RegisterElements()
+		{
+			ServiceLocator.Instance.Register<IRestService, RestService>();
+			ServiceLocator.Instance.Register<IHappimeterApiService, HappimeterApiService>();
+			ServiceLocator.Instance.Register<IAccountStoreService, AccountStoreService>();
+			ServiceLocator.Instance.Register<IBluetoothService, BluetoothService>();
+			ServiceLocator.Instance.Register<ISharedDatabaseContext, SharedDatabaseContext>();
+			ServiceLocator.Instance.Register<IMeasurementService, MeasurementService>();
+			ServiceLocator.Instance.Register<IConfigService, ConfigService>();
+			ServiceLocator.Instance.Register<ILoggingService, LoggingService>();
+			ServiceLocator.Instance.Register<IPredictionService, PredictionService>();
+			ServiceLocator.Instance.Register<IProximityService, ProximityService>();
+			ServiceLocator.Instance.Register<IGeoLocationService, GeoLocationService>();
+		}
+	}
 }

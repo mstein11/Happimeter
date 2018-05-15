@@ -7,7 +7,6 @@ using Happimeter.Core.Helper;
 using Happimeter.Core.Helpers;
 using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Core.Services;
-using Happimeter.Helpers;
 using Happimeter.Interfaces;
 using Happimeter.Models.ServiceModels;
 using Happimeter.ViewModels.Forms;
@@ -120,16 +119,25 @@ namespace Happimeter.Services
 			return viewModel;
 		}
 
-		public void AddMeasurements(DataExchangeMessage message)
+		public async Task AddMeasurements(DataExchangeMessage message)
 		{
 			var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
 			var apiService = ServiceLocator.Instance.Get<IHappimeterApiService>();
+
+			var location = await ServiceLocator.Instance.Get<IGeoLocationService>().GetLocation();
 
 			//save survey responses
 			foreach (var measurement in message.SurveyMeasurements)
 			{
 				measurement.IdFromWatch = measurement.Id;
 				measurement.Id = 0;
+
+				if (location != null)
+				{
+					measurement.Altitude = location.Altitude;
+					measurement.Longitude = location.Longitude;
+					measurement.Latitude = location.Latitude;
+				}
 				context.AddGraph(measurement);
 			}
 
@@ -138,13 +146,35 @@ namespace Happimeter.Services
 			{
 				measurement.IdFromWatch = measurement.Id;
 				measurement.Id = 0;
+
+				if (location != null && !measurement.SensorItemMeasures.Any(x => x.Type == MeasurementItemTypes.LocationLon) && !measurement.SensorItemMeasures.Any(x => x.Type == MeasurementItemTypes.LocationLat))
+				{
+					measurement.SensorItemMeasures.Add(new SensorItemMeasurement
+					{
+						Type = MeasurementItemTypes.LocationLon,
+						Magnitude = location.Longitude
+					});
+					measurement.SensorItemMeasures.Add(new SensorItemMeasurement
+					{
+						Type = MeasurementItemTypes.LocationLat,
+						Magnitude = location.Latitude
+					});
+					measurement.SensorItemMeasures.Add(new SensorItemMeasurement
+					{
+						Type = MeasurementItemTypes.LocationAlt,
+						Magnitude = location.Altitude
+					});
+				}
+
 				context.AddGraph(measurement);
 			}
 		}
 
-		public void AddSurveyData(SurveyViewModel model)
+		public async Task AddSurveyData(SurveyViewModel model)
 		{
 			var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
+
+
 			var surveyMeasurement = new SurveyMeasurement
 			{
 				IdFromWatch = -1,
@@ -152,6 +182,15 @@ namespace Happimeter.Services
 				SurveyItemMeasurement = new List<SurveyItemMeasurement>(),
 				//GenericQuestionGroupId = model.GenericQuestionGroupId
 			};
+			var location = await ServiceLocator.Instance.Get<IGeoLocationService>().GetLocation();
+			if (location != null)
+			{
+				surveyMeasurement.Latitude = location.Latitude;
+				surveyMeasurement.Longitude = location.Longitude;
+				surveyMeasurement.Altitude = location.Altitude;
+			}
+
+
 
 			foreach (var item in model.SurveyItems)
 			{
@@ -167,7 +206,7 @@ namespace Happimeter.Services
 
 			context.AddGraph(surveyMeasurement);
 			var apiService = ServiceLocator.Instance.Get<IHappimeterApiService>();
-			apiService.UploadMood();
+			await apiService.UploadMood();
 		}
 
 		public bool HasUnsynchronizedChanges()
@@ -226,8 +265,8 @@ namespace Happimeter.Services
 				result.Add(new PostMoodServiceModel
 				{
 					Id = entry.Id,
-					Timestamp = new DateTimeOffset(entry.Timestamp).ToUnixTimeSeconds(),
-					LocalTimestamp = new DateTimeOffset(entry.Timestamp.ToLocalTime()).ToUnixTimeSeconds(),
+					Timestamp = UtilHelper.GetUnixTimestamp(entry.Timestamp),
+					LocalTimestamp = UtilHelper.GetUnixTimestamp(entry.Timestamp.ToLocalTime()),
 					Activation = GetOldSurveyScaleValue(entry
 														?.SurveyItemMeasurement
 														?.FirstOrDefault(x => x.QuestionId == (int)SurveyHardcodedEnumeration.Activation)?.Answer ?? 0),
@@ -235,6 +274,8 @@ namespace Happimeter.Services
 														?.SurveyItemMeasurement
 													   ?.FirstOrDefault(x => x.QuestionId == (int)SurveyHardcodedEnumeration.Pleasance)?.Answer ?? 0),
 					DeviceId = "",
+					Position = entry.Latitude != default(double) && entry.Longitude != default(double)
+									? new PostMoodServicePositionModel(entry.Latitude, entry.Longitude) : null,
 					MoodAnswers = answers
 				});
 			}

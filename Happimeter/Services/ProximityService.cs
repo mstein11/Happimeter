@@ -40,6 +40,7 @@ namespace Happimeter.Services
 											 {
 												 CloseToUserId = x.CloseToUserId,
 												 Average = x.Average,
+												 ProximityType = x.Type.Split('_')[0],
 												 Timestamp = x.Timestamp,
 												 CloseToUserIdentifier = string.IsNullOrEmpty(x.Name) ? x.Mail : x.Name
 
@@ -60,34 +61,17 @@ namespace Happimeter.Services
 
 		public List<ProximityEntry> GetProximityEntries(DateTime? forDay = null)
 		{
-			var result = GetProximityCm(forDay);
-			if (!result.Any())
+			if (forDay != null)
 			{
-				if (forDay != null)
-				{
-					var forDayLocalTime = new DateTime(forDay.Value.Year, forDay.Value.Month, forDay.Value.Day);
-					var from = forDayLocalTime.Date.ToUniversalTime();
-					var to = forDayLocalTime.Date.AddHours(24).ToUniversalTime();
-					return ServiceLocator.Instance.Get<ISharedDatabaseContext>().GetAll<ProximityEntry>(x => x.Timestamp >= from && x.Timestamp <= to);
-				}
-				else
-				{
-					return ServiceLocator.Instance.Get<ISharedDatabaseContext>().GetAll<ProximityEntry>();
-				}
+				var forDayLocalTime = new DateTime(forDay.Value.Year, forDay.Value.Month, forDay.Value.Day);
+				var from = forDayLocalTime.Date.ToUniversalTime();
+				var to = forDayLocalTime.Date.AddHours(24).ToUniversalTime();
+				return ServiceLocator.Instance.Get<ISharedDatabaseContext>().GetAll<ProximityEntry>(x => x.Timestamp >= from && x.Timestamp <= to);
 			}
-			var resultObj = new List<ProximityEntry>();
-			foreach (var item in result)
+			else
 			{
-				var proximities = item.SensorItemMeasures.GroupBy(x => x.Type).Select(x => new ProximityEntry
-				{
-					Timestamp = item.Timestamp,
-					CloseToUserId = int.Parse(x.Key.Replace(MeasurementItemTypes.ProximityCm + "_", "")),
-					Average = x.Select(y => y.Average).Average(),
-					CloseToUserIdentifier = x.Key.Replace(MeasurementItemTypes.ProximityCm + "_", "")
-				});
-				resultObj.AddRange(proximities);
+				return ServiceLocator.Instance.Get<ISharedDatabaseContext>().GetAll<ProximityEntry>();
 			}
-			return resultObj;
 		}
 
 		public IList<SensorMeasurement> GetProximityCm(DateTime? forDay = null)
