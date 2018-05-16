@@ -276,10 +276,10 @@ namespace Happimeter.Services
 				return;
 			}
 
-			var genericQuestions = ServiceLocator.Instance.Get<ISharedDatabaseContext>().GetAll<GenericQuestion>();
+			var genericQuestions = ServiceLocator.Instance.Get<IMeasurementService>().GetActiveGenericQuestions();
 			var genericQuestionMessage = new GenericQuestionMessage
 			{
-				Questions = genericQuestions
+				Questions = genericQuestions.ToList()
 			};
 
 			var result = await WriteAsync(characteristic, genericQuestionMessage);
@@ -393,6 +393,7 @@ namespace Happimeter.Services
 				{
 					var stopWatch = new Stopwatch();
 					stopWatch.Start();
+					var toCompareWithWatchTime = DateTime.UtcNow;
 					var result = await ReadAsync(characteristic, (read, total) =>
 					{
 						DataExchangeStatusUpdate?.Invoke(this,
@@ -403,6 +404,7 @@ namespace Happimeter.Services
 								 TotalBytes = total
 							 });
 					});
+
 					if (result == null)
 					{
 						//we throw an exception and let the catch block handle it
@@ -413,6 +415,13 @@ namespace Happimeter.Services
 
 					//get the read data and save it to db
 					var data = Newtonsoft.Json.JsonConvert.DeserializeObject<DataExchangeMessage>(result);
+					if (data.CurrentTimeUtc != default(DateTime) && Math.Abs((toCompareWithWatchTime - data.CurrentTimeUtc).TotalHours) > TimeSpan.FromHours(1).TotalHours)
+					{
+						//adjust the times
+						var diff = toCompareWithWatchTime - data.CurrentTimeUtc;
+						data.SensorMeasurements.ForEach(x => x.Timestamp = x.Timestamp + diff);
+						data.SurveyMeasurements.ForEach(x => x.Timestamp = x.Timestamp + diff);
+					}
 					await ServiceLocator.Instance.Get<IMeasurementService>().AddMeasurements(data);
 
 					//update timestamp for last pairing

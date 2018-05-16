@@ -30,6 +30,12 @@ namespace Happimeter.Services
 			return context.GetAll<GenericQuestion>();
 		}
 
+		public IList<GenericQuestion> GetActiveGenericQuestions()
+		{
+			var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
+			return context.GetAll<GenericQuestion>().Where(x => !x.Deactivated).ToList();
+		}
+
 		public void ToggleGenericQuestionActivation(int questionId, bool isActivated)
 		{
 			var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
@@ -45,9 +51,7 @@ namespace Happimeter.Services
 		public SurveyViewModel GetSurveyQuestions()
 		{
 			var questions = new SurveyViewModel();
-			var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
-
-			var dbQuestions = context.GetAll<GenericQuestion>().Where(x => !x.Deactivated);
+			var dbQuestions = GetActiveGenericQuestions();
 			var additionalQuestions = dbQuestions.Select(x => new SurveyItemViewModel
 			{
 				Question = x.Question,
