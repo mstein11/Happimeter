@@ -1,46 +1,11 @@
 ﻿<Properties StartupConfiguration="{B926B5BC-5FAA-4225-BAC6-BA1BDABB67E9}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Happimeter/Services/MeasurementService.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Happimeter/Services/BluetoothService1.cs">
     <Files>
-      <File FileName="Happimeter/Services/BluetoothService.cs" Line="243" Column="1" />
-      <File FileName="Happimeter.Core/Models/Bluetooth/WriteReceiverContext.cs" Line="12" Column="1" />
-      <File FileName="Happimeter.Core/Helper/UuidHelper.cs" Line="46" Column="41" />
-      <File FileName="Happimeter.Core/Helper/BluetoothHelper.cs" Line="85" Column="1" />
-      <File FileName="iOS/Main.cs" Line="12" Column="1" />
-      <File FileName="Happimeter.Watch.Droid/Workers/MeasurementWorker.cs" Line="461" Column="77" />
-      <File FileName="Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" Line="87" Column="23" />
-      <File FileName="Happimeter.Core/Models/Bluetooth/ReadHostContext.cs" Line="22" Column="1" />
-      <File FileName="Happimeter.Watch.Droid/Bluetooth/HappimeterDataCharacteristic.cs" Line="24" Column="1" />
-      <File FileName="Happimeter.Watch.Droid/Bluetooth/HappimeterDataNotifyCharacteristic.cs" Line="20" Column="36" />
-      <File FileName="Happimeter.Watch.Droid/Bluetooth/HappimeterGenericQuestionCharacteristic.cs" Line="10" Column="87" />
-      <File FileName="Happimeter.Watch.Droid/Bluetooth/HappimeterAuthService.cs" Line="1" Column="1" />
-      <File FileName="Happimeter.Watch.Droid/Bluetooth/HappimeterAuthCharacteristic.cs" Line="1" Column="1" />
-      <File FileName="Happimeter.Watch.Droid/Bluetooth/HappimeterService.cs" Line="12" Column="1" />
-      <File FileName="Happimeter/Services/BluetoothService1.cs" Line="150" Column="1" />
-      <File FileName="Happimeter/DependencyInjection/Container.cs" Line="19" Column="1" />
-      <File FileName="iOS/Services/DeviceInformationService.cs" Line="49" Column="1" />
-      <File FileName="../../../../Library/Frameworks/Xamarin.iOS.framework/Versions/11.10.1.177/src/Xamarin.iOS/mcs/class/referencesource/mscorlib/system/threading/threadpool.cs" Line="1208" Column="1" />
-      <File FileName="Happimeter/ViewModels/Forms/BluetoothMainItemViewModel.cs" Line="1" Column="1" />
-      <File FileName="Happimeter/ViewModels/Forms/BluetoothPairingPageViewModel.cs" Line="34" Column="40" />
-      <File FileName="Happimeter/ViewModels/Forms/BluetoothMainPageViewModel.cs" Line="1" Column="1" />
-      <File FileName="Happimeter/Interfaces/IBluetoothService.cs" Line="14" Column="34" />
-      <File FileName="Happimeter/App.cs" Line="62" Column="47" />
-      <File FileName="Droid/Services/BeaconWakeupService.cs" Line="1" Column="1" />
-      <File FileName="Happimeter/Models/MiBand2Device.cs" Line="1" Column="1" />
-      <File FileName="Happimeter/Models/BluetoothDevice.cs" Line="1" Column="1" />
-      <File FileName="Droid/MainApplication.cs" Line="1" Column="1" />
-      <File FileName="Droid/packages.config" Line="1" Column="1" />
-      <File FileName="Droid/Services/DeviceInformationService.cs" Line="1" Column="1" />
-      <File FileName="Droid/Helpers/IDeviceExtension.cs" Line="2" Column="20" />
-      <File FileName="Droid/Resources/values/styles.xml" Line="2" Column="1" />
-      <File FileName="Happimeter.Watch.Droid/BroadcastReceiver/BluetoothBroadcastReceiver.cs" Line="1" Column="1" />
-      <File FileName="Happimeter/Services/HappimeterApiService.cs" Line="1" Column="1" />
-      <File FileName="Happimeter/Models/ServiceModels/PostSensorDataServiceModel.cs" Line="18" Column="24" />
-      <File FileName="Happimeter/Services/MeasurementService.cs" Line="326" Column="44" />
-      <File FileName="iOS/Entitlements.plist" />
-      <File FileName="iOS/Info.plist" />
+      <File FileName="Happimeter/Services/BluetoothService1.cs" Line="143" Column="22" />
     </Files>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release|iPhone" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhone" />
+  <MonoDevelop.Ide.ItemProperties.Happimeter.Droid PreferredExecutionTarget="Android.Android_ARMv7a_Nougat" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter.Watch.Droid/Workers/BeaconWorker.cs" relfile="Happimeter.Watch.Droid/Workers/BeaconWorker.cs" line="119" column="31" />
@@ -50,22 +15,21 @@
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService.cs" relfile="Happimeter/Services/BluetoothService.cs" line="227" column="1" />
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService.cs" relfile="Happimeter/Services/BluetoothService.cs" line="257" column="1" />
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter.Watch.Droid/Bluetooth/HappimeterService.cs" relfile="Happimeter.Watch.Droid/Bluetooth/HappimeterService.cs" line="12" column="1" />
+      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService1.cs" relfile="Happimeter/Services/BluetoothService1.cs" line="157" column="1" />
+      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService1.cs" relfile="Happimeter/Services/BluetoothService1.cs" line="266" column="1" />
+      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService1.cs" relfile="Happimeter/Services/BluetoothService1.cs" line="269" column="1" />
+      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService1.cs" relfile="Happimeter/Services/BluetoothService1.cs" line="270" column="1" />
+      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService1.cs" relfile="Happimeter/Services/BluetoothService1.cs" line="85" column="1" />
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService1.cs" relfile="Happimeter/Services/BluetoothService1.cs" line="61" column="1" />
-      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService1.cs" relfile="Happimeter/Services/BluetoothService1.cs" line="29" column="1" />
-      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService1.cs" relfile="Happimeter/Services/BluetoothService1.cs" line="40" column="1" />
-      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService1.cs" relfile="Happimeter/Services/BluetoothService1.cs" line="59" column="1" />
-      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService1.cs" relfile="Happimeter/Services/BluetoothService1.cs" line="63" column="1" />
-      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService1.cs" relfile="Happimeter/Services/BluetoothService1.cs" line="64" column="1" />
-      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService1.cs" relfile="Happimeter/Services/BluetoothService1.cs" line="150" column="1" />
-      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService1.cs" relfile="Happimeter/Services/BluetoothService1.cs" line="148" column="1" />
-      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService1.cs" relfile="Happimeter/Services/BluetoothService1.cs" line="133" column="4" />
-      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService1.cs" relfile="Happimeter/Services/BluetoothService1.cs" line="130" column="1" />
-      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService1.cs" relfile="Happimeter/Services/BluetoothService1.cs" line="128" column="1" />
-      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService1.cs" relfile="Happimeter/Services/BluetoothService1.cs" line="127" column="1" />
-      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService1.cs" relfile="Happimeter/Services/BluetoothService1.cs" line="33" column="1" />
+      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService1.cs" relfile="Happimeter/Services/BluetoothService1.cs" line="67" column="1" />
+      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService1.cs" relfile="Happimeter/Services/BluetoothService1.cs" line="41" column="1" />
+      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService1.cs" relfile="Happimeter/Services/BluetoothService1.cs" line="101" column="1" />
+      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService1.cs" relfile="Happimeter/Services/BluetoothService1.cs" line="30" column="1" />
+      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService1.cs" relfile="Happimeter/Services/BluetoothService1.cs" line="177" column="1" />
+      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/BluetoothService1.cs" relfile="Happimeter/Services/BluetoothService1.cs" line="178" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.ItemProperties.Happimeter.iOS PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.63A75A00-18A6-4043-9869-2D3DD3D3B5C7" />
+  <MonoDevelop.Ide.ItemProperties.Happimeter.iOS PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneDeviceTarget.121ae86dc29ab0207e48c6186659c33998870175" />
   <MultiItemStartupConfigurations />
 </Properties>

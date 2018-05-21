@@ -24,25 +24,53 @@ namespace Happimeter.Services
 		}
 
 		private bool _isInited = false;
+		private IObservable<AdapterStatus> WhenAdapterStatusChanged { get; set; }
 		public async Task Init()
 		{
 			if (_isInited)
 			{
 				return;
 			}
+
+			if (WhenAdapterStatusChanged == null)
+			{
+				WhenAdapterStatusChanged = CrossBleAdapter.Current.WhenStatusChanged();
+				var isFirst = true;
+				WhenAdapterStatusChanged.Subscribe(async status =>
+				{
+					if (status != AdapterStatus.PoweredOn)
+					{
+						_isInited = false;
+					}
+					else
+					{
+						if (!isFirst)
+						{
+							await Init();
+						}
+						isFirst = false;
+
+					}
+				});
+			}
+
+
+
 			var devices = CrossBleAdapter.Current.GetConnectedDevices();
-			var device = devices.FirstOrDefault(x => x.Name.Contains("Happimeter"));
+			var device = devices.FirstOrDefault(x => x.Name?.Contains("Happimeter") ?? false);
 			if (device != null && device.Status == ConnectionStatus.Connected)
 			{
+				//todo: give reference to subscription
 				device.WhenStatusChanged().Subscribe(status => WhenConnectionStatusChanged(status, device));
 			}
 			else
 			{
-				if (!CrossBleAdapter.Current.IsScanning)
+				if (!CrossBleAdapter.Current.IsScanning || ScanReplaySubject == null)
 				{
 					Console.WriteLine("Not connected, not scanning, starting scanning");
-					var replaySubj = StartScan(UuidHelper.AndroidWatchServiceUuidString);
+					StartScan(UuidHelper.AndroidWatchServiceUuidString);
 				}
+
 				var userId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId();
 				var userIdBytes = System.Text.Encoding.UTF8.GetBytes(userId.ToString());
 				//we skip 2 because the first two bytes are not relevant to us. the actual advertisement data start at position 3
@@ -113,8 +141,10 @@ namespace Happimeter.Services
 
 		private ReplaySubject<IGattCharacteristic> CharacteristicsReplaySubject { get; set; } = new ReplaySubject<IGattCharacteristic>();
 		private ReplaySubject<IDevice> ConnectedReplaySubject { get; set; }
+		private IDisposable WhenStatusChangedSubscription { get; set; }
 		public new IObservable<object> ConnectDevice(IDevice device)
 		{
+			Debug.WriteLine(device.Uuid);
 			var connectionError = false;
 			ConnectedReplaySubject = new ReplaySubject<IDevice>();
 			device.Connect(new ConnectionConfig
@@ -127,32 +157,17 @@ namespace Happimeter.Services
 			var obs = device.WhenConnected();
 			obs.Subscribe(success =>
 			{
-				device.WhenStatusChanged().Subscribe(status => WhenConnectionStatusChanged(status, device));
-
-			});
-
-			/*var obs = device.Connect(new GattConnectionConfig
-			{
-				AutoConnect = false,
-				Priority = ConnectionPriority.High,
-				IsPersistent = false
-			})
-				.Timeout(TimeSpan.FromSeconds(_connectTimeoutSeconds))
-				.Catch((Exception arg) =>
-				{
-					connectionError = true;
-					Console.WriteLine(arg.Message);
-					return Observable.Return<object>(null);
-				});
-*/
-			obs.Subscribe(success =>
-			{
+				Debug.WriteLine("Inside OnConnected!");
 				if (connectionError)
 				{
 					ConnectedReplaySubject.OnError(new Exception("Connection was not successful"));
 					return;
 				}
-				device.WhenStatusChanged().Subscribe(status => WhenConnectionStatusChanged(status, device));
+				if (WhenStatusChangedSubscription != null)
+				{
+					WhenStatusChangedSubscription = device.WhenStatusChanged().Subscribe(status => WhenConnectionStatusChanged(status, device));
+				}
+
 				ConnectedReplaySubject.OnNext(device);
 				ConnectedReplaySubject.OnCompleted();
 			});
