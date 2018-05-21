@@ -12,6 +12,7 @@ using Happimeter.Events;
 using Happimeter.Interfaces;
 using Happimeter.Models;
 using Plugin.BluetoothLE;
+using System.Xml.Schema;
 
 namespace Happimeter.Services
 {
@@ -113,6 +114,63 @@ namespace Happimeter.Services
 			}
 		}
 
+		public IObservable<object> ConnectDevice(IDevice device)
+		{
+			device.Connect(new ConnectionConfig
+			{
+				AutoConnect = false,
+				AndroidConnectionPriority = ConnectionPriority.High
+			});
+
+
+			var obs = device.WhenConnected();
+			obs.Subscribe(success =>
+			{
+				device.WhenStatusChanged().Subscribe(status => WhenConnectionStatusChanged(status, device));
+
+			});
+			return obs;
+		}
+
+		public void WhenConnectionStatusChanged(ConnectionStatus status, IDevice device)
+		{
+			Console.WriteLine("Status changed: " + status);
+			if (status == ConnectionStatus.Disconnected)
+			{
+				Console.WriteLine("DEVICE DISCONNECTED");
+				DevicesCharacteristics.Remove(device.Uuid);
+				//PairedDevice.Device.Connect(new GattConnectionConfig() { IsPersistent = true, AutoConnect = true, Priority = ConnectionPriority.High }); 
+			}
+			if (status == ConnectionStatus.Connected)
+			{
+				device.WhenAnyCharacteristicDiscovered().Subscribe(async characteristic =>
+				{
+					if (!UuidHelper.KnownCharacteristics().Contains(characteristic.Uuid))
+					{
+						Debug.WriteLine("We don't know characteristic: " + characteristic.Uuid);
+						return;
+					}
+					if (!DevicesCharacteristics.ContainsKey(device.Uuid))
+					{
+						DevicesCharacteristics.Add(device.Uuid, new Dictionary<Guid, IGattCharacteristic>());
+					}
+					if (!DevicesCharacteristics[device.Uuid].ContainsKey(characteristic.Uuid))
+					{
+						DevicesCharacteristics[device.Uuid].Add(characteristic.Uuid, characteristic);
+						if (characteristic.CanNotifyOrIndicate())
+						{
+							await EnableNotificationsFor(characteristic);
+						}
+					}
+				});
+			}
+		}
+
+		/// <summary>
+		/// Connects the device. Used in conjunction with Models/AndroidWatch.cs class. Should probably be refacterred at some point.
+		/// </summary>
+		/// <returns>The device.</returns>
+		/// <param name="device">Device.</param>
 		public IObservable<bool> PairDevice(BluetoothDevice device)
 		{
 			device.Connect();
@@ -122,23 +180,22 @@ namespace Happimeter.Services
 				PairedDevice = device;
 				PairedDevice.Device.WhenStatusChanged().Subscribe(status =>
 				{
-					Console.WriteLine("Status changed: " + status);
-					if (status == ConnectionStatus.Disconnected)
-					{
-						Console.WriteLine("DEVICE DISCONNECTED");
-						//PairedDevice.Device.Connect(new GattConnectionConfig() { IsPersistent = true, AutoConnect = true, Priority = ConnectionPriority.High }); 
-					}
+					WhenConnectionStatusChanged(status, device.Device);
 				});
 			});
 
-			/*
-            CrossBleAdapter.Current.WhenDeviceStateRestored().Subscribe(restoredDevice =>
-            {
-                Console.WriteLine("RESTORED DEVICE");
-                // will return the device(s) that are reconnecting
-            });
-            */
 			return obs;
+		}
+
+		private IDisposable _exchangeDataNotification;
+		private void HandleNotifications()
+		{
+			if (_exchangeDataNotification != null)
+			{
+				_exchangeDataNotification.Dispose();
+			}
+			var notiSub = WhenNotificationReceived().Where(((string, string) arg) => arg.Item1 == DataExchangeInitMessage.MessageNameConstant).Subscribe(x => ExchangeData());
+			_exchangeDataNotification = notiSub;
 		}
 
 		/// <summary>
@@ -156,6 +213,7 @@ namespace Happimeter.Services
 			if (connectedDevices.Any(x => x.Name?.Contains("Happimeter") ?? false))
 			{
 				var innerDevice = connectedDevices.FirstOrDefault(x => x.Name.Contains("Happimeter"));
+				innerDevice.WhenStatusChanged().Subscribe(status => WhenConnectionStatusChanged(status, innerDevice));
 				if (innerDevice.Status == ConnectionStatus.Connected && !RescanEvenIfConnectedNextTime)
 				{
 					Console.WriteLine("Device already connected");
@@ -188,12 +246,7 @@ namespace Happimeter.Services
 			}
 
 			bool connectionResult = true;
-			await device.Connect(
-				new GattConnectionConfig
-				{
-					AutoConnect = false,
-					Priority = ConnectionPriority.High
-				})
+			await ConnectDevice(device)
 				.Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
 											.Catch((Exception arg) =>
 											{
@@ -318,7 +371,14 @@ namespace Happimeter.Services
 					return;
 				}
 
-				var characteristic = await device.WhenAnyCharacteristicDiscovered()
+				IGattCharacteristic characteristic;
+				if (DevicesCharacteristics.ContainsKey(device.Uuid) && DevicesCharacteristics[device.Uuid].ContainsKey(UuidHelper.DataExchangeCharacteristicUuid))
+				{
+					characteristic = DevicesCharacteristics[device.Uuid][UuidHelper.DataExchangeCharacteristicUuid];
+				}
+				else
+				{
+					characteristic = await device.WhenAnyCharacteristicDiscovered()
 												 .Where(charac => charac.Uuid == UuidHelper.DataExchangeCharacteristicUuid)
 												 .Take(1)
 												 .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
@@ -328,6 +388,8 @@ namespace Happimeter.Services
 													 RescanEvenIfConnectedNextTime = true;
 													 return Observable.Return<IGattCharacteristic>(null);
 												 });
+				}
+
 
 				if (characteristic == null)
 				{
@@ -388,7 +450,6 @@ namespace Happimeter.Services
 									 EventType = AndroidWatchExchangeDataStates.DidWrite
 								 });
 
-				//FROM HERE ON WE RUN IT IN A BACKGROUND THREAD
 				try
 				{
 					var stopWatch = new Stopwatch();
@@ -459,7 +520,6 @@ namespace Happimeter.Services
 					ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.DataExchangeFailure);
 					IsBusy.Remove(characteristic.Service.Device.Uuid);
 				}
-
 			}
 		}
 
@@ -477,7 +537,7 @@ namespace Happimeter.Services
 			var nullByteSeq = new byte[3] { 0x00, 0x00, 0x00 };
 			var reseted = await characteristic.Write(nullByteSeq)
 				.Timeout(TimeSpan.FromSeconds(5))
-				.Catch<CharacteristicResult, Exception>((arg) =>
+											  .Catch<CharacteristicGattResult, Exception>((arg) =>
 				{
 					if (arg is TimeoutException)
 					{
@@ -487,7 +547,7 @@ namespace Happimeter.Services
 					{
 						Console.WriteLine("Got error while writing reset!");
 					}
-					return Observable.Return<CharacteristicResult>(null);
+					return Observable.Return<CharacteristicGattResult>(null);
 				});
 			if (reseted == null)
 			{
@@ -499,7 +559,7 @@ namespace Happimeter.Services
 			var header = BluetoothHelper.GetMessageHeader(message);
 			var written = await characteristic.Write(header)
 				.Timeout(TimeSpan.FromSeconds(5))
-				.Catch<CharacteristicResult, Exception>((arg) =>
+											  .Catch<CharacteristicGattResult, Exception>((arg) =>
 				{
 					if (arg is TimeoutException)
 					{
@@ -509,7 +569,7 @@ namespace Happimeter.Services
 					{
 						Console.WriteLine("Got error on write, while writing header");
 					}
-					return Observable.Return<CharacteristicResult>(null);
+					return Observable.Return<CharacteristicGattResult>(null);
 				});
 			if (written == null)
 			{
@@ -525,7 +585,7 @@ namespace Happimeter.Services
 				var toSend = messageJson.Skip(bytesSentCounter).Take(mtu).ToArray();
 				var sent = await characteristic.Write(toSend)
 				   .Timeout(TimeSpan.FromSeconds(8))
-				   .Catch<CharacteristicResult, Exception>((arg) =>
+											   .Catch<CharacteristicGattResult, Exception>((arg) =>
 				   {
 					   if (arg is TimeoutException)
 					   {
@@ -535,7 +595,7 @@ namespace Happimeter.Services
 					   {
 						   Console.WriteLine("Got error on write, while transfering data");
 					   }
-					   return Observable.Return<CharacteristicResult>(null);
+					   return Observable.Return<CharacteristicGattResult>(null);
 				   });
 				if (sent == null)
 				{
@@ -560,7 +620,7 @@ namespace Happimeter.Services
 			//from the first read request we assume to get an header, which contains information what and how much is sent
 			var headerResult = await characteristic.Read()
 					.Timeout(TimeSpan.FromSeconds(10))
-					.Catch<CharacteristicResult, Exception>((arg) =>
+												   .Catch<CharacteristicGattResult, Exception>((arg) =>
 					{
 						if (arg is TimeoutException)
 						{
@@ -570,7 +630,7 @@ namespace Happimeter.Services
 						{
 							Console.WriteLine("Got error while reading header!");
 						}
-						return Observable.Return<CharacteristicResult>(null);
+						return Observable.Return<CharacteristicGattResult>(null);
 					});
 			if (headerResult == null)
 			{
@@ -583,7 +643,7 @@ namespace Happimeter.Services
 				//here we receive the actual data until we got the complete message
 				var nextBytes = await characteristic.Read()
 					.Timeout(TimeSpan.FromSeconds(10))
-					.Catch<CharacteristicResult, Exception>((arg) =>
+													.Catch<CharacteristicGattResult, Exception>((arg) =>
 					{
 						if (arg is TimeoutException)
 						{
@@ -593,7 +653,7 @@ namespace Happimeter.Services
 						{
 							Console.WriteLine("Got error on reading data!");
 						}
-						return Observable.Return<CharacteristicResult>(null);
+						return Observable.Return<CharacteristicGattResult>(null);
 					});
 				if (nextBytes == null || nextBytes.Data.Length == 3 && nextBytes.Data.All(x => x == 0x00))
 				{
@@ -619,7 +679,7 @@ namespace Happimeter.Services
 			{
 				await EnableNotificationsFor(characteristic);
 			}
-			var notificationSubject = CharacteristicNotifiationSubjects[characteristic.Uuid.ToString()] as IObservable<CharacteristicResult>;
+			var notificationSubject = CharacteristicNotifiationSubjects[characteristic.Uuid.ToString()] as IObservable<CharacteristicGattResult>;
 			var headerNotificationResult = await notificationSubject.FirstAsync();
 			var context = new WriteReceiverContext(headerNotificationResult.Data);
 			while (true)
@@ -642,7 +702,7 @@ namespace Happimeter.Services
 			return context.GetMessageAsJson();
 		}
 
-		private Dictionary<string, ReplaySubject<CharacteristicResult>> CharacteristicNotifiationSubjects = new Dictionary<string, ReplaySubject<CharacteristicResult>>();
+		private Dictionary<string, ReplaySubject<CharacteristicGattResult>> CharacteristicNotifiationSubjects = new Dictionary<string, ReplaySubject<CharacteristicGattResult>>();
 		//first string is message name, second string is message json
 		private ReplaySubject<(string, string)> NotificationSubject = new ReplaySubject<(string, string)>(TimeSpan.FromSeconds(2));
 		public IObservable<(string, string)> WhenNotificationReceived()
@@ -658,9 +718,9 @@ namespace Happimeter.Services
 			var res = await characteristic.EnableNotifications().Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds)).Catch((Exception arg) =>
 			{
 				Console.WriteLine(arg.Message);
-				return Observable.Return<bool>(false);
+				return Observable.Return<CharacteristicGattResult>(null);
 			});
-			if (!res)
+			if (res == null)
 			{
 				//todo:implement
 				return false;
@@ -677,6 +737,10 @@ namespace Happimeter.Services
 
 			var subscription = characteristic.WhenNotificationReceived().Subscribe(result =>
 			{
+				if (UuidHelper.KnownCharacteristics().All(x => result.Characteristic.Uuid != x))
+				{
+					return;
+				}
 				if (result.Data == null)
 				{
 					return;

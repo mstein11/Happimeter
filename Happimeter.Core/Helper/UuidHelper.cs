@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 namespace Happimeter.Core.Helper
 {
 	public static class UuidHelper
@@ -18,6 +19,9 @@ namespace Happimeter.Core.Helper
 		public const string DataExchangeCharacteristicUuidString = "7918ec07-2ba4-4542-aa13-0a10ff3826ba";
 		public static Guid DataExchangeCharacteristicUuid => Guid.Parse(DataExchangeCharacteristicUuidString);
 
+		public const string DataExchangeNotifyCharacteristicUuidString = "964699c5-c9ff-486c-a833-d109b5700433";
+		public static Guid DataExchangeNotifyCharacteristicUuid => Guid.Parse(DataExchangeNotifyCharacteristicUuidString);
+
 		public const string AuthCharacteristicUuidString = "68b13553-0c4d-43de-8c1c-2b10d77d2d90";
 		public static Guid AuthCharacteristicUuid => Guid.Parse(AuthCharacteristicUuidString);
 
@@ -31,5 +35,16 @@ namespace Happimeter.Core.Helper
 		public const int TxPowerLevel = -56;
 		//Layout for iBeacon
 		public const string BeaconLayout = "m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24";
+
+		public static List<Guid> KnownCharacteristics()
+		{
+			return new List<Guid>() {
+				DataExchangeCharacteristicUuid,
+				AuthCharacteristicUuid,
+				GenericQuestionCharacteristicUuid,
+				MeasurementModeCharacteristicUuid,
+				DataExchangeNotifyCharacteristicUuid
+			};
+		}
 	}
 }

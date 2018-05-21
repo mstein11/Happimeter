@@ -217,12 +217,6 @@
     <Reference Include="SkiaSharp.Views.Forms">
       <HintPath>..\packages\SkiaSharp.Views.Forms.1.60.0\lib\XamariniOS\SkiaSharp.Views.Forms.dll</HintPath>
     </Reference>
-    <Reference Include="Plugin.BluetoothLE.Abstractions">
-      <HintPath>..\packages\Plugin.BluetoothLE.5.3.5\lib\Xamarin.iOS10\Plugin.BluetoothLE.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Plugin.BluetoothLE">
-      <HintPath>..\packages\Plugin.BluetoothLE.5.3.5\lib\Xamarin.iOS10\Plugin.BluetoothLE.dll</HintPath>
-    </Reference>
     <Reference Include="Xfx.Controls">
       <HintPath>..\packages\Xfx.Controls.1.1.3\lib\Xamarin.iOS10\Xfx.Controls.dll</HintPath>
     </Reference>
@@ -240,6 +234,12 @@
     </Reference>
     <Reference Include="Plugin.Geolocator">
       <HintPath>..\packages\Xam.Plugin.Geolocator.4.2.0\lib\Xamarin.iOS10\Plugin.Geolocator.dll</HintPath>
+    </Reference>
+    <Reference Include="Acr.Core">
+      <HintPath>..\packages\Acr.Core.2.0.2\lib\xamarinios10\Acr.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.BluetoothLE">
+      <HintPath>..\packages\Plugin.BluetoothLE.6.0.3\lib\xamarinios10\Plugin.BluetoothLE.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
