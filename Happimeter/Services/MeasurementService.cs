@@ -321,8 +321,8 @@ namespace Happimeter.Services
 				{
 					Id = entry.Id,
 					AvgHeartrate = entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.HeartRate)?.Average ?? 0,
-					LocalTimestamp = new DateTimeOffset(entry.Timestamp.ToLocalTime()).ToUnixTimeSeconds(),
-					Timestamp = new DateTimeOffset(entry.Timestamp).ToUnixTimeSeconds(),
+					LocalTimestamp = UtilHelper.GetUnixTimestamp(entry.Timestamp.ToLocalTime()),
+					Timestamp = UtilHelper.GetUnixTimestamp(entry.Timestamp),
 					Accelerometer = new AccelerometerModel
 					{
 						AvgX = GetOldAccelerometerScaleValue(entry.SensorItemMeasures?.FirstOrDefault(x => x.Type == MeasurementItemTypes.AccelerometerX)?.Average ?? 0),
