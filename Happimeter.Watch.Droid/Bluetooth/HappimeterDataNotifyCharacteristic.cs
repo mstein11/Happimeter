@@ -12,7 +12,7 @@ namespace Happimeter.Watch.Droid.Bluetooth
 	{
 		private const GattProperty GattProperties = GattProperty.Notify;
 		private const GattPermission GattPermissions = GattPermission.Read | GattPermission.Write;
-		public HappimeterDataNotifyCharacteristic() : base(uuid: UUID.FromString(UuidHelper.DataExchangeCharacteristicUuidString), properties: GattProperties, permissions: GattPermissions)
+		public HappimeterDataNotifyCharacteristic() : base(uuid: UUID.FromString(UuidHelper.DataExchangeNotifyCharacteristicUuidString), properties: GattProperties, permissions: GattPermissions)
 		{
 			var uuid = UUID.FromString("00002902-0000-1000-8000-00805f9b34fb");
 			//this.WriteType = GattWriteType.Default;
