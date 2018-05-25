@@ -40,7 +40,7 @@ namespace Happimeter.Droid.Services
 			_monitorNotifier.EnterRegionComplete += (sender, e) =>
 			{
 				Console.WriteLine("Did enter region");
-				var btService = ServiceLocator.Instance.Get<IBluetoothService1>();
+				var btService = ServiceLocator.Instance.Get<IBluetoothService>();
 				ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.BeaconRegionEnteredEvent);
 				//btService.ExchangeData();
 			};

@@ -1,7 +1,7 @@
 ﻿<Properties StartupConfiguration="{A206867A-1792-4275-9C38-842623227972}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Happimeter.Core/Models/Bluetooth/DataExchangeFirstMessage.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Happimeter/DependencyInjection/Container.cs">
     <Files>
-      <File FileName="Happimeter/Services/BluetoothService.cs" Line="707" Column="4" />
+      <File FileName="Happimeter/Services/BluetoothService.cs" Line="16" Column="30" />
       <File FileName="../../../../Library/Frameworks/Xamarin.iOS.framework/Versions/11.10.1.177/src/Xamarin.iOS/mcs/class/referencesource/mscorlib/system/runtime/exceptionservices/exceptionservicescommon.cs" Line="152" Column="1" />
       <File FileName="iOS/Services/BeaconWakeupService.cs" Line="44" Column="8" />
       <File FileName="iOS/Services/DeviceInformationService.cs" Line="50" Column="1" />
@@ -11,20 +11,20 @@
       <File FileName="Happimeter.Watch.Droid/Bluetooth/HappimeterService.cs" Line="12" Column="1" />
       <File FileName="Happimeter.Watch.Droid/Bluetooth/HappimeterDataNotifyCharacteristic.cs" Line="15" Column="129" />
       <File FileName="Happimeter.Watch.Droid/Workers/MeasurementWorker.cs" Line="1" Column="1" />
-      <File FileName="Happimeter/App.cs" Line="48" Column="23" />
-      <File FileName="Happimeter/Interfaces/IBluetoothService1.cs" Line="11" Column="47" />
+      <File FileName="Happimeter/App.cs" Line="52" Column="50" />
       <File FileName="Source Not Available" />
-      <File FileName="Happimeter/ViewModels/Forms/BluetoothMainPageViewModel.cs" Line="39" Column="27" />
+      <File FileName="Happimeter/ViewModels/Forms/BluetoothMainPageViewModel.cs" Line="54" Column="49" />
       <File FileName="Happimeter/ViewModels/Forms/BluetoothMainItemViewModel.cs" Line="1" Column="1" />
-      <File FileName="Happimeter/ViewModels/Forms/BluetoothPairingPageViewModel.cs" Line="32" Column="1" />
-      <File FileName="Happimeter/Models/AndroidWatch.cs" Line="197" Column="52" />
+      <File FileName="Happimeter/ViewModels/Forms/BluetoothPairingPageViewModel.cs" Line="43" Column="80" />
+      <File FileName="Happimeter/Models/AndroidWatch.cs" Line="67" Column="31" />
       <File FileName="Happimeter/Models/BluetoothDevice.cs" Line="36" Column="36" />
       <File FileName="Happimeter/ViewModels/Forms/BluetoothPairingItemViewModel.cs" Line="1" Column="1" />
-      <File FileName="Happimeter/Interfaces/IBluetoothService.cs" Line="24" Column="5" />
+      <File FileName="Happimeter/Interfaces/IBluetoothService.cs" Line="27" Column="11" />
       <File FileName="Droid/Services/BeaconWakeupService.cs" Line="45" Column="7" />
-      <File FileName="Happimeter/ViewModels/BluetoothDeviceListViewModel.cs" Line="30" Column="66" />
-      <File FileName="Happimeter/ViewModels/Forms/SettingsPageWatchConfigViewModel.cs" Line="28" Column="51" />
-      <File FileName="Happimeter/ViewModels/Forms/SettingsGenericQuestionPageViewModel.cs" Line="32" Column="51" />
+      <File FileName="Happimeter/ViewModels/BluetoothDeviceListViewModel.cs" Line="30" Column="65" />
+      <File FileName="Happimeter/ViewModels/Forms/SettingsPageWatchConfigViewModel.cs" Line="28" Column="50" />
+      <File FileName="Happimeter/ViewModels/Forms/SettingsGenericQuestionPageViewModel.cs" Line="32" Column="50" />
+      <File FileName="Happimeter/DependencyInjection/Container.cs" Line="19" Column="37" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />

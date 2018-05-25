@@ -127,7 +127,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\GeoLocationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IGeoLocationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\BluetoothService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IBluetoothService1.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />

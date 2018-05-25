@@ -49,7 +49,7 @@ namespace Happimeter
 			if (pairing != null)
 			{
 				ServiceLocator.Instance.Get<IBeaconWakeupService>().StartWakeupForBeacon();
-				ServiceLocator.Instance.Get<IBluetoothService1>().Init();
+				ServiceLocator.Instance.Get<IBluetoothService>().Init();
 			}
 
 

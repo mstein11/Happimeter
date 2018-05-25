@@ -29,7 +29,7 @@ namespace Happimeter.ViewModels.Forms
 				}
 				StartScanButtonText = "Scanning...";
 				StartScanButtonIsEnabled = false;
-				var btService = ServiceLocator.Instance.Get<IBluetoothService1>();
+				var btService = ServiceLocator.Instance.Get<IBluetoothService>();
 				Items.Clear();
 
 				var obs = btService.StartScan();

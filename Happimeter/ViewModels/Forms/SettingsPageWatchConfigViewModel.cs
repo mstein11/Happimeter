@@ -25,7 +25,7 @@ namespace Happimeter.ViewModels.Forms
 
 				int? valueToSend = ContinousModeIsOn ? null : (int?)300;
 
-				ServiceLocator.Instance.Get<IBluetoothService1>().SendMeasurementMode(valueToSend, (connectionUpdate) =>
+				ServiceLocator.Instance.Get<IBluetoothService>().SendMeasurementMode(valueToSend, (connectionUpdate) =>
 				{
 					Timer timer = null;
 					switch (connectionUpdate)

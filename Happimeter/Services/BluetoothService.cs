@@ -15,13 +15,13 @@ using Happimeter.Events;
 
 namespace Happimeter.Services
 {
-	public class BluetoothService1 : BluetoothService, IBluetoothService1
+	public class BluetoothService : IBluetoothService
 	{
 		private double _scanTimeoutSeconds = 30;
 		private double _connectTimeoutSeconds = 120;
 		private double _messageTimeoutSeconds = 10;
 
-		public BluetoothService1()
+		public BluetoothService()
 		{
 		}
 

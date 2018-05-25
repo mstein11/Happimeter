@@ -35,7 +35,7 @@ namespace Happimeter.ViewModels.Forms
 
 			RemovePairingCommand = new Command(() =>
 			{
-				var btService = ServiceLocator.Instance.Get<IBluetoothService1>();
+				var btService = ServiceLocator.Instance.Get<IBluetoothService>();
 				btService.UnpairConnection();
 				var innerContext = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
 				var innerPairing = context
@@ -51,13 +51,13 @@ namespace Happimeter.ViewModels.Forms
 			ExchangeDataCommand = new Command(() =>
 			{
 				App.BluetoothAlertIfNeeded();
-				var btService = ServiceLocator.Instance.Get<IBluetoothService1>();
+				var btService = ServiceLocator.Instance.Get<IBluetoothService>();
 				btService.ExchangeData();
 			});
 
 			RefreshData();
 
-			var btServiceForUpdate = ServiceLocator.Instance.Get<IBluetoothService1>();
+			var btServiceForUpdate = ServiceLocator.Instance.Get<IBluetoothService>();
 			btServiceForUpdate.DataExchangeStatusUpdate += (sender, e) =>
 			{
 				switch (e.EventType)

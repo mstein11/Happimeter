@@ -49,7 +49,7 @@ namespace Happimeter.Models
 				OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.IsBusy, null);
 				return Observable.Return<object>(null);
 			}
-			var btService = ServiceLocator.Instance.Get<IBluetoothService1>();
+			var btService = ServiceLocator.Instance.Get<IBluetoothService>();
 
 			OnConnectingStateChanged?.Invoke(AndroidWatchConnectingStates.Connecting, null);
 			IsBusyConnecting = true;

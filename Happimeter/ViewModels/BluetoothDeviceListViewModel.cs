@@ -27,7 +27,7 @@ namespace Happimeter.ViewModels
 		private void StartScan()
 		{
 
-			var btService = ServiceLocator.Instance.Get<IBluetoothService1>();
+			var btService = ServiceLocator.Instance.Get<IBluetoothService>();
 			btService.StartScan().Subscribe(x =>
 			{
 				var vm = BluetoothDevice.Create(x.Device);
