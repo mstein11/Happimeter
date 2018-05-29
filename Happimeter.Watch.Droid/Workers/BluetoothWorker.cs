@@ -41,6 +41,8 @@ namespace Happimeter.Watch.Droid.Workers
 		/// <value>The token source.</value>
 		private CancellationTokenSource TokenSource { get; set; }
 
+		public bool IsConnected = false;
+
 		#region Singleton instanciation
 		private static BluetoothWorker Instance { get; set; }
 		public static BluetoothWorker GetInstance()
@@ -91,6 +93,7 @@ namespace Happimeter.Watch.Droid.Workers
 				{
 					GattServer.Close();
 					GattServer.Dispose();
+					GattServer = null;
 				}
 				catch (ObjectDisposedException)
 				{
@@ -132,7 +135,7 @@ namespace Happimeter.Watch.Droid.Workers
 			var readhost = new ReadHostContext(message);
 			var header = readhost.Header;
 
-			var characteristic = GattServer.Services
+			var characteristic = GattServer?.Services
 									 .FirstOrDefault(x =>
 													 x.Characteristics.Any(c => c.Uuid.ToString().ToUpper() == characteristicUuid.ToString().ToUpper()))
 										   ?.Characteristics.FirstOrDefault(c => c.Uuid.ToString().ToUpper() == characteristicUuid.ToString().ToUpper())
@@ -146,7 +149,7 @@ namespace Happimeter.Watch.Droid.Workers
 
 			foreach (var dev in SubscribedDevices)
 			{
-				var headerResult = GattServer.NotifyCharacteristicChanged(dev.Value, characteristic, false);
+				var headerResult = GattServer?.NotifyCharacteristicChanged(dev.Value, characteristic, false) ?? false;
 				if (!headerResult)
 				{
 					throw new ArgumentException("Could not notify client");
@@ -159,7 +162,7 @@ namespace Happimeter.Watch.Droid.Workers
 				characteristic.SetValue(messagePart);
 				foreach (var dev in SubscribedDevices)
 				{
-					GattServer.NotifyCharacteristicChanged(dev.Value, characteristic, false);
+					GattServer?.NotifyCharacteristicChanged(dev.Value, characteristic, false);
 				}
 			}
 		}
@@ -244,16 +247,26 @@ namespace Happimeter.Watch.Droid.Workers
 		public override void OnConnectionStateChange(BluetoothDevice device, ProfileState status, ProfileState newState)
 		{
 			base.OnConnectionStateChange(device, status, newState);
-
+			System.Diagnostics.Debug.WriteLine($"Device status changed (watch as server): {device.Address}, {newState}");
 			if (newState == ProfileState.Connected)
 			{
+				Worker.IsConnected = true;
 				Console.WriteLine("device is now connected: watch as server");
+			}
+			else
+			{
+				Worker.IsConnected = false;
+				System.Threading.Timer timer = null;
+				timer = new System.Threading.Timer((obj) =>
+				{
+					if (!Worker.IsConnected)
+					{
+						BeaconWorker.GetInstance().Stop();
+						BeaconWorker.GetInstance().Start();
+						timer.Dispose();
+					}
+				}, null, 5000, System.Threading.Timeout.Infinite);
 
-				/*var client = device.ConnectGatt(Application.Context, true, new CallBackGattClient(Worker));
-                if (!Worker.GattClients.ContainsKey(device.Address)) {
-                    Worker.GattClients.Add(device.Address, client);
-                }
-                */
 			}
 		}
 
@@ -275,12 +288,12 @@ namespace Happimeter.Watch.Droid.Workers
 
 			if (context == null)
 			{
-				Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, new byte[] { 0x00, 0x00, 0x00 });
+				Worker.GattServer?.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, new byte[] { 0x00, 0x00, 0x00 });
 				return;
 			}
 			if (!context.DidSendHeader)
 			{
-				Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, context.Header);
+				Worker.GattServer?.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, context.Header);
 				context.DidSendHeader = true;
 				return;
 			}
@@ -306,7 +319,7 @@ namespace Happimeter.Watch.Droid.Workers
 				bytesToSend = new byte[] { 0x00, 0x00, 0x00 };
 			}
 
-			Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, bytesToSend);
+			Worker.GattServer?.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, bytesToSend);
 			return;
 		}
 
@@ -319,7 +332,7 @@ namespace Happimeter.Watch.Droid.Workers
 				WriteReceiverContextForDevice.Remove((device.Address, characteristic.Uuid.ToString()));
 				if (responseNeeded)
 				{
-					Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
+					Worker.GattServer?.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
 				}
 				return;
 			}
@@ -335,7 +348,7 @@ namespace Happimeter.Watch.Droid.Workers
 				}
 				catch (Exception)
 				{
-					Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Failure, offset, value);
+					Worker.GattServer?.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Failure, offset, value);
 				}
 
 			}
@@ -351,7 +364,7 @@ namespace Happimeter.Watch.Droid.Workers
 			{
 				//Error we can't handle message
 				System.Diagnostics.Debug.WriteLine($"Device {device.Address} wrote something which I don't know how to handle to data characteristic!");
-				Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, Encoding.UTF8.GetBytes("wrong pass phrase!"));
+				Worker.GattServer?.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, Encoding.UTF8.GetBytes("wrong pass phrase!"));
 				WriteReceiverContextForDevice.Remove((device.Address, characteristic.Uuid.ToString()));
 				return;
 			}
@@ -360,7 +373,7 @@ namespace Happimeter.Watch.Droid.Workers
 			{
 				if (!context.CanAddMessagePart(value))
 				{
-					Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Failure, offset, Encoding.UTF8.GetBytes("wrong pass phrase!"));
+					Worker.GattServer?.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Failure, offset, Encoding.UTF8.GetBytes("wrong pass phrase!"));
 					return;
 				}
 				context.AddMessagePart(value);
@@ -370,7 +383,7 @@ namespace Happimeter.Watch.Droid.Workers
 			{
 				if (responseNeeded)
 				{
-					Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
+					Worker.GattServer?.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
 				}
 				return;
 			}
@@ -381,7 +394,7 @@ namespace Happimeter.Watch.Droid.Workers
 
 			if (messageJson == null)
 			{
-				Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Failure, offset, Encoding.UTF8.GetBytes("malformated gzip"));
+				Worker.GattServer?.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Failure, offset, Encoding.UTF8.GetBytes("malformated gzip"));
 				return;
 			}
 
@@ -393,7 +406,7 @@ namespace Happimeter.Watch.Droid.Workers
 				authCharac.HandleWriteJson(messageJson, device.Address);
 				if (responseNeeded)
 				{
-					Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
+					Worker.GattServer?.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
 				}
 				return;
 			}
@@ -405,7 +418,7 @@ namespace Happimeter.Watch.Droid.Workers
 				dataCharac.HandleWriteJson(messageJson, device.Address);
 				if (responseNeeded)
 				{
-					Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
+					Worker.GattServer?.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
 				}
 				return;
 			}
@@ -417,7 +430,7 @@ namespace Happimeter.Watch.Droid.Workers
 				questionCharac.HandleWriteJson(messageJson, device.Address);
 				if (responseNeeded)
 				{
-					Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
+					Worker.GattServer?.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
 				}
 				return;
 			}
@@ -429,12 +442,12 @@ namespace Happimeter.Watch.Droid.Workers
 				measurementCharac.HandleWriteJson(messageJson, device.Address);
 				if (responseNeeded)
 				{
-					Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
+					Worker.GattServer?.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
 				}
 				return;
 			}
 
-			Worker.GattServer.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, Encoding.UTF8.GetBytes("Unknwon characteristic!"));
+			Worker.GattServer?.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, Encoding.UTF8.GetBytes("Unknwon characteristic!"));
 		}
 
 		public override void OnDescriptorReadRequest(BluetoothDevice device, int requestId, int offset, BluetoothGattDescriptor descriptor)
@@ -452,14 +465,14 @@ namespace Happimeter.Watch.Droid.Workers
 				{
 					valueToReturn = BluetoothGattDescriptor.DisableNotificationValue.ToList<byte>();
 				}
-				Worker.GattServer.SendResponse(device,
+				Worker.GattServer?.SendResponse(device,
 					requestId,
 											   Android.Bluetooth.GattStatus.Success,
 					0,
 					valueToReturn.ToArray());
 			}
 
-			Worker.GattServer.SendResponse(device,
+			Worker.GattServer?.SendResponse(device,
 							requestId,
 							Android.Bluetooth.GattStatus.Success,
 							0,
@@ -490,7 +503,7 @@ namespace Happimeter.Watch.Droid.Workers
 				}
 				if (responseNeeded)
 				{
-					Worker.GattServer.SendResponse(device,
+					Worker.GattServer?.SendResponse(device,
 							requestId,
 							Android.Bluetooth.GattStatus.Success,
 							0,
@@ -501,7 +514,7 @@ namespace Happimeter.Watch.Droid.Workers
 			{
 				if (responseNeeded)
 				{
-					Worker.GattServer.SendResponse(device,
+					Worker.GattServer?.SendResponse(device,
 							requestId,
 							Android.Bluetooth.GattStatus.Success,
 							0,
@@ -542,7 +555,7 @@ namespace Happimeter.Watch.Droid.Workers
 		public override void OnConnectionStateChange(BluetoothGatt gatt, Android.Bluetooth.GattStatus status, ProfileState newState)
 		{
 			base.OnConnectionStateChange(gatt, status, newState);
-			Console.WriteLine("device is now connected: watch as client");
+			System.Diagnostics.Debug.WriteLine($"Device status changed (watch as server): {newState}");
 			if (newState == ProfileState.Connected)
 			{
 				var success = gatt.RequestMtu(512);

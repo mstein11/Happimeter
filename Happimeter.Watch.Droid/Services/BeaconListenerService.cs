@@ -10,13 +10,14 @@ using Android.OS;
 using AltBeaconOrg.BoundBeacon.Powersave;
 using Android.App;
 using System.Collections.Concurrent;
+using System.Linq;
 
 namespace Happimeter.Watch.Droid.Services
 {
 	public class BeaconListenerService : Java.Lang.Object, IBeaconConsumer
 	{
 		private BeaconManager BeaconManager { get; set; }
-		private Region ToMonitor { get; set; }
+		private List<Region> ToMonitor { get; set; } = new List<Region>();
 		private readonly RangeNotifier _rangeNotifier = new RangeNotifier();
 		private BackgroundPowerSaver PowerSave { get; set; }
 
@@ -44,10 +45,13 @@ namespace Happimeter.Watch.Droid.Services
 			_rangeNotifier.DidRangeBeaconsInRegionComplete += _rangeNotifier_DidRangeBeaconsInRegionComplete;
 
 			var region = new AltBeaconOrg.BoundBeacon.Region("com.company.name", Identifier.Parse(UuidHelper.BeaconUuidString), null, null);
-			ToMonitor = region;
+			var region1 = new AltBeaconOrg.BoundBeacon.Region("com.company.name1", Identifier.Parse(UuidHelper.WakeupBeaconUuidString), null, null);
+			ToMonitor.Add(region);
+			ToMonitor.Add(region1);
 
 			BeaconManager.SetRangeNotifier(_rangeNotifier);
 			BeaconManager.StartRangingBeaconsInRegion(region);
+			BeaconManager.StartRangingBeaconsInRegion(region1);
 		}
 
 		public void UnbindService(IServiceConnection serviceConnection)
@@ -68,9 +72,13 @@ namespace Happimeter.Watch.Droid.Services
 
 		public void StopListeningForBeacons()
 		{
-			if (BeaconManager != null && ToMonitor != null)
+			if (BeaconManager != null && ToMonitor != null && ToMonitor.Any())
 			{
-				BeaconManager.StopRangingBeaconsInRegion(ToMonitor);
+				foreach (var item in ToMonitor)
+				{
+					BeaconManager.StopRangingBeaconsInRegion(item);
+				}
+
 			}
 		}
 

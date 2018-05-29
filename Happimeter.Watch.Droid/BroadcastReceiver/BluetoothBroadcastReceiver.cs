@@ -22,11 +22,11 @@ namespace Happimeter.Watch.Droid
 					//disconnect greacefully
 					if (BeaconWorker.GetInstance().IsRunning)
 					{
-						//BeaconWorker.GetInstance().Stop();
+						BeaconWorker.GetInstance().Stop();
 					}
 					if (BluetoothWorker.GetInstance().IsRunning)
 					{
-						//BluetoothWorker.GetInstance().Stop();
+						BluetoothWorker.GetInstance().Stop();
 					}
 					AfterBluetoothShutDown();
 					break;

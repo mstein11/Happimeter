@@ -74,7 +74,17 @@ namespace Happimeter.Watch.Droid.Workers
 		{
 			var userId = ServiceLocator.Instance.Get<IDatabaseContext>().Get<BluetoothPairing>(x => x.IsPairingActive)?.PairedWithUserId ?? 0;
 			(var major, var minor) = UtilHelper.GetMajorMinorFromUserId(userId);
-			var beaconUuid = UuidHelper.BeaconUuidString;
+			string beaconUuid;
+			var connectedDevice = BluetoothWorker.GetInstance().IsConnected;
+			if (connectedDevice)
+			{
+				beaconUuid = UuidHelper.BeaconUuidString;
+			}
+			else
+			{
+				beaconUuid = UuidHelper.WakeupBeaconUuidString;
+			}
+
 			var beacon = new Beacon.Builder()
 								   .SetId1(beaconUuid)
 								   .SetId2(major.ToString())
@@ -87,40 +97,6 @@ namespace Happimeter.Watch.Droid.Workers
 			BeaconTransmitter = new BeaconTransmitter(Application.Context, beaconParser);
 			return (BeaconTransmitter, beacon);
 		}
-
-		/*
-		private (BeaconTransmitter, Beacon) GetProximityBeaconTransmitterAndBeacon()
-		{
-			var userId = ServiceLocator.Instance.Get<IDatabaseContext>().Get<BluetoothPairing>(x => x.IsPairingActive)?.PairedWithUserId ?? 0;
-			(var major, var minor) = UtilHelper.GetMajorMinorFromUserId(userId);
-			var beaconUuid = UuidHelper.ProximityBeaconUuidString;
-			var beacon = new Beacon.Builder()
-								   .SetId1(beaconUuid)
-								   .SetId2(major.ToString())
-								   .SetId3((minor + 1).ToString())
-								   .SetManufacturer(UuidHelper.BeaconManufacturerId) // Radius Networks.0x0118  Change this for other beacon layouts//0x004C for iPhone
-								   .SetTxPower(UuidHelper.TxPowerLevel) // Power in dB
-																		//.SetBluetoothName("Happimeter")
-								   .Build();
-			var beaconParser = new BeaconParser().SetBeaconLayout(UuidHelper.BeaconLayout);
-			BeaconTransmitter = new BeaconTransmitter(Application.Context, beaconParser);
-			return (BeaconTransmitter, beacon);
-		}
-        */
-		/*
-		public void StartProximityBeacon()
-		{
-			(BeaconTransmitter beaconTransmitter, Beacon beacon) = GetProximityBeaconTransmitterAndBeacon();
-			ProximityBeaconTransmitter = beaconTransmitter;
-
-			Task.Factory.StartNew(() =>
-			{
-				IsRunning = true;
-				ProximityBeaconTransmitter.StartAdvertising(beacon, new CallbackAd());
-				System.Diagnostics.Debug.WriteLine("Started Beacon Proximity Beacon");
-			}, TokenSource.Token);
-		}
-        */
 
 		public void Start()
 		{

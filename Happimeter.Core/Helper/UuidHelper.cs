@@ -10,6 +10,9 @@ namespace Happimeter.Core.Helper
 		public const string BeaconUuidString = "6c2e3172-768b-4d3e-a47b-01470fe908a4";
 		public static Guid BeaconUuid => Guid.Parse(BeaconUuidString);
 
+		public const string WakeupBeaconUuidString = "31c668d3-6b81-4be2-876c-228ed4f88df8";
+		public static Guid WakeupBeaconUuid => Guid.Parse(WakeupBeaconUuidString);
+
 		public const string AndroidWatchServiceUuidString = "0000F0F0-0000-1000-8000-00805F9B34FB";
 		public static Guid AndroidWatchServiceUuid => Guid.Parse(AndroidWatchServiceUuidString);
 

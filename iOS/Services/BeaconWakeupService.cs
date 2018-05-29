@@ -27,7 +27,7 @@ namespace Happimeter.iOS.Services
 				var major = tupple.Item1;
 				var minor = tupple.Item2;
 
-				var beaconUuid = UuidHelper.BeaconUuidString;
+				var beaconUuid = UuidHelper.WakeupBeaconUuidString;
 				BeaconRegion = new CLBeaconRegion(new NSUuid(beaconUuid), (ushort)major, (ushort)minor, "com.example.company");
 				BeaconRegion.NotifyEntryStateOnDisplay = true;
 				BeaconRegion.NotifyOnExit = true;
@@ -39,9 +39,9 @@ namespace Happimeter.iOS.Services
 				LocationManager.RegionEntered += (object sender, CLRegionEventArgs e) =>
 				{
 					Console.WriteLine("region entered");
-					var btService = ServiceLocator.Instance.Get<IBluetoothService1>();
+					var btService = ServiceLocator.Instance.Get<IBluetoothService>();
 					ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.BeaconRegionEnteredEvent);
-					//btService.ExchangeData();
+					btService.Init();
 				};
 
 				LocationManager.RegionLeft += (object sender, CLRegionEventArgs e) =>

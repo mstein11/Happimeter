@@ -34,15 +34,15 @@ namespace Happimeter.Droid.Services
 			//BeaconManager.SetDebug(true);
 			BeaconManager.SetForegroundScanPeriod(60 * 1000);
 			BeaconManager.SetBackgroundScanPeriod(60 * 1000);
-			BeaconManager.SetBackgroundBetweenScanPeriod(600 * 1000);
-			BeaconManager.SetForegroundBetweenScanPeriod(600 * 1000);
+			BeaconManager.SetBackgroundBetweenScanPeriod(300 * 1000);
+			BeaconManager.SetForegroundBetweenScanPeriod(300 * 1000);
 			PowerSave = new BackgroundPowerSaver(ApplicationContext);
 			_monitorNotifier.EnterRegionComplete += (sender, e) =>
 			{
 				Console.WriteLine("Did enter region");
 				var btService = ServiceLocator.Instance.Get<IBluetoothService>();
 				ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.BeaconRegionEnteredEvent);
-				//btService.ExchangeData();
+				btService.Init();
 			};
 
 			_monitorNotifier.ExitRegionComplete += (sender, e) =>
@@ -54,7 +54,7 @@ namespace Happimeter.Droid.Services
 			var userId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId();
 			var tupple = UtilHelper.GetMajorMinorFromUserId(userId);
 			//a region constitutes the beacon that should be found. 
-			var region = new AltBeaconOrg.BoundBeacon.Region("com.company.name", Identifier.Parse(UuidHelper.BeaconUuidString), Identifier.FromInt(tupple.Item1), Identifier.FromInt(tupple.Item2));
+			var region = new AltBeaconOrg.BoundBeacon.Region("com.company.name", Identifier.Parse(UuidHelper.WakeupBeaconUuidString), Identifier.FromInt(tupple.Item1), Identifier.FromInt(tupple.Item2));
 			BeaconManager.SetMonitorNotifier(_monitorNotifier);
 			BeaconManager.StartMonitoringBeaconsInRegion(region);
 		}

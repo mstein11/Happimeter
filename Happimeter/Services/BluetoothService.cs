@@ -78,11 +78,12 @@ namespace Happimeter.Services
 			{
 				Console.WriteLine("We have a device that is already connected!");
 				//todo: give reference to subscription
-				if (WhenStatusChangedSubscription == null)
+				if (WhenStatusChangedSubscription != null)
 				{
-					Debug.WriteLine("Subscribing to Status Changes!");
-					WhenStatusChangedSubscription = device.WhenStatusChanged().Subscribe(status => WhenConnectionStatusChanged(status, device));
+					WhenStatusChangedSubscription.Dispose();
 				}
+				Debug.WriteLine("Subscribing to Status Changes!");
+				WhenStatusChangedSubscription = device.WhenStatusChanged().Subscribe(status => WhenConnectionStatusChanged(status, device));
 			}
 			else
 			{
@@ -206,11 +207,13 @@ namespace Happimeter.Services
 					ConnectedReplaySubject.OnError(new Exception("Connection was not successful"));
 					return;
 				}
-				if (WhenStatusChangedSubscription == null)
+				if (WhenStatusChangedSubscription != null)
 				{
-					Debug.WriteLine("Subscribing to Status Changes!");
-					WhenStatusChangedSubscription = device.WhenStatusChanged().Subscribe(status => WhenConnectionStatusChanged(status, device));
+					WhenStatusChangedSubscription.Dispose();
 				}
+				Debug.WriteLine("Subscribing to Status Changes!");
+				WhenStatusChangedSubscription = device.WhenStatusChanged().Subscribe(status => WhenConnectionStatusChanged(status, device));
+
 
 				ConnectedReplaySubject.OnNext(device);
 				ConnectedReplaySubject.OnCompleted();
