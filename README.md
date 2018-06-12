@@ -1,8 +1,25 @@
 # Introduction
-This repository is part of the happimeter project. Within this repository you will find the smartphone app that is used to to display data from the happimeter server. Additionally, it is used in order to pair with a Android Smartwatch (NOT ANDROID WEAR). This repository also contains the code of the Android Smartwatch application.
+This repository is part of the happimeter project. 
+This repository contains the happimeter smartphone app and the happimeter android watch app. 
 
-# Affiliation
-This Project was developed as part of the Happimeter project at MIT Center for Collective Intelligence.
+The happimeter is capable of gathering the data from different sensors of a smartwatch and send them to the happimeter server.
+The following sensor data can be collected:
+
+| Sensor | Description|
+|---|---|
+| Accelerometer | Measures the physical activity of a user on three axis. |
+| Heartrate sensor | Measures the heartrate of a user. |
+| Step Counter | Measures how many steps a user takes over the course of a day. |
+| Microphone | Measures the noise level around an user. No audio data are recorded, only a measure between 0 and 1 representing the noise level is saved. In the future, we want to distinguish between human voice and background noise to better capture instances of communication. |
+| Bluetooth | Measures the proximity of a user to other users or points of interest. |
+
+Running the happimeter smartwatch app drains the battery of such a device. The happimeter is capable to run in two distinct modes:
+1. <b>Battery-safer mode:</b> While running in battery safer mode, measuremnts are taken from the senors in five minute intervals. The battery usually lasts between 8 and 12 hours.
+2. <b>Continous mode:</b> The watch continously takes sensor measurements. It aggregates and stores the taken measures in one minute intervals. The battery lasts around 5 hours.
+
+
+
+# Technical Information
 
 # Getting Started Android Watch
 
@@ -59,3 +76,6 @@ The watch is capable of collecting data through two different methods: <b>Contin
 
 ##MicrophoneWorker, MeasurementWorker and BluetoothScannerWorker
 The logic for calculating, aggregating and storing the measures taken from the different sensors of the watch can be found in the classes MeasurementWorker.cs, MicrophoneWorker.cs and BluetoothScannerWorker.cs. 
+
+# Affiliation
+This Project was developed as part of the Happimeter project at MIT Center for Collective Intelligence.
