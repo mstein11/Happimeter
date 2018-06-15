@@ -35,7 +35,7 @@ namespace Happimeter.Droid.Services
 			BeaconManager.SetForegroundScanPeriod(60 * 1000);
 			BeaconManager.SetBackgroundScanPeriod(60 * 1000);
 			BeaconManager.SetBackgroundBetweenScanPeriod(300 * 1000);
-			BeaconManager.SetForegroundBetweenScanPeriod(300 * 1000);
+			BeaconManager.SetForegroundBetweenScanPeriod(60 * 1000);
 			PowerSave = new BackgroundPowerSaver(ApplicationContext);
 			_monitorNotifier.EnterRegionComplete += (sender, e) =>
 			{
@@ -66,7 +66,7 @@ namespace Happimeter.Droid.Services
 
 		public void StartWakeupForBeacon()
 		{
-
+			BeaconManager.SetDebug(true);
 			BeaconManager = BeaconManager.GetInstanceForApplication(CrossCurrentActivity.Current.Activity);
 			var iBeaconParser = new BeaconParser();
 			//  Estimote > 2013

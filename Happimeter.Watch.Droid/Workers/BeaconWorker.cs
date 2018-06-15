@@ -19,6 +19,7 @@ namespace Happimeter.Watch.Droid.Workers
 		private CancellationTokenSource TokenSource { get; set; }
 		private BeaconTransmitter BeaconTransmitter { get; set; }
 		private BeaconTransmitter ProximityBeaconTransmitter { get; set; }
+		private BeaconType? RunningInType { get; set; }
 
 		private static BeaconWorker Instance { get; set; }
 
@@ -79,10 +80,12 @@ namespace Happimeter.Watch.Droid.Workers
 			if (connectedDevice)
 			{
 				beaconUuid = UuidHelper.BeaconUuidString;
+				RunningInType = BeaconType.NormalMode;
 			}
 			else
 			{
 				beaconUuid = UuidHelper.WakeupBeaconUuidString;
+				RunningInType = BeaconType.WakeupMode;
 			}
 
 			var beacon = new Beacon.Builder()
@@ -129,8 +132,6 @@ namespace Happimeter.Watch.Droid.Workers
 			{
 				StartOnce();
 			}
-			//ProximityBeaconTransmitter?.StopAdvertising();
-			//StartProximityBeacon();
 		}
 
 		public void Stop()
@@ -156,5 +157,31 @@ namespace Happimeter.Watch.Droid.Workers
 			IsRunning = false;
 			Console.WriteLine($"Stopen Worker: {nameof(BeaconWorker)} in Stop method.");
 		}
+
+		public void EnsureRightBeacontypeIsRunning()
+		{
+			//todo: only restart if needed
+			if (RunningInType != null
+				&& RunningInType == BeaconType.WakeupMode
+				&& BluetoothWorker.GetInstance().IsConnected)
+			{
+				Stop();
+				Start();
+			}
+			else if (RunningInType != null
+				&& RunningInType == BeaconType.NormalMode
+					 && !BluetoothWorker.GetInstance().IsConnected)
+			{
+				Stop();
+				Start();
+			}
+
+		}
+	}
+
+	public enum BeaconType
+	{
+		NormalMode,
+		WakeupMode
 	}
 }

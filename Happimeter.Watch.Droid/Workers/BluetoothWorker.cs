@@ -73,15 +73,23 @@ namespace Happimeter.Watch.Droid.Workers
 
 		private void InitializeGatt()
 		{
-			GattServer = Manager.OpenGattServer(Application.Context, new CallbackGatt(this));
-			GattServer.AddService(HappimeterService.Create());
-
-			if (!ServiceLocator.Instance.Get<IDeviceService>().IsPaired())
+			try
 			{
-				GattServer.AddService(HappimeterAuthService.Create());
+				GattServer = Manager.OpenGattServer(Application.Context, new CallbackGatt(this));
+				GattServer.AddService(HappimeterService.Create());
+
+				if (!ServiceLocator.Instance.Get<IDeviceService>().IsPaired())
+				{
+					GattServer.AddService(HappimeterAuthService.Create());
+				}
+
+				System.Diagnostics.Debug.WriteLine("Gatt initialized");
+			}
+			catch (Exception e)
+			{
+				System.Diagnostics.Debug.WriteLine("ATTENTION: GATT SERVER NOT INITIALIZED WITH ERROR: " + e.Message);
 			}
 
-			System.Diagnostics.Debug.WriteLine("Gatt initialized");
 		}
 
 		public void Stop()
@@ -132,9 +140,6 @@ namespace Happimeter.Watch.Droid.Workers
 
 		public void SendNotifiation(Guid characteristicUuid, BaseBluetoothMessage message = null)
 		{
-			var readhost = new ReadHostContext(message);
-			var header = readhost.Header;
-
 			var characteristic = GattServer?.Services
 									 .FirstOrDefault(x =>
 													 x.Characteristics.Any(c => c.Uuid.ToString().ToUpper() == characteristicUuid.ToString().ToUpper()))
@@ -144,24 +149,24 @@ namespace Happimeter.Watch.Droid.Workers
 			{
 				return;
 			}
-			//characteristic = GattServer.GetService(UUID.FromString(UuidHelper.AndroidWatchAuthServiceUuidString)).GetCharacteristic(UUID.FromString(UuidHelper.AuthCharacteristicUuidString));
-			characteristic.SetValue(header);
+			//characteristic = GattServer.GetService(UUID.FromString(UuidHelper.AndroidWatchAuthServiceUuidString)).GetCharacteristic(UUID.FromString(UuidHelper.AuthCharacteristicUuidString));         
 
 			foreach (var dev in SubscribedDevices)
 			{
+				var readhost = new ReadHostContext(message);
+				var header = readhost.Header;
+				characteristic.SetValue(header);
+
 				var headerResult = GattServer?.NotifyCharacteristicChanged(dev.Value, characteristic, false) ?? false;
 				if (!headerResult)
 				{
 					throw new ArgumentException("Could not notify client");
 				}
-			}
 
-			while (!readhost.Complete)
-			{
-				var messagePart = readhost.GetNextBytes(20);
-				characteristic.SetValue(messagePart);
-				foreach (var dev in SubscribedDevices)
+				while (!readhost.Complete)
 				{
+					var messagePart = readhost.GetNextBytes(20);
+					characteristic.SetValue(messagePart);
 					GattServer?.NotifyCharacteristicChanged(dev.Value, characteristic, false);
 				}
 			}
@@ -252,19 +257,27 @@ namespace Happimeter.Watch.Droid.Workers
 			{
 				Worker.IsConnected = true;
 				Console.WriteLine("device is now connected: watch as server");
+				System.Threading.Timer timer = null;
+				timer = new System.Threading.Timer((obj) =>
+				{
+					BeaconWorker.GetInstance().EnsureRightBeacontypeIsRunning();
+					timer.Dispose();
+				}, null, 5000, System.Threading.Timeout.Infinite);
+
 			}
 			else
 			{
+				if (Worker.SubscribedDevices.ContainsKey(device.Address))
+				{
+					Worker.SubscribedDevices.Remove(device.Address);
+				}
 				Worker.IsConnected = false;
 				System.Threading.Timer timer = null;
 				timer = new System.Threading.Timer((obj) =>
 				{
-					if (!Worker.IsConnected)
-					{
-						BeaconWorker.GetInstance().Stop();
-						BeaconWorker.GetInstance().Start();
-						timer.Dispose();
-					}
+					//if we are not connected, we start the beacon with a uuid that will wakeup the phone which then reestablishes the connection
+					BeaconWorker.GetInstance().EnsureRightBeacontypeIsRunning();
+					timer.Dispose();
 				}, null, 5000, System.Threading.Timeout.Infinite);
 
 			}

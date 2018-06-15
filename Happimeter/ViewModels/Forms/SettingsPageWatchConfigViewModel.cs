@@ -39,6 +39,15 @@ namespace Happimeter.ViewModels.Forms
 						case BluetoothWriteEvent.Complete:
 							PushMeasurementModeToWatchText = "Successfully changed mode";
 							timer = null;
+							if (valueToSend != null)
+							{
+								ServiceLocator.Instance.Get<IConfigService>().SetBatterySaferMeasurementMode(valueToSend.Value);
+							}
+							else
+							{
+								ServiceLocator.Instance.Get<IConfigService>().SetContinousMeasurementMode();
+							}
+
 							timer = new Timer((obj) =>
 							{
 								PushMeasurementModeToWatchText = "Safe and Push To Watch";
