@@ -1,69 +1,155 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using System.Threading.Tasks;
-using Happimeter.Core.Database;
-using Happimeter.Core.Helper;
-using Happimeter.Core.Models.Bluetooth;
-using Happimeter.Events;
-using Happimeter.Interfaces;
-using Happimeter.Models;
 using Plugin.BluetoothLE;
+using System.Reactive.Subjects;
+using System.Reactive.Linq;
+using System.Linq;
+using Happimeter.Core.Helper;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using Happimeter.Core.Models.Bluetooth;
+using Happimeter.Interfaces;
+using Happimeter.Core.Database;
+using Happimeter.Models;
+using Happimeter.Events;
 
 namespace Happimeter.Services
 {
 	public class BluetoothService : IBluetoothService
 	{
-
-		private const int _messageTimeoutSeconds = 15;
-		private const int _scanTimeoutSeconds = 20;
-
-		private bool RescanEvenIfConnectedNextTime = false;
-
-		private ReplaySubject<IScanResult> ScanReplaySubject = new ReplaySubject<IScanResult>();
-
-		public BluetoothDevice PairedDevice { get; set; }
-		public IList<IDevice> ConnectedDevices { get; private set; }
-		public IList<IScanResult> FoundDevices { get; private set; }
-
-
-		public const string HeartRateService = "0000180D-0000-1000-8000-00805f9b34fb";
-		public const string GenericService = "00001800-0000-1000-8000-00805f9b34fb";
-		public const string MiBandService = "0000FEE0-0000-1000-8000-00805f9b34fb";
-
-		public const string NotificationHeartRate = "00002a37-0000-1000-8000-00805f9b34fb";
-		public const string ControlHeartRate = "00002a39-0000-1000-8000-00805f9b34fb";
-		public const string NameCharacteristic = "00002A00-0000-1000-8000-00805f9b34fb";//not discovered
-		public static Guid ButtonTouch = Guid.Parse("00000010-0000-3512-2118-0009af100700");
-
-		//public const string MiAuthCharacteristic = "00000009-0000-1000-8000-00805f9b34fb";//maybe instead : 00000009-0000-3512-2118-0009af100700
-		public const string MiAuthCharacteristic = "00000009-0000-3512-2118-0009af100700";//maybe instead : 00000009-0000-3512-2118-0009af100700
-		public static readonly Guid NotificationCharacteristic = Guid.Parse("00002a46-0000-1000-8000-00805f9b34fb");
-
-		public static readonly byte[] MiBandSecret = new byte[] { 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x40, 0x41, 0x42, 0x43, 0x44, 0x45 };
-		public Dictionary<Guid, Dictionary<Guid, IGattCharacteristic>> DevicesCharacteristics { get; set; }
+		private double _scanTimeoutSeconds = 30;
+		private double _connectTimeoutSeconds = 120;
+		private double _messageTimeoutSeconds = 10;
 
 		public BluetoothService()
 		{
-			ConnectedDevices = new List<IDevice>();
-			FoundDevices = new List<IScanResult>();
-			DevicesCharacteristics = new Dictionary<Guid, Dictionary<Guid, IGattCharacteristic>>();
 		}
 
-		public IObservable<IScanResult> StartScan(string serviceGuid = null)
+		private bool _isInited = false;
+		private IObservable<AdapterStatus> WhenAdapterStatusChanged { get; set; }
+		public async Task Init()
 		{
+			Console.WriteLine("Starting to init BT-Service");
+			var devices = CrossBleAdapter.Current.GetConnectedDevices();
+			var device = devices.FirstOrDefault(x => x.Name?.Contains("Happimeter") ?? false);
 
-			if (CrossBleAdapter.Current.IsScanning || CrossBleAdapter.Current.Status != AdapterStatus.PoweredOn)
+			if (_isInited && device != null && device.IsConnected())
+			{
+				Console.WriteLine("BT-Service already Inited");
+				return;
+			}
+			if (device != null && device.Status != ConnectionStatus.Connected)
+			{
+				ReleaseSubscriptions();
+			}
+			HandleDataExchangeNotification();
+			CharacteristicsReplaySubject = new ReplaySubject<IGattCharacteristic>();
+
+			if (WhenAdapterStatusChanged == null)
+			{
+				WhenAdapterStatusChanged = CrossBleAdapter.Current.WhenStatusChanged();
+				var isFirst = true;
+				WhenAdapterStatusChanged.Subscribe(async status =>
+				{
+					if (status != AdapterStatus.PoweredOn)
+					{
+						ReleaseSubscriptions();
+					}
+					else
+					{
+						if (!isFirst)
+						{
+							await Init();
+						}
+						isFirst = false;
+
+					}
+				});
+			}
+
+			//sometimes we get stuck in the connecting status - we need to disconnect then
+			if (device != null && device.Status == ConnectionStatus.Connecting)
+			{
+				Console.WriteLine("We have a device in Connecting Status, so we cancel the connection!");
+				device.CancelConnection();
+			}
+			//we are already connected, so we just hook up the events
+			if (device != null && device.Status == ConnectionStatus.Connected)
+			{
+				Console.WriteLine("We have a device that is already connected!");
+				//todo: give reference to subscription
+				if (WhenStatusChangedSubscription != null)
+				{
+					WhenStatusChangedSubscription.Dispose();
+				}
+				Debug.WriteLine("Subscribing to Status Changes!");
+				WhenStatusChangedSubscription = device.WhenStatusChanged().Subscribe(status => WhenConnectionStatusChanged(status, device));
+			}
+			else
+			{
+				Console.WriteLine("We need to scan for the device!");
+				//we need to find our device first! 
+				if (!CrossBleAdapter.Current.IsScanning || ScanReplaySubject == null)
+				{
+					if (CrossBleAdapter.Current.IsScanning)
+					{
+						Console.WriteLine("Adapted is scanning, lets stop!");
+						CrossBleAdapter.Current.StopScan();
+					}
+					Console.WriteLine("Not connected, not scanning, starting scanning");
+					//do not await here!
+					StartScan(UuidHelper.AndroidWatchServiceUuidString);
+				}
+
+				var userId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId();
+				var userIdBytes = System.Text.Encoding.UTF8.GetBytes(userId.ToString());
+				//we skip 2 because the first two bytes are not relevant to us. the actual advertisement data start at position 3
+				var scannedDevice = await ScanReplaySubject.Where(scanRes => scanRes?.AdvertisementData?.ServiceData?.FirstOrDefault()?.Skip(2)?.SequenceEqual(userIdBytes) ?? false)
+													.Select(result => result.Device)
+													.Take(1)
+													.Timeout(TimeSpan.FromSeconds(_scanTimeoutSeconds))
+													.Catch((Exception arg) =>
+													{
+														Console.WriteLine(arg.Message);
+														return Observable.Return<IDevice>(null);
+													})
+													.DefaultIfEmpty();
+				if (scannedDevice == null)
+				{
+					Console.WriteLine("Could not find the device! We stop the initiation process!");
+					return;
+				}
+				await ConnectDevice(scannedDevice);
+
+			}
+			_isInited = true;
+			Console.WriteLine("finished BT-Service Init");
+		}
+
+		public void UnpairConnection()
+		{
+			//release first, so that we don't reconnect in WhenConnectionStateChanged Observable.
+			ReleaseSubscriptions();
+			var devices = CrossBleAdapter.Current.GetConnectedDevices();
+			var device = devices.FirstOrDefault(x => x.Name?.Contains("Happimeter") ?? false);
+			if (device != null)
+			{
+				device.CancelConnection();
+			}
+		}
+
+		public ReplaySubject<IScanResult> ScanReplaySubject { get; private set; }
+		public List<IScanResult> FoundDevices { get; private set; }
+		public new IObservable<IScanResult> StartScan(string serviceGuid = null)
+		{
+			if (CrossBleAdapter.Current.IsScanning || CrossBleAdapter.Current.Status == AdapterStatus.PoweredOff)
 			{
 				if (CrossBleAdapter.Current.Status == AdapterStatus.PoweredOff)
 				{
+					Console.WriteLine("Not scanning because adapter is powered off!");
 					//reset the replaysubject
 					ScanReplaySubject = new ReplaySubject<IScanResult>();
 					ScanReplaySubject.OnCompleted();
-					//todo: open settings
 				}
 				return ScanReplaySubject;
 			}
@@ -97,179 +183,183 @@ namespace Happimeter.Services
 			return ScanReplaySubject;
 		}
 
-
-
-		public bool IsConnected(IDevice device)
+		public ReplaySubject<IGattCharacteristic> CharacteristicsReplaySubject { get; set; } = new ReplaySubject<IGattCharacteristic>();
+		private ReplaySubject<IDevice> ConnectedReplaySubject { get; set; }
+		private IDisposable WhenStatusChangedSubscription { get; set; }
+		private IDisposable WhenConnectedSubscription { get; set; }
+		public new IObservable<object> ConnectDevice(IDevice device)
 		{
-			return CrossBleAdapter.Current.GetConnectedDevices().Select(dev => dev.Uuid).Contains(device.Uuid);
-		}
-
-		public void RemoveAllConnections()
-		{
-			var devices = CrossBleAdapter.Current.GetConnectedDevices();
-			foreach (var device in devices)
+			var connectionError = false;
+			ConnectedReplaySubject = new ReplaySubject<IDevice>();
+			device.Connect(new ConnectionConfig
 			{
-				device.CancelConnection();
-			}
-		}
+				AutoConnect = false,
+				AndroidConnectionPriority = ConnectionPriority.High
+			});
 
-		public IObservable<bool> PairDevice(BluetoothDevice device)
-		{
-			device.Connect();
-			var obs = device.WhenDeviceReady().Take(1);
-			obs.Subscribe(success =>
+
+			var obs = device.WhenConnected();
+			WhenConnectedSubscription = obs.Subscribe(success =>
 			{
-				PairedDevice = device;
-				PairedDevice.Device.WhenStatusChanged().Subscribe(status =>
+				Debug.WriteLine("Inside OnConnected!");
+				if (connectionError)
 				{
-					Console.WriteLine("Status changed: " + status);
-					if (status == ConnectionStatus.Disconnected)
+					ConnectedReplaySubject.OnError(new Exception("Connection was not successful"));
+					return;
+				}
+				if (WhenStatusChangedSubscription != null)
+				{
+					WhenStatusChangedSubscription.Dispose();
+				}
+				Debug.WriteLine("Subscribing to Status Changes!");
+				WhenStatusChangedSubscription = device.WhenStatusChanged().Subscribe(status => WhenConnectionStatusChanged(status, device));
+
+
+				ConnectedReplaySubject.OnNext(device);
+				ConnectedReplaySubject.OnCompleted();
+			});
+			return ConnectedReplaySubject;
+		}
+
+		private IDisposable WhenCharacteristicDiscoveredSubscription { get; set; }
+		public new void WhenConnectionStatusChanged(ConnectionStatus status, IDevice device)
+		{
+			Debug.WriteLine("Status changed: " + status);
+			if (status == ConnectionStatus.Disconnected)
+			{
+				CharacteristicsReplaySubject.OnCompleted();
+				WhenCharacteristicDiscoveredSubscription?.Dispose();
+				WhenCharacteristicDiscoveredSubscription = null;
+				CharacteristicsReplaySubject.Dispose();
+				CharacteristicsReplaySubject = new ReplaySubject<IGattCharacteristic>();
+				device.Connect();
+			}
+			if (status == ConnectionStatus.Connected)
+			{
+				WhenCharacteristicDiscoveredSubscription = device.WhenAnyCharacteristicDiscovered().Subscribe(async characteristic =>
+				{
+					if (!UuidHelper.KnownCharacteristics().Contains(characteristic.Uuid))
 					{
-						Console.WriteLine("DEVICE DISCONNECTED");
-						//PairedDevice.Device.Connect(new GattConnectionConfig() { IsPersistent = true, AutoConnect = true, Priority = ConnectionPriority.High }); 
+						System.Diagnostics.Debug.WriteLine("We don't know characteristic: " + characteristic.Uuid);
+						return;
+					}
+					if (true || !await CharacteristicsReplaySubject.DefaultIfEmpty().Contains(characteristic))
+					{
+						if (characteristic.CanNotifyOrIndicate())
+						{
+							await EnableNotificationsFor(characteristic);
+						}
+						System.Diagnostics.Debug.WriteLine("Found characteristic: " + characteristic.Uuid);
+						CharacteristicsReplaySubject.OnNext(characteristic);
 					}
 				});
-			});
-
-			/*
-            CrossBleAdapter.Current.WhenDeviceStateRestored().Subscribe(restoredDevice =>
-            {
-                Console.WriteLine("RESTORED DEVICE");
-                // will return the device(s) that are reconnecting
-            });
-            */
-			return obs;
+			}
 		}
 
-		/// <summary>
-		/// This methods returns a paired (paired means it has an entry wihtin our db, not neccessary paired as per BT terminology) device.
-		/// If the corresponding device is already connected to the phone, it will simply be returned.
-		/// If there is no connection to the device (maybe because we went out of range or something similar) we scan for a few seconds to find the device and return it if we find it.
-		/// </summary>
-		/// <returns>The connected device.</returns>
-		private async Task<IDevice> GetConnectedDevice()
+		private void HandleDataExchangeNotification()
 		{
-
-			var connectedDevices = CrossBleAdapter.Current.GetConnectedDevices();
-
-			//todo: not be reliable on name
-			if (connectedDevices.Any(x => x.Name?.Contains("Happimeter") ?? false))
+			NotificationSubject.Where(x => x.Item1 == DataExchangeInitMessage.MessageNameConstant).Subscribe(x =>
 			{
-				var innerDevice = connectedDevices.FirstOrDefault(x => x.Name.Contains("Happimeter"));
-				if (innerDevice.Status == ConnectionStatus.Connected && !RescanEvenIfConnectedNextTime)
+				Debug.WriteLine("Got DataExchange Notification");
+				ExchangeData();
+			});
+		}
+
+		private Dictionary<Guid, IDisposable> NotificationSubscription = new Dictionary<Guid, IDisposable>();
+		public ReplaySubject<(string, string)> NotificationSubject { get; set; } = new ReplaySubject<(string, string)>(TimeSpan.FromSeconds(2));
+		public new async Task<bool> EnableNotificationsFor(IGattCharacteristic characteristic)
+		{
+			var res = await characteristic.EnableNotifications().Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds)).Catch((Exception arg) =>
+			{
+				Console.WriteLine(arg.Message);
+				return Observable.Return<CharacteristicGattResult>(null);
+			});
+			if (res == null)
+			{
+				//todo:implement
+				return false;
+			}
+			Debug.WriteLine("Enabled Notifications for:" + characteristic.Uuid);
+			WriteReceiverContext context = null;
+
+			//make sure we have only one WhenNotificationReceived by releasing old subscriptions
+			if (NotificationSubscription.ContainsKey(characteristic.Uuid))
+			{
+				var oldSubscription = NotificationSubscription[characteristic.Uuid];
+				oldSubscription.Dispose();
+				NotificationSubscription.Remove(characteristic.Uuid);
+			}
+
+			var subscription = characteristic.WhenNotificationReceived().Subscribe(result =>
+			{
+				Debug.WriteLine("Got Notification!");
+				if (UuidHelper.KnownCharacteristics().All(x => result.Characteristic.Uuid != x))
 				{
-					Console.WriteLine("Device already connected");
-					return innerDevice;
+					return;
 				}
-				RescanEvenIfConnectedNextTime = false;
-			}
-
-			if (!CrossBleAdapter.Current.IsScanning)
-			{
-				Console.WriteLine("Not connected, not scanning, starting scanning");
-				var replaySubj = StartScan(UuidHelper.AndroidWatchServiceUuidString);
-			}
-			var userId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId();
-			var userIdBytes = System.Text.Encoding.UTF8.GetBytes(userId.ToString());
-			//we skip 2 because the first two bytes are not relevant to us. the actual advertisement data start at position 3
-			var device = await ScanReplaySubject.Where(scanRes => scanRes?.AdvertisementData?.ServiceData?.FirstOrDefault()?.Skip(2)?.SequenceEqual(userIdBytes) ?? false)
-												.Select(result => result.Device)
-												.Take(1)
-												.Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
-												.Catch((Exception arg) =>
-												{
-													Console.WriteLine(arg.Message);
-													return Observable.Return<IDevice>(null);
-												})
-												.DefaultIfEmpty();
-			if (device == null)
-			{
-				return null;
-			}
-
-			bool connectionResult = true;
-			await device.Connect(
-				new GattConnectionConfig
+				if (result.Data == null)
 				{
-					AutoConnect = false,
-					Priority = ConnectionPriority.High
-				})
-				.Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
-											.Catch((Exception arg) =>
-											{
-												connectionResult = false;
-												return Observable.Return<object>(null);
-											});
-
-			if (!connectionResult)
-			{
-				//connection was not successful!
-				return null;
-			}
-
-			device.WhenStatusChanged().Subscribe(x =>
-			{
-				Debug.WriteLine($"Connection Status Changed: {x}");
+					return;
+				}
+				if (context == null)
+				{
+					context = new WriteReceiverContext(result.Data);
+					return;
+				}
+				if (!context.CanAddMessagePart(result.Data))
+				{
+					context = null;
+					return;
+				}
+				context.AddMessagePart(result.Data);
+				if (context.ReadComplete)
+				{
+					var json = context.GetMessageAsJson();
+					var name = context.MessageName;
+					context = null;
+					NotificationSubject.OnNext((name, json));
+					Debug.WriteLine($"Got Notification with name: {name}!");
+				}
 			});
-			return device;
-
+			NotificationSubscription.Add(characteristic.Uuid, subscription);
+			return true;
 		}
 
-		public async void SendMeasurementMode(int? interval = null, Action<BluetoothWriteEvent> statusUpdate = null)
+		public void ReleaseSubscriptions()
 		{
-			statusUpdate?.Invoke(BluetoothWriteEvent.Initialized);
-			var device = await GetConnectedDevice();
-			if (device == null)
+			Console.WriteLine("Relesign all subscriptions.");
+			foreach (var key in NotificationSubscription.Keys.ToList())
 			{
-				//device could either not be found or not be connected to
-				statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnConnectingToDevice);
-				return;
+				NotificationSubscription[key].Dispose();
+				NotificationSubscription.Remove(key);
 			}
-			statusUpdate?.Invoke(BluetoothWriteEvent.Connected);
-			var characteristic = await device.WhenAnyCharacteristicDiscovered()
-											 .Where(charac => charac.Uuid == UuidHelper.MeasurementModeCharacteristicUuid)
-											 .Take(1)
-											 .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
-											 .Catch((Exception e) => Observable.Return<IGattCharacteristic>(null));
-
-			if (characteristic == null)
-			{
-				//we did not find the characteristic within the give timeframe
-				statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnConnectingToDevice);
-				return;
-			}
-
-			var message = new SwitchMeasurementModeMessage(interval);
-
-			var result = await WriteAsync(characteristic, message);
-			if (result)
-			{
-				statusUpdate?.Invoke(BluetoothWriteEvent.Complete);
-			}
-			else
-			{
-				statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnWrite);
-			}
+			WhenCharacteristicDiscoveredSubscription?.Dispose();
+			WhenCharacteristicDiscoveredSubscription = null;
+			WhenConnectedSubscription?.Dispose();
+			WhenConnectedSubscription = null;
+			WhenStatusChangedSubscription?.Dispose();
+			WhenStatusChangedSubscription = null;
+			CharacteristicsReplaySubject?.Dispose();
+			CharacteristicsReplaySubject = new ReplaySubject<IGattCharacteristic>();
+			NotificationSubject?.Dispose();
+			NotificationSubject = new ReplaySubject<(string, string)>();
+			_isInited = false;
 		}
 
-		public async void SendGenericQuestions(Action<BluetoothWriteEvent> statusUpdate = null)
+		public async Task SendGenericQuestions(Action<BluetoothWriteEvent> statusUpdate = null)
 		{
 			statusUpdate?.Invoke(BluetoothWriteEvent.Initialized);
-			var device = await GetConnectedDevice();
-			if (device == null)
-			{
-				//device could either not be found or not be connected to
-				statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnConnectingToDevice);
-				return;
-			}
+			await Init();
+			var charac = await CharacteristicsReplaySubject
+				.Where(x => x.Uuid == UuidHelper.GenericQuestionCharacteristicUuid)
+				.FirstOrDefaultAsync()
+				.Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
+				.Catch((Exception arg) =>
+				{
+					return Observable.Return<IGattCharacteristic>(null);
+				});
 			statusUpdate?.Invoke(BluetoothWriteEvent.Connected);
-			var characteristic = await device.WhenAnyCharacteristicDiscovered()
-											 .Where(charac => charac.Uuid == UuidHelper.GenericQuestionCharacteristicUuid)
-											 .Take(1)
-											 .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
-											 .Catch((Exception e) => Observable.Return<IGattCharacteristic>(null));
-
-			if (characteristic == null)
+			if (charac == null)
 			{
 				//we did not find the characteristic within the give timeframe
 				statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnConnectingToDevice);
@@ -282,7 +372,7 @@ namespace Happimeter.Services
 				Questions = genericQuestions.ToList()
 			};
 
-			var result = await WriteAsync(characteristic, genericQuestionMessage);
+			var result = await WriteAsync(charac, genericQuestionMessage);
 			if (result)
 			{
 				statusUpdate?.Invoke(BluetoothWriteEvent.Complete);
@@ -293,173 +383,179 @@ namespace Happimeter.Services
 			}
 		}
 
-		//todo: maybe use give a statusUpdate delagate to function instead of providing events
-		public event EventHandler<AndroidWatchExchangeDataEventArgs> DataExchangeStatusUpdate;
-		//is busy with data exchange?
-		private Dictionary<Guid, bool> IsBusy = new Dictionary<Guid, bool>();
-		public async void ExchangeData()
+		public async Task SendMeasurementMode(int? interval = null, Action<BluetoothWriteEvent> statusUpdate = null)
 		{
+			statusUpdate?.Invoke(BluetoothWriteEvent.Initialized);
+			await Init();
+			var charac = await CharacteristicsReplaySubject
+				.Where(x => x.Uuid == UuidHelper.MeasurementModeCharacteristicUuid)
+				.FirstOrDefaultAsync()
+				.Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
+				.Catch((Exception arg) =>
+				{
+					return Observable.Return<IGattCharacteristic>(null);
+				});
+			statusUpdate?.Invoke(BluetoothWriteEvent.Connected);
+			if (charac == null)
+			{
+				//we did not find the characteristic within the give timeframe
+				statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnConnectingToDevice);
+				return;
+			}
+
+			if (charac == null)
+			{
+				//we did not find the characteristic within the give timeframe
+				statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnConnectingToDevice);
+				return;
+			}
+
+			var message = new SwitchMeasurementModeMessage(interval);
+
+			var result = await WriteAsync(charac, message);
+			if (result)
+			{
+				statusUpdate?.Invoke(BluetoothWriteEvent.Complete);
+			}
+			else
+			{
+				statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnWrite);
+			}
+		}
+
+		private Dictionary<Guid, bool> IsBusy = new Dictionary<Guid, bool>();
+		public new async void ExchangeData()
+		{
+			DataExchangeStatusUpdate?.Invoke(this,
+					 new AndroidWatchExchangeDataEventArgs
+					 {
+						 EventType = AndroidWatchExchangeDataStates.SearchingForDevice
+					 });
+			Console.WriteLine("Exchange Data started.");
 			var deviceInfoServic = ServiceLocator.Instance.Get<IDeviceInformationService>();
 			await deviceInfoServic.RunCodeInBackgroundMode(async () =>
 			{
-				DataExchangeStatusUpdate?.Invoke(this,
-												 new AndroidWatchExchangeDataEventArgs
-												 {
-													 EventType = AndroidWatchExchangeDataStates.SearchingForDevice
-												 });
-				var device = await GetConnectedDevice();
-				if (device == null)
+				await Init();
+				var charac = await CharacteristicsReplaySubject
+					.Where(x => x.Uuid == UuidHelper.DataExchangeCharacteristicUuid)
+					.FirstOrDefaultAsync()
+					.Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
+					.Catch((Exception arg) =>
+				{
+					return Observable.Return<IGattCharacteristic>(null);
+				});
+				if (charac == null)
 				{
 					DataExchangeStatusUpdate?.Invoke(this,
-									 new AndroidWatchExchangeDataEventArgs
-									 {
-										 EventType = AndroidWatchExchangeDataStates.DeviceNotFound
-									 });
+					 new AndroidWatchExchangeDataEventArgs
+					 {
+						 EventType = AndroidWatchExchangeDataStates.DeviceNotFound
+					 });
+					Console.WriteLine("We couldn't find our characteristic! We have to reinit");
+					//todo: if we don't find the charac, we have to reinit somehow
+					ReleaseSubscriptions();
 					return;
 				}
-
-				var characteristic = await device.WhenAnyCharacteristicDiscovered()
-												 .Where(charac => charac.Uuid == UuidHelper.DataExchangeCharacteristicUuid)
-												 .Take(1)
-												 .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
-												 .Catch((Exception e) =>
-												 {
-													 //device.CancelConnection();
-													 RescanEvenIfConnectedNextTime = true;
-													 return Observable.Return<IGattCharacteristic>(null);
-												 });
-
-				if (characteristic == null)
-				{
-					DataExchangeStatusUpdate?.Invoke(this,
-									 new AndroidWatchExchangeDataEventArgs
-									 {
-										 EventType = AndroidWatchExchangeDataStates.CouldNotDiscoverCharacteristic
-									 });
-					Debug.WriteLine("Could not discover");
-					device.CancelConnection();
-					return;
-				}
-
-				CharacteristicDiscoveredForDataExchange(characteristic);
+				Console.WriteLine("Characteristic discovered: " + charac.Uuid);
+				await CharacteristicDiscoveredForDataExchange(charac);
 			}, "data_exchange_task");
 		}
-
-		private async void CharacteristicDiscoveredForDataExchange(IGattCharacteristic characteristic)
+		public new event EventHandler<AndroidWatchExchangeDataEventArgs> DataExchangeStatusUpdate;
+		private async Task CharacteristicDiscoveredForDataExchange(IGattCharacteristic characteristic)
 		{
-			Console.WriteLine("Characteristic discovered: " + characteristic.Uuid);
+			if (!IsBusy.ContainsKey(characteristic.Service.Device.Uuid))
+			{
+				IsBusy.Add(characteristic.Service.Device.Uuid, true);//check wheter we are locked
+			}
+			else
+			{
+				Console.WriteLine("We are still busy with an previous data exchnage, lets abort the current one.");
+				return;
+			}
 
-			if (characteristic.Uuid == UuidHelper.DataExchangeCharacteristicUuid)
+			var success = await WriteAsync(characteristic, new DataExchangeFirstMessage());
+			Console.WriteLine("wrote successfully");
+			if (!success)
 			{
 				DataExchangeStatusUpdate?.Invoke(this,
-					new AndroidWatchExchangeDataEventArgs
-					{
-						EventType = AndroidWatchExchangeDataStates.CharacteristicDiscovered
-					});
+					 new AndroidWatchExchangeDataEventArgs
+					 {
+						 EventType = AndroidWatchExchangeDataStates.ErrorOnExchange
+					 });
+				//writing was not successful
+				IsBusy.Remove(characteristic.Service.Device.Uuid);
+				return;
+			}
 
-				if (!IsBusy.ContainsKey(characteristic.Service.Device.Uuid))
+			try
+			{
+				var stopWatch = new Stopwatch();
+				stopWatch.Start();
+				var toCompareWithWatchTime = DateTime.UtcNow;
+				var result = await ReadAsync(characteristic, (read, total) =>
 				{
-					IsBusy.Add(characteristic.Service.Device.Uuid, true);//check wheter we are locked
-				}
-				else
-				{
-					Console.WriteLine("We are still busy with an previous data exchnage, lets abort the current one.");
-					return;
-				}
-
-
-				var success = await WriteAsync(characteristic, new DataExchangeFirstMessage());
-				Console.WriteLine("wrote successfully");
-				if (!success)
-				{
-					//writing was not successful
 					DataExchangeStatusUpdate?.Invoke(this,
-								 new AndroidWatchExchangeDataEventArgs
-								 {
-									 EventType = AndroidWatchExchangeDataStates.ErrorOnExchange
-								 });
-					IsBusy.Remove(characteristic.Service.Device.Uuid);
-					return;
-				}
-
-				DataExchangeStatusUpdate?.Invoke(this,
-								 new AndroidWatchExchangeDataEventArgs
-								 {
-									 EventType = AndroidWatchExchangeDataStates.DidWrite
-								 });
-
-				//FROM HERE ON WE RUN IT IN A BACKGROUND THREAD
-				try
-				{
-					var stopWatch = new Stopwatch();
-					stopWatch.Start();
-					var toCompareWithWatchTime = DateTime.UtcNow;
-					var result = await ReadAsync(characteristic, (read, total) =>
-					{
-						DataExchangeStatusUpdate?.Invoke(this,
 							 new AndroidWatchExchangeDataEventArgs
 							 {
 								 EventType = AndroidWatchExchangeDataStates.ReadUpdate,
 								 BytesRead = read,
 								 TotalBytes = total
 							 });
-					});
+				});
 
-					if (result == null)
-					{
-						//we throw an exception and let the catch block handle it
-						throw new ArgumentException("Error during read process");
-					}
-					stopWatch.Stop();
-					Console.WriteLine($"Took {stopWatch.Elapsed.TotalSeconds} seconds to receive {result.Count()} bytes");
+				if (result == null)
+				{
+					//we throw an exception and let the catch block handle it
+					throw new ArgumentException("Error during read process");
+				}
+				stopWatch.Stop();
+				Console.WriteLine($"Took {stopWatch.Elapsed.TotalSeconds} seconds to receive {result.Count()} bytes");
 
-					//get the read data and save it to db
-					var data = Newtonsoft.Json.JsonConvert.DeserializeObject<DataExchangeMessage>(result);
-					if (data.CurrentTimeUtc != default(DateTime) && Math.Abs((toCompareWithWatchTime - data.CurrentTimeUtc).TotalHours) > TimeSpan.FromHours(1).TotalHours)
-					{
-						//adjust the times
-						var diff = toCompareWithWatchTime - data.CurrentTimeUtc;
-						data.SensorMeasurements.ForEach(x => x.Timestamp = x.Timestamp + diff);
-						data.SurveyMeasurements.ForEach(x => x.Timestamp = x.Timestamp + diff);
-					}
-					await ServiceLocator.Instance.Get<IMeasurementService>().AddMeasurements(data);
+				//get the read data and save it to db
+				var data = Newtonsoft.Json.JsonConvert.DeserializeObject<DataExchangeMessage>(result);
+				if (data.CurrentTimeUtc != default(DateTime) && Math.Abs((toCompareWithWatchTime - data.CurrentTimeUtc).TotalHours) > TimeSpan.FromHours(1).TotalHours)
+				{
+					//adjust the times
+					var diff = toCompareWithWatchTime - data.CurrentTimeUtc;
+					data.SensorMeasurements.ForEach(x => x.Timestamp = x.Timestamp + diff);
+					data.SurveyMeasurements.ForEach(x => x.Timestamp = x.Timestamp + diff);
+				}
+				await ServiceLocator.Instance.Get<IMeasurementService>().AddMeasurements(data);
 
-					//update timestamp for last pairing
-					var pairing = ServiceLocator.Instance.Get<ISharedDatabaseContext>().Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive);
-					pairing.LastDataSync = DateTime.UtcNow;
-					ServiceLocator.Instance.Get<ISharedDatabaseContext>().Update(pairing);
+				//update timestamp for last pairing
+				var pairing = ServiceLocator.Instance.Get<ISharedDatabaseContext>().Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive);
+				pairing.LastDataSync = DateTime.UtcNow;
+				ServiceLocator.Instance.Get<ISharedDatabaseContext>().Update(pairing);
 
-					//inform watch that we stored his data. In turn it will delete the data on the watch.
-					await WriteAsync(characteristic, new DataExchangeConfirmationMessage());
-					//As last step we upload the data to the server 
-					await ServiceLocator.Instance.Get<IHappimeterApiService>().UploadMood();
-					await ServiceLocator.Instance.Get<IHappimeterApiService>().UploadSensor();
+				//inform watch that we stored his data. In turn it will delete the data on the watch.
+				await WriteAsync(characteristic, new DataExchangeConfirmationMessage());
+				//As last step we upload the data to the server 
+				await ServiceLocator.Instance.Get<IHappimeterApiService>().UploadMood();
+				await ServiceLocator.Instance.Get<IHappimeterApiService>().UploadSensor();
 
-					Console.WriteLine("Succesfully finished data exchange");
-					IsBusy.Remove(characteristic.Service.Device.Uuid);
-					DataExchangeStatusUpdate?.Invoke(this,
+				Console.WriteLine("Succesfully finished data exchange");
+				IsBusy.Remove(characteristic.Service.Device.Uuid);
+				DataExchangeStatusUpdate?.Invoke(this,
 						new AndroidWatchExchangeDataEventArgs
 						{
 							EventType = AndroidWatchExchangeDataStates.Complete,
 						});
-					var eventData = new Dictionary<string, string> {
+				var eventData = new Dictionary<string, string> {
 							{"durationSeconds", stopWatch.Elapsed.TotalSeconds.ToString()},
 							{"bytesTransfered", result.Count().ToString()}
 						};
-					ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.DataExchangeEnd, eventData);
-				}
-				catch (Exception e)
-				{
-					DataExchangeStatusUpdate?.Invoke(this,
+				ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.DataExchangeEnd, eventData);
+			}
+			catch (Exception e)
+			{
+				DataExchangeStatusUpdate?.Invoke(this,
 						new AndroidWatchExchangeDataEventArgs
 						{
 							EventType = AndroidWatchExchangeDataStates.ErrorOnExchange,
 						});
-					Console.WriteLine($"Exception on Dataexchange after starting the exchange: {e.Message}");
-					ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.DataExchangeFailure);
-					IsBusy.Remove(characteristic.Service.Device.Uuid);
-				}
-
+				Console.WriteLine($"Exception on Dataexchange after starting the exchange: {e.Message}");
+				ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.DataExchangeFailure);
+				IsBusy.Remove(characteristic.Service.Device.Uuid);
 			}
 		}
 
@@ -477,18 +573,18 @@ namespace Happimeter.Services
 			var nullByteSeq = new byte[3] { 0x00, 0x00, 0x00 };
 			var reseted = await characteristic.Write(nullByteSeq)
 				.Timeout(TimeSpan.FromSeconds(5))
-				.Catch<CharacteristicResult, Exception>((arg) =>
-				{
-					if (arg is TimeoutException)
-					{
-						Console.WriteLine("Writing took longer than 5 seconds. Abort!");
-					}
-					else
-					{
-						Console.WriteLine("Got error while writing reset!");
-					}
-					return Observable.Return<CharacteristicResult>(null);
-				});
+											  .Catch<CharacteristicGattResult, Exception>((arg) =>
+											  {
+												  if (arg is TimeoutException)
+												  {
+													  Console.WriteLine("Writing took longer than 5 seconds. Abort!");
+												  }
+												  else
+												  {
+													  Console.WriteLine("Got error while writing reset!");
+												  }
+												  return Observable.Return<CharacteristicGattResult>(null);
+											  });
 			if (reseted == null)
 			{
 				return false;
@@ -499,18 +595,18 @@ namespace Happimeter.Services
 			var header = BluetoothHelper.GetMessageHeader(message);
 			var written = await characteristic.Write(header)
 				.Timeout(TimeSpan.FromSeconds(5))
-				.Catch<CharacteristicResult, Exception>((arg) =>
-				{
-					if (arg is TimeoutException)
-					{
-						Console.WriteLine("Writing took longer than 5 seconds. Abort!");
-					}
-					else
-					{
-						Console.WriteLine("Got error on write, while writing header");
-					}
-					return Observable.Return<CharacteristicResult>(null);
-				});
+											  .Catch<CharacteristicGattResult, Exception>((arg) =>
+											  {
+												  if (arg is TimeoutException)
+												  {
+													  Console.WriteLine("Writing took longer than 5 seconds. Abort!");
+												  }
+												  else
+												  {
+													  Console.WriteLine("Got error on write, while writing header");
+												  }
+												  return Observable.Return<CharacteristicGattResult>(null);
+											  });
 			if (written == null)
 			{
 				return false;
@@ -525,18 +621,18 @@ namespace Happimeter.Services
 				var toSend = messageJson.Skip(bytesSentCounter).Take(mtu).ToArray();
 				var sent = await characteristic.Write(toSend)
 				   .Timeout(TimeSpan.FromSeconds(8))
-				   .Catch<CharacteristicResult, Exception>((arg) =>
-				   {
-					   if (arg is TimeoutException)
-					   {
-						   Console.WriteLine("Writing took longer than 8 seconds. Abort!");
-					   }
-					   else
-					   {
-						   Console.WriteLine("Got error on write, while transfering data");
-					   }
-					   return Observable.Return<CharacteristicResult>(null);
-				   });
+											   .Catch<CharacteristicGattResult, Exception>((arg) =>
+											   {
+												   if (arg is TimeoutException)
+												   {
+													   Console.WriteLine("Writing took longer than 8 seconds. Abort!");
+												   }
+												   else
+												   {
+													   Console.WriteLine("Got error on write, while transfering data");
+												   }
+												   return Observable.Return<CharacteristicGattResult>(null);
+											   });
 				if (sent == null)
 				{
 					return false;
@@ -560,18 +656,18 @@ namespace Happimeter.Services
 			//from the first read request we assume to get an header, which contains information what and how much is sent
 			var headerResult = await characteristic.Read()
 					.Timeout(TimeSpan.FromSeconds(10))
-					.Catch<CharacteristicResult, Exception>((arg) =>
-					{
-						if (arg is TimeoutException)
-						{
-							Console.WriteLine("Reading took longer than 5 seconds. Abort!");
-						}
-						else
-						{
-							Console.WriteLine("Got error while reading header!");
-						}
-						return Observable.Return<CharacteristicResult>(null);
-					});
+												   .Catch<CharacteristicGattResult, Exception>((arg) =>
+												   {
+													   if (arg is TimeoutException)
+													   {
+														   Console.WriteLine("Reading took longer than 5 seconds. Abort!");
+													   }
+													   else
+													   {
+														   Console.WriteLine("Got error while reading header!");
+													   }
+													   return Observable.Return<CharacteristicGattResult>(null);
+												   });
 			if (headerResult == null)
 			{
 				return null;
@@ -583,18 +679,18 @@ namespace Happimeter.Services
 				//here we receive the actual data until we got the complete message
 				var nextBytes = await characteristic.Read()
 					.Timeout(TimeSpan.FromSeconds(10))
-					.Catch<CharacteristicResult, Exception>((arg) =>
-					{
-						if (arg is TimeoutException)
-						{
-							Console.WriteLine("Reading took longer than 10 seconds. Abort!");
-						}
-						else
-						{
-							Console.WriteLine("Got error on reading data!");
-						}
-						return Observable.Return<CharacteristicResult>(null);
-					});
+													.Catch<CharacteristicGattResult, Exception>((arg) =>
+													{
+														if (arg is TimeoutException)
+														{
+															Console.WriteLine("Reading took longer than 10 seconds. Abort!");
+														}
+														else
+														{
+															Console.WriteLine("Got error on reading data!");
+														}
+														return Observable.Return<CharacteristicGattResult>(null);
+													});
 				if (nextBytes == null || nextBytes.Data.Length == 3 && nextBytes.Data.All(x => x == 0x00))
 				{
 					//if next bytes are null, the read process throw an exception
@@ -611,97 +707,6 @@ namespace Happimeter.Services
 			}
 			var returnJson = context.GetMessageAsJson();
 			return returnJson;
-		}
-
-		public async Task<string> AwaitNotificationAsync(IGattCharacteristic characteristic)
-		{
-			if (!CharacteristicNotifiationSubjects.ContainsKey(characteristic.Uuid.ToString()))
-			{
-				await EnableNotificationsFor(characteristic);
-			}
-			var notificationSubject = CharacteristicNotifiationSubjects[characteristic.Uuid.ToString()] as IObservable<CharacteristicResult>;
-			var headerNotificationResult = await notificationSubject.FirstAsync();
-			var context = new WriteReceiverContext(headerNotificationResult.Data);
-			while (true)
-			{
-				var messagePart = await notificationSubject;
-				if (!context.CanAddMessagePart(messagePart.Data))
-				{
-					return null;
-				}
-				context.AddMessagePart(messagePart.Data);
-				if (context.ReadComplete)
-				{
-					break;
-				}
-			}
-			var subject = CharacteristicNotifiationSubjects[characteristic.Uuid.ToString()];
-			subject.OnCompleted();
-			CharacteristicNotifiationSubjects.Remove(characteristic.Uuid.ToString());
-
-			return context.GetMessageAsJson();
-		}
-
-		private Dictionary<string, ReplaySubject<CharacteristicResult>> CharacteristicNotifiationSubjects = new Dictionary<string, ReplaySubject<CharacteristicResult>>();
-		//first string is message name, second string is message json
-		private ReplaySubject<(string, string)> NotificationSubject = new ReplaySubject<(string, string)>(TimeSpan.FromSeconds(2));
-		public IObservable<(string, string)> WhenNotificationReceived()
-		{
-			return NotificationSubject as IObservable<(string, string)>;
-		}
-
-
-		private Dictionary<Guid, IDisposable> NotificationSubscription = new Dictionary<Guid, IDisposable>();
-		public async Task<bool> EnableNotificationsFor(IGattCharacteristic characteristic)
-		{
-			await Task.Delay(1000);
-			var res = await characteristic.EnableNotifications().Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds)).Catch((Exception arg) =>
-			{
-				Console.WriteLine(arg.Message);
-				return Observable.Return<bool>(false);
-			});
-			if (!res)
-			{
-				//todo:implement
-				return false;
-			}
-			WriteReceiverContext context = null;
-
-			//make sure we have only one WhenNotificationReceived by releasing old subscriptions
-			if (NotificationSubscription.ContainsKey(characteristic.Uuid))
-			{
-				var oldSubscription = NotificationSubscription[characteristic.Uuid];
-				oldSubscription.Dispose();
-				NotificationSubscription.Remove(characteristic.Uuid);
-			}
-
-			var subscription = characteristic.WhenNotificationReceived().Subscribe(result =>
-			{
-				if (result.Data == null)
-				{
-					return;
-				}
-				if (context == null)
-				{
-					context = new WriteReceiverContext(result.Data);
-					return;
-				}
-				if (!context.CanAddMessagePart(result.Data))
-				{
-					context = null;
-					return;
-				}
-				context.AddMessagePart(result.Data);
-				if (context.ReadComplete)
-				{
-					var json = context.GetMessageAsJson();
-					var name = context.MessageName;
-					context = null;
-					NotificationSubject.OnNext((name, json));
-				}
-			});
-			NotificationSubscription.Add(characteristic.Uuid, subscription);
-			return true;
 		}
 	}
 }

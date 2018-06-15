@@ -5,18 +5,19 @@ using Java.Util;
 
 namespace Happimeter.Watch.Droid.Bluetooth
 {
-    public class HappimeterService : BluetoothGattService
-    {
-        private HappimeterService() : base(uuid: UUID.FromString(UuidHelper.AndroidWatchServiceUuidString), serviceType: GattServiceType.Primary)
-        {
-            AddCharacteristic(new HappimeterDataCharacteristic());
-            AddCharacteristic(new HappimeterGenericQuestionCharacteristic());
-            AddCharacteristic(new HappimeterMeasurementModeCharacteristic());
-        }
+	public class HappimeterService : BluetoothGattService
+	{
+		private HappimeterService() : base(uuid: UUID.FromString(UuidHelper.AndroidWatchServiceUuidString), serviceType: GattServiceType.Primary)
+		{
+			AddCharacteristic(new HappimeterDataCharacteristic());
+			AddCharacteristic(new HappimeterGenericQuestionCharacteristic());
+			AddCharacteristic(new HappimeterMeasurementModeCharacteristic());
+			AddCharacteristic(new HappimeterDataNotifyCharacteristic());
+		}
 
-        public static HappimeterService Create()
-        {
-            return new HappimeterService();
-        }
-    }
+		public static HappimeterService Create()
+		{
+			return new HappimeterService();
+		}
+	}
 }

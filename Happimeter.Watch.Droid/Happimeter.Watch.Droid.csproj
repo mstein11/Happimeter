@@ -208,6 +208,7 @@
     <Compile Include="BroadcastReceiver\SurveyAlarmBroadcastReceiver.cs" />
     <Compile Include="Services\BeaconListenerService.cs" />
     <Compile Include="MainApplication.cs" />
+    <Compile Include="Bluetooth\HappimeterDataNotifyCharacteristic.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

@@ -7,6 +7,7 @@ using Happimeter.Core.Helper;
 using Happimeter.Events;
 using Happimeter.Interfaces;
 using System.Collections.ObjectModel;
+using Happimeter.Services;
 
 namespace Happimeter.ViewModels.Forms
 {

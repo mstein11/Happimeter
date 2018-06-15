@@ -8,6 +8,7 @@ using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Plugin.CurrentActivity;
+using Plugin.BluetoothLE;
 using Xfx;
 
 namespace Happimeter.Droid

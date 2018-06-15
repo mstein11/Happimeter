@@ -11,7 +11,7 @@ namespace Happimeter.Watch.Droid.Bluetooth
 {
 	public class HappimeterDataCharacteristic : BluetoothGattCharacteristic
 	{
-		private const GattProperty GattProperties = GattProperty.Read | GattProperty.Write | GattProperty.Notify;
+		private const GattProperty GattProperties = GattProperty.Read | GattProperty.Write;
 		private const GattPermission GattPermissions = GattPermission.Read | GattPermission.Write;
 
 		private Dictionary<string, bool> DidSendPass = new Dictionary<string, bool>();
