@@ -66,7 +66,6 @@ namespace Happimeter.Droid.Services
 
 		public void StartWakeupForBeacon()
 		{
-			BeaconManager.SetDebug(true);
 			BeaconManager = BeaconManager.GetInstanceForApplication(CrossCurrentActivity.Current.Activity);
 			var iBeaconParser = new BeaconParser();
 			//  Estimote > 2013

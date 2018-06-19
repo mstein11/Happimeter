@@ -32,7 +32,7 @@ namespace Happimeter.Models
 
 	public class AndroidWatch : BluetoothDevice
 	{
-		public AndroidWatch(IDevice device) : base(device)
+		public AndroidWatch(IDevice device, Guid[] serviceUuids = null) : base(device, serviceUuids)
 		{
 
 		}

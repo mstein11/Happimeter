@@ -12,6 +12,11 @@ using Happimeter.Interfaces;
 using Happimeter.Core.Database;
 using Happimeter.Models;
 using Happimeter.Events;
+using System.Runtime.CompilerServices;
+using System.Diagnostics.Contracts;
+using Plugin.Permissions;
+using Xamarin.Forms;
+using Plugin.Permissions.Abstractions;
 
 namespace Happimeter.Services
 {
@@ -27,6 +32,42 @@ namespace Happimeter.Services
 
 		private bool _isInited = false;
 		private IObservable<AdapterStatus> WhenAdapterStatusChanged { get; set; }
+
+		public async Task<bool> EnsureBluetoothAllowedAndroid()
+		{
+			if (ServiceLocator.Instance.Get<IDeviceInformationService>().IsIos())
+			{
+				return true;
+			}
+			var hasPermission = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Location);
+			if (hasPermission != PermissionStatus.Granted)
+			{
+				var shouldShow = await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(Permission.Location);
+				if (shouldShow)
+				{
+					Xamarin.Forms.Device.BeginInvokeOnMainThread(async () =>
+					{
+						var page = Application.Current.MainPage;
+
+						if (page != null)
+						{
+							await page.DisplayAlert("Location",
+									"Please enable location tracking, which is required to pair with a bluetooth device",
+									"Ok");
+							await CrossPermissions.Current.RequestPermissionsAsync(Permission.Location);
+						}
+					});
+					return false;
+				}
+				else
+				{
+					CrossPermissions.Current.RequestPermissionsAsync(Permission.Location);
+					return false;
+				}
+			}
+			return true;
+		}
+
 		public async Task Init()
 		{
 			Console.WriteLine("Starting to init BT-Service");
@@ -140,11 +181,17 @@ namespace Happimeter.Services
 
 		public ReplaySubject<IScanResult> ScanReplaySubject { get; private set; }
 		public List<IScanResult> FoundDevices { get; private set; }
-		public new IObservable<IScanResult> StartScan(string serviceGuid = null)
+		public IObservable<IScanResult> StartScan(string serviceGuid)
 		{
-			if (CrossBleAdapter.Current.IsScanning || CrossBleAdapter.Current.Status == AdapterStatus.PoweredOff)
+			return StartScan(new List<Guid> { Guid.Parse(serviceGuid) });
+		}
+
+		public IObservable<IScanResult> StartScan(List<Guid> serviceGuids = null)
+		{
+			var bluetoothAllowed = EnsureBluetoothAllowedAndroid().Result;
+			if (CrossBleAdapter.Current.IsScanning || CrossBleAdapter.Current.Status == AdapterStatus.PoweredOff || !bluetoothAllowed)
 			{
-				if (CrossBleAdapter.Current.Status == AdapterStatus.PoweredOff)
+				if (CrossBleAdapter.Current.Status == AdapterStatus.PoweredOff || !bluetoothAllowed || ScanReplaySubject == null)
 				{
 					Console.WriteLine("Not scanning because adapter is powered off!");
 					//reset the replaysubject
@@ -155,13 +202,13 @@ namespace Happimeter.Services
 			}
 
 			IObservable<IScanResult> scannerObs;
-			if (serviceGuid == null)
+			if (serviceGuids == null)
 			{
 				scannerObs = CrossBleAdapter.Current.Scan();
 			}
 			else
 			{
-				scannerObs = CrossBleAdapter.Current.Scan(new ScanConfig { ServiceUuids = new List<Guid> { Guid.Parse(serviceGuid) }, ScanType = BleScanType.LowLatency });
+				scannerObs = CrossBleAdapter.Current.Scan(new ScanConfig { ServiceUuids = serviceGuids, ScanType = BleScanType.LowLatency });
 			}
 			ScanReplaySubject = new ReplaySubject<IScanResult>();
 			FoundDevices = new List<IScanResult>();
@@ -187,7 +234,7 @@ namespace Happimeter.Services
 		private ReplaySubject<IDevice> ConnectedReplaySubject { get; set; }
 		private IDisposable WhenStatusChangedSubscription { get; set; }
 		private IDisposable WhenConnectedSubscription { get; set; }
-		public new IObservable<object> ConnectDevice(IDevice device)
+		public IObservable<object> ConnectDevice(IDevice device)
 		{
 			var connectionError = false;
 			ConnectedReplaySubject = new ReplaySubject<IDevice>();
@@ -222,7 +269,7 @@ namespace Happimeter.Services
 		}
 
 		private IDisposable WhenCharacteristicDiscoveredSubscription { get; set; }
-		public new void WhenConnectionStatusChanged(ConnectionStatus status, IDevice device)
+		public void WhenConnectionStatusChanged(ConnectionStatus status, IDevice device)
 		{
 			Debug.WriteLine("Status changed: " + status);
 			if (status == ConnectionStatus.Disconnected)
@@ -267,7 +314,7 @@ namespace Happimeter.Services
 
 		private Dictionary<Guid, IDisposable> NotificationSubscription = new Dictionary<Guid, IDisposable>();
 		public ReplaySubject<(string, string)> NotificationSubject { get; set; } = new ReplaySubject<(string, string)>(TimeSpan.FromSeconds(2));
-		public new async Task<bool> EnableNotificationsFor(IGattCharacteristic characteristic)
+		public async Task<bool> EnableNotificationsFor(IGattCharacteristic characteristic)
 		{
 			var res = await characteristic.EnableNotifications().Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds)).Catch((Exception arg) =>
 			{
@@ -424,7 +471,7 @@ namespace Happimeter.Services
 		}
 
 		private Dictionary<Guid, bool> IsBusy = new Dictionary<Guid, bool>();
-		public new async void ExchangeData()
+		public async void ExchangeData()
 		{
 			DataExchangeStatusUpdate?.Invoke(this,
 					 new AndroidWatchExchangeDataEventArgs
@@ -460,7 +507,7 @@ namespace Happimeter.Services
 				await CharacteristicDiscoveredForDataExchange(charac);
 			}, "data_exchange_task");
 		}
-		public new event EventHandler<AndroidWatchExchangeDataEventArgs> DataExchangeStatusUpdate;
+		public event EventHandler<AndroidWatchExchangeDataEventArgs> DataExchangeStatusUpdate;
 		private async Task CharacteristicDiscoveredForDataExchange(IGattCharacteristic characteristic)
 		{
 			if (!IsBusy.ContainsKey(characteristic.Service.Device.Uuid))

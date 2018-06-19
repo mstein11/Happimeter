@@ -9,6 +9,8 @@ using Happimeter.Controls;
 using System.Threading.Tasks;
 using Happimeter.Views.Converters;
 using Happimeter.Services;
+using Plugin.Permissions;
+using Plugin.Permissions.Abstractions;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace Happimeter
@@ -61,7 +63,7 @@ namespace Happimeter
 			await ServerSync();
 		}
 
-		public static void BluetoothAlertIfNeeded()
+		public static async void BluetoothAlertIfNeeded()
 		{
 			if (CrossBleAdapter.Current.Status != AdapterStatus.PoweredOn)
 			{

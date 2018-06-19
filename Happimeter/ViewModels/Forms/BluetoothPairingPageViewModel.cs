@@ -8,6 +8,8 @@ using Happimeter.Interfaces;
 using Happimeter.Models;
 using Happimeter.Services;
 using Xamarin.Forms;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Happimeter.ViewModels.Forms
 {
@@ -34,14 +36,26 @@ namespace Happimeter.ViewModels.Forms
 
 				var obs = btService.StartScan();
 
-				obs.Finally(() =>
-				{
-					StartScanButtonIsEnabled = true;
-					StartScanButtonText = "Scan for Devices";
-				}).Subscribe(result =>
-				{
-					Items.Add(new BluetoothPairingItemViewModel(BluetoothDevice.Create(result.Device)));
-				});
+				obs
+					.Where(x => x.Device?.Name?.Contains("Happimeter") ?? false)
+					.Finally(() =>
+					{
+						StartScanButtonIsEnabled = true;
+						StartScanButtonText = "Scan for Devices";
+					})
+				   .Subscribe(result =>
+					{
+						if (Items.Select(x => x.Name).Contains(result.Device.Name))
+						{
+							var toUpdate = Items.FirstOrDefault(x => x.Name == result.Device.Name);
+							toUpdate.UpdateModel(BluetoothDevice.Create(result.Device, result.AdvertisementData.ServiceUuids));
+						}
+						else
+						{
+							Items.Add(new BluetoothPairingItemViewModel(BluetoothDevice.Create(result.Device, result.AdvertisementData.ServiceUuids)));
+						}
+
+					});
 			});
 		}
 
@@ -67,6 +81,20 @@ namespace Happimeter.ViewModels.Forms
 
 		public void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
 		{
+			var viewModel = (e.SelectedItem as BluetoothPairingItemViewModel);
+			if (viewModel.IsUnavailable)
+			{
+				//show indication for 2 seconds
+				(e.SelectedItem as BluetoothPairingItemViewModel).ShowIndication = true;
+				(e.SelectedItem as BluetoothPairingItemViewModel).IndicationText = "Not possible";
+				Timer timer = null;
+				timer = new Timer((obj) =>
+				{
+					(e.SelectedItem as BluetoothPairingItemViewModel).ShowIndication = false;
+					timer.Dispose();
+				}, null, 2000, System.Threading.Timeout.Infinite);
+				return;
+			}
 			var selectedItem = (e.SelectedItem as BluetoothPairingItemViewModel)?.Device as AndroidWatch ?? null;
 			if (selectedItem == null)
 			{

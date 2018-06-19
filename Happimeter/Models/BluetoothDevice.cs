@@ -17,15 +17,18 @@ namespace Happimeter.Models
 			_btService = ServiceLocator.Instance.Get<IBluetoothService>();
 		}
 
-		public BluetoothDevice(IDevice device)
+		public BluetoothDevice(IDevice device, Guid[] serviceUuids = null)
 		{
 			Device = device;
 			Name = Device.Name ?? "No Name";
 			Description = Device.Uuid.ToString();
+			ServiceUuids = serviceUuids;
 		}
 
 		public string Name { get; set; }
 		public string Description { get; set; }
+
+		public Guid[] ServiceUuids { get; set; }
 
 		protected readonly ReplaySubject<bool> InitializedReplaySubject = new ReplaySubject<bool>();
 
@@ -77,7 +80,7 @@ namespace Happimeter.Models
 			Debug.WriteLine("Nothin to do here");
 		}
 
-		public static BluetoothDevice Create(IDevice device)
+		public static BluetoothDevice Create(IDevice device, Guid[] serviceUuids = null)
 		{
 			if (device?.Name?.Contains("MI Band") ?? false)
 			{
@@ -86,10 +89,10 @@ namespace Happimeter.Models
 
 			if (device?.Name?.Contains("Happimeter") ?? false)
 			{
-				return new AndroidWatch(device);
+				return new AndroidWatch(device, serviceUuids);
 			}
 
-			return new BluetoothDevice(device);
+			return new BluetoothDevice(device, serviceUuids);
 		}
 	}
 }

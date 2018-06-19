@@ -52,7 +52,7 @@
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>We are using BT to communicate with wearable devices</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>You are about to use location!</string>
+	<string>We want to access your location to show you which locations influence you mood</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>We use your Location in order to wake up the app when it is close to an iBeacon</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
@@ -60,6 +60,6 @@
 	<key>NSCalendarsUsageDescription</key>
 	<string>Needs Calendar Permission</string>
 	<key>CFBundleVersion</key>
-	<string>1.4.0</string>
+	<string>1.4.1</string>
 </dict>
 </plist>

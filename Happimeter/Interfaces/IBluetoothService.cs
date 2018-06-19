@@ -5,6 +5,7 @@ using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Events;
 using Happimeter.Models;
 using Plugin.BluetoothLE;
+using System.Collections.Generic;
 
 namespace Happimeter.Interfaces
 {
@@ -16,7 +17,8 @@ namespace Happimeter.Interfaces
 		void ReleaseSubscriptions();
 		void UnpairConnection();
 
-		IObservable<IScanResult> StartScan(string serviceGuid = null);
+		IObservable<IScanResult> StartScan(string serviceGuid);
+		IObservable<IScanResult> StartScan(List<Guid> serviceGuids = null);
 		ReplaySubject<IScanResult> ScanReplaySubject { get; }
 		event EventHandler<AndroidWatchExchangeDataEventArgs> DataExchangeStatusUpdate;
 

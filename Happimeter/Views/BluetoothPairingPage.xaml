@@ -48,12 +48,14 @@
                     <DataTemplate>
                         <ViewCell>
                             <StackLayout Orientation="Horizontal">
-                                <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-                                    <Label Text="{Binding Name}" FontSize="12" />
-                                    <Label Text="{Binding Description}" FontSize="12" />
+                                <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Padding="15, 0, 0, 0">
+                                    <Label Text="{Binding Name}" FontSize="16" VerticalOptions="CenterAndExpand" />
                                 </StackLayout>
                                 <StackLayout Padding="5" IsVisible="{Binding ShowIndication}" HorizontalOptions="End" VerticalOptions="CenterAndExpand">
                                     <Label FontSize="8" Text="{Binding IndicationText}"></Label>
+                                </StackLayout>
+                                <StackLayout Padding="5" IsVisible="{Binding IsUnavailable}" HorizontalOptions="End" VerticalOptions="CenterAndExpand">
+                                    <Label FontSize="8" Text="{Binding IsUnvailableReason}"></Label>
                                 </StackLayout>
                             </StackLayout>
                         </ViewCell>
