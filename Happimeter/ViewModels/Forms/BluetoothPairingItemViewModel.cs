@@ -98,7 +98,7 @@ namespace Happimeter.ViewModels.Forms
 											 && !x.ServiceUuids.Contains(UuidHelper.AndroidWatchServiceUuid)))
 			{
 				//if all devices have no happimeter service Uuids, there is something wrong
-				IsUnvailableReason = "Restart Watch";
+				IsUnvailableReason = "(Re)-start Watch App";
 				IsUnavailable = true;
 			}
 			else
