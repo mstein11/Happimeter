@@ -28,6 +28,10 @@ namespace Happimeter.Services
 			{
 				var lastEntry = ServiceLocator.Instance.Get<ISharedDatabaseContext>().GetAll<ProximityEntry>().OrderBy(x => x.Timestamp).LastOrDefault();
 				var lastEntryDate = lastEntry?.Timestamp ?? default(DateTime);
+				if (DateTime.UtcNow - lastEntryDate > TimeSpan.FromDays(20))
+				{
+					lastEntryDate = DateTime.UtcNow - TimeSpan.FromDays(20);
+				}
 				var proximity = await ServiceLocator.Instance.Get<IHappimeterApiService>().GetProximityData(lastEntryDate);
 				if (!proximity.IsSuccess)
 				{

@@ -5,37 +5,40 @@ using Happimeter.Core.Database;
 
 namespace Happimeter.Watch.Droid.ViewModels
 {
-    public class SurveyViewModel
-    {
-        public SurveyViewModel()
-        {
-        }
+	public class SurveyViewModel
+	{
+		public SurveyViewModel()
+		{
+		}
 
-        public List<SurveyFragmentViewModel> Questions = new List<SurveyFragmentViewModel>();
+		public List<SurveyFragmentViewModel> Questions = new List<SurveyFragmentViewModel>();
 
-        public SurveyFragmentViewModel GetCurrentQuestion() => Questions.FirstOrDefault(x => !x.IsAnswered);
-        public int GetCurrentQuestionPosition() => Questions.FindIndex(x => !x.IsAnswered);
+		public SurveyFragmentViewModel GetCurrentQuestion() => Questions.FirstOrDefault(x => !x.IsAnswered);
+		public int GetCurrentQuestionPosition() => Questions.FindIndex(x => !x.IsAnswered);
 
-        public SurveyMeasurement GetDataModel() {
+		public SurveyMeasurement GetDataModel()
+		{
 
-            var answers = new List<SurveyItemMeasurement>();
+			var answers = new List<SurveyItemMeasurement>();
 
-            foreach (var answer in Questions) {
-                answers.Add(new SurveyItemMeasurement {
-                    Answer = answer.Answer ?? 0,
-                    AnswerDisplay = answer.AnswerDisplay,
-                    Question = answer.Question,
-                    QuestionId = answer.QuestionId
-                });
-            }
+			foreach (var answer in Questions)
+			{
+				answers.Add(new SurveyItemMeasurement()
+				{
+					Answer = answer.Answer ?? 0,
+					AnswerDisplay = answer.AnswerDisplay,
+					Question = answer.Question,
+					QuestionId = answer.QuestionId
+				});
+			}
 
-            var measurement = new SurveyMeasurement()
-            {
-                Timestamp = DateTime.UtcNow,
-                SurveyItemMeasurement = answers,
-            };
+			var measurement = new SurveyMeasurement()
+			{
+				Timestamp = DateTime.UtcNow,
+				SurveyItemMeasurement = answers,
+			};
 
-            return measurement;
-        }
-    }
+			return measurement;
+		}
+	}
 }

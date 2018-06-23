@@ -29,7 +29,7 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
 			var generics = ServiceLocator.Instance.Get<IDatabaseContext>().GetAll<GenericQuestion>(x => !x.Deactivated);
 			foreach (var generic in generics)
 			{
-				questions.Questions.Add(new SurveyFragmentViewModel
+				questions.Questions.Add(new SurveyFragmentViewModel(questions)
 				{
 					Question = generic.Question,
 					QuestionShort = generic.QuestionShort,
@@ -40,7 +40,7 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
 			if (!questions.Questions.Any())
 			{
 				//if we don't have any questions. Add the default ones.
-				var question1 = new SurveyFragmentViewModel
+				var question1 = new SurveyFragmentViewModel(questions)
 				{
 					Question = "How Pleasant do you feel?",
 					QuestionShort = "Pleasance",
@@ -48,7 +48,7 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
 					QuestionId = 2,
 					Answer = 50
 				};
-				var question2 = new SurveyFragmentViewModel
+				var question2 = new SurveyFragmentViewModel(questions)
 				{
 					Question = "How Active do you feel?",
 					QuestionShort = "Activation",
@@ -59,6 +59,21 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
 				questions.Questions.Add(question1);
 				questions.Questions.Add(question2);
 			}
+
+			var sortedQuestions = new List<SurveyFragmentViewModel>();
+
+			var first = questions.Questions.FirstOrDefault(x => x.QuestionId == 2);
+			if (first != null)
+			{
+				sortedQuestions.Add(first);
+			}
+			var second = questions.Questions.FirstOrDefault(x => x.QuestionId == 1);
+			if (second != null)
+			{
+				sortedQuestions.Add(second);
+			}
+			sortedQuestions.AddRange(questions.Questions.Where(x => x.QuestionId != 1 && x.QuestionId != 2));
+			questions.Questions = sortedQuestions;
 
 			return questions;
 		}

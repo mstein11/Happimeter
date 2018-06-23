@@ -13,19 +13,35 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:layout_marginRight="0.0dp"
-        android:paddingBottom="10dp"
-        android:textSize="40dp"
+        android:paddingBottom="25dp"
+        android:textSize="35dp"
         android:textColor="#ffffff" />
-    <TextView
-        android:text="1"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:id="@+id/surveyAnserIndicator"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:textSize="40dp" />
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+        <ImageView
+            android:src="@drawable/a_0_h_0"
+            android:layout_width="fill_parent"
+            android:layout_height="150dp"
+            android:gravity="center"
+            android:id="@+id/moodImageView"
+            android:scaleType="fitCenter"
+            android:paddingBottom="20dp" />
+        <TextView
+            android:text="1"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:id="@+id/surveyAnserIndicator"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal"
+            android:textSize="40dp" />
+    </LinearLayout>
     <SeekBar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

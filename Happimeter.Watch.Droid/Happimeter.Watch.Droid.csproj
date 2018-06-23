@@ -229,6 +229,15 @@
     <AndroidResource Include="Resources\layout\FinishedSurvey.axml" />
     <AndroidResource Include="Resources\layout\Pairing.axml" />
     <AndroidResource Include="Resources\layout\PairingRequest.axml" />
+    <AndroidResource Include="Resources\drawable\a_2_h_2.png" />
+    <AndroidResource Include="Resources\drawable\a_2_h_1.png" />
+    <AndroidResource Include="Resources\drawable\a_2_h_0.png" />
+    <AndroidResource Include="Resources\drawable\a_1_h_2.png" />
+    <AndroidResource Include="Resources\drawable\a_1_h_1.png" />
+    <AndroidResource Include="Resources\drawable\a_1_h_0.png" />
+    <AndroidResource Include="Resources\drawable\a_0_h_2.png" />
+    <AndroidResource Include="Resources\drawable\a_0_h_1.png" />
+    <AndroidResource Include="Resources\drawable\a_0_h_0.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />
