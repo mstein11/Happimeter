@@ -1,5 +1,5 @@
-﻿<Properties StartupConfiguration="{B926B5BC-5FAA-4225-BAC6-BA1BDABB67E9}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Happimeter/Services/ProximityService.cs">
+﻿<Properties StartupConfiguration="{DE8957FA-3B78-4B43-A5A2-C82830EF665B}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Happimeter.Watch.Droid/MainActivity.cs">
     <Files>
       <File FileName="Happimeter/ViewModels/Forms/BluetoothPairingItemViewModel.cs" Line="103" Column="5" />
       <File FileName="Happimeter.Watch.Droid/ViewModels/SurveyFragmentViewModel.cs" Line="8" Column="38" />
@@ -10,16 +10,24 @@
       <File FileName="Happimeter/Services/HappimeterApiService.cs" Line="373" Column="66" />
       <File FileName="Happimeter/Interfaces/IProximityService.cs" Line="10" Column="14" />
       <File FileName="Happimeter/Services/ProximityService.cs" Line="33" Column="62" />
+      <File FileName="Happimeter.Watch.Droid/Resources/drawable/baseline-info-24px.svg" Line="1" Column="1" />
+      <File FileName="Happimeter.Watch.Droid/MainActivity.cs" Line="42" Column="1" />
+      <File FileName="Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" Line="507" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhone" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.ItemProperties.Happimeter.Droid AndroidDesignerPreferredDevice="Nexus 4" PreferredExecutionTarget="Android.Android_ARMv7a_Nougat" AndroidDesignerPreferredTheme="MasterDetailTheme" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" relfile="Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" line="474" column="33" />
+      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" relfile="Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" line="477" column="33" />
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Models/AndroidWatch.cs" relfile="Happimeter/Models/AndroidWatch.cs" line="60" column="1" />
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Models/AndroidWatch.cs" relfile="Happimeter/Models/AndroidWatch.cs" line="89" column="1" />
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/ProximityService.cs" relfile="Happimeter/Services/ProximityService.cs" line="22" column="1" />
+      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter.Watch.Droid/Resources/layout/Main.axml" relfile="Happimeter.Watch.Droid/Resources/layout/Main.axml" line="59" column="1" />
+      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter.Watch.Droid/MainActivity.cs" relfile="Happimeter.Watch.Droid/MainActivity.cs" line="52" column="1" />
+      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter.Watch.Droid/MainActivity.cs" relfile="Happimeter.Watch.Droid/MainActivity.cs" line="42" column="1" />
+      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" relfile="Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" line="507" column="34" />
+      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" relfile="Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" line="516" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.ItemProperties.Happimeter.Watch.Droid AndroidDesignerPreferredDevice="Nexus 4" PreferredExecutionTarget="Android.Android_ARMv7a_Nougat" AndroidDesignerPreferredTheme="Theme.DeviceDefault" />

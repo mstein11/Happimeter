@@ -18,72 +18,104 @@ using Happimeter.Watch.Droid.ServicesBusinessLogic;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using Happimeter.Watch.Droid.Workers;
 
 namespace Happimeter.Watch.Droid
 {
-    [Activity(Label = "Happimeter.Watch.Droid", MainLauncher = true, Icon = "@mipmap/icon")]
-    public class MainActivity : Activity
-    {
-        protected override void OnCreate(Bundle savedInstanceState)
-        {
-            base.OnCreate(savedInstanceState);
-            Container.RegisterElements();
-            AppCenter.Start("a614a5b2-5aeb-47ac-a4e9-1256a337a0b7",
-                typeof(Analytics), typeof(Crashes));
+	[Activity(Label = "Happimeter.Watch.Droid", MainLauncher = true, Icon = "@mipmap/icon")]
+	public class MainActivity : Activity
+	{
+		protected override void OnCreate(Bundle savedInstanceState)
+		{
+			base.OnCreate(savedInstanceState);
+			Container.RegisterElements();
+			AppCenter.Start("a614a5b2-5aeb-47ac-a4e9-1256a337a0b7",
+				typeof(Analytics), typeof(Crashes));
 
-            RequestWindowFeature(WindowFeatures.NoTitle);
-            //Remove notification bar
-            Window.SetFlags(WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
-            // Set our view from the "main" layout resource
-            SetContentView(Resource.Layout.Main);
+			RequestWindowFeature(WindowFeatures.NoTitle);
+			//Remove notification bar
+			Window.SetFlags(WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
+			// Set our view from the "main" layout resource
+			SetContentView(Resource.Layout.Main);
+			var textbox = FindViewById<TextView>(Resource.Id.main_info_subtext_paired_status);
+			var btWorker = BluetoothWorker.GetInstance();
+			if (btWorker == null || btWorker.SubscribedDevices.Count == 0)
+			{
+				textbox.Text = "Status: Not in Range";
+			}
+			else
+			{
+				textbox.Text = "Status: Connected";
+			}
+			btWorker.WhenSubscripbedDevicesChanges.Subscribe(x =>
+			{
+				if (x.Count == 0)
+				{
+					textbox.Text = "Status: Not in Range";
+				}
+				else
+				{
+					textbox.Text = "Status: Connected";
+				}
+			});
 
+			var pairing = ServiceLocator.Instance.Get<IDatabaseContext>().GetCurrentBluetoothPairing();
+			if (pairing != null)
+			{
 
-            var pairing = ServiceLocator.Instance.Get<IDatabaseContext>().GetCurrentBluetoothPairing();
-            if (pairing != null)
-            {
+			}
+			else
+			{
+				var intent = new Intent(this, typeof(PairingActivity));
+				StartActivity(intent);
+				Finish();
+			}
 
-            }
-            else
-            {
-                var intent = new Intent(this, typeof(PairingActivity));
-                StartActivity(intent);
-                Finish();
-            }
+			FindViewById<Button>(Resource.Id.removePairingButton).Click += delegate
+			{
+				var dialog = new AlertDialog.Builder(this)
+							   .SetTitle("Remove Pairing")
+							   .SetMessage("Are you sure that you want to remove the pairing?")
+							   .SetPositiveButton("Yes", (object sender, DialogClickEventArgs e) =>
+							   {
+								   ServiceLocator.Instance.Get<IDeviceService>().RemovePairing();
+								   var intent = new Intent(this, typeof(PairingActivity));
+								   StartActivity(intent);
+								   Finish();
+							   })
+							   .SetNegativeButton("No", (object sender, DialogClickEventArgs e) =>
+							   {
 
-            FindViewById<Button>(Resource.Id.removePairingButton).Click += delegate
-            {
-                ServiceLocator.Instance.Get<IDeviceService>().RemovePairing();
-                var intent = new Intent(this, typeof(PairingActivity));
-                StartActivity(intent);
-                Finish();
-            };
-            FindViewById<Button>(Resource.Id.surveyButton).Click += (sender, e) =>
-            {
-                var intent = new Intent(this, typeof(SurveyActivity));
-                StartActivity(intent);
-            };
-            if (!IsMyServiceRunning(typeof(BackgroundService)))
-            {
-                StartService(new Intent(this, typeof(BackgroundService)));
-            }
-            if (!IsMyServiceRunning(typeof(BeaconService)))
-            {
-                StartService(new Intent(this, typeof(BeaconService)));
-            }
-        }
+							   });
+				dialog.Show();
+			};
+			FindViewById<Button>(Resource.Id.surveyButton).Click += (sender, e) =>
+			{
+				var intent = new Intent(this, typeof(SurveyActivity));
+				StartActivity(intent);
+			};
+			if (!IsMyServiceRunning(typeof(BackgroundService)))
+			{
+				StartService(new Intent(this, typeof(BackgroundService)));
+			}
+			if (!IsMyServiceRunning(typeof(BeaconService)))
+			{
+				StartService(new Intent(this, typeof(BeaconService)));
+			}
+		}
 
-        private bool IsMyServiceRunning(Type serviceClass)
-        {
-            var manager = (ActivityManager)GetSystemService(Context.ActivityService);
-            foreach (var service in manager.GetRunningServices(int.MaxValue))
-            {
-                if (service.GetType() == serviceClass)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
+		private bool IsMyServiceRunning(Type serviceClass)
+		{
+			var manager = (ActivityManager)GetSystemService(Context.ActivityService);
+			foreach (var service in manager.GetRunningServices(int.MaxValue))
+			{
+				if (service.GetType() == serviceClass)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+	}
 }
 

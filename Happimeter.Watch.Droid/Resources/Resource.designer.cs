@@ -273,103 +273,115 @@ namespace Happimeter.Watch.Droid
 			public const int a_2_h_2 = 2130837512;
 			
 			// aapt resource value: 0x7f020009
-			public const int common_full_open_on_phone = 2130837513;
+			public const int baseline_highlight_off_black_48dp = 2130837513;
 			
 			// aapt resource value: 0x7f02000a
-			public const int common_google_signin_btn_icon_dark = 2130837514;
+			public const int baseline_info_black_18dp = 2130837514;
 			
 			// aapt resource value: 0x7f02000b
-			public const int common_google_signin_btn_icon_dark_focused = 2130837515;
+			public const int baseline_info_black_48dp = 2130837515;
 			
 			// aapt resource value: 0x7f02000c
-			public const int common_google_signin_btn_icon_dark_normal = 2130837516;
+			public const int common_full_open_on_phone = 2130837516;
 			
 			// aapt resource value: 0x7f02000d
-			public const int common_google_signin_btn_icon_dark_normal_background = 2130837517;
+			public const int common_google_signin_btn_icon_dark = 2130837517;
 			
 			// aapt resource value: 0x7f02000e
-			public const int common_google_signin_btn_icon_disabled = 2130837518;
+			public const int common_google_signin_btn_icon_dark_focused = 2130837518;
 			
 			// aapt resource value: 0x7f02000f
-			public const int common_google_signin_btn_icon_light = 2130837519;
+			public const int common_google_signin_btn_icon_dark_normal = 2130837519;
 			
 			// aapt resource value: 0x7f020010
-			public const int common_google_signin_btn_icon_light_focused = 2130837520;
+			public const int common_google_signin_btn_icon_dark_normal_background = 2130837520;
 			
 			// aapt resource value: 0x7f020011
-			public const int common_google_signin_btn_icon_light_normal = 2130837521;
+			public const int common_google_signin_btn_icon_disabled = 2130837521;
 			
 			// aapt resource value: 0x7f020012
-			public const int common_google_signin_btn_icon_light_normal_background = 2130837522;
+			public const int common_google_signin_btn_icon_light = 2130837522;
 			
 			// aapt resource value: 0x7f020013
-			public const int common_google_signin_btn_text_dark = 2130837523;
+			public const int common_google_signin_btn_icon_light_focused = 2130837523;
 			
 			// aapt resource value: 0x7f020014
-			public const int common_google_signin_btn_text_dark_focused = 2130837524;
+			public const int common_google_signin_btn_icon_light_normal = 2130837524;
 			
 			// aapt resource value: 0x7f020015
-			public const int common_google_signin_btn_text_dark_normal = 2130837525;
+			public const int common_google_signin_btn_icon_light_normal_background = 2130837525;
 			
 			// aapt resource value: 0x7f020016
-			public const int common_google_signin_btn_text_dark_normal_background = 2130837526;
+			public const int common_google_signin_btn_text_dark = 2130837526;
 			
 			// aapt resource value: 0x7f020017
-			public const int common_google_signin_btn_text_disabled = 2130837527;
+			public const int common_google_signin_btn_text_dark_focused = 2130837527;
 			
 			// aapt resource value: 0x7f020018
-			public const int common_google_signin_btn_text_light = 2130837528;
+			public const int common_google_signin_btn_text_dark_normal = 2130837528;
 			
 			// aapt resource value: 0x7f020019
-			public const int common_google_signin_btn_text_light_focused = 2130837529;
+			public const int common_google_signin_btn_text_dark_normal_background = 2130837529;
 			
 			// aapt resource value: 0x7f02001a
-			public const int common_google_signin_btn_text_light_normal = 2130837530;
+			public const int common_google_signin_btn_text_disabled = 2130837530;
 			
 			// aapt resource value: 0x7f02001b
-			public const int common_google_signin_btn_text_light_normal_background = 2130837531;
+			public const int common_google_signin_btn_text_light = 2130837531;
 			
 			// aapt resource value: 0x7f02001c
-			public const int googleg_disabled_color_18 = 2130837532;
+			public const int common_google_signin_btn_text_light_focused = 2130837532;
 			
 			// aapt resource value: 0x7f02001d
-			public const int googleg_standard_color_18 = 2130837533;
+			public const int common_google_signin_btn_text_light_normal = 2130837533;
 			
 			// aapt resource value: 0x7f02001e
-			public const int notification_action_background = 2130837534;
+			public const int common_google_signin_btn_text_light_normal_background = 2130837534;
 			
 			// aapt resource value: 0x7f02001f
-			public const int notification_bg = 2130837535;
+			public const int googleg_disabled_color_18 = 2130837535;
 			
 			// aapt resource value: 0x7f020020
-			public const int notification_bg_low = 2130837536;
+			public const int googleg_standard_color_18 = 2130837536;
 			
 			// aapt resource value: 0x7f020021
-			public const int notification_bg_low_normal = 2130837537;
+			public const int notification_action_background = 2130837537;
 			
 			// aapt resource value: 0x7f020022
-			public const int notification_bg_low_pressed = 2130837538;
+			public const int notification_bg = 2130837538;
 			
 			// aapt resource value: 0x7f020023
-			public const int notification_bg_normal = 2130837539;
+			public const int notification_bg_low = 2130837539;
 			
 			// aapt resource value: 0x7f020024
-			public const int notification_bg_normal_pressed = 2130837540;
+			public const int notification_bg_low_normal = 2130837540;
 			
 			// aapt resource value: 0x7f020025
-			public const int notification_icon_background = 2130837541;
-			
-			// aapt resource value: 0x7f020028
-			public const int notification_template_icon_bg = 2130837544;
-			
-			// aapt resource value: 0x7f020029
-			public const int notification_template_icon_low_bg = 2130837545;
+			public const int notification_bg_low_pressed = 2130837541;
 			
 			// aapt resource value: 0x7f020026
-			public const int notification_tile_bg = 2130837542;
+			public const int notification_bg_normal = 2130837542;
 			
 			// aapt resource value: 0x7f020027
-			public const int notify_panel_notification_icon_bg = 2130837543;
+			public const int notification_bg_normal_pressed = 2130837543;
+			
+			// aapt resource value: 0x7f020028
+			public const int notification_icon_background = 2130837544;
+			
+			// aapt resource value: 0x7f02002c
+			public const int notification_template_icon_bg = 2130837548;
+			
+			// aapt resource value: 0x7f02002d
+			public const int notification_template_icon_low_bg = 2130837549;
+			
+			// aapt resource value: 0x7f020029
+			public const int notification_tile_bg = 2130837545;
+			
+			// aapt resource value: 0x7f02002a
+			public const int notify_panel_notification_icon_bg = 2130837546;
+			
+			// aapt resource value: 0x7f02002b
+			public const int outline_info_black_48dp = 2130837547;
 			
 			static Drawable()
 			{
@@ -384,38 +396,38 @@ namespace Happimeter.Watch.Droid
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f0b002f
-			public const int PairingDeviceName = 2131427375;
-			
 			// aapt resource value: 0x7f0b0031
-			public const int PairingRequestAccept = 2131427377;
-			
-			// aapt resource value: 0x7f0b0032
-			public const int PairingRequestDecline = 2131427378;
-			
-			// aapt resource value: 0x7f0b0030
-			public const int PairingRequestDeviceName = 2131427376;
+			public const int PairingDeviceName = 2131427377;
 			
 			// aapt resource value: 0x7f0b0033
-			public const int PairingRequestLoading = 2131427379;
+			public const int PairingRequestAccept = 2131427379;
+			
+			// aapt resource value: 0x7f0b0034
+			public const int PairingRequestDecline = 2131427380;
+			
+			// aapt resource value: 0x7f0b0032
+			public const int PairingRequestDeviceName = 2131427378;
+			
+			// aapt resource value: 0x7f0b0035
+			public const int PairingRequestLoading = 2131427381;
+			
+			// aapt resource value: 0x7f0b0020
+			public const int action0 = 2131427360;
 			
 			// aapt resource value: 0x7f0b001d
-			public const int action0 = 2131427357;
+			public const int action_container = 2131427357;
 			
-			// aapt resource value: 0x7f0b001a
-			public const int action_container = 2131427354;
+			// aapt resource value: 0x7f0b0024
+			public const int action_divider = 2131427364;
 			
-			// aapt resource value: 0x7f0b0021
-			public const int action_divider = 2131427361;
+			// aapt resource value: 0x7f0b001e
+			public const int action_image = 2131427358;
 			
-			// aapt resource value: 0x7f0b001b
-			public const int action_image = 2131427355;
+			// aapt resource value: 0x7f0b001f
+			public const int action_text = 2131427359;
 			
-			// aapt resource value: 0x7f0b001c
-			public const int action_text = 2131427356;
-			
-			// aapt resource value: 0x7f0b002b
-			public const int actions = 2131427371;
+			// aapt resource value: 0x7f0b002e
+			public const int actions = 2131427374;
 			
 			// aapt resource value: 0x7f0b0005
 			public const int adjust_height = 2131427333;
@@ -432,17 +444,17 @@ namespace Happimeter.Watch.Droid
 			// aapt resource value: 0x7f0b000f
 			public const int blocking = 2131427343;
 			
-			// aapt resource value: 0x7f0b001e
-			public const int cancel_action = 2131427358;
+			// aapt resource value: 0x7f0b0021
+			public const int cancel_action = 2131427361;
 			
-			// aapt resource value: 0x7f0b0026
-			public const int chronometer = 2131427366;
+			// aapt resource value: 0x7f0b0029
+			public const int chronometer = 2131427369;
 			
 			// aapt resource value: 0x7f0b000c
 			public const int dark = 2131427340;
 			
-			// aapt resource value: 0x7f0b002d
-			public const int end_padder = 2131427373;
+			// aapt resource value: 0x7f0b0030
+			public const int end_padder = 2131427376;
 			
 			// aapt resource value: 0x7f0b0013
 			public const int finishSurvey_MainText = 2131427347;
@@ -450,20 +462,20 @@ namespace Happimeter.Watch.Droid
 			// aapt resource value: 0x7f0b0010
 			public const int forever = 2131427344;
 			
-			// aapt resource value: 0x7f0b0034
-			public const int fragment_container = 2131427380;
+			// aapt resource value: 0x7f0b0036
+			public const int fragment_container = 2131427382;
 			
-			// aapt resource value: 0x7f0b0028
-			public const int icon = 2131427368;
+			// aapt resource value: 0x7f0b002b
+			public const int icon = 2131427371;
 			
-			// aapt resource value: 0x7f0b002c
-			public const int icon_group = 2131427372;
+			// aapt resource value: 0x7f0b002f
+			public const int icon_group = 2131427375;
 			
 			// aapt resource value: 0x7f0b0008
 			public const int icon_only = 2131427336;
 			
-			// aapt resource value: 0x7f0b0027
-			public const int info = 2131427367;
+			// aapt resource value: 0x7f0b002a
+			public const int info = 2131427370;
 			
 			// aapt resource value: 0x7f0b0011
 			public const int italic = 2131427345;
@@ -477,8 +489,14 @@ namespace Happimeter.Watch.Droid
 			// aapt resource value: 0x7f0b0001
 			public const int line3 = 2131427329;
 			
-			// aapt resource value: 0x7f0b0020
-			public const int media_actions = 2131427360;
+			// aapt resource value: 0x7f0b001b
+			public const int main_info_subtext_paired_status = 2131427355;
+			
+			// aapt resource value: 0x7f0b0019
+			public const int main_mood_input_icon = 2131427353;
+			
+			// aapt resource value: 0x7f0b0023
+			public const int media_actions = 2131427363;
 			
 			// aapt resource value: 0x7f0b0015
 			public const int moodImageView = 2131427349;
@@ -489,29 +507,29 @@ namespace Happimeter.Watch.Droid
 			// aapt resource value: 0x7f0b0012
 			public const int normal = 2131427346;
 			
-			// aapt resource value: 0x7f0b002a
-			public const int notification_background = 2131427370;
+			// aapt resource value: 0x7f0b002d
+			public const int notification_background = 2131427373;
 			
-			// aapt resource value: 0x7f0b0023
-			public const int notification_main_column = 2131427363;
+			// aapt resource value: 0x7f0b0026
+			public const int notification_main_column = 2131427366;
 			
-			// aapt resource value: 0x7f0b0022
-			public const int notification_main_column_container = 2131427362;
+			// aapt resource value: 0x7f0b0025
+			public const int notification_main_column_container = 2131427365;
 			
-			// aapt resource value: 0x7f0b0018
-			public const int removePairingButton = 2131427352;
+			// aapt resource value: 0x7f0b001c
+			public const int removePairingButton = 2131427356;
 			
-			// aapt resource value: 0x7f0b0029
-			public const int right_icon = 2131427369;
+			// aapt resource value: 0x7f0b002c
+			public const int right_icon = 2131427372;
 			
-			// aapt resource value: 0x7f0b0024
-			public const int right_side = 2131427364;
+			// aapt resource value: 0x7f0b0027
+			public const int right_side = 2131427367;
 			
 			// aapt resource value: 0x7f0b0009
 			public const int standard = 2131427337;
 			
-			// aapt resource value: 0x7f0b001f
-			public const int status_bar_latest_event_content = 2131427359;
+			// aapt resource value: 0x7f0b0022
+			public const int status_bar_latest_event_content = 2131427362;
 			
 			// aapt resource value: 0x7f0b0016
 			public const int surveyAnserIndicator = 2131427350;
@@ -519,11 +537,11 @@ namespace Happimeter.Watch.Droid
 			// aapt resource value: 0x7f0b0017
 			public const int surveyAnswerSeekbar = 2131427351;
 			
-			// aapt resource value: 0x7f0b0019
-			public const int surveyButton = 2131427353;
+			// aapt resource value: 0x7f0b001a
+			public const int surveyButton = 2131427354;
 			
-			// aapt resource value: 0x7f0b0035
-			public const int surveyConfirmBurron = 2131427381;
+			// aapt resource value: 0x7f0b0037
+			public const int surveyConfirmBurron = 2131427383;
 			
 			// aapt resource value: 0x7f0b0014
 			public const int surveyQuestion = 2131427348;
@@ -534,11 +552,11 @@ namespace Happimeter.Watch.Droid
 			// aapt resource value: 0x7f0b0003
 			public const int text2 = 2131427331;
 			
-			// aapt resource value: 0x7f0b002e
-			public const int textView1 = 2131427374;
+			// aapt resource value: 0x7f0b0018
+			public const int textView1 = 2131427352;
 			
-			// aapt resource value: 0x7f0b0025
-			public const int time = 2131427365;
+			// aapt resource value: 0x7f0b0028
+			public const int time = 2131427368;
 			
 			// aapt resource value: 0x7f0b0004
 			public const int title = 2131427332;

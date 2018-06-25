@@ -15,6 +15,8 @@ using Happimeter.Watch.Droid.Bluetooth;
 using Happimeter.Watch.Droid.Database;
 using Happimeter.Watch.Droid.ServicesBusinessLogic;
 using Java.Util;
+using Javax.Security.Auth;
+using System.Reactive.Subjects;
 
 namespace Happimeter.Watch.Droid.Workers
 {
@@ -29,7 +31,7 @@ namespace Happimeter.Watch.Droid.Workers
 		///  For notifying the devices. Probably is not working right now
 		/// </summary>
 		public Dictionary<string, BluetoothDevice> SubscribedDevices = new Dictionary<string, BluetoothDevice>();
-
+		public Subject<Dictionary<string, BluetoothDevice>> WhenSubscripbedDevicesChanges { get; set; } = new Subject<Dictionary<string, BluetoothDevice>>();
 		/// <summary>
 		///     To know, how many bytes we can send in one instance.
 		/// </summary>
@@ -270,6 +272,7 @@ namespace Happimeter.Watch.Droid.Workers
 				if (Worker.SubscribedDevices.ContainsKey(device.Address))
 				{
 					Worker.SubscribedDevices.Remove(device.Address);
+					Worker.WhenSubscripbedDevicesChanges.OnNext(Worker.SubscribedDevices);
 				}
 				Worker.IsConnected = false;
 				System.Threading.Timer timer = null;
@@ -506,12 +509,14 @@ namespace Happimeter.Watch.Droid.Workers
 						Worker.SubscribedDevices.Remove(device.Address);
 					}
 					Worker.SubscribedDevices.Add(device.Address, device);
+					Worker.WhenSubscripbedDevicesChanges.OnNext(Worker.SubscribedDevices);
 				}
 				else if (value.SequenceEqual(BluetoothGattDescriptor.DisableNotificationValue))
 				{
 					if (Worker.SubscribedDevices.ContainsKey(device.Address))
 					{
 						Worker.SubscribedDevices.Remove(device.Address);
+						Worker.WhenSubscripbedDevicesChanges.OnNext(Worker.SubscribedDevices);
 					}
 				}
 				if (responseNeeded)

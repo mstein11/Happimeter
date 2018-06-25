@@ -1,40 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#ff82b1ff"
-    android:gravity="center_vertical">
-    <Button
-        android:text="Remove Pairing"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#ff82b1ff">
+    <TextView
+        android:text="Menu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/removePairingButton"
+        android:id="@+id/textView1"
         android:textSize="50dp"
-        android:backgroundTint="#ff424242"
         android:textColor="#ffffff"
-        android:paddingTop="10dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp"
-        android:paddingLeft="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp" />
-    <Button
+        android:layout_gravity="center"
+        android:paddingBottom="30dp"
+        android:gravity="center" />
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/surveyButton"
-        android:text="Mood input"
-        android:textSize="50dp"
-        android:backgroundTint="#ff424242"
-        android:textColor="#ffffff"
-        android:paddingTop="10dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp"
-        android:paddingLeft="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp" />
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#ff82b1ff"
+            android:paddingBottom="100dp">
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#ff82b1ff"
+                android:gravity="center"
+                android:layout_margin="10dp">
+                <ImageView
+                    android:src="@drawable/a_1_h_2"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:id="@+id/main_mood_input_icon"
+                    android:layout_gravity="center_vertical"
+                    android:scaleType="centerCrop"
+                    android:layout_marginRight="10dp" />
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp">
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/surveyButton"
+                        android:text="Mood input"
+                        android:textSize="45dp"
+                        android:backgroundTint="#ff424242"
+                        android:textColor="#ffffff"
+                        android:paddingTop="10dp"
+                        android:paddingRight="10dp"
+                        android:paddingBottom="10dp"
+                        android:paddingLeft="10dp" />
+                    <TextView
+                        android:text="Next Survey: 19.10.1991 10:30am"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView1"
+                        android:textSize="25dp"
+                        android:textColor="#ffffff"
+                        android:layout_gravity="center"
+                        android:gravity="center" />
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#ff82b1ff"
+                android:gravity="center"
+                android:layout_margin="10dp">
+                <ImageView
+                    android:src="@drawable/outline_info_black_48dp"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:id="@+id/main_mood_input_icon"
+                    android:layout_gravity="center_vertical"
+                    android:scaleType="centerCrop"
+                    android:layout_marginRight="10dp" />
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/surveyButton"
+                        android:text="Info"
+                        android:textSize="45dp"
+                        android:backgroundTint="#ff424242"
+                        android:textColor="#ffffff"
+                        android:paddingTop="10dp"
+                        android:paddingRight="10dp"
+                        android:paddingBottom="10dp"
+                        android:paddingLeft="10dp" />
+                    <TextView
+                        android:text="Status: Paired"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/main_info_subtext_paired_status"
+                        android:textSize="25dp"
+                        android:textColor="#ffffff" />
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#ff82b1ff"
+                android:gravity="center"
+                android:layout_margin="10dp">
+                <ImageView
+                    android:src="@drawable/baseline_highlight_off_black_48dp"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:id="@+id/main_mood_input_icon"
+                    android:layout_gravity="center_vertical"
+                    android:scaleType="fitCenter"
+                    android:layout_marginRight="10dp" />
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/removePairingButton"
+                        android:text="Remove Pairing"
+                        android:textSize="45dp"
+                        android:backgroundTint="#ff424242"
+                        android:textColor="#ffffff"
+                        android:paddingTop="10dp"
+                        android:paddingRight="10dp"
+                        android:paddingBottom="10dp"
+                        android:paddingLeft="10dp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>
