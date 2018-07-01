@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#ff82b1ff">
+    <TextView
+        android:text="Info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView1"
+        android:textSize="50dp"
+        android:textColor="#ffffff"
+        android:layout_gravity="center"
+        android:paddingBottom="30dp"
+        android:gravity="center" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:layout_margin="25dp">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="150dp">
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#ff82b1ff">
+                <TextView
+                    android:text="Heartrate:"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView1"
+                    android:textSize="35dp"
+                    android:textColor="#ffffff" />
+                <TextView
+                    android:text="-"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/info_heartrate_value"
+                    android:textSize="35dp"
+                    android:textColor="#ffffff" />
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#ff82b1ff">
+                <TextView
+                    android:text="Steps:"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView1"
+                    android:textSize="35dp"
+                    android:textColor="#ffffff" />
+                <TextView
+                    android:text="-"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/info_steps_value"
+                    android:textSize="35dp"
+                    android:textColor="#ffffff" />
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#ff82b1ff">
+                <TextView
+                    android:text="Close to:"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView1"
+                    android:textSize="35dp"
+                    android:textColor="#ffffff" />
+                <TextView
+                    android:text="-"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/info_close_to_value"
+                    android:textSize="35dp"
+                    android:textColor="#ffffff" />
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#ff82b1ff">
+                <TextView
+                    android:text="When:"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView1"
+                    android:textSize="35dp"
+                    android:textColor="#ffffff" />
+                <TextView
+                    android:text="-"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/info_timestamp"
+                    android:textSize="35dp"
+                    android:textColor="#ffffff" />
+            </LinearLayout>
+            <TextView
+                android:text="Other information"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView1"
+                android:textSize="50dp"
+                android:textColor="#ffffff"
+                android:layout_gravity="center"
+                android:paddingBottom="30dp"
+                android:gravity="center" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#ff82b1ff">
+                <TextView
+                    android:text="data exchange:"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/info_exchange_data"
+                    android:textSize="35dp"
+                    android:textColor="#ffffff" />
+                <TextView
+                    android:text="-"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/info_exchange_data_value"
+                    android:textSize="35dp"
+                    android:textColor="#ffffff" />
+            </LinearLayout>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/info_restart_app_button"
+                android:text="Restart app"
+                android:textSize="45dp"
+                android:backgroundTint="#ff424242"
+                android:textColor="#ffffff"
+                android:paddingTop="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

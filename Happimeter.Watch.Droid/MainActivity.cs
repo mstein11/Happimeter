@@ -49,14 +49,17 @@ namespace Happimeter.Watch.Droid
 			}
 			btWorker.WhenSubscripbedDevicesChanges.Subscribe(x =>
 			{
-				if (x.Count == 0)
+				RunOnUiThread(() =>
 				{
-					textbox.Text = "Status: Not in Range";
-				}
-				else
-				{
-					textbox.Text = "Status: Connected";
-				}
+					if (x.Count == 0)
+					{
+						textbox.Text = "Status: Not in Range";
+					}
+					else
+					{
+						textbox.Text = "Status: Connected";
+					}
+				});
 			});
 
 			var pairing = ServiceLocator.Instance.Get<IDatabaseContext>().GetCurrentBluetoothPairing();
@@ -70,6 +73,12 @@ namespace Happimeter.Watch.Droid
 				StartActivity(intent);
 				Finish();
 			}
+
+			FindViewById<Button>(Resource.Id.main_info_button).Click += delegate
+			{
+				var intent = new Intent(this, typeof(InfoActivity));
+				StartActivity(intent);
+			};
 
 			FindViewById<Button>(Resource.Id.removePairingButton).Click += delegate
 			{

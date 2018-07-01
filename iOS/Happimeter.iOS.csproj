@@ -68,7 +68,7 @@
     <DefineConstants>DEBUG;ENABLE_TEST_CLOUD;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodesignKey>iPhone Developer: Marius Stein (C37TPZL2UM)</CodesignKey>
+    <CodesignKey>iPhone Distribution: Marius Stein (76V7626Y7Y)</CodesignKey>
     <DeviceSpecificBuild>true</DeviceSpecificBuild>
     <MtouchDebug>true</MtouchDebug>
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
@@ -80,7 +80,7 @@
     <MtouchArch>ARM64</MtouchArch>
     <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
     <PlatformTarget>x86</PlatformTarget>
-<CodesignProvision>VS: edu.mit.Happimeter Development</CodesignProvision>
+<CodesignProvision>Happimeter Live Distribution</CodesignProvision>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -272,6 +272,10 @@
     <ImageAsset Include="Assets.xcassets\happinessfactory.imageset\happinessfactory.png" />
     <ImageAsset Include="Assets.xcassets\happinessfactory.imageset\happinessfactory%402x.png" />
     <ImageAsset Include="Assets.xcassets\happinessfactory.imageset\happinessfactory%403x.png" />
+    <ImageAsset Include="Assets.xcassets\BluetoothIcon.imageset\airdrop.png" />
+    <ImageAsset Include="Assets.xcassets\BluetoothIcon.imageset\airdrop%402x.png" />
+    <ImageAsset Include="Assets.xcassets\BluetoothIcon.imageset\airdrop%403x.png" />
+    <ImageAsset Include="Assets.xcassets\BluetoothIcon.imageset\Contents.json" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ViewControllers\TabBarController.cs" />
@@ -323,6 +327,7 @@
     <Folder Include="Renderers\" />
     <Folder Include="Assets.xcassets\happinessfactury.imageset\" />
     <Folder Include="Assets.xcassets\happinessfactory.imageset\" />
+    <Folder Include="Assets.xcassets\BluetoothIcon.imageset\" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />

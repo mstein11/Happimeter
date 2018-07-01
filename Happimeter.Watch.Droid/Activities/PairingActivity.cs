@@ -14,36 +14,51 @@ using Android.Widget;
 using Happimeter.Core.Helper;
 using Happimeter.Watch.Droid.Database;
 using Happimeter.Watch.Droid.ServicesBusinessLogic;
+using Java.Lang;
+using Plugin.BluetoothLE;
+using Android.Provider;
 
 namespace Happimeter.Watch.Droid.Activities
 {
-    [Activity(Label = "PairingActivity")]
-    public class PairingActivity : Activity
-    {
-        protected override void OnCreate(Bundle savedInstanceState)
-        {
-            base.OnCreate(savedInstanceState);
-            RequestWindowFeature(WindowFeatures.NoTitle);
+	[Activity(Label = "PairingActivity")]
+	public class PairingActivity : Activity
+	{
+		protected override void OnCreate(Bundle savedInstanceState)
+		{
+			base.OnCreate(savedInstanceState);
+			RequestWindowFeature(WindowFeatures.NoTitle);
 
-            //Remove notification bar
-            Window.SetFlags(WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
+			//Remove notification bar
+			//Window.SetFlags(WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
+			Window.AddFlags(WindowManagerFlags.Fullscreen
+							| WindowManagerFlags.TurnScreenOn
+							| WindowManagerFlags.KeepScreenOn);
 
-            // Create your application here
-            SetContentView(Resource.Layout.Pairing);
-            var db = ServiceLocator.Instance.Get<IDatabaseContext>();
-            var name = ServiceLocator.Instance.Get<IDeviceService>().GetDeviceName();
+			// Create your application here
+			SetContentView(Resource.Layout.Pairing);
+			var db = ServiceLocator.Instance.Get<IDatabaseContext>();
+			var name = ServiceLocator.Instance.Get<IDeviceService>().GetDeviceName();
 
-            var textView = FindViewById<TextView>(Resource.Id.PairingDeviceName);
-            textView.Text = name;
+			var textView = FindViewById<TextView>(Resource.Id.PairingDeviceName);
+			textView.Text = name;
 
-            db.WhenEntryChanged<BluetoothPairing>().Take(1).Subscribe(eventInfo => {
-                if (eventInfo.Entites.Cast<BluetoothPairing>().Any(x => x.IsPairingActive)) {
-                    var intent = new Intent(this, typeof(MainActivity));
-                    StartActivity(intent);
-                    Finish();
-                }
-            });
-            // Create your application here
-        }
-    }
+			db.WhenEntryChanged<BluetoothPairing>().Take(1).Subscribe(eventInfo =>
+			{
+				if (eventInfo.Entites.Cast<BluetoothPairing>().Any(x => x.IsPairingActive))
+				{
+					var intent = new Intent(this, typeof(MainActivity));
+					StartActivity(intent);
+					Finish();
+				}
+			});
+			// Create your application here
+		}
+
+		protected override void OnDestroy()
+		{
+			base.OnDestroy();
+
+
+		}
+	}
 }

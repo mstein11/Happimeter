@@ -34,10 +34,4 @@
             <point key="canvasLocation" x="349" y="339"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="First" width="32" height="30"/>
-        <image name="Second" width="32" height="30"/>
-        <image name="XamarinLogo" width="220" height="51"/>
-        <image name="HappimeterLogo" width="261" height="48"/>
-    </resources>
 </document>

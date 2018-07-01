@@ -20,6 +20,7 @@ using System.Threading;
 using Android.OS;
 using Happimeter.Watch.Droid.Bluetooth;
 using Happimeter.Core.Models.Bluetooth;
+using Happimeter.Watch.Droid.ServicesBusinessLogic;
 
 namespace Happimeter.Watch.Droid.Workers
 {
@@ -457,7 +458,8 @@ namespace Happimeter.Watch.Droid.Workers
 			}
 			BeaconListenerService.ProximityMeasures.Clear();
 
-			ServiceLocator.Instance.Get<IDatabaseContext>().AddGraph(sensorMeasurement);
+			//ServiceLocator.Instance.Get<IDatabaseContext>().AddGraph(sensorMeasurement);
+			ServiceLocator.Instance.Get<IMeasurementService>().AddSensorMeasurement(sensorMeasurement);
 			BluetoothWorker.GetInstance().SendNotifiation(UuidHelper.DataExchangeNotifyCharacteristicUuid, new DataExchangeInitMessage());
 		}
 

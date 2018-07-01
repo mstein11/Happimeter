@@ -11,74 +11,75 @@ using Happimeter.Watch.Droid.ViewModels;
 
 namespace Happimeter.Watch.Droid.Activities
 {
-    [Activity(Label = "SurveyActivity")]
-    public class SurveyActivity : Activity
-    {
-        public SurveyViewModel ViewModel { get; set; }
+	[Activity(Label = "SurveyActivity")]
+	public class SurveyActivity : Activity
+	{
+		public SurveyViewModel ViewModel { get; set; }
 
-        protected override void OnCreate(Bundle savedInstanceState)
-        {
-            base.OnCreate(savedInstanceState);
-            //Remove title bar
-            RequestWindowFeature(WindowFeatures.NoTitle);
+		protected override void OnCreate(Bundle savedInstanceState)
+		{
+			base.OnCreate(savedInstanceState);
+			//Remove title bar
+			RequestWindowFeature(WindowFeatures.NoTitle);
 
-            //Remove notification bar
-            Window.SetFlags(WindowManagerFlags.Fullscreen, WindowManagerFlags.Fullscreen);
+			//Remove notification bar
+			Window.AddFlags(WindowManagerFlags.Fullscreen | WindowManagerFlags.TurnScreenOn | WindowManagerFlags.KeepScreenOn);
 
 
 
-            ViewModel = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyQuestions();
 
-            // Create your application here
-            SetContentView(Resource.Layout.Survey);
-            FindViewById<Button>(Resource.Id.surveyConfirmBurron).Click += (sender, e) =>
-            {
-                var currentQuestion = ViewModel.GetCurrentQuestion();
-                if (currentQuestion != null)
-                {
-                    currentQuestion.IsAnswered = true;
-                }
+			ViewModel = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyQuestions();
 
-                if (currentQuestion == null || ViewModel.GetCurrentQuestion() == null)
-                {
+			// Create your application here
+			SetContentView(Resource.Layout.Survey);
+			FindViewById<Button>(Resource.Id.surveyConfirmBurron).Click += (sender, e) =>
+			{
+				var currentQuestion = ViewModel.GetCurrentQuestion();
+				if (currentQuestion != null)
+				{
+					currentQuestion.IsAnswered = true;
+				}
 
-                    var measurementService = ServiceLocator.Instance.Get<IMeasurementService>();
-                    //save answers to database
-                    measurementService.AddSurveyMeasurement(ViewModel.GetDataModel());
+				if (currentQuestion == null || ViewModel.GetCurrentQuestion() == null)
+				{
 
-                    //var intent = new Intent(this, typeof(MainActivity));
-                    //StartActivity(intent);
-                    Finish();
-                    return;
-                }
-                NavigateToNextQuestion();
-            };
+					var measurementService = ServiceLocator.Instance.Get<IMeasurementService>();
+					//save answers to database
+					measurementService.AddSurveyMeasurement(ViewModel.GetDataModel());
 
-            // However, if we're being restored from a previous state,
-            // then we don't need to do anything and should return or else
-            // we could end up with overlapping fragments.
-            if (savedInstanceState == null)
-            {
-                NavigateToNextQuestion();
-            }
+					//var intent = new Intent(this, typeof(MainActivity));
+					//StartActivity(intent);
+					Finish();
+					return;
+				}
+				NavigateToNextQuestion();
+			};
 
-        }
+			// However, if we're being restored from a previous state,
+			// then we don't need to do anything and should return or else
+			// we could end up with overlapping fragments.
+			if (savedInstanceState == null)
+			{
+				NavigateToNextQuestion();
+			}
 
-        private void NavigateToNextQuestion()
-        {
-            if (FindViewById(Resource.Id.fragment_container) != null)
-            {
-                // Create a new Fragment to be placed in the activity layout
-                var fragment = SurveyItemFragment.NewInstance(ViewModel.GetCurrentQuestionPosition());
+		}
 
-                // In case this activity was started with special instructions from an
-                // Intent, pass the Intent's extras to the fragment as arguments
-                //firstFragment.setArguments(getIntent().getExtras());
+		private void NavigateToNextQuestion()
+		{
+			if (FindViewById(Resource.Id.fragment_container) != null)
+			{
+				// Create a new Fragment to be placed in the activity layout
+				var fragment = SurveyItemFragment.NewInstance(ViewModel.GetCurrentQuestionPosition());
 
-                var transaction = FragmentManager.BeginTransaction();
-                transaction.Replace(Resource.Id.fragment_container, fragment);
-                transaction.Commit();
-            }
-        }
-    }
+				// In case this activity was started with special instructions from an
+				// Intent, pass the Intent's extras to the fragment as arguments
+				//firstFragment.setArguments(getIntent().getExtras());
+
+				var transaction = FragmentManager.BeginTransaction();
+				transaction.Replace(Resource.Id.fragment_container, fragment);
+				transaction.Commit();
+			}
+		}
+	}
 }

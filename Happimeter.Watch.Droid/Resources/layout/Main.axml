@@ -56,7 +56,7 @@
                         android:paddingRight="10dp"
                         android:paddingBottom="10dp"
                         android:paddingLeft="10dp" />
-                    <TextView
+                <!--<TextView
                         android:text="Next Survey: 19.10.1991 10:30am"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
                         android:textSize="25dp"
                         android:textColor="#ffffff"
                         android:layout_gravity="center"
-                        android:gravity="center" />
+                        android:gravity="center" /> -->
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
@@ -89,7 +89,7 @@
                     <Button
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/surveyButton"
+                        android:id="@+id/main_info_button"
                         android:text="Info"
                         android:textSize="45dp"
                         android:backgroundTint="#ff424242"

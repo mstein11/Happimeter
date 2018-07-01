@@ -7,6 +7,9 @@ using Happimeter.Core.Helper;
 using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Watch.Droid.Database;
 using Happimeter.Watch.Droid.ViewModels;
+using Android.Graphics;
+using System.Reactive.Subjects;
+using Happimeter.Core.Services;
 
 namespace Happimeter.Watch.Droid.ServicesBusinessLogic
 {
@@ -21,6 +24,51 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
 			var dbContext = ServiceLocator.Instance.Get<IDatabaseContext>();
 			dbContext.AddGraph(measurement);
 		}
+
+		public void AddSensorMeasurement(SensorMeasurement measurement)
+		{
+			var dbContext = ServiceLocator.Instance.Get<IDatabaseContext>();
+			dbContext.AddGraph(measurement);
+			SaveInfoMeasurement(measurement);
+		}
+
+		public void SaveInfoMeasurement(SensorMeasurement measurement)
+		{
+			var dbContext = ServiceLocator.Instance.Get<IDatabaseContext>();
+			var oldInstance = dbContext.GetAll<InfoScreenMeasurements>().OrderBy(x => x.Timestamp).FirstOrDefault();
+			var isNew = false;
+			if (oldInstance == null)
+			{
+				oldInstance = new InfoScreenMeasurements();
+				isNew = true;
+			}
+
+			oldInstance.Heartrate = measurement.SensorItemMeasures.FirstOrDefault(x => x.Type == MeasurementItemTypes.HeartRateClean)?.Average ?? default(double);
+			oldInstance.CloseTo = measurement.SensorItemMeasures.Count(x => x.Type.Contains(MeasurementItemTypes.ProximityCm));
+			oldInstance.Timestamp = measurement.Timestamp;
+			oldInstance.Steps = (int)(measurement.SensorItemMeasures.FirstOrDefault(x => x.Type == MeasurementItemTypes.Step)?.Magnitude ?? default(double));
+			if (isNew)
+			{
+				dbContext.Add(oldInstance);
+			}
+			else
+			{
+				dbContext.Update(oldInstance);
+			}
+			InfoScreenMeasurementsUpdatedSubject.OnNext(oldInstance);
+		}
+		private Subject<InfoScreenMeasurements> InfoScreenMeasurementsUpdatedSubject = new Subject<InfoScreenMeasurements>();
+		public IObservable<InfoScreenMeasurements> WhenInfoScreenMeasurementUpdated()
+		{
+			return InfoScreenMeasurementsUpdatedSubject;
+		}
+
+		public InfoScreenMeasurements GetInfoScreenMeasurements()
+		{
+			var dbContext = ServiceLocator.Instance.Get<IDatabaseContext>();
+			return dbContext.GetAll<InfoScreenMeasurements>().OrderBy(x => x.Timestamp).FirstOrDefault();
+		}
+
 
 		public SurveyViewModel GetSurveyQuestions()
 		{
@@ -117,6 +165,13 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
 			foreach (var measruement in message.SensorMeasurements)
 			{
 				context.Delete(measruement);
+			}
+
+			var pairing = context.Get<BluetoothPairing>(x => x.IsPairingActive);
+			if (pairing != null)
+			{
+				pairing.LastDataSync = DateTime.UtcNow;
+				context.Update(pairing);
 			}
 		}
 	}

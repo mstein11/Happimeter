@@ -208,6 +208,8 @@
     <Compile Include="Services\BeaconListenerService.cs" />
     <Compile Include="MainApplication.cs" />
     <Compile Include="Bluetooth\HappimeterDataNotifyCharacteristic.cs" />
+    <Compile Include="Activities\InfoActivity.cs" />
+    <Compile Include="Database\InfoScreenMeasurements.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -241,6 +243,7 @@
     <AndroidResource Include="Resources\drawable\baseline_info_black_48dp.png" />
     <AndroidResource Include="Resources\drawable\baseline_highlight_off_black_48dp.png" />
     <AndroidResource Include="Resources\drawable\outline_info_black_48dp.png" />
+    <AndroidResource Include="Resources\layout\Info.axml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />
