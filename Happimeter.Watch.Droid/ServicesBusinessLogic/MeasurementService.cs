@@ -70,20 +70,31 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
 		}
 
 
-		public SurveyViewModel GetSurveyQuestions()
+		public SurveyViewModel GetSurveyQuestions(int? pleasance = null, int? activation = null)
 		{
 			var questions = new SurveyViewModel();
 
 			var generics = ServiceLocator.Instance.Get<IDatabaseContext>().GetAll<GenericQuestion>(x => !x.Deactivated);
 			foreach (var generic in generics)
 			{
-				questions.Questions.Add(new SurveyFragmentViewModel(questions)
+				var viewModel = new SurveyFragmentViewModel(questions)
 				{
 					Question = generic.Question,
 					QuestionShort = generic.QuestionShort,
 					QuestionId = generic.QuestionId,
 					Answer = 50
-				});
+				};
+				if (generic.QuestionId == 2 && activation != null)
+				{
+					viewModel.Answer = activation.Value == 0 ? viewModel.Answer = 16 : activation.Value == 1 ? viewModel.Answer = 50 : viewModel.Answer = 83;
+					viewModel.IsAnswered = true;
+				}
+				else if (generic.QuestionId == 1 && pleasance != null)
+				{
+					viewModel.Answer = pleasance.Value == 0 ? viewModel.Answer = 16 : pleasance.Value == 1 ? viewModel.Answer = 50 : viewModel.Answer = 83;
+					viewModel.IsAnswered = true;
+				}
+				questions.Questions.Add(viewModel);
 			}
 			if (!questions.Questions.Any())
 			{

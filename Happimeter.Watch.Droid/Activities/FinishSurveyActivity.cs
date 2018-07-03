@@ -13,17 +13,17 @@ using Android.Widget;
 
 namespace Happimeter.Watch.Droid.Activities
 {
-    [Activity(Label = "FinishSurveyActivity")]
-    public class FinishSurveyActivity : Activity
-    {
-        protected override void OnCreate(Bundle savedInstanceState)
-        {
-            base.OnCreate(savedInstanceState);
+	[Activity(Label = "FinishSurveyActivity")]
+	public class FinishSurveyActivity : Activity
+	{
+		protected override void OnCreate(Bundle savedInstanceState)
+		{
+			base.OnCreate(savedInstanceState);
 
 
-            Task.Delay(TimeSpan.FromSeconds(1));
-            //Finish();
-            // Create your application here
-        }
-    }
+			Task.Delay(TimeSpan.FromSeconds(1));
+			//Finish();
+			// Create your application here
+		}
+	}
 }

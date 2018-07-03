@@ -431,9 +431,6 @@ namespace Happimeter.Services
 				return null;
 			}
 			genericQuestions.AddRange(questions.Questions);
-
-			context.DeleteAll<GenericQuestion>();
-
 			var dbQuestions = genericQuestions.Select(q => new GenericQuestion
 			{
 				//GenericQuestionGroupId = groupId,
@@ -441,6 +438,17 @@ namespace Happimeter.Services
 				QuestionShort = q.QuestionShort,
 				QuestionId = q.Id
 			}).ToList();
+			var oldQuestions = context.GetAll<GenericQuestion>();
+			foreach (var question in dbQuestions)
+			{
+				if (oldQuestions.Any(o => o.Deactivated && o.QuestionId == question.QuestionId))
+				{
+					question.Deactivated = true;
+				}
+			}
+			context.DeleteAll<GenericQuestion>();
+
+
 
 			foreach (var dbQuestion in dbQuestions)
 			{

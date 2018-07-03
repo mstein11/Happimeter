@@ -34,6 +34,9 @@ namespace Happimeter.Core.Helper
 		public const string MeasurementModeCharacteristicUuidString = "347b6858-dfb1-49bf-a615-3320ecaf6920";
 		public static Guid MeasurementModeCharacteristicUuid => Guid.Parse(MeasurementModeCharacteristicUuidString);
 
+		public const string PreSurveyDataCharacteristicUuidString = "6f4097ac-e7e0-45e3-b1c8-eb1f2e53f18e";
+		public static Guid PreSurveyDataCharacteristicUuid => Guid.Parse(PreSurveyDataCharacteristicUuidString);
+
 		public const byte BeaconManufacturerId = 0x004C;
 		public const int TxPowerLevel = -56;
 		//Layout for iBeacon
@@ -46,7 +49,8 @@ namespace Happimeter.Core.Helper
 				AuthCharacteristicUuid,
 				GenericQuestionCharacteristicUuid,
 				MeasurementModeCharacteristicUuid,
-				DataExchangeNotifyCharacteristicUuid
+				DataExchangeNotifyCharacteristicUuid,
+				PreSurveyDataCharacteristicUuid
 			};
 		}
 	}

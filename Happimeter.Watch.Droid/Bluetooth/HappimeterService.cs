@@ -13,6 +13,7 @@ namespace Happimeter.Watch.Droid.Bluetooth
 			AddCharacteristic(new HappimeterGenericQuestionCharacteristic());
 			AddCharacteristic(new HappimeterMeasurementModeCharacteristic());
 			AddCharacteristic(new HappimeterDataNotifyCharacteristic());
+			AddCharacteristic(new HappimeterPreSurveyDataCharacteristic());
 		}
 
 		public static HappimeterService Create()

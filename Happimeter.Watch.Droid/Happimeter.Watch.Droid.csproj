@@ -210,6 +210,12 @@
     <Compile Include="Bluetooth\HappimeterDataNotifyCharacteristic.cs" />
     <Compile Include="Activities\InfoActivity.cs" />
     <Compile Include="Database\InfoScreenMeasurements.cs" />
+    <Compile Include="Bluetooth\HappimeterPreSurveyDataCharacteristic.cs" />
+    <Compile Include="Activities\PreSurveyActivity.cs" />
+    <Compile Include="Bluetooth\IWritableCharacteristic.cs" />
+    <Compile Include="Fragments\ShowPredictionsFragment.cs" />
+    <Compile Include="Fragments\LoadingPredictionsFragment.cs" />
+    <Compile Include="Helper\UiHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -244,6 +250,18 @@
     <AndroidResource Include="Resources\drawable\baseline_highlight_off_black_48dp.png" />
     <AndroidResource Include="Resources\drawable\outline_info_black_48dp.png" />
     <AndroidResource Include="Resources\layout\Info.axml" />
+    <AndroidResource Include="Resources\layout\PreSurvey.axml" />
+    <AndroidResource Include="Resources\layout\ShowPredictions.axml" />
+    <AndroidResource Include="Resources\drawable\activation_2_small.png" />
+    <AndroidResource Include="Resources\drawable\activation_1_small.png" />
+    <AndroidResource Include="Resources\drawable\activation_0_small.png" />
+    <AndroidResource Include="Resources\drawable\happiness_2_small.png" />
+    <AndroidResource Include="Resources\drawable\happiness_1_small.png" />
+    <AndroidResource Include="Resources\drawable\happiness_0_small.png" />
+    <AndroidResource Include="Resources\drawable\happiness_0.png" />
+    <AndroidResource Include="Resources\drawable\activation_0.png" />
+    <AndroidResource Include="Resources\layout\PreSurveyFragmentContainer.axml" />
+    <AndroidResource Include="Resources\drawable\baseline_check_circle_outline_black_48dp.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />
@@ -257,6 +275,7 @@
     <Folder Include="ServicesBusinessLogic\" />
     <Folder Include="BroadcastReceiver\" />
     <Folder Include="DependencyInjection\" />
+    <Folder Include="Helper\" />
   </ItemGroup>
   <Import Project="..\Happimeter.Core\Happimeter.Core.projitems" Label="Shared" Condition="Exists('..\Happimeter.Core\Happimeter.Core.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

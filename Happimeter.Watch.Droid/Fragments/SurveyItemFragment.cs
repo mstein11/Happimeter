@@ -6,6 +6,7 @@ using Android.Widget;
 using Happimeter.Watch.Droid.Activities;
 using Happimeter.Watch.Droid.ViewModels;
 using System.Linq;
+using Happimeter.Watch.Droid.Helper;
 
 namespace Happimeter.Watch.Droid.Fragments
 {
@@ -91,42 +92,8 @@ namespace Happimeter.Watch.Droid.Fragments
 			}
 			var activation = ViewModel?.ParentViewModel?.Questions.FirstOrDefault(x => x.QuestionId == 1)?.AnswerDisplay ?? 1;
 			var pleasance = ViewModel?.ParentViewModel?.Questions.FirstOrDefault(x => x.QuestionId == 2)?.AnswerDisplay ?? 1;
-			if (activation == 0 && pleasance == 0)
-			{
-				View.FindViewById<ImageView>(Resource.Id.moodImageView).SetImageResource(Resource.Drawable.a_0_h_0);
-			}
-			else if (activation == 1 && pleasance == 0)
-			{
-				View.FindViewById<ImageView>(Resource.Id.moodImageView).SetImageResource(Resource.Drawable.a_1_h_0);
-			}
-			else if (activation == 2 && pleasance == 0)
-			{
-				View.FindViewById<ImageView>(Resource.Id.moodImageView).SetImageResource(Resource.Drawable.a_2_h_0);
-			}
-			else if (activation == 0 && pleasance == 1)
-			{
-				View.FindViewById<ImageView>(Resource.Id.moodImageView).SetImageResource(Resource.Drawable.a_0_h_1);
-			}
-			else if (activation == 1 && pleasance == 1)
-			{
-				View.FindViewById<ImageView>(Resource.Id.moodImageView).SetImageResource(Resource.Drawable.a_1_h_1);
-			}
-			else if (activation == 2 && pleasance == 1)
-			{
-				View.FindViewById<ImageView>(Resource.Id.moodImageView).SetImageResource(Resource.Drawable.a_2_h_1);
-			}
-			else if (activation == 0 && pleasance == 2)
-			{
-				View.FindViewById<ImageView>(Resource.Id.moodImageView).SetImageResource(Resource.Drawable.a_0_h_2);
-			}
-			else if (activation == 1 && pleasance == 2)
-			{
-				View.FindViewById<ImageView>(Resource.Id.moodImageView).SetImageResource(Resource.Drawable.a_1_h_2);
-			}
-			else if (activation == 2 && pleasance == 2)
-			{
-				View.FindViewById<ImageView>(Resource.Id.moodImageView).SetImageResource(Resource.Drawable.a_2_h_2);
-			}
+
+			UiHelper.SetMoodImage(View.FindViewById<ImageView>(Resource.Id.moodImageView), pleasance, activation);
 		}
 	}
 }

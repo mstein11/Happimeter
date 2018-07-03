@@ -8,6 +8,7 @@ using Android.Widget;
 using Happimeter.Core.Helper;
 using Happimeter.Watch.Droid.Database;
 using Happimeter.Watch.Droid.ServicesBusinessLogic;
+using System.Linq;
 
 namespace Happimeter.Watch.Droid.Workers
 {
@@ -76,7 +77,7 @@ namespace Happimeter.Watch.Droid.Workers
 			var userId = ServiceLocator.Instance.Get<IDatabaseContext>().Get<BluetoothPairing>(x => x.IsPairingActive)?.PairedWithUserId ?? 0;
 			(var major, var minor) = UtilHelper.GetMajorMinorFromUserId(userId);
 			string beaconUuid;
-			var connectedDevice = BluetoothWorker.GetInstance().IsConnected;
+			var connectedDevice = BluetoothWorker.GetInstance().SubscribedDevices.Any();
 			if (connectedDevice)
 			{
 				beaconUuid = UuidHelper.BeaconUuidString;

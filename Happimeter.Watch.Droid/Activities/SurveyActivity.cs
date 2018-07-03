@@ -8,6 +8,9 @@ using Happimeter.Core.Helper;
 using Happimeter.Watch.Droid.Fragments;
 using Happimeter.Watch.Droid.ServicesBusinessLogic;
 using Happimeter.Watch.Droid.ViewModels;
+using Happimeter.Watch.Droid.Workers;
+using Happimeter.Core.Models.Bluetooth;
+using System.Linq;
 
 namespace Happimeter.Watch.Droid.Activities
 {
@@ -25,10 +28,19 @@ namespace Happimeter.Watch.Droid.Activities
 			//Remove notification bar
 			Window.AddFlags(WindowManagerFlags.Fullscreen | WindowManagerFlags.TurnScreenOn | WindowManagerFlags.KeepScreenOn);
 
+			int? activation = null;
+			int? pleasance = null;
+			if (Intent.HasExtra("pleasance"))
+			{
+				pleasance = Intent.GetIntExtra("pleasance", 0);
+			}
+			if (Intent.HasExtra("activation"))
+			{
+				activation = Intent.GetIntExtra("activation", 0);
+			}
 
 
-
-			ViewModel = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyQuestions();
+			ViewModel = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyQuestions(pleasance, activation);
 
 			// Create your application here
 			SetContentView(Resource.Layout.Survey);
@@ -42,14 +54,7 @@ namespace Happimeter.Watch.Droid.Activities
 
 				if (currentQuestion == null || ViewModel.GetCurrentQuestion() == null)
 				{
-
-					var measurementService = ServiceLocator.Instance.Get<IMeasurementService>();
-					//save answers to database
-					measurementService.AddSurveyMeasurement(ViewModel.GetDataModel());
-
-					//var intent = new Intent(this, typeof(MainActivity));
-					//StartActivity(intent);
-					Finish();
+					FinishSurvey();
 					return;
 				}
 				NavigateToNextQuestion();
@@ -60,9 +65,25 @@ namespace Happimeter.Watch.Droid.Activities
 			// we could end up with overlapping fragments.
 			if (savedInstanceState == null)
 			{
+				if (ViewModel.Questions.All(x => x.IsAnswered))
+				{
+					FinishSurvey();
+					return;
+				}
 				NavigateToNextQuestion();
 			}
 
+		}
+
+		private void FinishSurvey()
+		{
+			var measurementService = ServiceLocator.Instance.Get<IMeasurementService>();
+			//save answers to database
+			measurementService.AddSurveyMeasurement(ViewModel.GetDataModel());
+
+			//var intent = new Intent(this, typeof(MainActivity));
+			//StartActivity(intent);
+			Finish();
 		}
 
 		private void NavigateToNextQuestion()

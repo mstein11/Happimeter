@@ -100,7 +100,7 @@ namespace Happimeter.Watch.Droid
 			};
 			FindViewById<Button>(Resource.Id.surveyButton).Click += (sender, e) =>
 			{
-				var intent = new Intent(this, typeof(SurveyActivity));
+				var intent = new Intent(this, typeof(PreSurveyActivity));
 				StartActivity(intent);
 			};
 			if (!IsMyServiceRunning(typeof(BackgroundService)))

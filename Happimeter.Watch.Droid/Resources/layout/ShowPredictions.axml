@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ff82b1ff"
+    android:gravity="center_horizontal">
+    <TextView
+        android:text="Mood Prediction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView1"
+        android:textSize="45dp"
+        android:textColor="#ffffff"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingTop="30dp" />
+    <ImageView
+        android:src="@drawable/a_0_h_0"
+        android:layout_width="fill_parent"
+        android:layout_height="200dp"
+        android:gravity="center"
+        android:id="@+id/moodImageView"
+        android:scaleType="fitCenter"
+        android:paddingBottom="20dp" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ff82b1ff"
+        android:gravity="center_horizontal">
+        <TextView
+            android:text="HAPPY (3) - ACTIVE (3)"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/predictions_text"
+            android:textSize="35dp"
+            android:gravity="center"
+            android:textColor="#ffffff" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ff82b1ff"
+        android:paddingBottom="30dp"
+        android:gravity="center|bottom">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="30dp">
+            <ImageButton
+                android:src="@drawable/baseline_check_circle_outline_black_48dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/prediction_right"
+                android:backgroundTint="@android:color/holo_green_light" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="30dp">
+            <ImageButton
+                android:src="@drawable/baseline_highlight_off_black_48dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/prediction_wrong"
+                android:backgroundTint="@android:color/holo_red_light" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

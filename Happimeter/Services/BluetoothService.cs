@@ -83,7 +83,7 @@ namespace Happimeter.Services
 			{
 				ReleaseSubscriptions();
 			}
-			HandleDataExchangeNotification();
+			SubscribeToNotifications();
 			CharacteristicsReplaySubject = new ReplaySubject<IGattCharacteristic>();
 
 			if (WhenAdapterStatusChanged == null)
@@ -303,12 +303,44 @@ namespace Happimeter.Services
 			}
 		}
 
-		private void HandleDataExchangeNotification()
+		private void SubscribeToNotifications()
 		{
 			NotificationSubject.Where(x => x.Item1 == DataExchangeInitMessage.MessageNameConstant).Subscribe(x =>
 			{
 				Debug.WriteLine("Got DataExchange Notification");
 				ExchangeData();
+			});
+
+			NotificationSubject.Where(x => x.Item1 == PreSurveyFirstMessage.MessageNameConstant).Subscribe(async res =>
+			{
+				Debug.WriteLine("Got PreSurveyMessage");
+
+				var predictionService = ServiceLocator.Instance.Get<IPredictionService>();
+				var measurementService = ServiceLocator.Instance.Get<IMeasurementService>();
+				await predictionService.DownloadAndSavePrediction();
+				await measurementService.DownloadAndSaveGenericQuestions();
+
+				var questions = measurementService.GetGenericQuestions();
+				var predictions = predictionService.GetLastPrediction();
+				var activation = predictions.FirstOrDefault(x => x.QuestionId == 1);
+				var pleasance = predictions.FirstOrDefault(x => x.QuestionId == 2);
+
+				var message = new PreSurveySecondMessage();
+				message.PredictedActivation = activation.PredictedValue;
+				message.PredictedPleasance = pleasance.PredictedValue;
+				message.PredictionFrom = pleasance.Timestamp;
+				message.Questions = questions.ToList();
+
+
+				var charac = await CharacteristicsReplaySubject
+					.Where(x => x.Uuid == UuidHelper.PreSurveyDataCharacteristicUuid)
+					.FirstOrDefaultAsync()
+					.Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
+					.Catch((Exception arg) =>
+					{
+						return Observable.Return<IGattCharacteristic>(null);
+					});
+				await WriteAsync(charac, message);
 			});
 		}
 

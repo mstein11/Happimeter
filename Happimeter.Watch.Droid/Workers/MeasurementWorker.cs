@@ -460,7 +460,7 @@ namespace Happimeter.Watch.Droid.Workers
 
 			//ServiceLocator.Instance.Get<IDatabaseContext>().AddGraph(sensorMeasurement);
 			ServiceLocator.Instance.Get<IMeasurementService>().AddSensorMeasurement(sensorMeasurement);
-			BluetoothWorker.GetInstance().SendNotifiation(UuidHelper.DataExchangeNotifyCharacteristicUuid, new DataExchangeInitMessage());
+			BluetoothWorker.GetInstance().SendNotification(UuidHelper.DataExchangeNotifyCharacteristicUuid, new DataExchangeInitMessage());
 		}
 
 		public void Stop()

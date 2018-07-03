@@ -17,6 +17,7 @@ using Happimeter.Watch.Droid.ServicesBusinessLogic;
 using Java.Util;
 using Javax.Security.Auth;
 using System.Reactive.Subjects;
+using Android.Runtime;
 
 namespace Happimeter.Watch.Droid.Workers
 {
@@ -140,19 +141,8 @@ namespace Happimeter.Watch.Droid.Workers
 			ConnectableAdvertisement();
 		}
 
-		public void SendNotifiation(Guid characteristicUuid, BaseBluetoothMessage message = null)
+		public void SendNotification(BluetoothGattCharacteristic characteristic, BaseBluetoothMessage message = null)
 		{
-			var characteristic = GattServer?.Services
-									 .FirstOrDefault(x =>
-													 x.Characteristics.Any(c => c.Uuid.ToString().ToUpper() == characteristicUuid.ToString().ToUpper()))
-										   ?.Characteristics.FirstOrDefault(c => c.Uuid.ToString().ToUpper() == characteristicUuid.ToString().ToUpper())
-									 ?? null;
-			if (characteristic == null)
-			{
-				return;
-			}
-			//characteristic = GattServer.GetService(UUID.FromString(UuidHelper.AndroidWatchAuthServiceUuidString)).GetCharacteristic(UUID.FromString(UuidHelper.AuthCharacteristicUuidString));         
-
 			foreach (var dev in SubscribedDevices)
 			{
 				var readhost = new ReadHostContext(message);
@@ -172,6 +162,39 @@ namespace Happimeter.Watch.Droid.Workers
 					GattServer?.NotifyCharacteristicChanged(dev.Value, characteristic, false);
 				}
 			}
+		}
+
+		public void SendNotification(Guid characteristicUuid, BaseBluetoothMessage message = null)
+		{
+			var characteristic = GattServer?.Services
+									 .FirstOrDefault(x =>
+													 x.Characteristics.Any(c => c.Uuid.ToString().ToUpper() == characteristicUuid.ToString().ToUpper()))
+										   ?.Characteristics.FirstOrDefault(c => c.Uuid.ToString().ToUpper() == characteristicUuid.ToString().ToUpper())
+									 ?? null;
+			if (characteristic == null)
+			{
+				return;
+			}
+			SendNotification(characteristic, message);
+		}
+
+		public async Task<BaseBluetoothMessage> SendNotificationAwaitResponse(Guid characteristicUuid, BaseBluetoothMessage message)
+		{
+			var characteristic = GattServer?.Services
+									 .FirstOrDefault(x =>
+													 x.Characteristics.Any(c => c.Uuid.ToString().ToUpper() == characteristicUuid.ToString().ToUpper()))
+										   ?.Characteristics.FirstOrDefault(c => c.Uuid.ToString().ToUpper() == characteristicUuid.ToString().ToUpper())
+									 ?? null;
+			if (characteristic == null || !(characteristic is IWritableCharacteristic))
+			{
+				return null;
+			}
+
+			SendNotification(characteristic, message);
+			var writableCharacteristic = (IWritableCharacteristic)characteristic;
+
+			var resMessage = await writableCharacteristic.OnWriteReceived.Take(1);
+			return resMessage;
 		}
 
 		private void ConnectableAdvertisement()
@@ -251,6 +274,8 @@ namespace Happimeter.Watch.Droid.Workers
 			Worker = worker;
 		}
 
+
+
 		public override void OnConnectionStateChange(BluetoothDevice device, ProfileState status, ProfileState newState)
 		{
 			base.OnConnectionStateChange(device, status, newState);
@@ -284,6 +309,15 @@ namespace Happimeter.Watch.Droid.Workers
 				}, null, 5000, System.Threading.Timeout.Infinite);
 
 			}
+		}
+
+		public override void OnServiceAdded([GeneratedEnum] GattStatus status, BluetoothGattService service)
+		{
+			base.OnServiceAdded(status, service);
+		}
+		public override void OnServiceAdded(ProfileState status, BluetoothGattService service)
+		{
+			//base.OnServiceAdded(status, service);
 		}
 
 		public override void OnCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset, BluetoothGattCharacteristic characteristic)
@@ -376,7 +410,8 @@ namespace Happimeter.Watch.Droid.Workers
 				&& messageName != AuthFirstMessage.MessageNameConstant
 				&& messageName != AuthSecondMessage.MessageNameConstant
 				&& messageName != GenericQuestionMessage.MessageNameConstant
-				&& messageName != SwitchMeasurementModeMessage.MessageNameConstant)
+				&& messageName != SwitchMeasurementModeMessage.MessageNameConstant
+				&& messageName != PreSurveySecondMessage.MessageNameConstant)
 			{
 				//Error we can't handle message
 				System.Diagnostics.Debug.WriteLine($"Device {device.Address} wrote something which I don't know how to handle to data characteristic!");
@@ -456,6 +491,17 @@ namespace Happimeter.Watch.Droid.Workers
 			{
 				//dataCharac.HandleWriteAsync(device, requestId, preparedWrite, responseNeeded, offset, value, Worker);
 				measurementCharac.HandleWriteJson(messageJson, device.Address);
+				if (responseNeeded)
+				{
+					Worker.GattServer?.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);
+				}
+				return;
+			}
+
+			var preDataCharac = characteristic as HappimeterPreSurveyDataCharacteristic;
+			if (preDataCharac != null)
+			{
+				preDataCharac.HandleWriteJson(messageJson, device.Address);
 				if (responseNeeded)
 				{
 					Worker.GattServer?.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Success, offset, value);

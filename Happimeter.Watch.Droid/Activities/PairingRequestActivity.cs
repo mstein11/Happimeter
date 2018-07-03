@@ -49,7 +49,7 @@ namespace Happimeter.Watch.Droid.Activities
 				acceptButton.Visibility = ViewStates.Gone;
 				declineButton.Visibility = ViewStates.Gone;
 				loading.Visibility = ViewStates.Visible;
-				BluetoothWorker.GetInstance().SendNotifiation(UuidHelper.AuthCharacteristicUuid, new AuthNotificationMessage(true));
+				BluetoothWorker.GetInstance().SendNotification(UuidHelper.AuthCharacteristicUuid, new AuthNotificationMessage(true));
 				Timer timer = null;
 				timer = new Timer((obj) =>
 				{
@@ -71,7 +71,7 @@ namespace Happimeter.Watch.Droid.Activities
 				acceptButton.Visibility = ViewStates.Gone;
 				declineButton.Visibility = ViewStates.Gone;
 				loading.Visibility = ViewStates.Visible;
-				BluetoothWorker.GetInstance().SendNotifiation(UuidHelper.AuthCharacteristicUuid, new AuthNotificationMessage(false));
+				BluetoothWorker.GetInstance().SendNotification(UuidHelper.AuthCharacteristicUuid, new AuthNotificationMessage(false));
 				Finish();
 			};
 			var db = ServiceLocator.Instance.Get<IDatabaseContext>();

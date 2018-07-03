@@ -11,7 +11,7 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
 	{
 		void AddSensorMeasurement(SensorMeasurement measurement);
 		void AddSurveyMeasurement(SurveyMeasurement measurement);
-		SurveyViewModel GetSurveyQuestions();
+		SurveyViewModel GetSurveyQuestions(int? pleasance = null, int? activation = null);
 		DataExchangeMessage GetMeasurementsForDataTransfer();
 		void DeleteSurveyMeasurement(DataExchangeMessage message);
 		void AddGenericQuestions(List<GenericQuestion> questions);
