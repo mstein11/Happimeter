@@ -17,6 +17,8 @@ using System.Diagnostics.Contracts;
 using Plugin.Permissions;
 using Xamarin.Forms;
 using Plugin.Permissions.Abstractions;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace Happimeter.Services
 {
@@ -313,34 +315,41 @@ namespace Happimeter.Services
 
 			NotificationSubject.Where(x => x.Item1 == PreSurveyFirstMessage.MessageNameConstant).Subscribe(async res =>
 			{
-				Debug.WriteLine("Got PreSurveyMessage");
+				try
+				{
+					Debug.WriteLine("Got PreSurveyMessage");
 
-				var predictionService = ServiceLocator.Instance.Get<IPredictionService>();
-				var measurementService = ServiceLocator.Instance.Get<IMeasurementService>();
-				await predictionService.DownloadAndSavePrediction();
-				await measurementService.DownloadAndSaveGenericQuestions();
+					var predictionService = ServiceLocator.Instance.Get<IPredictionService>();
+					var measurementService = ServiceLocator.Instance.Get<IMeasurementService>();
+					await predictionService.DownloadAndSavePrediction();
+					await measurementService.DownloadAndSaveGenericQuestions();
 
-				var questions = measurementService.GetGenericQuestions();
-				var predictions = predictionService.GetLastPrediction();
-				var activation = predictions.FirstOrDefault(x => x.QuestionId == 1);
-				var pleasance = predictions.FirstOrDefault(x => x.QuestionId == 2);
+					var questions = measurementService.GetGenericQuestions();
+					var predictions = predictionService.GetLastPrediction();
+					var activation = predictions.FirstOrDefault(x => x.QuestionId == 1);
+					var pleasance = predictions.FirstOrDefault(x => x.QuestionId == 2);
 
-				var message = new PreSurveySecondMessage();
-				message.PredictedActivation = activation.PredictedValue;
-				message.PredictedPleasance = pleasance.PredictedValue;
-				message.PredictionFrom = pleasance.Timestamp;
-				message.Questions = questions.ToList();
+					var message = new PreSurveySecondMessage();
+					message.PredictedActivation = activation.PredictedValue;
+					message.PredictedPleasance = pleasance.PredictedValue;
+					message.PredictionFrom = pleasance.Timestamp;
+					message.Questions = questions.ToList();
 
 
-				var charac = await CharacteristicsReplaySubject
-					.Where(x => x.Uuid == UuidHelper.PreSurveyDataCharacteristicUuid)
-					.FirstOrDefaultAsync()
-					.Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
-					.Catch((Exception arg) =>
-					{
-						return Observable.Return<IGattCharacteristic>(null);
-					});
-				await WriteAsync(charac, message);
+					var charac = await CharacteristicsReplaySubject
+						.Where(x => x.Uuid == UuidHelper.PreSurveyDataCharacteristicUuid)
+						.FirstOrDefaultAsync()
+						.Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
+						.Catch((Exception arg) =>
+						{
+							return Observable.Return<IGattCharacteristic>(null);
+						});
+					await WriteAsync(charac, message);
+				}
+				catch (Exception e)
+				{
+					ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
+				}
 			});
 		}
 

@@ -69,11 +69,13 @@ namespace Happimeter.Services
 				|| e is WebException
 			)
 			{
+				ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
 				methodResult.ResultType = RegisterUserResultTypes.ErrorNoInternet;
 				return methodResult;
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
+				ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
 				methodResult.ResultType = RegisterUserResultTypes.ErrorUnknown;
 				return methodResult;
 			}
@@ -125,11 +127,13 @@ namespace Happimeter.Services
 				|| e is WebException
 			)
 			{
+				ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
 				methodResult.ResultType = AuthResultTypes.ErrorNoInternet;
 				return methodResult;
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
+				ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
 				methodResult.ResultType = AuthResultTypes.ErrorUnknown;
 				return methodResult;
 			}
@@ -189,6 +193,7 @@ namespace Happimeter.Services
 				|| e is WebException
 			)
 			{
+				ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
 				methodResult.ResultType = HappimeterApiResultInformation.NoInternet;
 				return methodResult;
 			}
@@ -279,6 +284,7 @@ namespace Happimeter.Services
 			)
 			{
 				Debug.WriteLine(e.Message);
+				ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
 				UploadMoodStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
 				{
 					EventType = SyncronizeDataStates.NoInternetError
@@ -288,6 +294,7 @@ namespace Happimeter.Services
 			catch (Exception e)
 			{
 				Debug.WriteLine(e.Message);
+				ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
 				UploadMoodStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
 				{
 					EventType = SyncronizeDataStates.UploadingError
@@ -387,6 +394,7 @@ namespace Happimeter.Services
 			)
 			{
 				Debug.WriteLine(e.Message);
+				ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
 				UploadSensorStatusUpdate?.Invoke(this, new SynchronizeDataEventArgs
 				{
 					EventType = SyncronizeDataStates.NoInternetError
@@ -396,6 +404,7 @@ namespace Happimeter.Services
 			catch (Exception e)
 			{
 				Debug.WriteLine(e.Message);
+				ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
 				if (e.InnerException != null)
 				{
 					Debug.WriteLine(e.InnerException.Message);
@@ -425,12 +434,14 @@ namespace Happimeter.Services
 				|| e is WebException
 			)
 			{
+				ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
 				Debug.WriteLine(e.Message);
 				methodResult.ResultType = HappimeterApiResultInformation.NoInternet;
 				return methodResult;
 			}
 			catch (Exception e)
 			{
+				ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
 				Debug.WriteLine(e.Message);
 				Debug.WriteLine(e.GetType());
 				methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
@@ -473,12 +484,14 @@ namespace Happimeter.Services
 				|| e is WebException
 			)
 			{
+				ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
 				Debug.WriteLine(e.Message);
 				methodResult.ResultType = HappimeterApiResultInformation.NoInternet;
 				return methodResult;
 			}
 			catch (Exception e)
 			{
+				ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
 				Debug.WriteLine(e.Message);
 				Debug.WriteLine(e.GetType());
 				methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
@@ -520,12 +533,14 @@ namespace Happimeter.Services
 				|| e is WebException
 			)
 			{
+				ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
 				Debug.WriteLine(e.Message);
 				methodResult.ResultType = HappimeterApiResultInformation.NoInternet;
 				return methodResult;
 			}
 			catch (Exception e)
 			{
+				ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
 				Debug.WriteLine(e.Message);
 				Debug.WriteLine(e.GetType());
 				methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
@@ -565,12 +580,14 @@ namespace Happimeter.Services
 				|| e is WebException
 			)
 			{
+				ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
 				Debug.WriteLine(e.Message);
 				methodResult.ResultType = HappimeterApiResultInformation.NoInternet;
 				return methodResult;
 			}
 			catch (Exception e)
 			{
+				ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
 				Debug.WriteLine(e.Message);
 				Debug.WriteLine(e.GetType());
 				methodResult.ResultType = HappimeterApiResultInformation.UnknownError;

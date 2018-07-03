@@ -45,22 +45,26 @@ namespace Happimeter
 				ServiceLocator.Instance.Register<IDataStore<Item>, CloudDataStore>();
 
 			Container.RegisterElements();
+			await ServerSync();
 			var sharedDb = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
 			var pairing = sharedDb.Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive);
-			await ServerSync();
 			if (pairing != null)
 			{
 				ServiceLocator.Instance.Get<IBeaconWakeupService>().StartWakeupForBeacon();
-				ServiceLocator.Instance.Get<IBluetoothService>().Init();
 			}
-
-
 		}
 
 		public static async void AppResumed()
 		{
 			BluetoothAlertIfNeeded();
 			await ServerSync();
+
+			var sharedDb = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
+			var pairing = sharedDb.Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive);
+			if (pairing != null)
+			{
+				ServiceLocator.Instance.Get<IBluetoothService>().Init();
+			}
 		}
 
 		public static async void BluetoothAlertIfNeeded()
