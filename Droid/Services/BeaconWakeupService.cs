@@ -10,6 +10,7 @@ using Plugin.CurrentActivity;
 using Happimeter.Services;
 using Android.OS;
 using AltBeaconOrg.BoundBeacon.Powersave;
+using Happimeter.Core.Services;
 
 namespace Happimeter.Droid.Services
 {

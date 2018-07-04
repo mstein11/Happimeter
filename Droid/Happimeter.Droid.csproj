@@ -278,7 +278,6 @@
     <Compile Include="Services\NativeNavigationService.cs" />
     <Compile Include="Renderers\MyButtonRenderer.cs" />
     <Compile Include="Helpers\IDeviceExtension.cs" />
-    <Compile Include="IAccountStoreService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\AboutAssets.txt" />
