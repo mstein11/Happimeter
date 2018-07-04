@@ -211,9 +211,6 @@
     <Reference Include="Plugin.Connectivity">
       <HintPath>..\packages\Xam.Plugin.Connectivity.3.1.1\lib\Xamarin.iOS10\Plugin.Connectivity.dll</HintPath>
     </Reference>
-    <Reference Include="Xamarin.Auth">
-      <HintPath>..\packages\Xamarin.Auth.1.6.0.1\lib\Xamarin.iOS10\Xamarin.Auth.dll</HintPath>
-    </Reference>
     <Reference Include="SkiaSharp.Views.Forms">
       <HintPath>..\packages\SkiaSharp.Views.Forms.1.60.0\lib\XamariniOS\SkiaSharp.Views.Forms.dll</HintPath>
     </Reference>
@@ -240,6 +237,9 @@
     </Reference>
     <Reference Include="Plugin.BluetoothLE">
       <HintPath>..\packages\Plugin.BluetoothLE.6.0.3\lib\xamarinios10\Plugin.BluetoothLE.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Auth">
+      <HintPath>..\packages\Xamarin.Auth.1.6.0.2\lib\Xamarin.iOS10\Xamarin.Auth.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Happimeter.ViewModels.Forms;
 using Xamarin.Forms;
 using Newtonsoft.Json.Linq;
+using Happimeter.Interfaces;
+using Happimeter.Core.Helper;
 
 namespace Happimeter.Views
 {
@@ -44,6 +46,12 @@ namespace Happimeter.Views
 				};
 				toggle.BindingContext = item;
 				toggle.SetBinding(Switch.IsToggledProperty, new Binding(nameof(GenericQuestionViewModel.IsActivated)));
+
+				toggle.Toggled += (object sender, ToggledEventArgs e) =>
+				{
+					ServiceLocator.Instance.Get<IMeasurementService>().ToggleGenericQuestionActivation(item.Id, e.Value);
+					Console.WriteLine("Switch.Toggled event sent");
+				};
 
 				row.Children.Add(nameLabel);
 				row.Children.Add(toggle);

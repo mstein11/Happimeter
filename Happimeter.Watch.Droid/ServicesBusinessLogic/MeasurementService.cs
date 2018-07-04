@@ -184,6 +184,7 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
 				pairing.LastDataSync = DateTime.UtcNow;
 				context.Update(pairing);
 			}
+			ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.DataExchangeEnd);
 		}
 	}
 }

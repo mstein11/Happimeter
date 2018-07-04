@@ -18,6 +18,8 @@ using Java.Util;
 using Javax.Security.Auth;
 using System.Reactive.Subjects;
 using Android.Runtime;
+using Microsoft.AppCenter.Analytics;
+using Happimeter.Core.Services;
 
 namespace Happimeter.Watch.Droid.Workers
 {
@@ -396,9 +398,11 @@ namespace Happimeter.Watch.Droid.Workers
 				{
 					WriteReceiverContextForDevice.Add((device.Address, characteristic.Uuid.ToString()), new WriteReceiverContext(value));
 				}
-				catch (Exception)
+				catch (Exception e)
 				{
+					ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
 					Worker.GattServer?.SendResponse(device, requestId, Android.Bluetooth.GattStatus.Failure, offset, value);
+					return;
 				}
 
 			}

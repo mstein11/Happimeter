@@ -26,6 +26,151 @@ namespace Happimeter.Watch.Droid
 		
 		public static void UpdateIdValues()
 		{
+			global::Xamarin.Auth.Resource.Animation.slide_in_right = global::Happimeter.Watch.Droid.Resource.Animation.slide_in_right;
+			global::Xamarin.Auth.Resource.Animation.slide_out_left = global::Happimeter.Watch.Droid.Resource.Animation.slide_out_left;
+			global::Xamarin.Auth.Resource.Attribute.font = global::Happimeter.Watch.Droid.Resource.Attribute.font;
+			global::Xamarin.Auth.Resource.Attribute.fontProviderAuthority = global::Happimeter.Watch.Droid.Resource.Attribute.fontProviderAuthority;
+			global::Xamarin.Auth.Resource.Attribute.fontProviderCerts = global::Happimeter.Watch.Droid.Resource.Attribute.fontProviderCerts;
+			global::Xamarin.Auth.Resource.Attribute.fontProviderFetchStrategy = global::Happimeter.Watch.Droid.Resource.Attribute.fontProviderFetchStrategy;
+			global::Xamarin.Auth.Resource.Attribute.fontProviderFetchTimeout = global::Happimeter.Watch.Droid.Resource.Attribute.fontProviderFetchTimeout;
+			global::Xamarin.Auth.Resource.Attribute.fontProviderPackage = global::Happimeter.Watch.Droid.Resource.Attribute.fontProviderPackage;
+			global::Xamarin.Auth.Resource.Attribute.fontProviderQuery = global::Happimeter.Watch.Droid.Resource.Attribute.fontProviderQuery;
+			global::Xamarin.Auth.Resource.Attribute.fontStyle = global::Happimeter.Watch.Droid.Resource.Attribute.fontStyle;
+			global::Xamarin.Auth.Resource.Attribute.fontWeight = global::Happimeter.Watch.Droid.Resource.Attribute.fontWeight;
+			global::Xamarin.Auth.Resource.Boolean.abc_action_bar_embed_tabs = global::Happimeter.Watch.Droid.Resource.Boolean.abc_action_bar_embed_tabs;
+			global::Xamarin.Auth.Resource.Color.notification_action_color_filter = global::Happimeter.Watch.Droid.Resource.Color.notification_action_color_filter;
+			global::Xamarin.Auth.Resource.Color.notification_icon_bg_color = global::Happimeter.Watch.Droid.Resource.Color.notification_icon_bg_color;
+			global::Xamarin.Auth.Resource.Color.notification_material_background_media_default_color = global::Happimeter.Watch.Droid.Resource.Color.notification_material_background_media_default_color;
+			global::Xamarin.Auth.Resource.Color.primary_text_default_material_dark = global::Happimeter.Watch.Droid.Resource.Color.primary_text_default_material_dark;
+			global::Xamarin.Auth.Resource.Color.ripple_material_light = global::Happimeter.Watch.Droid.Resource.Color.ripple_material_light;
+			global::Xamarin.Auth.Resource.Color.secondary_text_default_material_dark = global::Happimeter.Watch.Droid.Resource.Color.secondary_text_default_material_dark;
+			global::Xamarin.Auth.Resource.Color.secondary_text_default_material_light = global::Happimeter.Watch.Droid.Resource.Color.secondary_text_default_material_light;
+			global::Xamarin.Auth.Resource.Dimension.compat_button_inset_horizontal_material = global::Happimeter.Watch.Droid.Resource.Dimension.compat_button_inset_horizontal_material;
+			global::Xamarin.Auth.Resource.Dimension.compat_button_inset_vertical_material = global::Happimeter.Watch.Droid.Resource.Dimension.compat_button_inset_vertical_material;
+			global::Xamarin.Auth.Resource.Dimension.compat_button_padding_horizontal_material = global::Happimeter.Watch.Droid.Resource.Dimension.compat_button_padding_horizontal_material;
+			global::Xamarin.Auth.Resource.Dimension.compat_button_padding_vertical_material = global::Happimeter.Watch.Droid.Resource.Dimension.compat_button_padding_vertical_material;
+			global::Xamarin.Auth.Resource.Dimension.compat_control_corner_material = global::Happimeter.Watch.Droid.Resource.Dimension.compat_control_corner_material;
+			global::Xamarin.Auth.Resource.Dimension.notification_action_icon_size = global::Happimeter.Watch.Droid.Resource.Dimension.notification_action_icon_size;
+			global::Xamarin.Auth.Resource.Dimension.notification_action_text_size = global::Happimeter.Watch.Droid.Resource.Dimension.notification_action_text_size;
+			global::Xamarin.Auth.Resource.Dimension.notification_big_circle_margin = global::Happimeter.Watch.Droid.Resource.Dimension.notification_big_circle_margin;
+			global::Xamarin.Auth.Resource.Dimension.notification_content_margin_start = global::Happimeter.Watch.Droid.Resource.Dimension.notification_content_margin_start;
+			global::Xamarin.Auth.Resource.Dimension.notification_large_icon_height = global::Happimeter.Watch.Droid.Resource.Dimension.notification_large_icon_height;
+			global::Xamarin.Auth.Resource.Dimension.notification_large_icon_width = global::Happimeter.Watch.Droid.Resource.Dimension.notification_large_icon_width;
+			global::Xamarin.Auth.Resource.Dimension.notification_main_column_padding_top = global::Happimeter.Watch.Droid.Resource.Dimension.notification_main_column_padding_top;
+			global::Xamarin.Auth.Resource.Dimension.notification_media_narrow_margin = global::Happimeter.Watch.Droid.Resource.Dimension.notification_media_narrow_margin;
+			global::Xamarin.Auth.Resource.Dimension.notification_right_icon_size = global::Happimeter.Watch.Droid.Resource.Dimension.notification_right_icon_size;
+			global::Xamarin.Auth.Resource.Dimension.notification_right_side_padding_top = global::Happimeter.Watch.Droid.Resource.Dimension.notification_right_side_padding_top;
+			global::Xamarin.Auth.Resource.Dimension.notification_small_icon_background_padding = global::Happimeter.Watch.Droid.Resource.Dimension.notification_small_icon_background_padding;
+			global::Xamarin.Auth.Resource.Dimension.notification_small_icon_size_as_large = global::Happimeter.Watch.Droid.Resource.Dimension.notification_small_icon_size_as_large;
+			global::Xamarin.Auth.Resource.Dimension.notification_subtext_size = global::Happimeter.Watch.Droid.Resource.Dimension.notification_subtext_size;
+			global::Xamarin.Auth.Resource.Dimension.notification_top_pad = global::Happimeter.Watch.Droid.Resource.Dimension.notification_top_pad;
+			global::Xamarin.Auth.Resource.Dimension.notification_top_pad_large_text = global::Happimeter.Watch.Droid.Resource.Dimension.notification_top_pad_large_text;
+			global::Xamarin.Auth.Resource.Drawable.ic_arrow_back = global::Happimeter.Watch.Droid.Resource.Drawable.ic_arrow_back;
+			global::Xamarin.Auth.Resource.Drawable.notification_action_background = global::Happimeter.Watch.Droid.Resource.Drawable.notification_action_background;
+			global::Xamarin.Auth.Resource.Drawable.notification_bg = global::Happimeter.Watch.Droid.Resource.Drawable.notification_bg;
+			global::Xamarin.Auth.Resource.Drawable.notification_bg_low = global::Happimeter.Watch.Droid.Resource.Drawable.notification_bg_low;
+			global::Xamarin.Auth.Resource.Drawable.notification_bg_low_normal = global::Happimeter.Watch.Droid.Resource.Drawable.notification_bg_low_normal;
+			global::Xamarin.Auth.Resource.Drawable.notification_bg_low_pressed = global::Happimeter.Watch.Droid.Resource.Drawable.notification_bg_low_pressed;
+			global::Xamarin.Auth.Resource.Drawable.notification_bg_normal = global::Happimeter.Watch.Droid.Resource.Drawable.notification_bg_normal;
+			global::Xamarin.Auth.Resource.Drawable.notification_bg_normal_pressed = global::Happimeter.Watch.Droid.Resource.Drawable.notification_bg_normal_pressed;
+			global::Xamarin.Auth.Resource.Drawable.notification_icon_background = global::Happimeter.Watch.Droid.Resource.Drawable.notification_icon_background;
+			global::Xamarin.Auth.Resource.Drawable.notification_template_icon_bg = global::Happimeter.Watch.Droid.Resource.Drawable.notification_template_icon_bg;
+			global::Xamarin.Auth.Resource.Drawable.notification_template_icon_low_bg = global::Happimeter.Watch.Droid.Resource.Drawable.notification_template_icon_low_bg;
+			global::Xamarin.Auth.Resource.Drawable.notification_tile_bg = global::Happimeter.Watch.Droid.Resource.Drawable.notification_tile_bg;
+			global::Xamarin.Auth.Resource.Drawable.notify_panel_notification_icon_bg = global::Happimeter.Watch.Droid.Resource.Drawable.notify_panel_notification_icon_bg;
+			global::Xamarin.Auth.Resource.Id.action0 = global::Happimeter.Watch.Droid.Resource.Id.action0;
+			global::Xamarin.Auth.Resource.Id.action_container = global::Happimeter.Watch.Droid.Resource.Id.action_container;
+			global::Xamarin.Auth.Resource.Id.action_divider = global::Happimeter.Watch.Droid.Resource.Id.action_divider;
+			global::Xamarin.Auth.Resource.Id.action_image = global::Happimeter.Watch.Droid.Resource.Id.action_image;
+			global::Xamarin.Auth.Resource.Id.action_text = global::Happimeter.Watch.Droid.Resource.Id.action_text;
+			global::Xamarin.Auth.Resource.Id.actions = global::Happimeter.Watch.Droid.Resource.Id.actions;
+			global::Xamarin.Auth.Resource.Id.async = global::Happimeter.Watch.Droid.Resource.Id.async;
+			global::Xamarin.Auth.Resource.Id.blocking = global::Happimeter.Watch.Droid.Resource.Id.blocking;
+			global::Xamarin.Auth.Resource.Id.cancel_action = global::Happimeter.Watch.Droid.Resource.Id.cancel_action;
+			global::Xamarin.Auth.Resource.Id.chronometer = global::Happimeter.Watch.Droid.Resource.Id.chronometer;
+			global::Xamarin.Auth.Resource.Id.end_padder = global::Happimeter.Watch.Droid.Resource.Id.end_padder;
+			global::Xamarin.Auth.Resource.Id.forever = global::Happimeter.Watch.Droid.Resource.Id.forever;
+			global::Xamarin.Auth.Resource.Id.icon = global::Happimeter.Watch.Droid.Resource.Id.icon;
+			global::Xamarin.Auth.Resource.Id.icon_group = global::Happimeter.Watch.Droid.Resource.Id.icon_group;
+			global::Xamarin.Auth.Resource.Id.info = global::Happimeter.Watch.Droid.Resource.Id.info;
+			global::Xamarin.Auth.Resource.Id.italic = global::Happimeter.Watch.Droid.Resource.Id.italic;
+			global::Xamarin.Auth.Resource.Id.line1 = global::Happimeter.Watch.Droid.Resource.Id.line1;
+			global::Xamarin.Auth.Resource.Id.line3 = global::Happimeter.Watch.Droid.Resource.Id.line3;
+			global::Xamarin.Auth.Resource.Id.media_actions = global::Happimeter.Watch.Droid.Resource.Id.media_actions;
+			global::Xamarin.Auth.Resource.Id.normal = global::Happimeter.Watch.Droid.Resource.Id.normal;
+			global::Xamarin.Auth.Resource.Id.notification_background = global::Happimeter.Watch.Droid.Resource.Id.notification_background;
+			global::Xamarin.Auth.Resource.Id.notification_main_column = global::Happimeter.Watch.Droid.Resource.Id.notification_main_column;
+			global::Xamarin.Auth.Resource.Id.notification_main_column_container = global::Happimeter.Watch.Droid.Resource.Id.notification_main_column_container;
+			global::Xamarin.Auth.Resource.Id.right_icon = global::Happimeter.Watch.Droid.Resource.Id.right_icon;
+			global::Xamarin.Auth.Resource.Id.right_side = global::Happimeter.Watch.Droid.Resource.Id.right_side;
+			global::Xamarin.Auth.Resource.Id.status_bar_latest_event_content = global::Happimeter.Watch.Droid.Resource.Id.status_bar_latest_event_content;
+			global::Xamarin.Auth.Resource.Id.text = global::Happimeter.Watch.Droid.Resource.Id.text;
+			global::Xamarin.Auth.Resource.Id.text2 = global::Happimeter.Watch.Droid.Resource.Id.text2;
+			global::Xamarin.Auth.Resource.Id.time = global::Happimeter.Watch.Droid.Resource.Id.time;
+			global::Xamarin.Auth.Resource.Id.title = global::Happimeter.Watch.Droid.Resource.Id.title;
+			global::Xamarin.Auth.Resource.Id.webview = global::Happimeter.Watch.Droid.Resource.Id.webview;
+			global::Xamarin.Auth.Resource.Integer.cancel_button_image_alpha = global::Happimeter.Watch.Droid.Resource.Integer.cancel_button_image_alpha;
+			global::Xamarin.Auth.Resource.Integer.status_bar_notification_info_maxnum = global::Happimeter.Watch.Droid.Resource.Integer.status_bar_notification_info_maxnum;
+			global::Xamarin.Auth.Resource.Layout.activity_webview = global::Happimeter.Watch.Droid.Resource.Layout.activity_webview;
+			global::Xamarin.Auth.Resource.Layout.notification_action = global::Happimeter.Watch.Droid.Resource.Layout.notification_action;
+			global::Xamarin.Auth.Resource.Layout.notification_action_tombstone = global::Happimeter.Watch.Droid.Resource.Layout.notification_action_tombstone;
+			global::Xamarin.Auth.Resource.Layout.notification_media_action = global::Happimeter.Watch.Droid.Resource.Layout.notification_media_action;
+			global::Xamarin.Auth.Resource.Layout.notification_media_cancel_action = global::Happimeter.Watch.Droid.Resource.Layout.notification_media_cancel_action;
+			global::Xamarin.Auth.Resource.Layout.notification_template_big_media = global::Happimeter.Watch.Droid.Resource.Layout.notification_template_big_media;
+			global::Xamarin.Auth.Resource.Layout.notification_template_big_media_custom = global::Happimeter.Watch.Droid.Resource.Layout.notification_template_big_media_custom;
+			global::Xamarin.Auth.Resource.Layout.notification_template_big_media_narrow = global::Happimeter.Watch.Droid.Resource.Layout.notification_template_big_media_narrow;
+			global::Xamarin.Auth.Resource.Layout.notification_template_big_media_narrow_custom = global::Happimeter.Watch.Droid.Resource.Layout.notification_template_big_media_narrow_custom;
+			global::Xamarin.Auth.Resource.Layout.notification_template_custom_big = global::Happimeter.Watch.Droid.Resource.Layout.notification_template_custom_big;
+			global::Xamarin.Auth.Resource.Layout.notification_template_icon_group = global::Happimeter.Watch.Droid.Resource.Layout.notification_template_icon_group;
+			global::Xamarin.Auth.Resource.Layout.notification_template_lines_media = global::Happimeter.Watch.Droid.Resource.Layout.notification_template_lines_media;
+			global::Xamarin.Auth.Resource.Layout.notification_template_media = global::Happimeter.Watch.Droid.Resource.Layout.notification_template_media;
+			global::Xamarin.Auth.Resource.Layout.notification_template_media_custom = global::Happimeter.Watch.Droid.Resource.Layout.notification_template_media_custom;
+			global::Xamarin.Auth.Resource.Layout.notification_template_part_chronometer = global::Happimeter.Watch.Droid.Resource.Layout.notification_template_part_chronometer;
+			global::Xamarin.Auth.Resource.Layout.notification_template_part_time = global::Happimeter.Watch.Droid.Resource.Layout.notification_template_part_time;
+			global::Xamarin.Auth.Resource.String.status_bar_notification_info_overflow = global::Happimeter.Watch.Droid.Resource.String.status_bar_notification_info_overflow;
+			global::Xamarin.Auth.Resource.String.title_activity_webview = global::Happimeter.Watch.Droid.Resource.String.title_activity_webview;
+			global::Xamarin.Auth.Resource.Style.TextAppearance_Compat_Notification = global::Happimeter.Watch.Droid.Resource.Style.TextAppearance_Compat_Notification;
+			global::Xamarin.Auth.Resource.Style.TextAppearance_Compat_Notification_Info = global::Happimeter.Watch.Droid.Resource.Style.TextAppearance_Compat_Notification_Info;
+			global::Xamarin.Auth.Resource.Style.TextAppearance_Compat_Notification_Info_Media = global::Happimeter.Watch.Droid.Resource.Style.TextAppearance_Compat_Notification_Info_Media;
+			global::Xamarin.Auth.Resource.Style.TextAppearance_Compat_Notification_Line2 = global::Happimeter.Watch.Droid.Resource.Style.TextAppearance_Compat_Notification_Line2;
+			global::Xamarin.Auth.Resource.Style.TextAppearance_Compat_Notification_Line2_Media = global::Happimeter.Watch.Droid.Resource.Style.TextAppearance_Compat_Notification_Line2_Media;
+			global::Xamarin.Auth.Resource.Style.TextAppearance_Compat_Notification_Media = global::Happimeter.Watch.Droid.Resource.Style.TextAppearance_Compat_Notification_Media;
+			global::Xamarin.Auth.Resource.Style.TextAppearance_Compat_Notification_Time = global::Happimeter.Watch.Droid.Resource.Style.TextAppearance_Compat_Notification_Time;
+			global::Xamarin.Auth.Resource.Style.TextAppearance_Compat_Notification_Time_Media = global::Happimeter.Watch.Droid.Resource.Style.TextAppearance_Compat_Notification_Time_Media;
+			global::Xamarin.Auth.Resource.Style.TextAppearance_Compat_Notification_Title = global::Happimeter.Watch.Droid.Resource.Style.TextAppearance_Compat_Notification_Title;
+			global::Xamarin.Auth.Resource.Style.TextAppearance_Compat_Notification_Title_Media = global::Happimeter.Watch.Droid.Resource.Style.TextAppearance_Compat_Notification_Title_Media;
+			global::Xamarin.Auth.Resource.Style.Widget_Compat_NotificationActionContainer = global::Happimeter.Watch.Droid.Resource.Style.Widget_Compat_NotificationActionContainer;
+			global::Xamarin.Auth.Resource.Style.Widget_Compat_NotificationActionText = global::Happimeter.Watch.Droid.Resource.Style.Widget_Compat_NotificationActionText;
+			global::Xamarin.Auth.Resource.Styleable.FontFamily = global::Happimeter.Watch.Droid.Resource.Styleable.FontFamily;
+			global::Xamarin.Auth.Resource.Styleable.FontFamily_fontProviderAuthority = global::Happimeter.Watch.Droid.Resource.Styleable.FontFamily_fontProviderAuthority;
+			global::Xamarin.Auth.Resource.Styleable.FontFamily_fontProviderCerts = global::Happimeter.Watch.Droid.Resource.Styleable.FontFamily_fontProviderCerts;
+			global::Xamarin.Auth.Resource.Styleable.FontFamily_fontProviderFetchStrategy = global::Happimeter.Watch.Droid.Resource.Styleable.FontFamily_fontProviderFetchStrategy;
+			global::Xamarin.Auth.Resource.Styleable.FontFamily_fontProviderFetchTimeout = global::Happimeter.Watch.Droid.Resource.Styleable.FontFamily_fontProviderFetchTimeout;
+			global::Xamarin.Auth.Resource.Styleable.FontFamily_fontProviderPackage = global::Happimeter.Watch.Droid.Resource.Styleable.FontFamily_fontProviderPackage;
+			global::Xamarin.Auth.Resource.Styleable.FontFamily_fontProviderQuery = global::Happimeter.Watch.Droid.Resource.Styleable.FontFamily_fontProviderQuery;
+			global::Xamarin.Auth.Resource.Styleable.FontFamilyFont = global::Happimeter.Watch.Droid.Resource.Styleable.FontFamilyFont;
+			global::Xamarin.Auth.Resource.Styleable.FontFamilyFont_font = global::Happimeter.Watch.Droid.Resource.Styleable.FontFamilyFont_font;
+			global::Xamarin.Auth.Resource.Styleable.FontFamilyFont_fontStyle = global::Happimeter.Watch.Droid.Resource.Styleable.FontFamilyFont_fontStyle;
+			global::Xamarin.Auth.Resource.Styleable.FontFamilyFont_fontWeight = global::Happimeter.Watch.Droid.Resource.Styleable.FontFamilyFont_fontWeight;
+		}
+		
+		public partial class Animation
+		{
+			
+			// aapt resource value: 0x7f050000
+			public const int slide_in_right = 2131034112;
+			
+			// aapt resource value: 0x7f050001
+			public const int slide_out_left = 2131034113;
+			
+			static Animation()
+			{
+				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
+			}
+			
+			private Animation()
+			{
+			}
 		}
 		
 		public partial class Attribute
@@ -89,8 +234,8 @@ namespace Happimeter.Watch.Droid
 		public partial class Boolean
 		{
 			
-			// aapt resource value: 0x7f090000
-			public const int abc_action_bar_embed_tabs = 2131296256;
+			// aapt resource value: 0x7f0a0000
+			public const int abc_action_bar_embed_tabs = 2131361792;
 			
 			static Boolean()
 			{
@@ -105,59 +250,59 @@ namespace Happimeter.Watch.Droid
 		public partial class Color
 		{
 			
-			// aapt resource value: 0x7f07000f
-			public const int common_google_signin_btn_text_dark = 2131165199;
+			// aapt resource value: 0x7f08000f
+			public const int common_google_signin_btn_text_dark = 2131230735;
 			
-			// aapt resource value: 0x7f070000
-			public const int common_google_signin_btn_text_dark_default = 2131165184;
+			// aapt resource value: 0x7f080000
+			public const int common_google_signin_btn_text_dark_default = 2131230720;
 			
-			// aapt resource value: 0x7f070001
-			public const int common_google_signin_btn_text_dark_disabled = 2131165185;
+			// aapt resource value: 0x7f080001
+			public const int common_google_signin_btn_text_dark_disabled = 2131230721;
 			
-			// aapt resource value: 0x7f070002
-			public const int common_google_signin_btn_text_dark_focused = 2131165186;
+			// aapt resource value: 0x7f080002
+			public const int common_google_signin_btn_text_dark_focused = 2131230722;
 			
-			// aapt resource value: 0x7f070003
-			public const int common_google_signin_btn_text_dark_pressed = 2131165187;
+			// aapt resource value: 0x7f080003
+			public const int common_google_signin_btn_text_dark_pressed = 2131230723;
 			
-			// aapt resource value: 0x7f070010
-			public const int common_google_signin_btn_text_light = 2131165200;
+			// aapt resource value: 0x7f080010
+			public const int common_google_signin_btn_text_light = 2131230736;
 			
-			// aapt resource value: 0x7f070004
-			public const int common_google_signin_btn_text_light_default = 2131165188;
+			// aapt resource value: 0x7f080004
+			public const int common_google_signin_btn_text_light_default = 2131230724;
 			
-			// aapt resource value: 0x7f070005
-			public const int common_google_signin_btn_text_light_disabled = 2131165189;
+			// aapt resource value: 0x7f080005
+			public const int common_google_signin_btn_text_light_disabled = 2131230725;
 			
-			// aapt resource value: 0x7f070006
-			public const int common_google_signin_btn_text_light_focused = 2131165190;
+			// aapt resource value: 0x7f080006
+			public const int common_google_signin_btn_text_light_focused = 2131230726;
 			
-			// aapt resource value: 0x7f070007
-			public const int common_google_signin_btn_text_light_pressed = 2131165191;
+			// aapt resource value: 0x7f080007
+			public const int common_google_signin_btn_text_light_pressed = 2131230727;
 			
-			// aapt resource value: 0x7f070011
-			public const int common_google_signin_btn_tint = 2131165201;
+			// aapt resource value: 0x7f080011
+			public const int common_google_signin_btn_tint = 2131230737;
 			
-			// aapt resource value: 0x7f07000b
-			public const int notification_action_color_filter = 2131165195;
+			// aapt resource value: 0x7f08000b
+			public const int notification_action_color_filter = 2131230731;
 			
-			// aapt resource value: 0x7f07000c
-			public const int notification_icon_bg_color = 2131165196;
+			// aapt resource value: 0x7f08000c
+			public const int notification_icon_bg_color = 2131230732;
 			
-			// aapt resource value: 0x7f070008
-			public const int notification_material_background_media_default_color = 2131165192;
+			// aapt resource value: 0x7f080008
+			public const int notification_material_background_media_default_color = 2131230728;
 			
-			// aapt resource value: 0x7f070009
-			public const int primary_text_default_material_dark = 2131165193;
+			// aapt resource value: 0x7f080009
+			public const int primary_text_default_material_dark = 2131230729;
 			
-			// aapt resource value: 0x7f07000d
-			public const int ripple_material_light = 2131165197;
+			// aapt resource value: 0x7f08000d
+			public const int ripple_material_light = 2131230733;
 			
-			// aapt resource value: 0x7f07000a
-			public const int secondary_text_default_material_dark = 2131165194;
+			// aapt resource value: 0x7f08000a
+			public const int secondary_text_default_material_dark = 2131230730;
 			
-			// aapt resource value: 0x7f07000e
-			public const int secondary_text_default_material_light = 2131165198;
+			// aapt resource value: 0x7f08000e
+			public const int secondary_text_default_material_light = 2131230734;
 			
 			static Color()
 			{
@@ -172,65 +317,65 @@ namespace Happimeter.Watch.Droid
 		public partial class Dimension
 		{
 			
-			// aapt resource value: 0x7f0a0004
-			public const int compat_button_inset_horizontal_material = 2131361796;
+			// aapt resource value: 0x7f0b0004
+			public const int compat_button_inset_horizontal_material = 2131427332;
 			
-			// aapt resource value: 0x7f0a0005
-			public const int compat_button_inset_vertical_material = 2131361797;
+			// aapt resource value: 0x7f0b0005
+			public const int compat_button_inset_vertical_material = 2131427333;
 			
-			// aapt resource value: 0x7f0a0006
-			public const int compat_button_padding_horizontal_material = 2131361798;
+			// aapt resource value: 0x7f0b0006
+			public const int compat_button_padding_horizontal_material = 2131427334;
 			
-			// aapt resource value: 0x7f0a0007
-			public const int compat_button_padding_vertical_material = 2131361799;
+			// aapt resource value: 0x7f0b0007
+			public const int compat_button_padding_vertical_material = 2131427335;
 			
-			// aapt resource value: 0x7f0a0008
-			public const int compat_control_corner_material = 2131361800;
+			// aapt resource value: 0x7f0b0008
+			public const int compat_control_corner_material = 2131427336;
 			
-			// aapt resource value: 0x7f0a0009
-			public const int notification_action_icon_size = 2131361801;
+			// aapt resource value: 0x7f0b0009
+			public const int notification_action_icon_size = 2131427337;
 			
-			// aapt resource value: 0x7f0a000a
-			public const int notification_action_text_size = 2131361802;
+			// aapt resource value: 0x7f0b000a
+			public const int notification_action_text_size = 2131427338;
 			
-			// aapt resource value: 0x7f0a000b
-			public const int notification_big_circle_margin = 2131361803;
+			// aapt resource value: 0x7f0b000b
+			public const int notification_big_circle_margin = 2131427339;
 			
-			// aapt resource value: 0x7f0a0001
-			public const int notification_content_margin_start = 2131361793;
+			// aapt resource value: 0x7f0b0001
+			public const int notification_content_margin_start = 2131427329;
 			
-			// aapt resource value: 0x7f0a000c
-			public const int notification_large_icon_height = 2131361804;
+			// aapt resource value: 0x7f0b000c
+			public const int notification_large_icon_height = 2131427340;
 			
-			// aapt resource value: 0x7f0a000d
-			public const int notification_large_icon_width = 2131361805;
+			// aapt resource value: 0x7f0b000d
+			public const int notification_large_icon_width = 2131427341;
 			
-			// aapt resource value: 0x7f0a0002
-			public const int notification_main_column_padding_top = 2131361794;
+			// aapt resource value: 0x7f0b0002
+			public const int notification_main_column_padding_top = 2131427330;
 			
-			// aapt resource value: 0x7f0a0003
-			public const int notification_media_narrow_margin = 2131361795;
+			// aapt resource value: 0x7f0b0003
+			public const int notification_media_narrow_margin = 2131427331;
 			
-			// aapt resource value: 0x7f0a000e
-			public const int notification_right_icon_size = 2131361806;
+			// aapt resource value: 0x7f0b000e
+			public const int notification_right_icon_size = 2131427342;
 			
-			// aapt resource value: 0x7f0a0000
-			public const int notification_right_side_padding_top = 2131361792;
+			// aapt resource value: 0x7f0b0000
+			public const int notification_right_side_padding_top = 2131427328;
 			
-			// aapt resource value: 0x7f0a000f
-			public const int notification_small_icon_background_padding = 2131361807;
+			// aapt resource value: 0x7f0b000f
+			public const int notification_small_icon_background_padding = 2131427343;
 			
-			// aapt resource value: 0x7f0a0010
-			public const int notification_small_icon_size_as_large = 2131361808;
+			// aapt resource value: 0x7f0b0010
+			public const int notification_small_icon_size_as_large = 2131427344;
 			
-			// aapt resource value: 0x7f0a0011
-			public const int notification_subtext_size = 2131361809;
+			// aapt resource value: 0x7f0b0011
+			public const int notification_subtext_size = 2131427345;
 			
-			// aapt resource value: 0x7f0a0012
-			public const int notification_top_pad = 2131361810;
+			// aapt resource value: 0x7f0b0012
+			public const int notification_top_pad = 2131427346;
 			
-			// aapt resource value: 0x7f0a0013
-			public const int notification_top_pad_large_text = 2131361811;
+			// aapt resource value: 0x7f0b0013
+			public const int notification_top_pad_large_text = 2131427347;
 			
 			static Dimension()
 			{
@@ -372,43 +517,46 @@ namespace Happimeter.Watch.Droid
 			public const int happiness_2_small = 2130837545;
 			
 			// aapt resource value: 0x7f02002a
-			public const int notification_action_background = 2130837546;
+			public const int ic_arrow_back = 2130837546;
 			
 			// aapt resource value: 0x7f02002b
-			public const int notification_bg = 2130837547;
+			public const int notification_action_background = 2130837547;
 			
 			// aapt resource value: 0x7f02002c
-			public const int notification_bg_low = 2130837548;
+			public const int notification_bg = 2130837548;
 			
 			// aapt resource value: 0x7f02002d
-			public const int notification_bg_low_normal = 2130837549;
+			public const int notification_bg_low = 2130837549;
 			
 			// aapt resource value: 0x7f02002e
-			public const int notification_bg_low_pressed = 2130837550;
+			public const int notification_bg_low_normal = 2130837550;
 			
 			// aapt resource value: 0x7f02002f
-			public const int notification_bg_normal = 2130837551;
+			public const int notification_bg_low_pressed = 2130837551;
 			
 			// aapt resource value: 0x7f020030
-			public const int notification_bg_normal_pressed = 2130837552;
+			public const int notification_bg_normal = 2130837552;
 			
 			// aapt resource value: 0x7f020031
-			public const int notification_icon_background = 2130837553;
-			
-			// aapt resource value: 0x7f020035
-			public const int notification_template_icon_bg = 2130837557;
-			
-			// aapt resource value: 0x7f020036
-			public const int notification_template_icon_low_bg = 2130837558;
+			public const int notification_bg_normal_pressed = 2130837553;
 			
 			// aapt resource value: 0x7f020032
-			public const int notification_tile_bg = 2130837554;
+			public const int notification_icon_background = 2130837554;
+			
+			// aapt resource value: 0x7f020036
+			public const int notification_template_icon_bg = 2130837558;
+			
+			// aapt resource value: 0x7f020037
+			public const int notification_template_icon_low_bg = 2130837559;
 			
 			// aapt resource value: 0x7f020033
-			public const int notify_panel_notification_icon_bg = 2130837555;
+			public const int notification_tile_bg = 2130837555;
 			
 			// aapt resource value: 0x7f020034
-			public const int outline_info_black_48dp = 2130837556;
+			public const int notify_panel_notification_icon_bg = 2130837556;
+			
+			// aapt resource value: 0x7f020035
+			public const int outline_info_black_48dp = 2130837557;
 			
 			static Drawable()
 			{
@@ -423,206 +571,209 @@ namespace Happimeter.Watch.Droid
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f0b0039
-			public const int PairingDeviceName = 2131427385;
+			// aapt resource value: 0x7f0c003a
+			public const int PairingDeviceName = 2131492922;
 			
-			// aapt resource value: 0x7f0b003b
-			public const int PairingRequestAccept = 2131427387;
+			// aapt resource value: 0x7f0c003c
+			public const int PairingRequestAccept = 2131492924;
 			
-			// aapt resource value: 0x7f0b003c
-			public const int PairingRequestDecline = 2131427388;
+			// aapt resource value: 0x7f0c003d
+			public const int PairingRequestDecline = 2131492925;
 			
-			// aapt resource value: 0x7f0b003a
-			public const int PairingRequestDeviceName = 2131427386;
+			// aapt resource value: 0x7f0c003b
+			public const int PairingRequestDeviceName = 2131492923;
 			
-			// aapt resource value: 0x7f0b003d
-			public const int PairingRequestLoading = 2131427389;
+			// aapt resource value: 0x7f0c003e
+			public const int PairingRequestLoading = 2131492926;
 			
-			// aapt resource value: 0x7f0b0028
-			public const int action0 = 2131427368;
+			// aapt resource value: 0x7f0c0029
+			public const int action0 = 2131492905;
 			
-			// aapt resource value: 0x7f0b0025
-			public const int action_container = 2131427365;
+			// aapt resource value: 0x7f0c0026
+			public const int action_container = 2131492902;
 			
-			// aapt resource value: 0x7f0b002c
-			public const int action_divider = 2131427372;
+			// aapt resource value: 0x7f0c002d
+			public const int action_divider = 2131492909;
 			
-			// aapt resource value: 0x7f0b0026
-			public const int action_image = 2131427366;
+			// aapt resource value: 0x7f0c0027
+			public const int action_image = 2131492903;
 			
-			// aapt resource value: 0x7f0b0027
-			public const int action_text = 2131427367;
+			// aapt resource value: 0x7f0c0028
+			public const int action_text = 2131492904;
 			
-			// aapt resource value: 0x7f0b0036
-			public const int actions = 2131427382;
+			// aapt resource value: 0x7f0c0037
+			public const int actions = 2131492919;
 			
-			// aapt resource value: 0x7f0b0005
-			public const int adjust_height = 2131427333;
+			// aapt resource value: 0x7f0c0005
+			public const int adjust_height = 2131492869;
 			
-			// aapt resource value: 0x7f0b0006
-			public const int adjust_width = 2131427334;
+			// aapt resource value: 0x7f0c0006
+			public const int adjust_width = 2131492870;
 			
-			// aapt resource value: 0x7f0b000e
-			public const int async = 2131427342;
+			// aapt resource value: 0x7f0c000e
+			public const int async = 2131492878;
 			
-			// aapt resource value: 0x7f0b000b
-			public const int auto = 2131427339;
+			// aapt resource value: 0x7f0c000b
+			public const int auto = 2131492875;
 			
-			// aapt resource value: 0x7f0b000f
-			public const int blocking = 2131427343;
+			// aapt resource value: 0x7f0c000f
+			public const int blocking = 2131492879;
 			
-			// aapt resource value: 0x7f0b0029
-			public const int cancel_action = 2131427369;
+			// aapt resource value: 0x7f0c002a
+			public const int cancel_action = 2131492906;
 			
-			// aapt resource value: 0x7f0b0031
-			public const int chronometer = 2131427377;
+			// aapt resource value: 0x7f0c0032
+			public const int chronometer = 2131492914;
 			
-			// aapt resource value: 0x7f0b000c
-			public const int dark = 2131427340;
+			// aapt resource value: 0x7f0c000c
+			public const int dark = 2131492876;
 			
-			// aapt resource value: 0x7f0b0038
-			public const int end_padder = 2131427384;
+			// aapt resource value: 0x7f0c0039
+			public const int end_padder = 2131492921;
 			
-			// aapt resource value: 0x7f0b0013
-			public const int finishSurvey_MainText = 2131427347;
+			// aapt resource value: 0x7f0c0014
+			public const int finishSurvey_MainText = 2131492884;
 			
-			// aapt resource value: 0x7f0b0010
-			public const int forever = 2131427344;
+			// aapt resource value: 0x7f0c0010
+			public const int forever = 2131492880;
 			
-			// aapt resource value: 0x7f0b003e
-			public const int fragment_container = 2131427390;
+			// aapt resource value: 0x7f0c003f
+			public const int fragment_container = 2131492927;
 			
-			// aapt resource value: 0x7f0b0033
-			public const int icon = 2131427379;
+			// aapt resource value: 0x7f0c0034
+			public const int icon = 2131492916;
 			
-			// aapt resource value: 0x7f0b0037
-			public const int icon_group = 2131427383;
+			// aapt resource value: 0x7f0c0038
+			public const int icon_group = 2131492920;
 			
-			// aapt resource value: 0x7f0b0008
-			public const int icon_only = 2131427336;
+			// aapt resource value: 0x7f0c0008
+			public const int icon_only = 2131492872;
 			
-			// aapt resource value: 0x7f0b0032
-			public const int info = 2131427378;
+			// aapt resource value: 0x7f0c0033
+			public const int info = 2131492915;
 			
-			// aapt resource value: 0x7f0b001b
-			public const int info_close_to_value = 2131427355;
+			// aapt resource value: 0x7f0c001c
+			public const int info_close_to_value = 2131492892;
 			
-			// aapt resource value: 0x7f0b001d
-			public const int info_exchange_data = 2131427357;
+			// aapt resource value: 0x7f0c001e
+			public const int info_exchange_data = 2131492894;
 			
-			// aapt resource value: 0x7f0b001e
-			public const int info_exchange_data_value = 2131427358;
+			// aapt resource value: 0x7f0c001f
+			public const int info_exchange_data_value = 2131492895;
 			
-			// aapt resource value: 0x7f0b0019
-			public const int info_heartrate_value = 2131427353;
+			// aapt resource value: 0x7f0c001a
+			public const int info_heartrate_value = 2131492890;
 			
-			// aapt resource value: 0x7f0b001f
-			public const int info_restart_app_button = 2131427359;
+			// aapt resource value: 0x7f0c0020
+			public const int info_restart_app_button = 2131492896;
 			
-			// aapt resource value: 0x7f0b001a
-			public const int info_steps_value = 2131427354;
+			// aapt resource value: 0x7f0c001b
+			public const int info_steps_value = 2131492891;
 			
-			// aapt resource value: 0x7f0b001c
-			public const int info_timestamp = 2131427356;
+			// aapt resource value: 0x7f0c001d
+			public const int info_timestamp = 2131492893;
 			
-			// aapt resource value: 0x7f0b0011
-			public const int italic = 2131427345;
+			// aapt resource value: 0x7f0c0011
+			public const int italic = 2131492881;
 			
-			// aapt resource value: 0x7f0b000d
-			public const int light = 2131427341;
+			// aapt resource value: 0x7f0c000d
+			public const int light = 2131492877;
 			
-			// aapt resource value: 0x7f0b0000
-			public const int line1 = 2131427328;
+			// aapt resource value: 0x7f0c0000
+			public const int line1 = 2131492864;
 			
-			// aapt resource value: 0x7f0b0001
-			public const int line3 = 2131427329;
+			// aapt resource value: 0x7f0c0001
+			public const int line3 = 2131492865;
 			
-			// aapt resource value: 0x7f0b0022
-			public const int main_info_button = 2131427362;
+			// aapt resource value: 0x7f0c0023
+			public const int main_info_button = 2131492899;
 			
-			// aapt resource value: 0x7f0b0023
-			public const int main_info_subtext_paired_status = 2131427363;
+			// aapt resource value: 0x7f0c0024
+			public const int main_info_subtext_paired_status = 2131492900;
 			
-			// aapt resource value: 0x7f0b0020
-			public const int main_mood_input_icon = 2131427360;
+			// aapt resource value: 0x7f0c0021
+			public const int main_mood_input_icon = 2131492897;
 			
-			// aapt resource value: 0x7f0b002b
-			public const int media_actions = 2131427371;
+			// aapt resource value: 0x7f0c002c
+			public const int media_actions = 2131492908;
 			
-			// aapt resource value: 0x7f0b0015
-			public const int moodImageView = 2131427349;
+			// aapt resource value: 0x7f0c0016
+			public const int moodImageView = 2131492886;
 			
-			// aapt resource value: 0x7f0b0007
-			public const int none = 2131427335;
+			// aapt resource value: 0x7f0c0007
+			public const int none = 2131492871;
 			
-			// aapt resource value: 0x7f0b0012
-			public const int normal = 2131427346;
+			// aapt resource value: 0x7f0c0012
+			public const int normal = 2131492882;
 			
-			// aapt resource value: 0x7f0b0035
-			public const int notification_background = 2131427381;
+			// aapt resource value: 0x7f0c0036
+			public const int notification_background = 2131492918;
 			
-			// aapt resource value: 0x7f0b002e
-			public const int notification_main_column = 2131427374;
+			// aapt resource value: 0x7f0c002f
+			public const int notification_main_column = 2131492911;
 			
-			// aapt resource value: 0x7f0b002d
-			public const int notification_main_column_container = 2131427373;
+			// aapt resource value: 0x7f0c002e
+			public const int notification_main_column_container = 2131492910;
 			
-			// aapt resource value: 0x7f0b0040
-			public const int prediction_right = 2131427392;
+			// aapt resource value: 0x7f0c0041
+			public const int prediction_right = 2131492929;
 			
-			// aapt resource value: 0x7f0b0041
-			public const int prediction_wrong = 2131427393;
+			// aapt resource value: 0x7f0c0042
+			public const int prediction_wrong = 2131492930;
 			
-			// aapt resource value: 0x7f0b003f
-			public const int predictions_text = 2131427391;
+			// aapt resource value: 0x7f0c0040
+			public const int predictions_text = 2131492928;
 			
-			// aapt resource value: 0x7f0b0024
-			public const int removePairingButton = 2131427364;
+			// aapt resource value: 0x7f0c0025
+			public const int removePairingButton = 2131492901;
 			
-			// aapt resource value: 0x7f0b0034
-			public const int right_icon = 2131427380;
+			// aapt resource value: 0x7f0c0035
+			public const int right_icon = 2131492917;
 			
-			// aapt resource value: 0x7f0b002f
-			public const int right_side = 2131427375;
+			// aapt resource value: 0x7f0c0030
+			public const int right_side = 2131492912;
 			
-			// aapt resource value: 0x7f0b0009
-			public const int standard = 2131427337;
+			// aapt resource value: 0x7f0c0009
+			public const int standard = 2131492873;
 			
-			// aapt resource value: 0x7f0b002a
-			public const int status_bar_latest_event_content = 2131427370;
+			// aapt resource value: 0x7f0c002b
+			public const int status_bar_latest_event_content = 2131492907;
 			
-			// aapt resource value: 0x7f0b0016
-			public const int surveyAnserIndicator = 2131427350;
+			// aapt resource value: 0x7f0c0017
+			public const int surveyAnserIndicator = 2131492887;
 			
-			// aapt resource value: 0x7f0b0017
-			public const int surveyAnswerSeekbar = 2131427351;
+			// aapt resource value: 0x7f0c0018
+			public const int surveyAnswerSeekbar = 2131492888;
 			
-			// aapt resource value: 0x7f0b0021
-			public const int surveyButton = 2131427361;
+			// aapt resource value: 0x7f0c0022
+			public const int surveyButton = 2131492898;
 			
-			// aapt resource value: 0x7f0b0042
-			public const int surveyConfirmBurron = 2131427394;
+			// aapt resource value: 0x7f0c0043
+			public const int surveyConfirmBurron = 2131492931;
 			
-			// aapt resource value: 0x7f0b0014
-			public const int surveyQuestion = 2131427348;
+			// aapt resource value: 0x7f0c0015
+			public const int surveyQuestion = 2131492885;
 			
-			// aapt resource value: 0x7f0b0002
-			public const int text = 2131427330;
+			// aapt resource value: 0x7f0c0002
+			public const int text = 2131492866;
 			
-			// aapt resource value: 0x7f0b0003
-			public const int text2 = 2131427331;
+			// aapt resource value: 0x7f0c0003
+			public const int text2 = 2131492867;
 			
-			// aapt resource value: 0x7f0b0018
-			public const int textView1 = 2131427352;
+			// aapt resource value: 0x7f0c0019
+			public const int textView1 = 2131492889;
 			
-			// aapt resource value: 0x7f0b0030
-			public const int time = 2131427376;
+			// aapt resource value: 0x7f0c0031
+			public const int time = 2131492913;
 			
-			// aapt resource value: 0x7f0b0004
-			public const int title = 2131427332;
+			// aapt resource value: 0x7f0c0004
+			public const int title = 2131492868;
 			
-			// aapt resource value: 0x7f0b000a
-			public const int wide = 2131427338;
+			// aapt resource value: 0x7f0c0013
+			public const int webview = 2131492883;
+			
+			// aapt resource value: 0x7f0c000a
+			public const int wide = 2131492874;
 			
 			static Id()
 			{
@@ -637,14 +788,14 @@ namespace Happimeter.Watch.Droid
 		public partial class Integer
 		{
 			
-			// aapt resource value: 0x7f050001
-			public const int cancel_button_image_alpha = 2131034113;
+			// aapt resource value: 0x7f060001
+			public const int cancel_button_image_alpha = 2131099649;
 			
-			// aapt resource value: 0x7f050000
-			public const int google_play_services_version = 2131034112;
+			// aapt resource value: 0x7f060000
+			public const int google_play_services_version = 2131099648;
 			
-			// aapt resource value: 0x7f050002
-			public const int status_bar_notification_info_maxnum = 2131034114;
+			// aapt resource value: 0x7f060002
+			public const int status_bar_notification_info_maxnum = 2131099650;
 			
 			static Integer()
 			{
@@ -660,79 +811,82 @@ namespace Happimeter.Watch.Droid
 		{
 			
 			// aapt resource value: 0x7f040000
-			public const int FinishedSurvey = 2130968576;
+			public const int activity_webview = 2130968576;
 			
 			// aapt resource value: 0x7f040001
-			public const int Fragment_SurveyItem = 2130968577;
+			public const int FinishedSurvey = 2130968577;
 			
 			// aapt resource value: 0x7f040002
-			public const int Info = 2130968578;
+			public const int Fragment_SurveyItem = 2130968578;
 			
 			// aapt resource value: 0x7f040003
-			public const int Main = 2130968579;
+			public const int Info = 2130968579;
 			
 			// aapt resource value: 0x7f040004
-			public const int notification_action = 2130968580;
+			public const int Main = 2130968580;
 			
 			// aapt resource value: 0x7f040005
-			public const int notification_action_tombstone = 2130968581;
+			public const int notification_action = 2130968581;
 			
 			// aapt resource value: 0x7f040006
-			public const int notification_media_action = 2130968582;
+			public const int notification_action_tombstone = 2130968582;
 			
 			// aapt resource value: 0x7f040007
-			public const int notification_media_cancel_action = 2130968583;
+			public const int notification_media_action = 2130968583;
 			
 			// aapt resource value: 0x7f040008
-			public const int notification_template_big_media = 2130968584;
+			public const int notification_media_cancel_action = 2130968584;
 			
 			// aapt resource value: 0x7f040009
-			public const int notification_template_big_media_custom = 2130968585;
+			public const int notification_template_big_media = 2130968585;
 			
 			// aapt resource value: 0x7f04000a
-			public const int notification_template_big_media_narrow = 2130968586;
+			public const int notification_template_big_media_custom = 2130968586;
 			
 			// aapt resource value: 0x7f04000b
-			public const int notification_template_big_media_narrow_custom = 2130968587;
+			public const int notification_template_big_media_narrow = 2130968587;
 			
 			// aapt resource value: 0x7f04000c
-			public const int notification_template_custom_big = 2130968588;
+			public const int notification_template_big_media_narrow_custom = 2130968588;
 			
 			// aapt resource value: 0x7f04000d
-			public const int notification_template_icon_group = 2130968589;
+			public const int notification_template_custom_big = 2130968589;
 			
 			// aapt resource value: 0x7f04000e
-			public const int notification_template_lines_media = 2130968590;
+			public const int notification_template_icon_group = 2130968590;
 			
 			// aapt resource value: 0x7f04000f
-			public const int notification_template_media = 2130968591;
+			public const int notification_template_lines_media = 2130968591;
 			
 			// aapt resource value: 0x7f040010
-			public const int notification_template_media_custom = 2130968592;
+			public const int notification_template_media = 2130968592;
 			
 			// aapt resource value: 0x7f040011
-			public const int notification_template_part_chronometer = 2130968593;
+			public const int notification_template_media_custom = 2130968593;
 			
 			// aapt resource value: 0x7f040012
-			public const int notification_template_part_time = 2130968594;
+			public const int notification_template_part_chronometer = 2130968594;
 			
 			// aapt resource value: 0x7f040013
-			public const int Pairing = 2130968595;
+			public const int notification_template_part_time = 2130968595;
 			
 			// aapt resource value: 0x7f040014
-			public const int PairingRequest = 2130968596;
+			public const int Pairing = 2130968596;
 			
 			// aapt resource value: 0x7f040015
-			public const int PreSurvey = 2130968597;
+			public const int PairingRequest = 2130968597;
 			
 			// aapt resource value: 0x7f040016
-			public const int PreSurveyFragmentContainer = 2130968598;
+			public const int PreSurvey = 2130968598;
 			
 			// aapt resource value: 0x7f040017
-			public const int ShowPredictions = 2130968599;
+			public const int PreSurveyFragmentContainer = 2130968599;
 			
 			// aapt resource value: 0x7f040018
-			public const int Survey = 2130968600;
+			public const int ShowPredictions = 2130968600;
+			
+			// aapt resource value: 0x7f040019
+			public const int Survey = 2130968601;
 			
 			static Layout()
 			{
@@ -763,65 +917,68 @@ namespace Happimeter.Watch.Droid
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f060013
-			public const int app_name = 2131099667;
+			// aapt resource value: 0x7f070014
+			public const int app_name = 2131165204;
 			
-			// aapt resource value: 0x7f060001
-			public const int common_google_play_services_enable_button = 2131099649;
+			// aapt resource value: 0x7f070001
+			public const int common_google_play_services_enable_button = 2131165185;
 			
-			// aapt resource value: 0x7f060002
-			public const int common_google_play_services_enable_text = 2131099650;
+			// aapt resource value: 0x7f070002
+			public const int common_google_play_services_enable_text = 2131165186;
 			
-			// aapt resource value: 0x7f060003
-			public const int common_google_play_services_enable_title = 2131099651;
+			// aapt resource value: 0x7f070003
+			public const int common_google_play_services_enable_title = 2131165187;
 			
-			// aapt resource value: 0x7f060004
-			public const int common_google_play_services_install_button = 2131099652;
+			// aapt resource value: 0x7f070004
+			public const int common_google_play_services_install_button = 2131165188;
 			
-			// aapt resource value: 0x7f060005
-			public const int common_google_play_services_install_text = 2131099653;
+			// aapt resource value: 0x7f070005
+			public const int common_google_play_services_install_text = 2131165189;
 			
-			// aapt resource value: 0x7f060006
-			public const int common_google_play_services_install_title = 2131099654;
+			// aapt resource value: 0x7f070006
+			public const int common_google_play_services_install_title = 2131165190;
 			
-			// aapt resource value: 0x7f060007
-			public const int common_google_play_services_notification_ticker = 2131099655;
+			// aapt resource value: 0x7f070007
+			public const int common_google_play_services_notification_ticker = 2131165191;
 			
-			// aapt resource value: 0x7f060000
-			public const int common_google_play_services_unknown_issue = 2131099648;
+			// aapt resource value: 0x7f070000
+			public const int common_google_play_services_unknown_issue = 2131165184;
 			
-			// aapt resource value: 0x7f060008
-			public const int common_google_play_services_unsupported_text = 2131099656;
+			// aapt resource value: 0x7f070008
+			public const int common_google_play_services_unsupported_text = 2131165192;
 			
-			// aapt resource value: 0x7f060009
-			public const int common_google_play_services_update_button = 2131099657;
+			// aapt resource value: 0x7f070009
+			public const int common_google_play_services_update_button = 2131165193;
 			
-			// aapt resource value: 0x7f06000a
-			public const int common_google_play_services_update_text = 2131099658;
+			// aapt resource value: 0x7f07000a
+			public const int common_google_play_services_update_text = 2131165194;
 			
-			// aapt resource value: 0x7f06000b
-			public const int common_google_play_services_update_title = 2131099659;
+			// aapt resource value: 0x7f07000b
+			public const int common_google_play_services_update_title = 2131165195;
 			
-			// aapt resource value: 0x7f06000c
-			public const int common_google_play_services_updating_text = 2131099660;
+			// aapt resource value: 0x7f07000c
+			public const int common_google_play_services_updating_text = 2131165196;
 			
-			// aapt resource value: 0x7f06000d
-			public const int common_google_play_services_wear_update_text = 2131099661;
+			// aapt resource value: 0x7f07000d
+			public const int common_google_play_services_wear_update_text = 2131165197;
 			
-			// aapt resource value: 0x7f06000e
-			public const int common_open_on_phone = 2131099662;
+			// aapt resource value: 0x7f07000e
+			public const int common_open_on_phone = 2131165198;
 			
-			// aapt resource value: 0x7f06000f
-			public const int common_signin_button_text = 2131099663;
+			// aapt resource value: 0x7f07000f
+			public const int common_signin_button_text = 2131165199;
 			
-			// aapt resource value: 0x7f060010
-			public const int common_signin_button_text_long = 2131099664;
+			// aapt resource value: 0x7f070010
+			public const int common_signin_button_text_long = 2131165200;
 			
-			// aapt resource value: 0x7f060012
-			public const int hello = 2131099666;
+			// aapt resource value: 0x7f070013
+			public const int hello = 2131165203;
 			
-			// aapt resource value: 0x7f060011
-			public const int status_bar_notification_info_overflow = 2131099665;
+			// aapt resource value: 0x7f070012
+			public const int status_bar_notification_info_overflow = 2131165202;
+			
+			// aapt resource value: 0x7f070011
+			public const int title_activity_webview = 2131165201;
 			
 			static String()
 			{
@@ -836,41 +993,41 @@ namespace Happimeter.Watch.Droid
 		public partial class Style
 		{
 			
-			// aapt resource value: 0x7f080005
-			public const int TextAppearance_Compat_Notification = 2131230725;
+			// aapt resource value: 0x7f090005
+			public const int TextAppearance_Compat_Notification = 2131296261;
 			
-			// aapt resource value: 0x7f080006
-			public const int TextAppearance_Compat_Notification_Info = 2131230726;
+			// aapt resource value: 0x7f090006
+			public const int TextAppearance_Compat_Notification_Info = 2131296262;
 			
-			// aapt resource value: 0x7f080000
-			public const int TextAppearance_Compat_Notification_Info_Media = 2131230720;
+			// aapt resource value: 0x7f090000
+			public const int TextAppearance_Compat_Notification_Info_Media = 2131296256;
 			
-			// aapt resource value: 0x7f08000b
-			public const int TextAppearance_Compat_Notification_Line2 = 2131230731;
+			// aapt resource value: 0x7f09000b
+			public const int TextAppearance_Compat_Notification_Line2 = 2131296267;
 			
-			// aapt resource value: 0x7f080004
-			public const int TextAppearance_Compat_Notification_Line2_Media = 2131230724;
+			// aapt resource value: 0x7f090004
+			public const int TextAppearance_Compat_Notification_Line2_Media = 2131296260;
 			
-			// aapt resource value: 0x7f080001
-			public const int TextAppearance_Compat_Notification_Media = 2131230721;
+			// aapt resource value: 0x7f090001
+			public const int TextAppearance_Compat_Notification_Media = 2131296257;
 			
-			// aapt resource value: 0x7f080007
-			public const int TextAppearance_Compat_Notification_Time = 2131230727;
+			// aapt resource value: 0x7f090007
+			public const int TextAppearance_Compat_Notification_Time = 2131296263;
 			
-			// aapt resource value: 0x7f080002
-			public const int TextAppearance_Compat_Notification_Time_Media = 2131230722;
+			// aapt resource value: 0x7f090002
+			public const int TextAppearance_Compat_Notification_Time_Media = 2131296258;
 			
-			// aapt resource value: 0x7f080008
-			public const int TextAppearance_Compat_Notification_Title = 2131230728;
+			// aapt resource value: 0x7f090008
+			public const int TextAppearance_Compat_Notification_Title = 2131296264;
 			
-			// aapt resource value: 0x7f080003
-			public const int TextAppearance_Compat_Notification_Title_Media = 2131230723;
+			// aapt resource value: 0x7f090003
+			public const int TextAppearance_Compat_Notification_Title_Media = 2131296259;
 			
-			// aapt resource value: 0x7f080009
-			public const int Widget_Compat_NotificationActionContainer = 2131230729;
+			// aapt resource value: 0x7f090009
+			public const int Widget_Compat_NotificationActionContainer = 2131296265;
 			
-			// aapt resource value: 0x7f08000a
-			public const int Widget_Compat_NotificationActionText = 2131230730;
+			// aapt resource value: 0x7f09000a
+			public const int Widget_Compat_NotificationActionText = 2131296266;
 			
 			static Style()
 			{

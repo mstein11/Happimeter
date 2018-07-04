@@ -11,6 +11,7 @@ using Happimeter.Views.Converters;
 using Happimeter.Services;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
+using Happimeter.Core.Services;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace Happimeter

@@ -19,6 +19,7 @@ using Xamarin.Forms;
 using Plugin.Permissions.Abstractions;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using Happimeter.Core.Services;
 
 namespace Happimeter.Services
 {
@@ -321,8 +322,15 @@ namespace Happimeter.Services
 
 					var predictionService = ServiceLocator.Instance.Get<IPredictionService>();
 					var measurementService = ServiceLocator.Instance.Get<IMeasurementService>();
-					await predictionService.DownloadAndSavePrediction();
-					await measurementService.DownloadAndSaveGenericQuestions();
+
+					var downloadPredictionsTask = predictionService.DownloadAndSavePrediction();
+					var downloadQuestionsTask = measurementService.DownloadAndSaveGenericQuestions();
+					var httpDone = Task.WhenAll(downloadQuestionsTask, downloadPredictionsTask);
+					var timeout = Task.Delay(50000);
+					if (await Task.WhenAny(httpDone, timeout) == timeout)
+					{
+						Debug.WriteLine("couldn't complete httpRequests");
+					}
 
 					var questions = measurementService.GetGenericQuestions();
 					var predictions = predictionService.GetLastPrediction();

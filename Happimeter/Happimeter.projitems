@@ -25,7 +25,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\HappimeterApiService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IHappimeterApiService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\AccountStoreService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IAccountStoreService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ApiResultModels\AuthApiResponseModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\AuthResultModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\GetMeResultModel.cs" />
@@ -84,8 +83,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\PostSensorDataServiceModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\SynchronizeDataEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\GetGenericQuestionApiResult.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\LoggingService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\ILoggingService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Events\BluetoothWriteEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\TestPage.xaml.cs">
       <DependentUpon>TestPage.xaml</DependentUpon>
@@ -119,7 +116,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\SettingsGenericQuestionPage.xaml.cs">
       <DependentUpon>SettingsGenericQuestionPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\SettingsGenericQuestionPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\SettingsWatchConfigPage.xaml.cs">
       <DependentUpon>SettingsWatchConfigPage.xaml</DependentUpon>
     </Compile>
@@ -127,6 +123,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\GeoLocationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IGeoLocationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\BluetoothService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\SettingsGenericQuestionPageViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />

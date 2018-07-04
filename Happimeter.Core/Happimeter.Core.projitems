@@ -48,6 +48,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\Bluetooth\DataExchangeInitMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Bluetooth\PreSurveyFirstMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Bluetooth\PreSurveySecondMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\LoggingService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ILoggingService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IAccountStoreService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Models\" />

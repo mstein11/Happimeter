@@ -65,7 +65,7 @@ namespace Happimeter.Watch.Droid.Activities
 
 					var transaction = FragmentManager.BeginTransaction();
 					transaction.Replace(Resource.Id.fragment_container, predictionsFragment);
-					transaction.Commit();
+					transaction.CommitAllowingStateLoss();
 
 					return;
 				}
