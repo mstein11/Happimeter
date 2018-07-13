@@ -11,6 +11,7 @@ using Happimeter.Views.Converters;
 using Happimeter.Services;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
+using Happimeter.Core.Services;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace Happimeter
@@ -50,6 +51,7 @@ namespace Happimeter
 			var pairing = sharedDb.Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive);
 			if (pairing != null)
 			{
+				ServiceLocator.Instance.Get<IBluetoothService>().Init();
 				ServiceLocator.Instance.Get<IBeaconWakeupService>().StartWakeupForBeacon();
 			}
 		}

@@ -11,7 +11,7 @@ namespace Happimeter.Interfaces
 {
 	public interface IBluetoothService
 	{
-		Task Init();
+		Task Init(bool force = false);
 		IObservable<object> ConnectDevice(IDevice device);
 		void WhenConnectionStatusChanged(ConnectionStatus status, IDevice device);
 		void ReleaseSubscriptions();

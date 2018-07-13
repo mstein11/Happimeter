@@ -214,7 +214,7 @@ namespace Happimeter.ViewModels.Forms
 
 		private void HandleActivatedChanged(bool IsActivatedInner)
 		{
-			ServiceLocator.Instance.Get<IMeasurementService>().ToggleGenericQuestionActivation(Id, IsActivatedInner);
+			//ServiceLocator.Instance.Get<IMeasurementService>().ToggleGenericQuestionActivation(Id, IsActivatedInner);
 		}
 	}
 }

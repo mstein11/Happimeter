@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Happimeter.Watch.Droid", "H
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Happimeter.Core", "Happimeter.Core\Happimeter.Core.shproj", "{D803EA70-BB66-49C2-8465-6591E039DDE8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A3A4E0BF-4D68-4E08-AB32-6A7D07316E74}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|iPhoneSimulator = Debug|iPhoneSimulator

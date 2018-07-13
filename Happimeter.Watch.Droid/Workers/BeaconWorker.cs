@@ -9,6 +9,7 @@ using Happimeter.Core.Helper;
 using Happimeter.Watch.Droid.Database;
 using Happimeter.Watch.Droid.ServicesBusinessLogic;
 using System.Linq;
+using Happimeter.Core.Services;
 
 namespace Happimeter.Watch.Droid.Workers
 {
@@ -111,7 +112,14 @@ namespace Happimeter.Watch.Droid.Workers
 			var user = ServiceLocator.Instance.Get<IDatabaseContext>().Get<BluetoothPairing>(x => x.IsPairingActive == true);
 			if (!BluetoothAdapter.DefaultAdapter.IsEnabled)
 			{
-				Toast.MakeText(Application.Context, "Bluetooth is not activated", ToastLength.Long).Show();
+				try
+				{
+					Toast.MakeText(Application.Context, "Bluetooth is not activated", ToastLength.Long).Show();
+				}
+				catch (Exception e)
+				{
+					ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
+				}
 				//we can not start Beacon without BT
 				return;
 			}
