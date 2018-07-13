@@ -19,6 +19,7 @@ namespace Happimeter.Core.Services
 		public const string BeaconRegionLeftEvent = "BeaconRegionLeftEvent";
 		public const string CouldNotUploadSensorNewFormat = "CouldNotUploadSensorNewFormat";
 		public const string CouldNotUploadSensorOldFormat = "CouldNotUploadSensorOldFormat";
+		public const string CouldNotFindCharacteristicsOnConnectedDevice = "CouldNotFindCharacteristicsOnConnectedDevice";
 
 
 		public void LogEvent(string name, Dictionary<string, string> data = null)

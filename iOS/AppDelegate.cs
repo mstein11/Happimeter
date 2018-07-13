@@ -12,6 +12,7 @@ using UIKit;
 using Xamarin.Forms;
 using Xfx;
 using Happimeter.Core.Services;
+using UserNotifications;
 
 namespace Happimeter.iOS
 {
@@ -65,6 +66,25 @@ namespace Happimeter.iOS
 			}
 
 
+			if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
+			{
+				// Ask the user for permission to get notifications on iOS 10.0+
+				UNUserNotificationCenter.Current.RequestAuthorization(
+						UNAuthorizationOptions.Alert | UNAuthorizationOptions.Badge | UNAuthorizationOptions.Sound,
+						(approved, error) => { });
+
+				UNUserNotificationCenter.Current.Delegate = new UserNotificationCenterDelegate();
+			}
+			else if (UIDevice.CurrentDevice.CheckSystemVersion(8, 0))
+			{
+				// Ask the user for permission to get notifications on iOS 8.0+
+				var settings = UIUserNotificationSettings.GetSettingsForTypes(
+						UIUserNotificationType.Alert | UIUserNotificationType.Badge | UIUserNotificationType.Sound,
+						new NSSet());
+
+				UIApplication.SharedApplication.RegisterUserNotificationSettings(settings);
+			}
+
 			return true;
 		}
 
@@ -106,6 +126,16 @@ namespace Happimeter.iOS
 		{
 			Console.WriteLine("WILL TERMINATE");
 			// Called when the application is about to terminate. Save data, if needed. See also DidEnterBackground.
+		}
+	}
+
+	public class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
+	{
+		public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification, Action<UNNotificationPresentationOptions> completionHandler)
+		{
+			// Tell system to display the notification anyway or use
+			// `None` to say we have handled the display locally.
+			completionHandler(UNNotificationPresentationOptions.Alert);
 		}
 	}
 }

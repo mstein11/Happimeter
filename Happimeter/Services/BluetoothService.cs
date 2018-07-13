@@ -33,7 +33,6 @@ namespace Happimeter.Services
 		{
 		}
 
-		private bool _isInited = false;
 		private IObservable<AdapterStatus> WhenAdapterStatusChanged { get; set; }
 
 		public async Task<bool> EnsureBluetoothAllowedAndroid()
@@ -71,18 +70,33 @@ namespace Happimeter.Services
 			return true;
 		}
 
-		public async Task Init()
+		private bool _isInited = false;
+		private DateTime? _isInitingDate = null;
+		private object _initLock = new object();
+		public async Task Init(bool force = false)
 		{
 			Console.WriteLine("Starting to init BT-Service");
 			var devices = CrossBleAdapter.Current.GetConnectedDevices();
 			var device = devices.FirstOrDefault(x => x.Name?.Contains("Happimeter") ?? false);
 
-			if (_isInited && device != null && device.IsConnected())
+			//ensure we init only once!!!
+			lock (_initLock)
 			{
-				Console.WriteLine("BT-Service already Inited");
-				return;
+				if (!force && _isInited && device != null && device.IsConnected())
+				{
+					Console.WriteLine("BT-Service already Inited");
+					return;
+				}
+				if (_isInitingDate != null && Math.Abs((_isInitingDate.Value - DateTime.UtcNow).TotalSeconds) < 15)
+				{
+					Console.WriteLine("BT-Service is currently initializing in another thread - return");
+					return;
+				}
+				_isInitingDate = DateTime.UtcNow;
 			}
-			if (device != null && device.Status != ConnectionStatus.Connected)
+
+
+			if (force || device != null && device.Status != ConnectionStatus.Connected)
 			{
 				ReleaseSubscriptions();
 			}
@@ -161,12 +175,16 @@ namespace Happimeter.Services
 				if (scannedDevice == null)
 				{
 					Console.WriteLine("Could not find the device! We stop the initiation process!");
+					_isInitingDate = null;
 					return;
 				}
+				Console.WriteLine("Found the correct happimeter device - now trying to connect!");
+				//todo: maybe introduce timeout
 				await ConnectDevice(scannedDevice);
 
 			}
 			_isInited = true;
+			_isInitingDate = null;
 			Console.WriteLine("finished BT-Service Init");
 		}
 
@@ -241,34 +259,49 @@ namespace Happimeter.Services
 		{
 			var connectionError = false;
 			ConnectedReplaySubject = new ReplaySubject<IDevice>();
-			device.Connect(new ConnectionConfig
+			try
 			{
-				AutoConnect = false,
-				AndroidConnectionPriority = ConnectionPriority.High
-			});
+				device.Connect(new ConnectionConfig
+				{
+					AutoConnect = false,
+					AndroidConnectionPriority = ConnectionPriority.High
+				});
+				Console.WriteLine("ConnectDevice: after device.Connect()");
+
+				var obs = device.WhenConnected();
+				if (WhenConnectedSubscription != null)
+				{
+					WhenConnectedSubscription.Dispose();
+				}
+				WhenConnectedSubscription = obs.Subscribe(success =>
+				{
+					Debug.WriteLine("Inside OnConnected!");
+					if (connectionError)
+					{
+						ConnectedReplaySubject.OnError(new Exception("Connection was not successful"));
+						return;
+					}
+					if (WhenStatusChangedSubscription != null)
+					{
+						WhenStatusChangedSubscription.Dispose();
+					}
+					Debug.WriteLine("Subscribing to Status Changes!");
+					WhenStatusChangedSubscription = device.WhenStatusChanged().Subscribe(status => WhenConnectionStatusChanged(status, device));
 
 
-			var obs = device.WhenConnected();
-			WhenConnectedSubscription = obs.Subscribe(success =>
+					ConnectedReplaySubject.OnNext(device);
+					ConnectedReplaySubject.OnCompleted();
+				});
+				Console.WriteLine("ConnectDevice: after subscription()");
+				return ConnectedReplaySubject;
+			}
+			catch (Exception e)
 			{
-				Debug.WriteLine("Inside OnConnected!");
-				if (connectionError)
-				{
-					ConnectedReplaySubject.OnError(new Exception("Connection was not successful"));
-					return;
-				}
-				if (WhenStatusChangedSubscription != null)
-				{
-					WhenStatusChangedSubscription.Dispose();
-				}
-				Debug.WriteLine("Subscribing to Status Changes!");
-				WhenStatusChangedSubscription = device.WhenStatusChanged().Subscribe(status => WhenConnectionStatusChanged(status, device));
-
-
-				ConnectedReplaySubject.OnNext(device);
-				ConnectedReplaySubject.OnCompleted();
-			});
-			return ConnectedReplaySubject;
+				Console.WriteLine("Error while connection: " + e.Message);
+				ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
+				ConnectedReplaySubject.OnError(e);
+				return ConnectedReplaySubject;
+			}
 		}
 
 		private IDisposable WhenCharacteristicDiscoveredSubscription { get; set; }
@@ -282,7 +315,7 @@ namespace Happimeter.Services
 				WhenCharacteristicDiscoveredSubscription = null;
 				CharacteristicsReplaySubject.Dispose();
 				CharacteristicsReplaySubject = new ReplaySubject<IGattCharacteristic>();
-				device.Connect();
+				//device.Connect();
 			}
 			if (status == ConnectionStatus.Connected)
 			{
@@ -293,28 +326,44 @@ namespace Happimeter.Services
 						System.Diagnostics.Debug.WriteLine("We don't know characteristic: " + characteristic.Uuid);
 						return;
 					}
-					if (true || !await CharacteristicsReplaySubject.DefaultIfEmpty().Contains(characteristic))
+					System.Diagnostics.Debug.WriteLine("Found characteristic: " + characteristic.Uuid);
+					if (characteristic.CanNotifyOrIndicate())
 					{
-						if (characteristic.CanNotifyOrIndicate())
-						{
-							await EnableNotificationsFor(characteristic);
-						}
-						System.Diagnostics.Debug.WriteLine("Found characteristic: " + characteristic.Uuid);
-						CharacteristicsReplaySubject.OnNext(characteristic);
+						await EnableNotificationsFor(characteristic);
+					}
+					CharacteristicsReplaySubject.OnNext(characteristic);
+				});
+				var timer = Observable.Timer(TimeSpan.FromSeconds(1));
+				var tmp = timer.Merge(CharacteristicsReplaySubject.Select(x => (long)-1));
+				tmp.Take(1).Subscribe(x =>
+				{
+					if (x != -1)
+					{
+						Console.WriteLine("We could not find the characteristics we need!");
+						ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.CouldNotUploadSensorOldFormat);
+						Plugin.LocalNotifications.CrossLocalNotifications.Current.Show("Bluetooth Problem", "Please restart Bluetooth on your Watch!");
 					}
 				});
+
 			}
 		}
 
+		private IList<IDisposable> NotificationSubscriptions = new List<IDisposable>();
 		private void SubscribeToNotifications()
 		{
-			NotificationSubject.Where(x => x.Item1 == DataExchangeInitMessage.MessageNameConstant).Subscribe(x =>
+			foreach (var sub in NotificationSubscriptions)
+			{
+				sub.Dispose();
+			}
+			NotificationSubscriptions = new List<IDisposable>();
+
+			NotificationSubscriptions.Add(NotificationSubject.Where(x => x.Item1 == DataExchangeInitMessage.MessageNameConstant).Subscribe(x =>
 			{
 				Debug.WriteLine("Got DataExchange Notification");
 				ExchangeData();
-			});
+			}));
 
-			NotificationSubject.Where(x => x.Item1 == PreSurveyFirstMessage.MessageNameConstant).Subscribe(async res =>
+			NotificationSubscriptions.Add(NotificationSubject.Where(x => x.Item1 == PreSurveyFirstMessage.MessageNameConstant).Subscribe(async res =>
 			{
 				try
 				{
@@ -358,7 +407,7 @@ namespace Happimeter.Services
 				{
 					ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
 				}
-			});
+			}));
 		}
 
 		private Dictionary<Guid, IDisposable> NotificationSubscription = new Dictionary<Guid, IDisposable>();
@@ -548,6 +597,7 @@ namespace Happimeter.Services
 						 EventType = AndroidWatchExchangeDataStates.DeviceNotFound
 					 });
 					Console.WriteLine("We couldn't find our characteristic! We have to reinit");
+					Debug.WriteLine("WATCH DOES NOT HAVE CHARACTERISTICS!");
 					//todo: if we don't find the charac, we have to reinit somehow
 					ReleaseSubscriptions();
 					return;

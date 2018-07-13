@@ -51,6 +51,7 @@ namespace Happimeter
 			var pairing = sharedDb.Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive);
 			if (pairing != null)
 			{
+				ServiceLocator.Instance.Get<IBluetoothService>().Init();
 				ServiceLocator.Instance.Get<IBeaconWakeupService>().StartWakeupForBeacon();
 			}
 		}

@@ -32,7 +32,6 @@ namespace Happimeter.Droid.Services
 
 		public void OnBeaconServiceConnect()
 		{
-			//BeaconManager.SetDebug(true);
 			BeaconManager.SetForegroundScanPeriod(60 * 1000);
 			BeaconManager.SetBackgroundScanPeriod(60 * 1000);
 			BeaconManager.SetBackgroundBetweenScanPeriod(300 * 1000);
@@ -43,7 +42,7 @@ namespace Happimeter.Droid.Services
 				Console.WriteLine("Did enter region");
 				var btService = ServiceLocator.Instance.Get<IBluetoothService>();
 				ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.BeaconRegionEnteredEvent);
-				btService.Init();
+				btService.Init(force: true);
 			};
 
 			_monitorNotifier.ExitRegionComplete += (sender, e) =>

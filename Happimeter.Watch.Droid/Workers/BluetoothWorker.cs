@@ -117,6 +117,7 @@ namespace Happimeter.Watch.Droid.Workers
 			Manager.Adapter.BluetoothLeAdvertiser?.Dispose();
 
 			IsRunning = false;
+			SubscribedDevices = new Dictionary<string, BluetoothDevice>();
 		}
 
 		public void RemoveAuthService()
