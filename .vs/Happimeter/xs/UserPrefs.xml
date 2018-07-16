@@ -1,7 +1,7 @@
-﻿<Properties StartupConfiguration="{B926B5BC-5FAA-4225-BAC6-BA1BDABB67E9}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="../../../../Library/Frameworks/Xamarin.Android.framework/Versions/8.3.0-19/lib/xamarin.android/xbuild/Xamarin/Android/Xamarin.Android.Common.targets">
+﻿<Properties StartupConfiguration="{A206867A-1792-4275-9C38-842623227972}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="packages/Xam.Plugin.Geolocator.4.5.0.6/readme.txt">
     <Files>
-      <File FileName="Happimeter/Services/BluetoothService.cs" Line="371" Column="51" />
+      <File FileName="Happimeter/Services/BluetoothService.cs" Line="186" Column="16" />
       <File FileName="Happimeter.Core/Services/LoggingService.cs" Line="1" Column="1" />
       <File FileName="Happimeter/Views/BluetoothMainPage.xaml" Line="88" Column="1" />
       <File FileName="Happimeter/Views/BluetoothMainPage.xaml.cs" Line="1" Column="1" />
@@ -23,6 +23,10 @@
       <File FileName="iOS/Entitlements.plist" />
       <File FileName="iOS/Info.plist" />
       <File FileName="../../../../Library/Frameworks/Xamarin.Android.framework/Versions/8.3.0-19/lib/xamarin.android/xbuild/Xamarin/Android/Xamarin.Android.Common.targets" Line="1805" Column="54" />
+      <File FileName="packages/Plugin.CurrentActivity.2.1.0.4/readme.txt" Line="1" Column="1" />
+      <File FileName="packages/Plugin.Permissions.3.0.0.12/readme.txt" Line="1" Column="1" />
+      <File FileName="packages/Xam.Plugin.Geolocator.4.5.0.6/readme.txt" Line="1" Column="1" />
+      <File FileName="Happimeter.Watch.Droid/BroadcastReceiver/AutoStartBroadcastReceiver.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />

@@ -71,7 +71,7 @@ namespace Happimeter.Services
 		public async Task Init(bool force = false)
 		{
 			Console.WriteLine("Starting to init BT-Service");
-			var devices = CrossBleAdapter.Current.GetConnectedDevices();
+			var devices = await CrossBleAdapter.Current.GetConnectedDevices();
 			var device = devices.FirstOrDefault(x => x.Name?.Contains("Happimeter") ?? false);
 
 			//ensure we init only once!!!
@@ -183,11 +183,11 @@ namespace Happimeter.Services
 			Console.WriteLine("finished BT-Service Init");
 		}
 
-		public void UnpairConnection()
+		public async void UnpairConnection()
 		{
 			//release first, so that we don't reconnect in WhenConnectionStateChanged Observable.
 			ReleaseSubscriptions();
-			var devices = CrossBleAdapter.Current.GetConnectedDevices();
+			var devices = await CrossBleAdapter.Current.GetConnectedDevices();
 			var device = devices.FirstOrDefault(x => x.Name?.Contains("Happimeter") ?? false);
 			if (device != null)
 			{
