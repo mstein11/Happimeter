@@ -10,15 +10,10 @@ using System.Threading.Tasks;
 using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Interfaces;
 using Happimeter.Core.Database;
-using Happimeter.Models;
 using Happimeter.Events;
-using System.Runtime.CompilerServices;
-using System.Diagnostics.Contracts;
 using Plugin.Permissions;
 using Xamarin.Forms;
 using Plugin.Permissions.Abstractions;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 using Happimeter.Core.Services;
 
 namespace Happimeter.Services
@@ -375,7 +370,7 @@ namespace Happimeter.Services
 					var downloadPredictionsTask = predictionService.DownloadAndSavePrediction();
 					var downloadQuestionsTask = measurementService.DownloadAndSaveGenericQuestions();
 					var httpDone = Task.WhenAll(downloadQuestionsTask, downloadPredictionsTask);
-					var timeout = Task.Delay(50000);
+					var timeout = Task.Delay(5000);
 					if (await Task.WhenAny(httpDone, timeout) == timeout)
 					{
 						Debug.WriteLine("couldn't complete httpRequests");

@@ -1,27 +1,27 @@
 ﻿<Properties StartupConfiguration="{B926B5BC-5FAA-4225-BAC6-BA1BDABB67E9}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Droid/Resources/drawable/background_splash.xml">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Happimeter/Services/BluetoothService.cs">
     <Files>
-      <File FileName="Happimeter/Services/BluetoothService.cs" Line="344" Column="125" />
-      <File FileName="Happimeter.Core/Services/LoggingService.cs" Line="9" Column="15" />
+      <File FileName="Happimeter/Services/BluetoothService.cs" Line="1" Column="1" />
+      <File FileName="Happimeter.Core/Services/LoggingService.cs" Line="1" Column="1" />
       <File FileName="Happimeter/Views/BluetoothMainPage.xaml" Line="88" Column="1" />
-      <File FileName="Happimeter/Views/BluetoothMainPage.xaml.cs" Line="16" Column="54" />
+      <File FileName="Happimeter/Views/BluetoothMainPage.xaml.cs" Line="1" Column="1" />
       <File FileName="Droid/Activities/TabMainActivity.cs" Line="57" Column="1" />
       <File FileName="Happimeter.Core/Helper/ServiceLocator.cs" Line="30" Column="1" />
-      <File FileName="Droid/Activities/SplashActivity.cs" Line="17" Column="1" />
-      <File FileName="Happimeter.Core/Services/IAccountStoreService.cs" Line="6" Column="19" />
+      <File FileName="Droid/Activities/SplashActivity.cs" Line="1" Column="1" />
+      <File FileName="Happimeter.Core/Services/IAccountStoreService.cs" Line="1" Column="1" />
       <File FileName="Happimeter/DependencyInjection/Container.cs" Line="17" Column="67" />
-      <File FileName="Droid/DependencyInjection/Container.cs" Line="16" Column="90" />
+      <File FileName="Droid/DependencyInjection/Container.cs" Line="1" Column="1" />
       <File FileName="Droid/MainApplication.cs" Line="34" Column="1" />
-      <File FileName="Happimeter/App.cs" Line="43" Column="1" />
-      <File FileName="Happimeter/Services/AccountStoreService.cs" Line="11" Column="15" />
-      <File FileName="Happimeter.Watch.Droid/ServicesBusinessLogic/AccountStoreService.cs" Line="8" Column="41" />
-      <File FileName="iOS/AppDelegate.cs" Line="74" Column="1" />
+      <File FileName="Happimeter/App.cs" Line="1" Column="1" />
+      <File FileName="Happimeter/Services/AccountStoreService.cs" Line="1" Column="1" />
+      <File FileName="Happimeter.Watch.Droid/ServicesBusinessLogic/AccountStoreService.cs" Line="1" Column="1" />
+      <File FileName="iOS/AppDelegate.cs" Line="1" Column="1" />
       <File FileName="Happimeter/Models/AndroidWatch.cs" Line="85" Column="1" />
-      <File FileName="iOS/Info.plist" />
       <File FileName="Happimeter/Views/MoodOverview/MoodOverviewDetailCloseToPersonView.xaml" Line="18" Column="1" />
       <File FileName="iOS/Main.cs" Line="1" Column="1" />
-      <File FileName="iOS/Entitlements.plist" />
       <File FileName="Droid/Resources/drawable/background_splash.xml" Line="1" Column="1" />
+      <File FileName="iOS/Entitlements.plist" />
+      <File FileName="iOS/Info.plist" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release|iPhone" />
