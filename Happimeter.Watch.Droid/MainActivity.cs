@@ -103,6 +103,7 @@ namespace Happimeter.Watch.Droid
 				var intent = new Intent(this, typeof(PreSurveyActivity));
 				StartActivity(intent);
 			};
+
 			if (!IsMyServiceRunning(typeof(BackgroundService)))
 			{
 				StartService(new Intent(this, typeof(BackgroundService)));

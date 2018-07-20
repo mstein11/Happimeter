@@ -13,6 +13,10 @@ namespace Happimeter.Models.ServiceModels
 		public decimal Timestamp { get; set; }
 		[JsonProperty("local_timestamp")]
 		public decimal LocalTimestamp { get; set; }
+		[JsonProperty("timestamp_arrived_on_phone")]
+		public decimal TimestampArrivedOnPhone { get; set; }
+		[JsonProperty("user_id")]
+		public decimal UserId { get; set; }
 		[JsonProperty("pleasance")]
 		public int Pleasance { get; set; }
 		[JsonProperty("activation")]

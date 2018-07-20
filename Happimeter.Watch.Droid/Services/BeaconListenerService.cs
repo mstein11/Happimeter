@@ -61,7 +61,9 @@ namespace Happimeter.Watch.Droid.Services
 
 		public void StartListeningForBeacons()
 		{
+#if DEBUG
 			BeaconManager.SetDebug(true);
+#endif
 			BeaconManager = BeaconManager.GetInstanceForApplication(Application.Context);
 			var iBeaconParser = new BeaconParser();
 			//  ibeacon layout
