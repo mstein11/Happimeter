@@ -1,13 +1,14 @@
 ﻿<Properties StartupConfiguration="{B926B5BC-5FAA-4225-BAC6-BA1BDABB67E9}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Happimeter/ViewModels/Forms/SettingsPageViewModel.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="iOS/Info.plist">
     <Files>
       <File FileName="Happimeter.Core/Database/SharedDatabaseContext.cs" Line="202" Column="18" />
       <File FileName="Happimeter.Core/Database/ISharedDatabaseContext.cs" Line="24" Column="36" />
-      <File FileName="Happimeter.Core/Services/LoggingService.cs" Line="13" Column="46" />
+      <File FileName="Happimeter.Core/Services/LoggingService.cs" Line="100" Column="6" />
       <File FileName="Happimeter.Core/Services/ILoggingService.cs" Line="10" Column="36" />
       <File FileName="Happimeter/Views/SettingsPage.xaml" Line="62" Column="1" />
       <File FileName="Happimeter/Views/SettingsPage.xaml.cs" Line="14" Column="42" />
-      <File FileName="Happimeter/ViewModels/Forms/SettingsPageViewModel.cs" Line="16" Column="15" />
+      <File FileName="Happimeter/ViewModels/Forms/SettingsPageViewModel.cs" Line="60" Column="189" />
+      <File FileName="iOS/Info.plist" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
