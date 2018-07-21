@@ -1,27 +1,23 @@
-﻿<Properties StartupConfiguration="{A206867A-1792-4275-9C38-842623227972}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Happimeter.Core/Database/SharedDatabaseContext.cs">
+﻿<Properties StartupConfiguration="{B926B5BC-5FAA-4225-BAC6-BA1BDABB67E9}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Happimeter/ViewModels/Forms/SettingsPageViewModel.cs">
     <Files>
-      <File FileName="Happimeter.Core/Database/SharedDatabaseContext.cs" Line="16" Column="54" />
-      <File FileName="Happimeter/Services/MeasurementService.cs" Line="364" Column="9" />
-      <File FileName="Happimeter.Core/Database/ISharedDatabaseContext.cs" Line="24" Column="127" />
-      <File FileName="Happimeter/Interfaces/IMeasurementService.cs" Line="21" Column="49" />
-      <File FileName="Source Not Available" />
-      <File FileName="Happimeter/ViewModels/Forms/BluetoothMainItemViewModel.cs" Line="1" Column="1" />
-      <File FileName="Happimeter/Views/BluetoothMainPage.xaml" Line="88" Column="1" />
-      <File FileName="Happimeter/ViewModels/Forms/BluetoothMainPageViewModel.cs" Line="168" Column="1" />
-      <File FileName="Happimeter/Views/BluetoothMainPage.xaml.cs" Line="45" Column="1" />
-      <File FileName="Happimeter.Core/Database/SharedBluetoothDevicePairing.cs" Line="1" Column="1" />
+      <File FileName="Happimeter.Core/Database/SharedDatabaseContext.cs" Line="202" Column="18" />
+      <File FileName="Happimeter.Core/Database/ISharedDatabaseContext.cs" Line="24" Column="36" />
+      <File FileName="Happimeter.Core/Services/LoggingService.cs" Line="13" Column="46" />
+      <File FileName="Happimeter.Core/Services/ILoggingService.cs" Line="10" Column="36" />
+      <File FileName="Happimeter/Views/SettingsPage.xaml" Line="62" Column="1" />
+      <File FileName="Happimeter/Views/SettingsPage.xaml.cs" Line="14" Column="42" />
+      <File FileName="Happimeter/ViewModels/Forms/SettingsPageViewModel.cs" Line="16" Column="15" />
     </Files>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.ItemProperties.Happimeter.Droid PreferredExecutionTarget="Android.329F76369FB2" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
+  <MonoDevelop.Ide.ItemProperties.Happimeter.Droid PreferredExecutionTarget="Android.Android_ARMv7a_Nougat" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Models/AndroidWatch.cs" relfile="Happimeter/Models/AndroidWatch.cs" line="60" column="1" />
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter.Watch.Droid/Resources/layout/Main.axml" relfile="Happimeter.Watch.Droid/Resources/layout/Main.axml" line="59" column="1" />
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter.Watch.Droid/Workers/BeaconWorker.cs" relfile="Happimeter.Watch.Droid/Workers/BeaconWorker.cs" line="122" column="1" />
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" relfile="Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" line="323" column="1" />
-      <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/Services/MeasurementService.cs" relfile="Happimeter/Services/MeasurementService.cs" line="362" column="1" />
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/ViewModels/Forms/BluetoothMainPageViewModel.cs" relfile="Happimeter/ViewModels/Forms/BluetoothMainPageViewModel.cs" line="168" column="1" />
       <Breakpoint file="/Users/mariusstein/Projects/Happimeter/Happimeter/ViewModels/Forms/BluetoothMainPageViewModel.cs" relfile="Happimeter/ViewModels/Forms/BluetoothMainPageViewModel.cs" line="165" column="96" />
     </BreakpointStore>

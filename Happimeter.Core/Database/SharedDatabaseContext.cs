@@ -181,6 +181,28 @@ namespace Happimeter.Core.Database
             }
         }
 
+        public virtual int CountSensorMeasurements()
+        {
+            return ExcecuteScalar<int>("SELECT COUNT(*) FROM SensorMeasurement");
+        }
+
+        public virtual int CountSensorMeasurementsNotUploaded()
+        {
+            return ExcecuteScalar<int>("SELECT COUNT(*) FROM SensorMeasurement WHERE IsUploadedToServer = 1");
+        }
+
+        private T ExcecuteScalar<T>(string query)
+        {
+            EnsureDatabaseCreated();
+            lock (SyncLock)
+            {
+                using (var connection = GetConnection())
+                {
+                    return connection.ExecuteScalar<T>(query);
+                }
+            }
+        }
+
         /// <summary>
         ///     The methods below is a little bit faster in quering the data from db. Thats why we use it. 
         ///     The best way to query the data would be to not rely on reflection for the object mapping.

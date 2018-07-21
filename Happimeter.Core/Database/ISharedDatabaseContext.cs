@@ -21,6 +21,8 @@ namespace Happimeter.Core.Database
         T Get<T>(Expression<Func<T, bool>> whereClause) where T : new();
         List<T> GetAll<T>(Expression<Func<T, bool>> whereClause = null) where T : new();
         List<T> GetAllWithChildren<T>(Expression<Func<T, bool>> whereClause = null) where T : new();
+        int CountSensorMeasurements();
+        int CountSensorMeasurementsNotUploaded();
         List<SensorMeasurement> GetSensorMeasurements(int skip = 0, int take = 100, bool orderDesc = false, int? userId = null);
         List<SensorMeasurement> GetProximity(DateTime? forDay = null);
 
