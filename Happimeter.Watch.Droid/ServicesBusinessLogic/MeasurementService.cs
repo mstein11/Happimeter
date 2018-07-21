@@ -21,12 +21,16 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
 
 		public void AddSurveyMeasurement(SurveyMeasurement measurement)
 		{
+			var pairing = ServiceLocator.Instance.Get<IDeviceService>().GetBluetoothPairing();
+			measurement.UserId = pairing.PairedWithUserId;
 			var dbContext = ServiceLocator.Instance.Get<IDatabaseContext>();
 			dbContext.AddGraph(measurement);
 		}
 
 		public void AddSensorMeasurement(SensorMeasurement measurement)
 		{
+			var pairing = ServiceLocator.Instance.Get<IDeviceService>().GetBluetoothPairing();
+			measurement.UserId = pairing.PairedWithUserId;
 			var dbContext = ServiceLocator.Instance.Get<IDatabaseContext>();
 			dbContext.AddGraph(measurement);
 			SaveInfoMeasurement(measurement);

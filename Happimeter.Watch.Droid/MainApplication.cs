@@ -24,7 +24,7 @@ namespace Happimeter.Watch.Droid
 		{
 			base.OnCreate();
 
-
+			Log.Error("HAPPIMETER", "Inside Main Application");
 
 			// To detect proprietary beacons, you must add a line like below corresponding to your beacon
 			// type.  Do a web search for "setBeaconLayout" to get the proper expression.
