@@ -1,0 +1,11 @@
+##DOWNLOAD from db from server
+scp -r -P22022 mstein@5.35.253.27:../pbudner/happimeter-server/debug_databases/83/ .
+
+#RENAME file
+cd 83
+mv 1532346378.db db_sqlnet.db
+
+##Push to Phone
+adb push db_sqlnet.db /sdcard
+adb shell "run-as edu.mit.Happimeter cp /sdcard/db_sqlnet.db files/db_sqlnet.db"
+

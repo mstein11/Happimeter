@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    x:Class="Happimeter.Views.SettingsDebugPage"
+    xmlns:local="clr-namespace:Happimeter.Controls">
+    <ContentPage.Content>
+        <ScrollView Padding="0, 0, 0, 50">
+            <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                <RelativeLayout HeightRequest="110" VerticalOptions="Start">
+                    <Image Aspect="AspectFill" 
+                       RelativeLayout.WidthConstraint="{ConstraintExpression  
+                       Type=RelativeToParent,  
+                       Property=Width,  
+                       Factor=1}"
+                       RelativeLayout.HeightConstraint="{ConstraintExpression  
+                       Type=RelativeToParent,  
+                       Property=Height,  
+                       Factor=1}">
+                        <Image.Source>
+                            <OnPlatform x:TypeArguments="ImageSource"
+                                        iOS="happinessfactory"
+                                        Android="happinessfactory.png" />
+                        </Image.Source>
+                    </Image>
+                    <Grid RowSpacing="10" Padding="10, 0, 10, 0" ColumnSpacing="20" BackgroundColor="#B2307AEA"
+                          RelativeLayout.WidthConstraint="{ConstraintExpression  
+                          Type=RelativeToParent,  
+                          Property=Width,  
+                          Factor=1}"
+                          RelativeLayout.HeightConstraint="{ConstraintExpression  
+                          Type=RelativeToParent,  
+                          Property=Height,  
+                          Factor=1}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Label Style="{StaticResource HeaderOnBackground}" Grid.Row="0" Text="Debug" VerticalTextAlignment="Center" />
+                    </Grid>
+                </RelativeLayout>
+                <StackLayout Padding="20" Spacing="15" VerticalOptions="Fill">
+                    <Label Text="Upload Debug Snapshot" />
+                    <Label FontSize="12" Text="You can create and upload a debug snapshot, which will help us fix existing bugs."/>
+                    <local:MyButton Text="Upload" Command="{Binding UploadDebugSnapshotCommand}" Style="{StaticResource ButtonWithBackground}"></local:MyButton>
+                </StackLayout>
+                <StackLayout Padding="20" Spacing="15" VerticalOptions="Fill">
+                    <Label Text="Upload Database" />
+                    <Label FontSize="12" Text="If we ask you to upload your local database to our server you can to that here. It will allow us to better debug bugs."/>
+                    <local:MyButton Text="{Binding UploadDatabaseButtonText}" IsEnabled="{Binding UploadDatabaseButtonIsEnabled}" Command="{Binding UploadDatabaseCommand}" Style="{StaticResource ButtonWithBackground}"></local:MyButton>
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

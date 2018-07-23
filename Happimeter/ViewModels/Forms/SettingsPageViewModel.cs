@@ -51,13 +51,14 @@ namespace Happimeter.ViewModels.Forms
 
             listMenuEntries.Add(new ListMenuItemViewModel
             {
-                ItemTitle = "Upload Debug Snapshot",
+                ItemTitle = "Debug",
                 IconBackgroundColor = Color.FromHex("#9a7a1b"),
                 IconText = "D",
                 OnClickedCommand = new Command(() =>
                 {
-                    ServiceLocator.Instance.Get<ILoggingService>().CreateDebugSnapshot();
-                    Application.Current.MainPage.DisplayAlert("Debug Snapshot Saved", "You successfully saved the debug snapshot! It will help us make the happimeter a better experience, thank you!", "Ok");
+                    ListMenuItemSelected?.Invoke(new SettingsDebugPage(), null);
+                    //ServiceLocator.Instance.Get<ILoggingService>().CreateDebugSnapshot();
+                    //Application.Current.MainPage.DisplayAlert("Debug Snapshot Saved", "You successfully saved the debug snapshot! It will help us make the happimeter a better experience, thank you!", "Ok");
                 })
             });
 

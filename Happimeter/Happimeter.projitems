@@ -124,6 +124,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IGeoLocationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\BluetoothService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\SettingsGenericQuestionPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\SettingsDebugPage.xaml.cs">
+      <DependentUpon>SettingsDebugPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\SettingsDebugPageViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />
@@ -199,6 +203,10 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\SettingsWatchConfigPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\SettingsDebugPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>

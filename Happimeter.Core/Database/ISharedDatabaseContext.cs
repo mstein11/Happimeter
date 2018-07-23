@@ -8,7 +8,7 @@ namespace Happimeter.Core.Database
     public interface ISharedDatabaseContext
     {
         void CreateDatabase();
-
+        string GetDatabasePath();
         void Add<T>(T entity) where T : new();
         void AddGraph<T>(T entity) where T : new();
         void Update<T>(T entity) where T : new();

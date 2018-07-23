@@ -27,6 +27,7 @@ namespace Happimeter.Droid
 		public static void UpdateIdValues()
 		{
 			global::Microcharts.Droid.Resource.String.library_name = global::Happimeter.Droid.Resource.String.library_name;
+			global::ModernHttpClient.Resource.String.library_name = global::Happimeter.Droid.Resource.String.library_name;
 			global::PCLCrypto.Resource.String.ApplicationName = global::Happimeter.Droid.Resource.String.ApplicationName;
 			global::PCLCrypto.Resource.String.Hello = global::Happimeter.Droid.Resource.String.Hello;
 			global::Plugin.LocalNotifications.Resource.Drawable.plugin_lc_smallicon = global::Happimeter.Droid.Resource.Drawable.plugin_lc_smallicon;
