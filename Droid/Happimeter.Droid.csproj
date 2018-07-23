@@ -104,24 +104,6 @@
     <Reference Include="Xamarin.Forms.Xaml">
       <HintPath>..\packages\Xamarin.Forms.3.1.0.637273\lib\MonoAndroid10\Xamarin.Forms.Xaml.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.AppCenter.Android.Bindings">
-      <HintPath>..\packages\Microsoft.AppCenter.1.7.0\lib\MonoAndroid403\Microsoft.AppCenter.Android.Bindings.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter">
-      <HintPath>..\packages\Microsoft.AppCenter.1.7.0\lib\MonoAndroid403\Microsoft.AppCenter.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter.Analytics.Android.Bindings">
-      <HintPath>..\packages\Microsoft.AppCenter.Analytics.1.7.0\lib\MonoAndroid403\Microsoft.AppCenter.Analytics.Android.Bindings.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter.Analytics">
-      <HintPath>..\packages\Microsoft.AppCenter.Analytics.1.7.0\lib\MonoAndroid403\Microsoft.AppCenter.Analytics.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter.Crashes.Android.Bindings">
-      <HintPath>..\packages\Microsoft.AppCenter.Crashes.1.7.0\lib\MonoAndroid403\Microsoft.AppCenter.Crashes.Android.Bindings.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter.Crashes">
-      <HintPath>..\packages\Microsoft.AppCenter.Crashes.1.7.0\lib\MonoAndroid403\Microsoft.AppCenter.Crashes.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -277,6 +259,30 @@
     </Reference>
     <Reference Include="SkiaSharp.Views.Forms">
       <HintPath>..\packages\SkiaSharp.Views.Forms.1.60.2\lib\MonoAndroid\SkiaSharp.Views.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="ModernHttpClient">
+      <HintPath>..\packages\modernhttpclient.2.4.2\lib\MonoAndroid\ModernHttpClient.dll</HintPath>
+    </Reference>
+    <Reference Include="OkHttp">
+      <HintPath>..\packages\modernhttpclient.2.4.2\lib\MonoAndroid\OkHttp.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Android.Bindings">
+      <HintPath>..\packages\Microsoft.AppCenter.1.8.0\lib\MonoAndroid403\Microsoft.AppCenter.Android.Bindings.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter">
+      <HintPath>..\packages\Microsoft.AppCenter.1.8.0\lib\MonoAndroid403\Microsoft.AppCenter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Analytics.Android.Bindings">
+      <HintPath>..\packages\Microsoft.AppCenter.Analytics.1.8.0\lib\MonoAndroid403\Microsoft.AppCenter.Analytics.Android.Bindings.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Analytics">
+      <HintPath>..\packages\Microsoft.AppCenter.Analytics.1.8.0\lib\MonoAndroid403\Microsoft.AppCenter.Analytics.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Crashes.Android.Bindings">
+      <HintPath>..\packages\Microsoft.AppCenter.Crashes.1.8.0\lib\MonoAndroid403\Microsoft.AppCenter.Crashes.Android.Bindings.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Crashes">
+      <HintPath>..\packages\Microsoft.AppCenter.Crashes.1.8.0\lib\MonoAndroid403\Microsoft.AppCenter.Crashes.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

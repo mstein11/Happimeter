@@ -25,7 +25,7 @@ namespace Happimeter.Core.Database
         {
         }
 
-        protected virtual string GetDatabasePath()
+        public virtual string GetDatabasePath()
         {
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), DatabaseName);
         }
