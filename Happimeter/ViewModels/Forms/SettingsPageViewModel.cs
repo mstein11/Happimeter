@@ -22,48 +22,6 @@ namespace Happimeter.ViewModels.Forms
         public SettingsPageViewModel()
         {
 
-            var listMenuEntries = new List<ListMenuItemViewModel> {
-                new ListMenuItemViewModel {
-                    ItemTitle = "Generic Questions",
-                    IconBackgroundColor = Color.FromHex("#c62828"),
-                    IconText = "G",
-                    OnClickedCommand = new Command(() => {
-                        ListMenuItemSelected?.Invoke(new SettingsGenericQuestionPage(), null);
-                    })
-                }
-            };
-
-            var hasBtPairing = ServiceLocator.Instance.Get<ISharedDatabaseContext>().Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive) != null;
-            //only if we are paired to a watch, we show the watch config
-            if (hasBtPairing)
-            {
-                listMenuEntries.Add(new ListMenuItemViewModel
-                {
-                    ItemTitle = "Watch Config",
-                    IconBackgroundColor = Color.FromHex("#6a1b9a"),
-                    IconText = "W",
-                    OnClickedCommand = new Command(() =>
-                    {
-                        ListMenuItemSelected?.Invoke(new SettingsWatchConfigPage(), null);
-                    })
-                });
-            }
-
-            listMenuEntries.Add(new ListMenuItemViewModel
-            {
-                ItemTitle = "Debug",
-                IconBackgroundColor = Color.FromHex("#9a7a1b"),
-                IconText = "D",
-                OnClickedCommand = new Command(() =>
-                {
-                    ListMenuItemSelected?.Invoke(new SettingsDebugPage(), null);
-                    //ServiceLocator.Instance.Get<ILoggingService>().CreateDebugSnapshot();
-                    //Application.Current.MainPage.DisplayAlert("Debug Snapshot Saved", "You successfully saved the debug snapshot! It will help us make the happimeter a better experience, thank you!", "Ok");
-                })
-            });
-
-
-            ListMenuItems = listMenuEntries;
             UserEmail = ServiceLocator
                 .Instance
                 .Get<IAccountStoreService>()
@@ -86,23 +44,9 @@ namespace Happimeter.ViewModels.Forms
                     .Get<INativeNavigationService>()
                     .NavigateToLoginPage();
             });
-
-            UploadCommand = new Command(() =>
-            {
-                var apiService = ServiceLocator.Instance.Get<IHappimeterApiService>();
-                apiService.UploadMood();
-                apiService.UploadSensor();
-            });
-
-            ServiceLocator.Instance.Get<IHappimeterApiService>().UploadMoodStatusUpdate += HandleUploadStatusUpdate;
-            ServiceLocator.Instance.Get<IHappimeterApiService>().UploadSensorStatusUpdate += HandleUploadStatusUpdate;
-
-            var needSync = ServiceLocator.Instance.Get<IMeasurementService>().HasUnsynchronizedChanges();
-            if (needSync)
-            {
-                UnsyncronizedChangedVisible = true;
-            }
-
+            //setup list menu
+            var hasBtPairing = ServiceLocator.Instance.Get<ISharedDatabaseContext>().Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive) != null;
+            ListMenuItems = GetMenuViewModel(hasBtPairing);
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             context.WhenEntryChanged<SharedBluetoothDevicePairing>().Subscribe(eventInfo =>
             {
@@ -110,44 +54,28 @@ namespace Happimeter.ViewModels.Forms
                         && eventInfo.TypeOfEvent != Core.Events.DatabaseChangedEventTypes.Deleted
                         && eventInfo.TypeOfEvent != Core.Events.DatabaseChangedEventTypes.DeleteAll)
                 {
-                    listMenuEntries = new List<ListMenuItemViewModel> {
-                        new ListMenuItemViewModel {
-                        ItemTitle = "Generic Questions",
-                        IconBackgroundColor = Color.FromHex("#c62828"),
-                        IconText = "G",
-                        OnClickedCommand = new Command(() => {
-                            ListMenuItemSelected?.Invoke(new SettingsGenericQuestionPage(), null);
-                            })
-                        },new ListMenuItemViewModel
-                        {
-                            ItemTitle = "Watch Config",
-                            IconBackgroundColor = Color.FromHex("#6a1b9a"),
-                            IconText = "W",
-                            OnClickedCommand = new Command(() =>
-                            {
-                                ListMenuItemSelected?.Invoke(new SettingsWatchConfigPage(), null);
-                            })
-                        }
-                    };
-                    ListMenuItems = listMenuEntries;
+                    ListMenuItems = GetMenuViewModel(true);
                 }
                 else
                 {
-                    listMenuEntries = new List<ListMenuItemViewModel> {
-                        new ListMenuItemViewModel {
-                        ItemTitle = "Generic Questions",
-                        IconBackgroundColor = Color.FromHex("#c62828"),
-                        IconText = "G",
-                        OnClickedCommand = new Command(() => {
-                            ListMenuItemSelected?.Invoke(new SettingsGenericQuestionPage(), null);
-                            })
-                        }
-                    };
-                    ListMenuItems = listMenuEntries;
+                    ListMenuItems = GetMenuViewModel(false);
                 }
             });
 
 
+            UploadCommand = new Command(() =>
+            {
+                var apiService = ServiceLocator.Instance.Get<IHappimeterApiService>();
+                apiService.UploadMood();
+                apiService.UploadSensor();
+            });
+            ServiceLocator.Instance.Get<IHappimeterApiService>().UploadMoodStatusUpdate += HandleUploadStatusUpdate;
+            ServiceLocator.Instance.Get<IHappimeterApiService>().UploadSensorStatusUpdate += HandleUploadStatusUpdate;
+            var needSync = ServiceLocator.Instance.Get<IMeasurementService>().HasUnsynchronizedChanges();
+            if (needSync)
+            {
+                UnsyncronizedChangedVisible = true;
+            }
 
             context.WhenEntryAdded<SurveyMeasurement>().Subscribe(eventInfos =>
                 {
@@ -325,5 +253,46 @@ namespace Happimeter.ViewModels.Forms
             }
         }
 
+        private List<ListMenuItemViewModel> GetMenuViewModel(bool hasBtPairing)
+        {
+            var listMenuEntries = new List<ListMenuItemViewModel> {
+                new ListMenuItemViewModel {
+                    ItemTitle = "Generic Questions",
+                    IconBackgroundColor = Color.FromHex("#c62828"),
+                    IconText = "G",
+                    OnClickedCommand = new Command(() => {
+                        ListMenuItemSelected?.Invoke(new SettingsGenericQuestionPage(), null);
+                    })
+                }
+            };
+            //only if we are paired to a watch, we show the watch config
+            if (hasBtPairing)
+            {
+                listMenuEntries.Add(new ListMenuItemViewModel
+                {
+                    ItemTitle = "Watch Config",
+                    IconBackgroundColor = Color.FromHex("#6a1b9a"),
+                    IconText = "W",
+                    OnClickedCommand = new Command(() =>
+                    {
+                        ListMenuItemSelected?.Invoke(new SettingsWatchConfigPage(), null);
+                    })
+                });
+            }
+            listMenuEntries.Add(new ListMenuItemViewModel
+            {
+                ItemTitle = "Debug",
+                IconBackgroundColor = Color.FromHex("#9a7a1b"),
+                IconText = "D",
+                OnClickedCommand = new Command(() =>
+                {
+                    ListMenuItemSelected?.Invoke(new SettingsDebugPage(), null);
+                    //ServiceLocator.Instance.Get<ILoggingService>().CreateDebugSnapshot();
+                    //Application.Current.MainPage.DisplayAlert("Debug Snapshot Saved", "You successfully saved the debug snapshot! It will help us make the happimeter a better experience, thank you!", "Ok");
+                })
+            });
+
+            return listMenuEntries;
+        }
     }
 }

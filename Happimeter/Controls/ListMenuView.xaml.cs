@@ -34,7 +34,7 @@ namespace Happimeter.Controls
 
         private void SetupPage()
         {
-            Content.Children.Clear();
+            InnerContent.Children.Clear();
             foreach (var item in ListMenuItems)
             {
                 var layout = new StackLayout
@@ -88,7 +88,7 @@ namespace Happimeter.Controls
                 layout.Children.Add(icon);
                 layout.Children.Add(text);
                 layout.Children.Add(indicator);
-                Content.Children.Add(layout);
+                InnerContent.Children.Add(layout);
             }
         }
 

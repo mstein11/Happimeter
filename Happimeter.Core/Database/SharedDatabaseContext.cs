@@ -222,7 +222,7 @@ namespace Happimeter.Core.Database
                     var sw = new Stopwatch();
                     sw.Start();
                     var orderString = orderDesc ? "DESC" : "";
-                    var whereString = userId != null ? $" WHERE s1.UserId = {userId} " : " ";
+                    var whereString = userId != null ? $" WHERE s1.UserId = {userId} OR s1.UserId IS NULL " : " ";
                     var items = connection.Query<SensorMeasurementsAndItems>($"SELECT * FROM (SELECT * FROM SensorMeasurement as s1{whereString}ORDER BY Timestamp {orderString} LIMIT {take} OFFSET {skip}) as s1, SensorItemMeasurement as s2 WHERE s1.Id == s2.SensorMeasurementId").ToList();
                     sw.Stop();
                     Debug.WriteLine($"Took {sw.ElapsedMilliseconds} milliseconds to read sensordata");

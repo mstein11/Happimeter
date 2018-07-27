@@ -5,7 +5,6 @@ using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using System.Diagnostics;
 using Happimeter.Core.Database;
-using Xamarin.Forms;
 using System.Linq;
 
 namespace Happimeter.Core.Services
