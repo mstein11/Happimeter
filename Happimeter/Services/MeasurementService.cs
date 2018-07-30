@@ -245,8 +245,9 @@ namespace Happimeter.Services
 
         public List<SurveyMeasurement> GetSurveyData()
         {
+            var userId = ServiceLocator.Instance.Get<IAccountStoreService>()?.GetAccountUserId() ?? null;
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
-            return context.GetAllWithChildren<SurveyMeasurement>().ToList();
+            return context.GetAllWithChildren<SurveyMeasurement>().Where(x => x.UserId == default(int) || x.UserId == userId).ToList();
         }
 
 

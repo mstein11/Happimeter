@@ -1,5 +1,5 @@
-﻿<Properties StartupConfiguration="{A206867A-1792-4275-9C38-842623227972}|Default" NuGet.AddPackagesDialog.IncludePrerelease="True">
-  <MonoDevelop.Ide.Workbench ActiveDocument="iOS/Info.plist">
+﻿<Properties StartupConfiguration="{DE8957FA-3B78-4B43-A5A2-C82830EF665B}|Default" NuGet.AddPackagesDialog.IncludePrerelease="True">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Happimeter/ViewModels/Forms/SurveyOverviewViewModel.cs">
     <Files>
       <File FileName="../../../../Library/Frameworks/Xamarin.Android.framework/Versions/8.3.3-2/lib/xamarin.android/xbuild/Xamarin/Android/Xamarin.Android.Common.targets" Line="2198" Column="3" />
       <File FileName="Droid/proguard.cfg" Line="1" Column="1" />
@@ -10,16 +10,23 @@
       <File FileName="Happimeter/App.cs" Line="54" Column="17" />
       <File FileName="Happimeter.Core/Models/Bluetooth/WriteReceiverContext.cs" Line="51" Column="31" />
       <File FileName="Happimeter/Services/AccountStoreService.cs" Line="22" Column="13" />
-      <File FileName="Happimeter/Services/MeasurementService.cs" Line="51" Column="37" />
+      <File FileName="Happimeter/Services/MeasurementService.cs" Line="246" Column="45" />
       <File FileName="Happimeter.Core/Database/ISharedDatabaseContext.cs" Line="26" Column="33" />
       <File FileName="Happimeter.Core/Database/SharedDatabaseContext.cs" Line="1" Column="1" />
-      <File FileName="iOS/AppDelegate.cs" Line="52" Column="1" />
+      <File FileName="iOS/AppDelegate.cs" Line="40" Column="13" />
       <File FileName="iOS/Info.plist" />
       <File FileName="Happimeter.Core/Services/LoggingService.cs" Line="1" Column="1" />
       <File FileName="Happimeter/ViewModels/Forms/SettingsPageViewModel.cs" Line="1" Column="1" />
+      <File FileName="Happimeter.Watch.Droid/MainActivity.cs" Line="32" Column="66" />
+      <File FileName="Happimeter.Watch.Droid/Workers/MicrophoneWorker.cs" Line="1" Column="1" />
+      <File FileName="Happimeter.Watch.Droid/Workers/BluetoothWorker.cs" Line="1" Column="1" />
+      <File FileName="Happimeter.Watch.Droid/Workers/BluetoothScannerWorker.cs" Line="1" Column="1" />
+      <File FileName="Happimeter.Watch.Droid/Services/BeaconListenerService.cs" Line="92" Column="36" />
+      <File FileName="Happimeter.Watch.Droid/ServicesBusinessLogic/MeasurementService.cs" Line="1" Column="1" />
+      <File FileName="Happimeter/ViewModels/Forms/SurveyOverviewViewModel.cs" Line="165" Column="80" />
     </Files>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.ItemProperties.Happimeter.Droid PreferredExecutionTarget="Android.Android_ARMv7a_Nougat" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
