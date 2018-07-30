@@ -15,32 +15,29 @@ using Happimeter.Watch.Droid.Activities;
 
 namespace Happimeter.Watch.Droid.BroadcastReceiver
 {
-	[BroadcastReceiver]
-	public class SurveyAlarmBroadcastReceiver : Android.Content.BroadcastReceiver
-	{
-		public override void OnReceive(Context context, Intent intent)
-		{
-			var vibrator = (Vibrator)context.GetSystemService(Context.VibratorService);
-			//vibrate for 500 milis
-			vibrator.Vibrate(500);
+    [BroadcastReceiver]
+    public class SurveyAlarmBroadcastReceiver : Android.Content.BroadcastReceiver
+    {
+        public override void OnReceive(Context context, Intent intent)
+        {
+            var activityIntent = new Intent(context, typeof(PreSurveyActivity));
+            activityIntent.PutExtra("IsAlarmTriggered", true);
+            activityIntent.AddFlags(ActivityFlags.NewTask);
+            context.StartActivity(activityIntent);
 
-			var activityIntent = new Intent(context, typeof(PreSurveyActivity));
-			activityIntent.AddFlags(ActivityFlags.NewTask);
-			context.StartActivity(activityIntent);
-
-			var nextPollTime = UtilHelper.GetNextSurveyPromptTime() - DateTime.UtcNow.ToLocalTime();
-			//if for some reason we have a negative timespan, lets simply set it to 2 hours
-			if (nextPollTime < TimeSpan.Zero)
-			{
-				nextPollTime = TimeSpan.FromHours(2);
-			}
-			var alarmManager = (AlarmManager)context.GetSystemService(Context.AlarmService);
-			Intent surveyAlarmIntent = new Intent(context, typeof(BroadcastReceiver.SurveyAlarmBroadcastReceiver));
-			var surveyPendingIntent = PendingIntent.GetBroadcast(context, 0, surveyAlarmIntent, 0);
-			System.Diagnostics.Debug.WriteLine($"Scheduled new survey for: {(DateTime.UtcNow.ToLocalTime() + nextPollTime)}");
-			alarmManager.Set(AlarmType.ElapsedRealtimeWakeup,
-								  SystemClock.ElapsedRealtime() +
-							 (long)nextPollTime.TotalMilliseconds, surveyPendingIntent);
-		}
-	}
+            var nextPollTime = UtilHelper.GetNextSurveyPromptTime() - DateTime.UtcNow.ToLocalTime();
+            //if for some reason we have a negative timespan, lets simply set it to 2 hours
+            if (nextPollTime < TimeSpan.Zero)
+            {
+                nextPollTime = TimeSpan.FromHours(2);
+            }
+            var alarmManager = (AlarmManager)context.GetSystemService(Context.AlarmService);
+            Intent surveyAlarmIntent = new Intent(context, typeof(BroadcastReceiver.SurveyAlarmBroadcastReceiver));
+            var surveyPendingIntent = PendingIntent.GetBroadcast(context, 0, surveyAlarmIntent, 0);
+            System.Diagnostics.Debug.WriteLine($"Scheduled new survey for: {(DateTime.UtcNow.ToLocalTime() + nextPollTime)}");
+            alarmManager.Set(AlarmType.ElapsedRealtimeWakeup,
+                                  SystemClock.ElapsedRealtime() +
+                             (long)nextPollTime.TotalMilliseconds, surveyPendingIntent);
+        }
+    }
 }

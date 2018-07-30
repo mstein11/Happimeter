@@ -12,6 +12,7 @@ namespace Happimeter.Core.Services
     public class LoggingService : ILoggingService
     {
         public const string LoginEvent = "Login";
+        public const string LogoutEvent = "Logout";
         public const string PairEvent = "Pair";
         public const string PairFailureEvent = "PairFailure";
         public const string DataExchangeReceivedNotification = "DataExchangeReceivedNotification";
