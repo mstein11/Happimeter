@@ -11,6 +11,7 @@ using Happimeter.Interfaces;
 using Happimeter.Models.ServiceModels;
 using Happimeter.ViewModels.Forms;
 using System.Collections.ObjectModel;
+using Version.Plugin;
 
 namespace Happimeter.Services
 {
@@ -129,12 +130,14 @@ namespace Happimeter.Services
             var apiService = ServiceLocator.Instance.Get<IHappimeterApiService>();
 
             var location = await ServiceLocator.Instance.Get<IGeoLocationService>().GetLocation();
+            var appVersion = CrossVersion.Current.Version;
 
             //save survey responses
             foreach (var measurement in message.SurveyMeasurements)
             {
                 measurement.IdFromWatch = measurement.Id;
                 measurement.TimestampArrivedOnPhone = DateTime.UtcNow;
+                measurement.PhoneAppVersion = appVersion;
                 measurement.Id = 0;
 
                 if (location != null)
@@ -152,6 +155,7 @@ namespace Happimeter.Services
                 measurement.IdFromWatch = measurement.Id;
                 measurement.Id = 0;
                 measurement.TimestampArrivedOnPhone = DateTime.UtcNow;
+                measurement.PhoneAppVersion = appVersion;
 
                 if (location != null && !measurement.SensorItemMeasures.Any(x => x.Type == MeasurementItemTypes.LocationLon) && !measurement.SensorItemMeasures.Any(x => x.Type == MeasurementItemTypes.LocationLat))
                 {
@@ -180,7 +184,7 @@ namespace Happimeter.Services
         {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             var userId = ServiceLocator.Instance.Get<IAccountStoreService>().GetAccountUserId();
-
+            var appVersion = CrossVersion.Current.Version;
             var surveyMeasurement = new SurveyMeasurement
             {
                 IdFromWatch = -1,
@@ -188,6 +192,7 @@ namespace Happimeter.Services
                 Timestamp = DateTime.UtcNow,
                 TimestampArrivedOnPhone = DateTime.UtcNow,
                 SurveyItemMeasurement = new List<SurveyItemMeasurement>(),
+                PhoneAppVersion = appVersion
             };
             var location = await ServiceLocator.Instance.Get<IGeoLocationService>().GetLocation();
             if (location != null)
@@ -275,6 +280,9 @@ namespace Happimeter.Services
                     LocalTimestamp = UtilHelper.GetUnixTimestamp(entry.Timestamp.ToLocalTime()),
                     TimestampArrivedOnPhone = entry.TimestampArrivedOnPhone.HasValue ? UtilHelper.GetUnixTimestamp(entry.TimestampArrivedOnPhone.Value) : default(decimal),
                     UserId = entry.UserId,
+                    WatchAppVersion = entry.WatchAppVersion,
+                    PhoneAppVersion = entry.PhoneAppVersion,
+                    WatchBatteryLevel = entry.WatchBatteryPercentage,
                     Activation = GetOldSurveyScaleValue(entry
                                                         ?.SurveyItemMeasurement
                                                         ?.FirstOrDefault(x => x.QuestionId == (int)SurveyHardcodedEnumeration.Activation)?.Answer ?? 0),

@@ -12,6 +12,10 @@ namespace Happimeter.Core.Database.ModelsNotMappedToDb
         public DateTime Timestamp { get; set; }
         public bool IsUploadedToServer { get; set; }
 
+        public string WatchAppVersion { get; set; }
+        public string PhoneAppVersion { get; set; }
+        public int WatchBatteryPercentage { get; set; }
+
         public int IdFromWatch { get; set; }
 
         public string Type { get; set; }

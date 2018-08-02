@@ -233,13 +233,16 @@ namespace Happimeter.Core.Database
 
         private List<SensorMeasurement> PrepareSensorMeasurementsFromDb(List<SensorMeasurementsAndItems> data)
         {
-            return data.GroupBy(group => new { group.SensorMeasurementId, group.Timestamp, group.IsUploadedToServer, group.UserId })
+            return data.GroupBy(group => new { group.SensorMeasurementId, group.Timestamp, group.IsUploadedToServer, group.UserId, group.PhoneAppVersion, group.WatchAppVersion, group.WatchBatteryPercentage })
                          .Select(x => new SensorMeasurement
                          {
                              Id = x.Key.SensorMeasurementId,
                              UserId = x.Key.UserId,
                              Timestamp = x.Key.Timestamp,
                              IsUploadedToServer = x.Key.IsUploadedToServer,
+                             WatchAppVersion = x.Key.WatchAppVersion,
+                             PhoneAppVersion = x.Key.PhoneAppVersion,
+                             WatchBatteryPercentage = x.Key.WatchBatteryPercentage,
 
                              SensorItemMeasures = x.Select(item =>
                              {
