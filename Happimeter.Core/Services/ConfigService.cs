@@ -9,6 +9,7 @@ namespace Happimeter.Core.Services
         public const string GenericQuestionGroupIdKey = "GENERIC_QUESTION_GROUP";
         public const string WatchNameKey = "WATCH_NAME_KEY";
         public const string BatterySaferMeasurementInterval = "BATTERY_SAFER_MEASUREMENT_INTERVAL";
+        public const string DeactivateAppStartsOnBoot = "DEACTIVATE_APP_STARTS_ON_BOOT";
 
         public void AddOrUpdateConfigEntry(string key, string value)
         {
@@ -95,6 +96,16 @@ namespace Happimeter.Core.Services
         public bool IsContinousMeasurementMode()
         {
             return GetMeasurementMode() == null;
+        }
+
+        public void SetDeactivateAppStartsOnBoot(bool starts)
+        {
+            AddOrUpdateConfigEntry(DeactivateAppStartsOnBoot, starts.ToString());
+        }
+
+        public bool GetDeactivateAppStartsOnBoot()
+        {
+            return GetConfigValueByKey(DeactivateAppStartsOnBoot) == true.ToString();
         }
     }
 }

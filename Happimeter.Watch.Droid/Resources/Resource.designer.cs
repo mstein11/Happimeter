@@ -664,14 +664,14 @@ namespace Happimeter.Watch.Droid
 			// aapt resource value: 0x7f0c001a
 			public const int info_heartrate_value = 2131492890;
 			
-			// aapt resource value: 0x7f0c0020
-			public const int info_restart_app_button = 2131492896;
-			
 			// aapt resource value: 0x7f0c001b
 			public const int info_steps_value = 2131492891;
 			
 			// aapt resource value: 0x7f0c001d
 			public const int info_timestamp = 2131492893;
+			
+			// aapt resource value: 0x7f0c0020
+			public const int info_toggle_start_on_boot_button = 2131492896;
 			
 			// aapt resource value: 0x7f0c0011
 			public const int italic = 2131492881;

@@ -9,5 +9,7 @@
         void SetBatterySaferMeasurementMode(int measurementInterval = 300);
         int? GetMeasurementMode();
         bool IsContinousMeasurementMode();
+        void SetDeactivateAppStartsOnBoot(bool starts);
+        bool GetDeactivateAppStartsOnBoot();
     }
 }

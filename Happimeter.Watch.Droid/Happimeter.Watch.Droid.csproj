@@ -215,7 +215,6 @@
     <Compile Include="Services\BeaconListenerService.cs" />
     <Compile Include="MainApplication.cs" />
     <Compile Include="Bluetooth\HappimeterDataNotifyCharacteristic.cs" />
-    <Compile Include="Activities\InfoActivity.cs" />
     <Compile Include="Database\InfoScreenMeasurements.cs" />
     <Compile Include="Bluetooth\HappimeterPreSurveyDataCharacteristic.cs" />
     <Compile Include="Activities\PreSurveyActivity.cs" />
@@ -224,6 +223,7 @@
     <Compile Include="Fragments\LoadingPredictionsFragment.cs" />
     <Compile Include="Helper\UiHelper.cs" />
     <Compile Include="ServicesBusinessLogic\AccountStoreService.cs" />
+    <Compile Include="Activities\InfoActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

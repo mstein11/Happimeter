@@ -137,8 +137,8 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/info_restart_app_button"
-                android:text="Restart app"
+                android:id="@+id/info_toggle_start_on_boot_button"
+                android:text="Dectivate start on boot"
                 android:textSize="45dp"
                 android:backgroundTint="#ff424242"
                 android:textColor="#ffffff"
@@ -146,6 +146,18 @@
                 android:paddingRight="10dp"
                 android:paddingBottom="10dp"
                 android:paddingLeft="10dp" />
+        <!-- <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/info_restart_app_button"
+                android:text="Stop app"
+                android:textSize="45dp"
+                android:backgroundTint="#ff424242"
+                android:textColor="#ffffff"
+                android:paddingTop="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp" /> -->
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
