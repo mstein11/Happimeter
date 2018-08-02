@@ -176,6 +176,10 @@ namespace Happimeter.Services
                     methodResult.ResultType = AuthResultTypes.ErrorUnknown;
                 }
             }
+            else
+            {
+                methodResult.ResultType = AuthResultTypes.ErrorUnknown;
+            }
 
 
             return methodResult;
