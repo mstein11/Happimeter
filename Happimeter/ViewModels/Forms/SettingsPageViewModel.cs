@@ -27,22 +27,26 @@ namespace Happimeter.ViewModels.Forms
                 .Get<IAccountStoreService>()
                     .GetAccount()?.Username ?? "";
 
-            Logout = new Command(() =>
+            Logout = new Command(async () =>
             {
-                ServiceLocator
+                var logoutWanted = await Application.Current.MainPage.DisplayAlert("Logout", "Do you want to logout from your happimeter account?", "Yes", "No");
+                if (logoutWanted)
+                {
+                    ServiceLocator
                     .Instance
                     .Get<IAccountStoreService>()
                     .DeleteAccount();
 
-                ServiceLocator
-                    .Instance
-                    .Get<ISharedDatabaseContext>()
-                    .ResetDatabase();
+                    ServiceLocator
+                        .Instance
+                        .Get<ISharedDatabaseContext>()
+                        .ResetDatabase();
 
-                ServiceLocator
-                    .Instance
-                    .Get<INativeNavigationService>()
-                    .NavigateToLoginPage();
+                    ServiceLocator
+                        .Instance
+                        .Get<INativeNavigationService>()
+                        .NavigateToLoginPage();
+                }
             });
             //setup list menu
             var hasBtPairing = ServiceLocator.Instance.Get<ISharedDatabaseContext>().Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive) != null;
