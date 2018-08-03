@@ -11,121 +11,133 @@ using AltBeaconOrg.BoundBeacon.Powersave;
 using Android.App;
 using System.Collections.Concurrent;
 using System.Linq;
+using Plugin.BluetoothLE;
+using Happimeter.Watch.Droid.ServicesBusinessLogic;
 
 namespace Happimeter.Watch.Droid.Services
 {
-	public class BeaconListenerService : Java.Lang.Object, IBeaconConsumer
-	{
-		private BeaconManager BeaconManager { get; set; }
-		private List<Region> ToMonitor { get; set; } = new List<Region>();
-		private readonly RangeNotifier _rangeNotifier = new RangeNotifier();
-		private BackgroundPowerSaver PowerSave { get; set; }
+    public class BeaconListenerService : Java.Lang.Object, IBeaconConsumer
+    {
+        private BeaconManager BeaconManager { get; set; }
+        private List<Region> ToMonitor { get; set; } = new List<Region>();
+        private readonly RangeNotifier _rangeNotifier = new RangeNotifier();
+        private BackgroundPowerSaver PowerSave { get; set; }
 
-		public static ConcurrentBag<(int, double)> ProximityMeasures = new ConcurrentBag<(int, double)>();
+        public static ConcurrentBag<(int, double)> ProximityMeasures = new ConcurrentBag<(int, double)>();
 
-		public BeaconListenerService()
-		{
-		}
+        public BeaconListenerService()
+        {
+        }
 
-		public Context ApplicationContext => Application.Context;
+        public Context ApplicationContext => Application.Context;
 
-		public bool BindService(Intent intent, IServiceConnection serviceConnection, [GeneratedEnum] Bind flags)
-		{
-			return ApplicationContext.BindService(intent, serviceConnection, flags);
-		}
+        public bool BindService(Intent intent, IServiceConnection serviceConnection, [GeneratedEnum] Bind flags)
+        {
+            return ApplicationContext.BindService(intent, serviceConnection, flags);
+        }
 
-		public void OnBeaconServiceConnect()
-		{
-			BeaconManager.SetForegroundScanPeriod(60 * 1000);
-			BeaconManager.SetBackgroundScanPeriod(60 * 1000);
-			BeaconManager.SetBackgroundBetweenScanPeriod(60 * 1000);
-			BeaconManager.SetForegroundBetweenScanPeriod(60 * 1000);
-			PowerSave = new BackgroundPowerSaver(ApplicationContext);
+        public void OnBeaconServiceConnect()
+        {
+            var ratio = UtilHelper.RatioSleepingInMeasurementPeriod;
+            var duration = ServiceLocator.Instance.Get<IDeviceService>().GetMeasurementMode();
+            var runfor = 60;
+            var breakFor = 60;
+            if (duration.HasValue)
+            {
+                breakFor = duration.Value - (duration.Value / ratio);
+                runfor = duration.Value / ratio;
+            }
 
-			_rangeNotifier.DidRangeBeaconsInRegionComplete += _rangeNotifier_DidRangeBeaconsInRegionComplete;
+            BeaconManager.SetForegroundScanPeriod(runfor * 1000);
+            BeaconManager.SetBackgroundScanPeriod(runfor * 1000);
+            BeaconManager.SetBackgroundBetweenScanPeriod(breakFor * 1000);
+            BeaconManager.SetForegroundBetweenScanPeriod(breakFor * 1000);
+            PowerSave = new BackgroundPowerSaver(ApplicationContext);
 
-			var region = new AltBeaconOrg.BoundBeacon.Region("com.company.name", Identifier.Parse(UuidHelper.BeaconUuidString), null, null);
-			var region1 = new AltBeaconOrg.BoundBeacon.Region("com.company.name1", Identifier.Parse(UuidHelper.WakeupBeaconUuidString), null, null);
-			ToMonitor.Add(region);
-			ToMonitor.Add(region1);
+            _rangeNotifier.DidRangeBeaconsInRegionComplete += _rangeNotifier_DidRangeBeaconsInRegionComplete;
 
-			BeaconManager.SetRangeNotifier(_rangeNotifier);
-			BeaconManager.StartRangingBeaconsInRegion(region);
-			BeaconManager.StartRangingBeaconsInRegion(region1);
-		}
+            var region = new AltBeaconOrg.BoundBeacon.Region("com.company.name", Identifier.Parse(UuidHelper.BeaconUuidString), null, null);
+            var region1 = new AltBeaconOrg.BoundBeacon.Region("com.company.name1", Identifier.Parse(UuidHelper.WakeupBeaconUuidString), null, null);
+            ToMonitor.Add(region);
+            ToMonitor.Add(region1);
 
-		public void UnbindService(IServiceConnection serviceConnection)
-		{
-			ApplicationContext.UnbindService(serviceConnection);
-		}
+            BeaconManager.SetRangeNotifier(_rangeNotifier);
+            BeaconManager.StartRangingBeaconsInRegion(region);
+            BeaconManager.StartRangingBeaconsInRegion(region1);
+        }
 
-		public void StartListeningForBeacons()
-		{
+        public void UnbindService(IServiceConnection serviceConnection)
+        {
+            ApplicationContext.UnbindService(serviceConnection);
+        }
+
+        public void StartListeningForBeacons()
+        {
 #if DEBUG
-			BeaconManager.SetDebug(true);
+            BeaconManager.SetDebug(true);
 #endif
-			BeaconManager = BeaconManager.GetInstanceForApplication(Application.Context);
-			var iBeaconParser = new BeaconParser();
-			//  ibeacon layout
-			iBeaconParser.SetBeaconLayout(UuidHelper.BeaconLayout);
-			BeaconManager.BeaconParsers.Add(iBeaconParser);
-			BeaconManager.Bind(this);
-		}
+            BeaconManager = BeaconManager.GetInstanceForApplication(Application.Context);
+            var iBeaconParser = new BeaconParser();
+            //  ibeacon layout
+            iBeaconParser.SetBeaconLayout(UuidHelper.BeaconLayout);
+            BeaconManager.BeaconParsers.Add(iBeaconParser);
+            BeaconManager.Bind(this);
+        }
 
-		public void StopListeningForBeacons()
-		{
-			if (BeaconManager != null && ToMonitor != null && ToMonitor.Any())
-			{
-				foreach (var item in ToMonitor)
-				{
-					BeaconManager.StopRangingBeaconsInRegion(item);
-				}
+        public void StopListeningForBeacons()
+        {
+            if (BeaconManager != null && ToMonitor != null && ToMonitor.Any())
+            {
+                foreach (var item in ToMonitor)
+                {
+                    BeaconManager.StopRangingBeaconsInRegion(item);
+                }
 
-			}
-		}
+            }
+        }
 
 
-		void _rangeNotifier_DidRangeBeaconsInRegionComplete(object sender, RangeEventArgs e)
-		{
-			try
-			{
-				Console.WriteLine("Did Range yo");
-				foreach (var beacon in e.Beacons)
-				{
-					var userId = UtilHelper.GetUserIdFromMajorMinor(beacon.Id2.ToInt(), beacon.Id3.ToInt());
-					Console.WriteLine($"userId {userId}; Distance {beacon.Distance}");
-					ProximityMeasures.Add((userId, beacon.Distance));
-				}
-			}
-			catch (Exception)
-			{
-				Console.WriteLine("Caught error in ranging");
-			}
-		}
+        void _rangeNotifier_DidRangeBeaconsInRegionComplete(object sender, RangeEventArgs e)
+        {
+            try
+            {
+                Console.WriteLine("Did Range yo");
+                foreach (var beacon in e.Beacons)
+                {
+                    var userId = UtilHelper.GetUserIdFromMajorMinor(beacon.Id2.ToInt(), beacon.Id3.ToInt());
+                    Console.WriteLine($"userId {userId}; Distance {beacon.Distance}");
+                    ProximityMeasures.Add((userId, beacon.Distance));
+                }
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Caught error in ranging");
+            }
+        }
 
-	}
+    }
 
-	public class RangeEventArgs : EventArgs
-	{
-		public Region Region { get; set; }
-		public ICollection<Beacon> Beacons { get; set; }
-	}
+    public class RangeEventArgs : EventArgs
+    {
+        public Region Region { get; set; }
+        public ICollection<Beacon> Beacons { get; set; }
+    }
 
-	public class RangeNotifier : Java.Lang.Object, IRangeNotifier
-	{
-		public event EventHandler<RangeEventArgs> DidRangeBeaconsInRegionComplete;
+    public class RangeNotifier : Java.Lang.Object, IRangeNotifier
+    {
+        public event EventHandler<RangeEventArgs> DidRangeBeaconsInRegionComplete;
 
-		public void DidRangeBeaconsInRegion(ICollection<Beacon> beacons, Region region)
-		{
-			OnDidRangeBeaconsInRegion(beacons, region);
-		}
+        public void DidRangeBeaconsInRegion(ICollection<Beacon> beacons, Region region)
+        {
+            OnDidRangeBeaconsInRegion(beacons, region);
+        }
 
-		void OnDidRangeBeaconsInRegion(ICollection<Beacon> beacons, Region region)
-		{
-			if (DidRangeBeaconsInRegionComplete != null)
-			{
-				DidRangeBeaconsInRegionComplete(this, new RangeEventArgs { Beacons = beacons, Region = region });
-			}
-		}
-	}
+        void OnDidRangeBeaconsInRegion(ICollection<Beacon> beacons, Region region)
+        {
+            if (DidRangeBeaconsInRegionComplete != null)
+            {
+                DidRangeBeaconsInRegionComplete(this, new RangeEventArgs { Beacons = beacons, Region = region });
+            }
+        }
+    }
 }

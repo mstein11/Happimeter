@@ -6,7 +6,7 @@
         string GetConfigValueByKey(string key);
         void RemoveConfigEntry(string key);
         void SetContinousMeasurementMode();
-        void SetBatterySaferMeasurementMode(int measurementInterval = 300);
+        void SetBatterySaferMeasurementMode(int measurementInterval = 900);
         int? GetMeasurementMode();
         bool IsContinousMeasurementMode();
         void SetDeactivateAppStartsOnBoot(bool starts);

@@ -66,7 +66,7 @@ namespace Happimeter.Core.Services
         ///     During the time where there is done nothing, the watch can go into hibernate mode to save battery.
         /// </summary>
         /// <param name="measurementInterval">Measurement interval.</param>
-        public void SetBatterySaferMeasurementMode(int measurementInterval = 300)
+        public void SetBatterySaferMeasurementMode(int measurementInterval = 900)
         {
             var key = ConfigService.BatterySaferMeasurementInterval;
             AddOrUpdateConfigEntry(key, measurementInterval.ToString());

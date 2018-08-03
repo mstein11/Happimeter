@@ -130,5 +130,10 @@ namespace Happimeter.Core.Helper
         {
             return (Int32)(datetime.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
         }
+
+        /// <summary>
+        ///     If we have a measurement period of 15 minutes and this variable has a value of 15, we collect sensor data for 1 minute.
+        /// </summary>
+        public static int RatioSleepingInMeasurementPeriod = 15;
     }
 }
