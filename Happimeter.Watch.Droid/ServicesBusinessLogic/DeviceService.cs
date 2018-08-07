@@ -11,6 +11,9 @@ using Happimeter.Watch.Droid.Database;
 using Happimeter.Watch.Droid.Workers;
 using System.Linq;
 using Android.Content.PM;
+using Happimeter.Core.Models;
+using Java.Util.Logging;
+using Happimeter.Watch.Droid.BroadcastReceiver;
 
 namespace Happimeter.Watch.Droid.ServicesBusinessLogic
 {
@@ -79,10 +82,8 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
         ///     Enables the Continous mode. In continous mode, the watch constantly collects sensor data. 
         ///     Every minute, the watch calculated average, etc of the collected metrics and safes it to the db.
         /// </summary>
-        public void SetContinousMeasurementMode()
+        private void SetContinousMeasurementMode()
         {
-            ServiceLocator.Instance.Get<IConfigService>().SetContinousMeasurementMode();
-
             MeasurementWorker.GetInstance().Stop();
             MicrophoneWorker.GetInstance().Stop();
             BeaconWorker.GetInstance().Stop();
@@ -125,17 +126,15 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
         ///     Batterysafer mode is characterized by first gathering the sensor data for half of the given interval and then doing nothing the other half of the interval.
         ///     During the time where there is done nothing, the watch can go into hibernate mode to save battery.
         /// </summary>
-        /// <param name="measurementInterval">Measurement interval.</param>
-        public void SetBatterySaferMeasurementMode(int measurementInterval = 900)
+        private void SetBatterySaferMeasurementMode()
         {
-            ServiceLocator.Instance.Get<IConfigService>().SetBatterySaferMeasurementMode(measurementInterval);
-
             MeasurementWorker.GetInstance().Stop();
             MicrophoneWorker.GetInstance().Stop();
             BeaconWorker.GetInstance().Stop();
 
             System.Diagnostics.Debug.WriteLine("Stopped Continous mode - Started battery safer mode");
-
+            //reset next schedule time, so we can set a new time later
+            AlarmBroadcastReceiver.NextScheuleTime = null;
             var alarmManager = (AlarmManager)Application.Context.GetSystemService(Context.AlarmService);
             Intent alarmIntent = new Intent(Application.Context, typeof(BroadcastReceiver.AlarmBroadcastReceiver));
             var pendingIntent = PendingIntent.GetBroadcast(Application.Context, 0, alarmIntent, 0);
@@ -152,12 +151,26 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
                                   2 * 1000, pendingIntentBeacon);
         }
 
+        public void SetMeasurementMode(int id)
+        {
+            ServiceLocator.Instance.Get<IConfigService>().SetMeasurementMode(id);
+            var mode = ServiceLocator.Instance.Get<IConfigService>().GetMeasurementMode();
+            if (mode.IntervalSeconds == null || mode.FactorMeasurementOfInterval == null)
+            {
+                SetContinousMeasurementMode();
+            }
+            else
+            {
+                SetBatterySaferMeasurementMode();
+            }
+        }
+
         /// <summary>
         ///     If this method retuns null, we are in Continous Mode.
         ///     If this method returns a int value. We are in BatterySaferMode and the returned values indicates the duration of one interval.
         /// </summary>
         /// <returns>The measurement mode.</returns>
-        public int? GetMeasurementMode()
+        public MeasurementModeModel GetMeasurementMode()
         {
             return ServiceLocator.Instance.Get<IConfigService>().GetMeasurementMode();
         }

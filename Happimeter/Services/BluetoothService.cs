@@ -523,7 +523,7 @@ namespace Happimeter.Services
             }
         }
 
-        public async Task SendMeasurementMode(int? interval = null, Action<BluetoothWriteEvent> statusUpdate = null)
+        public async Task SendMeasurementMode(int modeId, Action<BluetoothWriteEvent> statusUpdate = null)
         {
             statusUpdate?.Invoke(BluetoothWriteEvent.Initialized);
             await Init();
@@ -550,7 +550,7 @@ namespace Happimeter.Services
                 return;
             }
 
-            var message = new SwitchMeasurementModeMessage(interval);
+            var message = new SwitchMeasurementModeMessage(modeId);
 
             var result = await WriteAsync(charac, message);
             if (result)

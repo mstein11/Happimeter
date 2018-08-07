@@ -5,6 +5,10 @@ using Happimeter.Core.Services;
 using Happimeter.Events;
 using Happimeter.Interfaces;
 using Happimeter.Services;
+using System.Security.Policy;
+using System.Collections.Generic;
+using System.Linq;
+using Xamarin.Forms;
 
 namespace Happimeter.ViewModels.Forms
 {
@@ -15,16 +19,22 @@ namespace Happimeter.ViewModels.Forms
             var configService = ServiceLocator.Instance.Get<IConfigService>();
             ContinousModeIsOn = configService.IsContinousMeasurementMode();
 
+            MeasurementModes = MeasurementMode.GetModes();
+            //SelectedMode = MeasurementModes.LastOrDefault();
             PushMeasurementModeToWatchText = "Safe and Push To Watch";
             PushMeasurementModeToWatchIsEnabled = true;
             PushMeasurementModeToWatchCommand = new Command(() =>
             {
+                if (SelectedMode == null)
+                {
+                    Application.Current.MainPage.DisplayAlert("Error", "Please select a mode", "Ok");
+                    return;
+                }
                 App.BluetoothAlertIfNeeded();
                 PushMeasurementModeToWatchText = "Loading...";
                 PushMeasurementModeToWatchIsEnabled = false;
 
-                int? valueToSend = ContinousModeIsOn ? null : (int?)UtilHelper.SecondsBatterySaverMeasurementPeriod;
-
+                int valueToSend = SelectedMode.Id;
                 ServiceLocator.Instance.Get<IBluetoothService>().SendMeasurementMode(valueToSend, (connectionUpdate) =>
                 {
                     Timer timer = null;
@@ -39,14 +49,9 @@ namespace Happimeter.ViewModels.Forms
                         case BluetoothWriteEvent.Complete:
                             PushMeasurementModeToWatchText = "Successfully changed mode";
                             timer = null;
-                            if (valueToSend != null)
-                            {
-                                ServiceLocator.Instance.Get<IConfigService>().SetBatterySaferMeasurementMode(valueToSend.Value);
-                            }
-                            else
-                            {
-                                ServiceLocator.Instance.Get<IConfigService>().SetContinousMeasurementMode();
-                            }
+
+                            ServiceLocator.Instance.Get<IConfigService>().SetMeasurementMode(valueToSend);
+
 
                             timer = new Timer((obj) =>
                             {
@@ -108,6 +113,64 @@ namespace Happimeter.ViewModels.Forms
             set => SetProperty(ref _pushMeasurementModeToWatchIsEnabled, value);
         }
 
+        private IList<MeasurementMode> _measurementModes = new List<MeasurementMode>();
+        public IList<MeasurementMode> MeasurementModes
+        {
+            get => _measurementModes;
+            set => SetProperty(ref _measurementModes, value);
+        }
+
+        private MeasurementMode _selectedMode;
+        public MeasurementMode SelectedMode
+        {
+            get => _selectedMode;
+            set => SetProperty(ref _selectedMode, value);
+        }
+
         public System.Windows.Input.ICommand PushMeasurementModeToWatchCommand { protected set; get; }
+    }
+
+    public class MeasurementMode
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public int? IntervalSeconds { get; set; }
+        public int? FactorMeasurementOfInterval { get; set; }
+        public bool IsSelected { get; set; }
+
+        public static IList<MeasurementMode> GetModes()
+        {
+            return new List<MeasurementMode> {
+                new MeasurementMode {
+                    Id = 1,
+                    Name = "Super Battery Safer",
+                    IntervalSeconds = 1800, //30 minutes
+                    FactorMeasurementOfInterval = 60,
+                    Description = "Every 30 Minutes the sensors run for 30 seconds."
+                },
+                new MeasurementMode {
+                    Id = 2,
+                    Name = "Battery Safer",
+                    IntervalSeconds = 900, //15 minutes
+                    FactorMeasurementOfInterval = 30,
+                    Description = "Every 15 Minutes the sensors run for 30 seconds."
+                },
+                new MeasurementMode {
+                    Id = 3,
+                    Name = "Normal Mode",
+                    IntervalSeconds = 300, // 5 minutes
+                    FactorMeasurementOfInterval = 10,
+                    Description = "Every 5 Minutes the sensors run for 30 seconds."
+                },
+                new MeasurementMode {
+                    Id = 4,
+                    Name = "Continuous mode",
+                    IntervalSeconds = null, // every minute with continous measurements
+                    FactorMeasurementOfInterval = null,
+                    Description = "The sensors run continuously and a aggregated measurement is saved every minute"
+                }
+            };
+        }
     }
 }

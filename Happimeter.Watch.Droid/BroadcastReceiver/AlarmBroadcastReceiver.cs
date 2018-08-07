@@ -13,7 +13,7 @@ namespace Happimeter.Watch.Droid.BroadcastReceiver
     public class AlarmBroadcastReceiver : Android.Content.BroadcastReceiver
     {
         public static bool IsScheduled = false;
-        private static DateTime? NextScheuleTime;
+        public static DateTime? NextScheuleTime;
         public AlarmBroadcastReceiver()
         {
         }
@@ -29,10 +29,10 @@ namespace Happimeter.Watch.Droid.BroadcastReceiver
             }
             IsScheduled = false;
             var deviceService = ServiceLocator.Instance.Get<IDeviceService>();
-            var duration = deviceService.GetMeasurementMode();
+            var measurementMode = deviceService.GetMeasurementMode();
             System.Diagnostics.Debug.WriteLine("Received alarm");
 
-            if (duration == null)
+            if (measurementMode.IntervalSeconds == null)
             {
                 //do not reschedule alarm. do not start the workers! We are actually in continous mode already.
                 System.Diagnostics.Debug.WriteLine("RECEIVED MEASUREMENT ALARM BUT WE ARE IN CONTINOUS MODE... IGNORING");
@@ -44,12 +44,12 @@ namespace Happimeter.Watch.Droid.BroadcastReceiver
             Intent alarmIntent = new Intent(context, typeof(AlarmBroadcastReceiver));
             var pendingIntent = PendingIntent.GetBroadcast(context, 0, alarmIntent, 0);
 
-            var durationAsTimespan = TimeSpan.FromSeconds(duration.Value);
+            var durationAsTimespan = TimeSpan.FromSeconds(measurementMode.IntervalSeconds.Value);
 
             var next = DateTime.UtcNow.Add(durationAsTimespan);
             while (next.Minute % durationAsTimespan.Minutes != 0)
             {
-                next = next.AddMinutes(1);
+                next = next.AddMinutes(-1);
             }
             next = next.AddSeconds(next.Second * -1);
             //store when the next alarm is scheduled, so that we stop alarm that are from previous start of the app.
@@ -67,9 +67,9 @@ namespace Happimeter.Watch.Droid.BroadcastReceiver
             Task.Factory.StartNew(() =>
             {
                 var measurementWorker = MeasurementWorker.GetInstance(context);
-                MicrophoneWorker.GetInstance().StartFor((int)duration.Value / UtilHelper.RatioSleepingInMeasurementPeriod);
-                measurementWorker.StartFor((int)duration.Value / UtilHelper.RatioSleepingInMeasurementPeriod);
-                BluetoothScannerWorker.GetInstance().StartFor((int)duration.Value / UtilHelper.RatioSleepingInMeasurementPeriod);
+                MicrophoneWorker.GetInstance().StartFor((int)measurementMode.IntervalSeconds.Value / measurementMode.FactorMeasurementOfInterval.Value);
+                measurementWorker.StartFor((int)measurementMode.IntervalSeconds.Value / measurementMode.FactorMeasurementOfInterval.Value);
+                BluetoothScannerWorker.GetInstance().StartFor((int)measurementMode.IntervalSeconds.Value / measurementMode.FactorMeasurementOfInterval.Value);
             });
 
             IsScheduled = true;

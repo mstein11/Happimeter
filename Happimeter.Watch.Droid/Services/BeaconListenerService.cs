@@ -39,13 +39,13 @@ namespace Happimeter.Watch.Droid.Services
         public void OnBeaconServiceConnect()
         {
             var ratio = UtilHelper.RatioSleepingInMeasurementPeriod;
-            var duration = ServiceLocator.Instance.Get<IDeviceService>().GetMeasurementMode();
+            var measurementMode = ServiceLocator.Instance.Get<IDeviceService>().GetMeasurementMode();
             var runfor = 60;
             var breakFor = 60;
-            if (duration.HasValue)
+            if (measurementMode.IntervalSeconds != null && measurementMode.FactorMeasurementOfInterval != null)
             {
-                breakFor = duration.Value - (duration.Value / ratio);
-                runfor = duration.Value / ratio;
+                breakFor = measurementMode.IntervalSeconds.Value - (measurementMode.IntervalSeconds.Value / measurementMode.FactorMeasurementOfInterval.Value);
+                runfor = measurementMode.IntervalSeconds.Value / measurementMode.FactorMeasurementOfInterval.Value;
             }
 
             BeaconManager.SetForegroundScanPeriod(runfor * 1000);

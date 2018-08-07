@@ -1,6 +1,8 @@
 ﻿using System;
 using Happimeter.Core.Database;
 using Happimeter.Core.Helper;
+using Happimeter.Core.Models;
+using System.Linq;
 
 namespace Happimeter.Core.Services
 {
@@ -9,6 +11,7 @@ namespace Happimeter.Core.Services
         public const string GenericQuestionGroupIdKey = "GENERIC_QUESTION_GROUP";
         public const string WatchNameKey = "WATCH_NAME_KEY";
         public const string BatterySaferMeasurementInterval = "BATTERY_SAFER_MEASUREMENT_INTERVAL";
+        public const string BatterySaferMeasurementIntervalId = "BATTERY_SAFER_MEASUREMENT_INTERVAL_ID";
         public const string DeactivateAppStartsOnBoot = "DEACTIVATE_APP_STARTS_ON_BOOT";
 
         public void AddOrUpdateConfigEntry(string key, string value)
@@ -54,11 +57,11 @@ namespace Happimeter.Core.Services
         ///     Enables the Continous mode. In continous mode, the watch constantly collects sensor data. 
         ///     Every minute, the watch calculated average, etc of the collected metrics and safes it to the db.
         /// </summary>
-        public void SetContinousMeasurementMode()
+        /*public void SetContinousMeasurementMode()
         {
             var key = ConfigService.BatterySaferMeasurementInterval;
             RemoveConfigEntry(key);
-        }
+        }*
 
         /// <summary>
         ///     Toggles the measurement mode of the watch.
@@ -66,18 +69,19 @@ namespace Happimeter.Core.Services
         ///     During the time where there is done nothing, the watch can go into hibernate mode to save battery.
         /// </summary>
         /// <param name="measurementInterval">Measurement interval.</param>
-        public void SetBatterySaferMeasurementMode(int measurementInterval = 900)
+        /*public void SetBatterySaferMeasurementMode(int measurementInterval = 900)
         {
             var key = ConfigService.BatterySaferMeasurementInterval;
             AddOrUpdateConfigEntry(key, measurementInterval.ToString());
-        }
+        }*/
 
+        /// OLD
         /// <summary>
         ///     If this method retuns null, we are in Continous Mode.
         ///     If this method returns a int value. We are in BatterySaferMode and the returned values indicates the duration of one interval.
         /// </summary>
         /// <returns>The measurement mode.</returns>
-        public int? GetMeasurementMode()
+        /*public int? GetMeasurementMode()
         {
             var key = ConfigService.BatterySaferMeasurementInterval;
             var value = GetConfigValueByKey(key);
@@ -87,6 +91,23 @@ namespace Happimeter.Core.Services
                 return outputValue;
             }
             return null;
+        }*/
+
+        public MeasurementModeModel GetMeasurementMode()
+        {
+            var id = GetConfigValueByKey(BatterySaferMeasurementIntervalId);
+            int idAsInt;
+            if (id == null || !int.TryParse(id, out idAsInt))
+            {
+                return MeasurementModeModel.GetDefault();
+            }
+            var mode = MeasurementModeModel.GetModes().FirstOrDefault(x => x.Id == idAsInt);
+            return mode ?? MeasurementModeModel.GetDefault();
+        }
+
+        public void SetMeasurementMode(int id)
+        {
+            AddOrUpdateConfigEntry(BatterySaferMeasurementIntervalId, id.ToString());
         }
 
         /// <summary>
@@ -95,7 +116,7 @@ namespace Happimeter.Core.Services
         /// <returns><c>true</c>, if continous measurement mode was ised, <c>false</c> if runnign in battery saver mode.</returns>
         public bool IsContinousMeasurementMode()
         {
-            return GetMeasurementMode() == null;
+            return GetMeasurementMode().IntervalSeconds == null;
         }
 
         public void SetDeactivateAppStartsOnBoot(bool starts)
