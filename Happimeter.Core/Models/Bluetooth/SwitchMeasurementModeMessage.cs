@@ -11,9 +11,6 @@ namespace Happimeter.Core.Models.Bluetooth
         public SwitchMeasurementModeMessage(int value) : base(MessageNameConstant)
         {
             //int value is id of mode
-
-            //if we have a value, it means battery safer measurement mode
-            //int value indicates the seconds of one interval
             MessageValue = value.ToString();
 
         }

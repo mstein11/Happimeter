@@ -10,7 +10,6 @@ namespace Happimeter.Core.Services
     {
         public const string GenericQuestionGroupIdKey = "GENERIC_QUESTION_GROUP";
         public const string WatchNameKey = "WATCH_NAME_KEY";
-        public const string BatterySaferMeasurementInterval = "BATTERY_SAFER_MEASUREMENT_INTERVAL";
         public const string BatterySaferMeasurementIntervalId = "BATTERY_SAFER_MEASUREMENT_INTERVAL_ID";
         public const string DeactivateAppStartsOnBoot = "DEACTIVATE_APP_STARTS_ON_BOOT";
 
@@ -51,47 +50,6 @@ namespace Happimeter.Core.Services
             var entry = context.Get<ConfigEntry>(x => x.Key == key);
             return entry?.Value ?? null;
         }
-
-
-        /// <summary>
-        ///     Enables the Continous mode. In continous mode, the watch constantly collects sensor data. 
-        ///     Every minute, the watch calculated average, etc of the collected metrics and safes it to the db.
-        /// </summary>
-        /*public void SetContinousMeasurementMode()
-        {
-            var key = ConfigService.BatterySaferMeasurementInterval;
-            RemoveConfigEntry(key);
-        }*
-
-        /// <summary>
-        ///     Toggles the measurement mode of the watch.
-        ///     Batterysafer mode is characterized by first gathering the sensor data for half of the given interval and then doing nothing the other half of the interval.
-        ///     During the time where there is done nothing, the watch can go into hibernate mode to save battery.
-        /// </summary>
-        /// <param name="measurementInterval">Measurement interval.</param>
-        /*public void SetBatterySaferMeasurementMode(int measurementInterval = 900)
-        {
-            var key = ConfigService.BatterySaferMeasurementInterval;
-            AddOrUpdateConfigEntry(key, measurementInterval.ToString());
-        }*/
-
-        /// OLD
-        /// <summary>
-        ///     If this method retuns null, we are in Continous Mode.
-        ///     If this method returns a int value. We are in BatterySaferMode and the returned values indicates the duration of one interval.
-        /// </summary>
-        /// <returns>The measurement mode.</returns>
-        /*public int? GetMeasurementMode()
-        {
-            var key = ConfigService.BatterySaferMeasurementInterval;
-            var value = GetConfigValueByKey(key);
-            int outputValue;
-            if (int.TryParse(value, out outputValue))
-            {
-                return outputValue;
-            }
-            return null;
-        }*/
 
         public MeasurementModeModel GetMeasurementMode()
         {

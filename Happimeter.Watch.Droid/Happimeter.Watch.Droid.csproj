@@ -223,7 +223,7 @@
     <Compile Include="Helper\UiHelper.cs" />
     <Compile Include="ServicesBusinessLogic\AccountStoreService.cs" />
     <Compile Include="Activities\InfoActivity.cs" />
-    <Compile Include="Database\MeasurementService.cs" />
+    <Compile Include="ServicesBusinessLogic\MeasurementService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

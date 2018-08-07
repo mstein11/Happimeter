@@ -1,13 +1,9 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using Happimeter.Core.Helper;
 using Happimeter.Core.Services;
 using Happimeter.Events;
 using Happimeter.Interfaces;
-using Happimeter.Services;
-using System.Security.Policy;
 using System.Collections.Generic;
-using System.Linq;
 using Xamarin.Forms;
 
 namespace Happimeter.ViewModels.Forms
