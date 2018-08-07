@@ -6,17 +6,13 @@ namespace Happimeter.Core.Models.Bluetooth
 {
     public class SwitchMeasurementModeMessage : BaseBluetoothMessage
     {
-        public const string MessageNameConstant = "MModeMess";
+        public const string MessageNameConstant = "MModeMess2";
 
-        public SwitchMeasurementModeMessage(int? value) : base(MessageNameConstant)
+        public SwitchMeasurementModeMessage(int value) : base(MessageNameConstant)
         {
-            //if value is null, it means continous measurement mode
-            if (value != null)
-            {
-                //if we have a value, it means battery safer measurement mode
-                //int value indicates the seconds of one interval
-                MessageValue = value.Value.ToString();
-            }
+            //int value is id of mode
+            MessageValue = value.ToString();
+
         }
     }
 }

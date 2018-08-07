@@ -1,5 +1,6 @@
 ﻿using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Watch.Droid.Database;
+using Happimeter.Core.Models;
 
 namespace Happimeter.Watch.Droid.ServicesBusinessLogic
 {
@@ -10,10 +11,9 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
         void RemovePairing();
         bool IsPaired();
         void NavigateToPairingRequestPage(string deviceName);
-        int? GetMeasurementMode();
+        MeasurementModeModel GetMeasurementMode();
         bool IsContinousMeasurementMode();
-        void SetBatterySaferMeasurementMode(int measurementInterval = 300);
-        void SetContinousMeasurementMode();
+        void SetMeasurementMode(int id);
         BluetoothPairing GetBluetoothPairing();
         int BatteryPercent();
         string AppVersion();

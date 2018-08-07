@@ -40,11 +40,16 @@
                 </RelativeLayout>
                 <StackLayout Padding="20, 0, 20 ,20" Spacing="15" VerticalOptions="Fill">
                     <Label Text="Measurement Mode"/>
-                    <Label FontSize="12" Text="Here you can switch between the battery safer and continous mode. In battery safer mode, the device will save the sensor data every 10 minutes, in continous mode every minute."/>
-                    <StackLayout Spacing="0" Orientation="Horizontal" VerticalOptions="CenterAndExpand">
+                    <!-- Label FontSize="12" Text="Here you can switch between the battery safer and continous mode. In battery safer mode, the device will save the sensor data every 10 minutes, in continous mode every minute."/> -->
+                    <!--<StackLayout Spacing="0" Orientation="Horizontal" VerticalOptions="CenterAndExpand">
                         <Label FontSize="14" FontAttributes="Bold" Text="Activate continous mode" />
                         <Switch IsToggled="{Binding ContinousModeIsOn}" HorizontalOptions="EndAndExpand"/>
+                    </StackLayout>-->
+                    <StackLayout Spacing="0" Orientation="Horizontal" VerticalOptions="CenterAndExpand">
+                        <Label FontSize="14" FontAttributes="Bold" Text="Select Mode" VerticalOptions="Center" VerticalTextAlignment="Center"/>
+                        <Picker Title="Select Measurement Mode" ItemsSource="{Binding MeasurementModes}" ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding SelectedMode}" HorizontalOptions="EndAndExpand"/>
                     </StackLayout>
+                    <Label FontSize="12" Text="{Binding SelectedMode.Description}"></Label>
                     <local:MyButton Text="{Binding PushMeasurementModeToWatchText}" IsEnabled="{Binding PushMeasurementModeToWatchIsEnabled}" Command="{Binding PushMeasurementModeToWatchCommand}" Style="{StaticResource ButtonWithBackground}"></local:MyButton>
                 </StackLayout>
             </StackLayout>

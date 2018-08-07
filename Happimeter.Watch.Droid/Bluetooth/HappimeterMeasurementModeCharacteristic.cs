@@ -4,6 +4,7 @@ using Happimeter.Core.Helper;
 using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Watch.Droid.ServicesBusinessLogic;
 using Java.Util;
+using Happimeter.Core.Models;
 
 namespace Happimeter.Watch.Droid.Bluetooth
 {
@@ -28,25 +29,19 @@ namespace Happimeter.Watch.Droid.Bluetooth
                 System.Diagnostics.Debug.WriteLine($"Device {deviceAddress} sent measurementMode message");
 
                 var mesVal = message.MessageValue;
-                if (mesVal == null)
+
+                int modeId;
+                if (int.TryParse(mesVal, out modeId))
                 {
-                    //message value of null indicates that we want to run in Continous Mode
-                    ServiceLocator.Instance.Get<IDeviceService>().SetContinousMeasurementMode();
+                    //if we can parse it, we have the measurement interval in seconds
+                    ServiceLocator.Instance.Get<IDeviceService>().SetMeasurementMode(modeId);
                 }
                 else
                 {
-                    int duration;
-                    if (int.TryParse(mesVal, out duration))
-                    {
-                        //if we can parse it, we have the measurement interval in seconds
-                        ServiceLocator.Instance.Get<IDeviceService>().SetBatterySaferMeasurementMode(duration);
-                    }
-                    else
-                    {
-                        //if we can not parse it, we go with the default
-                        ServiceLocator.Instance.Get<IDeviceService>().SetBatterySaferMeasurementMode();
-                    }
+                    //if we can not parse it, we go with the default
+                    ServiceLocator.Instance.Get<IDeviceService>().SetMeasurementMode(MeasurementModeModel.GetDefault().Id);
                 }
+
             }
         }
     }

@@ -51,6 +51,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\LoggingService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\ILoggingService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\IAccountStoreService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\MeasurementModeModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Models\" />
