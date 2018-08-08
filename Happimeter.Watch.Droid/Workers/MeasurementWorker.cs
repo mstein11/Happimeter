@@ -496,7 +496,7 @@ namespace Happimeter.Watch.Droid.Workers
         private async Task StartSensors()
         {
             _sensorManager = (SensorManager)Application.Context.GetSystemService(Android.Content.Context.SensorService);
-
+            StopSensors();
             var light = _sensorManager.GetDefaultSensor(SensorType.Light);
             if (light != null)
             {

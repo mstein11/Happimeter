@@ -38,7 +38,6 @@ namespace Happimeter.Watch.Droid.Services
 
         public void OnBeaconServiceConnect()
         {
-            var ratio = UtilHelper.RatioSleepingInMeasurementPeriod;
             var measurementMode = ServiceLocator.Instance.Get<IDeviceService>().GetMeasurementMode();
             var runfor = 60;
             var breakFor = 60;
@@ -94,6 +93,11 @@ namespace Happimeter.Watch.Droid.Services
                 }
 
             }
+            if (BeaconManager != null)
+            {
+                BeaconManager.Unbind(this);
+            }
+
         }
 
 

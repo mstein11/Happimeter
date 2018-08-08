@@ -131,6 +131,7 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
             MeasurementWorker.GetInstance().Stop();
             MicrophoneWorker.GetInstance().Stop();
             BeaconWorker.GetInstance().Stop();
+            BluetoothScannerWorker.GetInstance().Stop();
 
             System.Diagnostics.Debug.WriteLine("Stopped Continous mode - Started battery safer mode");
             //reset next schedule time, so we can set a new time later
