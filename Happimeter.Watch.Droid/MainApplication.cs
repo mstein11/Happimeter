@@ -5,32 +5,33 @@ using Android.App;
 using Java.Lang;
 using Plugin.BluetoothLE;
 using Android.Speech.Tts;
+using AltBeaconOrg.Bluetooth;
 namespace Happimeter.Watch.Droid
 {
-	public class MainApplication : Application, IBootstrapNotifier
-	{
-		//private BackgroundPowerSaver _backgroundPowerSaver;
-		private bool _haveDetectedBeaconsSinceBoot = false;
-		//private MonitoringActivity monitoringActivity = null;
+    public class MainApplication : Application, IBootstrapNotifier
+    {
+        //private BackgroundPowerSaver _backgroundPowerSaver;
+        private bool _haveDetectedBeaconsSinceBoot = false;
+        //private MonitoringActivity monitoringActivity = null;
 
-		private BeaconManager BeaconManager { get; set; }
-		private RegionBootstrap regionBootstrap;
+        private BeaconManager BeaconManager { get; set; }
+        private RegionBootstrap regionBootstrap;
 
-		public MainApplication()
-		{
-		}
+        public MainApplication()
+        {
+        }
 
-		public override void OnCreate()
-		{
-			base.OnCreate();
+        public override void OnCreate()
+        {
+            base.OnCreate();
 
-			Log.Error("HAPPIMETER", "Inside Main Application");
-
-			// To detect proprietary beacons, you must add a line like below corresponding to your beacon
-			// type.  Do a web search for "setBeaconLayout" to get the proper expression.
-			// beaconManager.getBeaconParsers().add(new BeaconParser().
-			//        setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"));
-			/*
+            BluetoothMedic.Instance.EnablePowerCycleOnFailures(this);
+            BluetoothMedic.Instance.SetNotificationsEnabled(true, Resource.Drawable.notification_icon_background);
+            // To detect proprietary beacons, you must add a line like below corresponding to your beacon
+            // type.  Do a web search for "setBeaconLayout" to get the proper expression.
+            // beaconManager.getBeaconParsers().add(new BeaconParser().
+            //        setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"));
+            /*
 			BeaconManager = BeaconManager.GetInstanceForApplication(this);
 			var iBeaconParser = new BeaconParser();
 			//  Estimote > 2013
@@ -45,21 +46,21 @@ namespace Happimeter.Watch.Droid
 
 			RegionBootstrap = new RegionBootstrap(this, region);
 			*/
-		}
+        }
 
-		public void DidDetermineStateForRegion(int state, Region region)
-		{
-			//throw new NotImplementedException();
-		}
+        public void DidDetermineStateForRegion(int state, Region region)
+        {
+            //throw new NotImplementedException();
+        }
 
-		public void DidEnterRegion(Region region)
-		{
-			//throw new NotImplementedException();
-		}
+        public void DidEnterRegion(Region region)
+        {
+            //throw new NotImplementedException();
+        }
 
-		public void DidExitRegion(Region region)
-		{
-			//throw new NotImplementedException();
-		}
-	}
+        public void DidExitRegion(Region region)
+        {
+            //throw new NotImplementedException();
+        }
+    }
 }

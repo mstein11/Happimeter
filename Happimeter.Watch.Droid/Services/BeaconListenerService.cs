@@ -47,10 +47,12 @@ namespace Happimeter.Watch.Droid.Services
                 runfor = measurementMode.IntervalSeconds.Value / measurementMode.FactorMeasurementOfInterval.Value;
             }
 
-            BeaconManager.SetForegroundScanPeriod(runfor * 1000);
-            BeaconManager.SetBackgroundScanPeriod(runfor * 1000);
-            BeaconManager.SetBackgroundBetweenScanPeriod(breakFor * 1000);
-            BeaconManager.SetForegroundBetweenScanPeriod(breakFor * 1000);
+
+            BeaconManager.ForegroundScanPeriod = runfor * 1000;
+            BeaconManager.BackgroundScanPeriod = runfor * 1000;
+            BeaconManager.BackgroundBetweenScanPeriod = breakFor * 1000;
+            BeaconManager.ForegroundBetweenScanPeriod = breakFor * 1000;
+
             PowerSave = new BackgroundPowerSaver(ApplicationContext);
 
             _rangeNotifier.DidRangeBeaconsInRegionComplete += _rangeNotifier_DidRangeBeaconsInRegionComplete;
@@ -60,7 +62,7 @@ namespace Happimeter.Watch.Droid.Services
             ToMonitor.Add(region);
             ToMonitor.Add(region1);
 
-            BeaconManager.SetRangeNotifier(_rangeNotifier);
+            BeaconManager.AddRangeNotifier(_rangeNotifier);
             BeaconManager.StartRangingBeaconsInRegion(region);
             BeaconManager.StartRangingBeaconsInRegion(region1);
         }
@@ -73,7 +75,7 @@ namespace Happimeter.Watch.Droid.Services
         public void StartListeningForBeacons()
         {
 #if DEBUG
-            BeaconManager.SetDebug(true);
+            //BeaconManager.SetDebug(true);
 #endif
             BeaconManager = BeaconManager.GetInstanceForApplication(Application.Context);
             var iBeaconParser = new BeaconParser();
