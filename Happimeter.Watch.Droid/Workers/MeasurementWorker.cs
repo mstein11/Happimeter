@@ -19,6 +19,9 @@ using Android.OS;
 using Happimeter.Core.Models.Bluetooth;
 using Happimeter.Watch.Droid.ServicesBusinessLogic;
 using Android.Content.PM;
+using AltBeaconOrg.Bluetooth;
+using System.ServiceProcess;
+using Happimeter.Core.Services;
 
 namespace Happimeter.Watch.Droid.Workers
 {
@@ -167,6 +170,14 @@ namespace Happimeter.Watch.Droid.Workers
 
         private async Task CollectMeasurements()
         {
+            Android.OS.Looper.Prepare();
+            var scanRes = BluetoothMedic.Instance.RunScanTest(Application.Context);
+            var transRes = BluetoothMedic.Instance.RunTransmitterTest(Application.Context);
+            if (!scanRes || !transRes)
+            {
+                ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.BluetoothInBadState);
+            }
+
             var sensorMeasurement = new SensorMeasurement
             {
                 Timestamp = DateTime.UtcNow,
