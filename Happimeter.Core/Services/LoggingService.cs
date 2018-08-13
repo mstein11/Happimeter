@@ -47,7 +47,8 @@ namespace Happimeter.Core.Services
             var currentMethodName = sf.GetMethod();
             if (!data.ContainsKey("methodName") && currentMethodName != null)
             {
-                data.Add("methodName", currentMethodName.DeclaringType.FullName + "." + currentMethodName.Name);
+                var fullString = currentMethodName.DeclaringType.FullName + "." + currentMethodName.Name;
+                data.Add("methodName", fullString.Substring(fullString.Length - 64, 64));
             }
 
             Analytics.TrackEvent(name, data);

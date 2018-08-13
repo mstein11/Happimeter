@@ -169,6 +169,9 @@
     <Reference Include="AndroidAltBeaconLibrary">
       <HintPath>..\packages\AndroidAltBeaconLibrary_2_15.2.15.0\lib\monoandroid81\AndroidAltBeaconLibrary.dll</HintPath>
     </Reference>
+    <Reference Include="Plugin.CurrentActivity">
+      <HintPath>..\packages\Plugin.CurrentActivity.2.1.0.4\lib\monoandroid44\Plugin.CurrentActivity.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
@@ -212,7 +215,6 @@
     <Compile Include="Workers\BluetoothScannerWorker.cs" />
     <Compile Include="BroadcastReceiver\SurveyAlarmBroadcastReceiver.cs" />
     <Compile Include="Services\BeaconListenerService.cs" />
-    <Compile Include="MainApplication.cs" />
     <Compile Include="Bluetooth\HappimeterDataNotifyCharacteristic.cs" />
     <Compile Include="Database\InfoScreenMeasurements.cs" />
     <Compile Include="Bluetooth\HappimeterPreSurveyDataCharacteristic.cs" />
@@ -224,6 +226,7 @@
     <Compile Include="ServicesBusinessLogic\AccountStoreService.cs" />
     <Compile Include="Activities\InfoActivity.cs" />
     <Compile Include="ServicesBusinessLogic\MeasurementService.cs" />
+    <Compile Include="MainApplication.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

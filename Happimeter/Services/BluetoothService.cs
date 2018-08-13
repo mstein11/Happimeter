@@ -21,7 +21,7 @@ namespace Happimeter.Services
     public class BluetoothService : IBluetoothService
     {
         private double _scanTimeoutSeconds = 30;
-        private double _connectTimeoutSeconds = 120;
+        //private double _connectTimeoutSeconds = 120;
         private double _messageTimeoutSeconds = 10;
 
         public BluetoothService()
@@ -377,16 +377,18 @@ namespace Happimeter.Services
                     }
 
                     var questions = measurementService.GetGenericQuestions();
-                    var predictions = predictionService.GetLastPrediction();
+                    var predictions = predictionService.GetLastPrediction().Where(x => x != null);
                     var activation = predictions.FirstOrDefault(x => x.QuestionId == 1);
                     var pleasance = predictions.FirstOrDefault(x => x.QuestionId == 2);
 
                     var message = new PreSurveySecondMessage();
-                    message.PredictedActivation = activation.PredictedValue;
-                    message.PredictedPleasance = pleasance.PredictedValue;
-                    message.PredictionFrom = pleasance.Timestamp;
+                    if (activation != null && pleasance != null)
+                    {
+                        message.PredictedActivation = activation.PredictedValue;
+                        message.PredictedPleasance = pleasance.PredictedValue;
+                        message.PredictionFrom = pleasance.Timestamp;
+                    }
                     message.Questions = questions.ToList();
-
 
                     var charac = await CharacteristicsReplaySubject
                         .Where(x => x.Uuid == UuidHelper.PreSurveyDataCharacteristicUuid)
@@ -686,6 +688,10 @@ namespace Happimeter.Services
                             {"bytesTransfered", result.Count().ToString()}
                         };
                 ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.DataExchangeEnd, eventData);
+                if (data.NeedAnotherBatch)
+                {
+                    ExchangeData();
+                }
             }
             catch (Exception e)
             {

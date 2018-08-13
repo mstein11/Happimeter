@@ -10,6 +10,7 @@ using Happimeter.Watch.Droid.Workers;
 using System.Threading.Tasks;
 using Happimeter.Watch.Droid.Fragments;
 using Happimeter.Watch.Droid.ServicesBusinessLogic;
+using System;
 
 namespace Happimeter.Watch.Droid.Activities
 {
@@ -72,25 +73,27 @@ namespace Happimeter.Watch.Droid.Activities
                     {
                         ServiceLocator.Instance.Get<IMeasurementService>().AddGenericQuestions(res.Questions);
                     }
-                    if (IsAlarmTriggered)
+                    if (res.PredictionFrom != default(DateTime))
                     {
-                        var vibrator = (Vibrator)ApplicationContext.GetSystemService(Context.VibratorService);
-                        //vibrate for 500 milis
-                        vibrator.Vibrate(500);
+                        if (IsAlarmTriggered)
+                        {
+                            var vibrator = (Vibrator)ApplicationContext.GetSystemService(Context.VibratorService);
+                            //vibrate for 500 milis
+                            vibrator.Vibrate(500);
+                        }
+                        var bundle = new Bundle();
+                        bundle.PutInt("activation", res.PredictedActivation);
+                        bundle.PutInt("pleasance", res.PredictedPleasance);
+
+                        var predictionsFragment = new ShowPredictionsFragment();
+                        predictionsFragment.Arguments = bundle;
+
+                        var transaction = FragmentManager.BeginTransaction();
+                        transaction.Replace(Resource.Id.fragment_container, predictionsFragment);
+                        transaction.CommitAllowingStateLoss();
+
+                        return;
                     }
-
-                    var bundle = new Bundle();
-                    bundle.PutInt("activation", res.PredictedActivation);
-                    bundle.PutInt("pleasance", res.PredictedPleasance);
-
-                    var predictionsFragment = new ShowPredictionsFragment();
-                    predictionsFragment.Arguments = bundle;
-
-                    var transaction = FragmentManager.BeginTransaction();
-                    transaction.Replace(Resource.Id.fragment_container, predictionsFragment);
-                    transaction.CommitAllowingStateLoss();
-
-                    return;
                 }
             }
 

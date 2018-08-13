@@ -10,6 +10,10 @@ using Happimeter.Watch.Droid.ViewModels;
 using Android.Graphics;
 using System.Reactive.Subjects;
 using Happimeter.Core.Services;
+using Happimeter.Watch.Droid.Workers;
+using AltBeaconOrg.Bluetooth;
+using Android.App;
+using System.Threading.Tasks;
 
 namespace Happimeter.Watch.Droid.ServicesBusinessLogic
 {
@@ -29,6 +33,22 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
             measurement.WatchBatteryPercentage = batteryLevel;
             var dbContext = ServiceLocator.Instance.Get<IDatabaseContext>();
             dbContext.AddGraph(measurement);
+
+            Task.Factory.StartNew(() =>
+            {
+                if (Android.OS.Looper.MyLooper() == null)
+                {
+                    Android.OS.Looper.Prepare();
+                }
+
+                var scanRes = BluetoothMedic.Instance.RunScanTest(Application.Context);
+                var transRes = BluetoothMedic.Instance.RunTransmitterTest(Application.Context);
+                if (!scanRes || !transRes)
+                {
+                    ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.BluetoothInBadState);
+                }
+                BluetoothWorker.GetInstance().SendNotification(UuidHelper.DataExchangeNotifyCharacteristicUuid, new DataExchangeInitMessage());
+            });
         }
 
         public void AddSensorMeasurement(SensorMeasurement measurement)
@@ -42,6 +62,22 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
             var dbContext = ServiceLocator.Instance.Get<IDatabaseContext>();
             dbContext.AddGraph(measurement);
             SaveInfoMeasurement(measurement);
+
+            Task.Factory.StartNew(() =>
+            {
+                if (Android.OS.Looper.MyLooper() == null)
+                {
+                    Android.OS.Looper.Prepare();
+                }
+
+                var scanRes = BluetoothMedic.Instance.RunScanTest(Application.Context);
+                var transRes = BluetoothMedic.Instance.RunTransmitterTest(Application.Context);
+                if (!scanRes || !transRes)
+                {
+                    ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.BluetoothInBadState);
+                }
+                BluetoothWorker.GetInstance().SendNotification(UuidHelper.DataExchangeNotifyCharacteristicUuid, new DataExchangeInitMessage());
+            });
         }
 
         public void SaveInfoMeasurement(SensorMeasurement measurement)
@@ -165,17 +201,30 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
             var referenceTime = DateTime.UtcNow;
             var stopWatch = new Stopwatch();
             stopWatch.Start();
-            var moods = ServiceLocator.Instance.Get<IDatabaseContext>().GetAllWithChildren<SurveyMeasurement>().Take(100).ToList();
+            var allMoods = ServiceLocator.Instance.Get<IDatabaseContext>().GetAllWithChildren<SurveyMeasurement>();
+            var moods = allMoods.Take(UtilHelper.NumberOfMeasurementToTransferPerOperation).ToList();
+            var moodsCount = allMoods.Count();
             stopWatch.Stop();
             Debug.WriteLine($"Read {moods.Count} moods from db. took {stopWatch.Elapsed.Seconds} seconds");
             stopWatch.Reset();
             stopWatch.Start();
-            var sensors = ServiceLocator.Instance.Get<IDatabaseContext>().GetSensorMeasurements().ToList();
+            var sensorMeasurementCount = ServiceLocator.Instance.Get<IDatabaseContext>().CountSensorMeasurements();
+            var sensors = ServiceLocator.Instance.Get<IDatabaseContext>().GetSensorMeasurements(0, UtilHelper.NumberOfMeasurementToTransferPerOperation).ToList();
             Debug.WriteLine($"Read {sensors.Count} sensors from db. took {stopWatch.Elapsed.Seconds} seconds");
             //remove self referencing loop so that we can serialize it
             moods.ForEach(x => x.SurveyItemMeasurement.ForEach(y => y.SurveyMeasurement = null));
             sensors.ForEach(x => x.SensorItemMeasures.ForEach(y => y.SensorMeasurement = null));
-            return new DataExchangeMessage { SurveyMeasurements = moods, SensorMeasurements = sensors, CurrentTimeUtc = referenceTime };
+            var needAnotherBatch =
+                moodsCount > UtilHelper.NumberOfMeasurementToTransferPerOperation
+                                       || sensorMeasurementCount > UtilHelper.NumberOfMeasurementToTransferPerOperation;
+
+            return new DataExchangeMessage
+            {
+                SurveyMeasurements = moods,
+                SensorMeasurements = sensors,
+                CurrentTimeUtc = referenceTime,
+                NeedAnotherBatch = needAnotherBatch
+            };
         }
 
         public void DeleteSurveyMeasurement(DataExchangeMessage message)
