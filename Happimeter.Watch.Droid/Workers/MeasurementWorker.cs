@@ -170,14 +170,6 @@ namespace Happimeter.Watch.Droid.Workers
 
         private async Task CollectMeasurements()
         {
-            Android.OS.Looper.Prepare();
-            var scanRes = BluetoothMedic.Instance.RunScanTest(Application.Context);
-            var transRes = BluetoothMedic.Instance.RunTransmitterTest(Application.Context);
-            if (!scanRes || !transRes)
-            {
-                ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.BluetoothInBadState);
-            }
-
             var sensorMeasurement = new SensorMeasurement
             {
                 Timestamp = DateTime.UtcNow,
@@ -469,7 +461,6 @@ namespace Happimeter.Watch.Droid.Workers
 
             //ServiceLocator.Instance.Get<IDatabaseContext>().AddGraph(sensorMeasurement);
             ServiceLocator.Instance.Get<IMeasurementService>().AddSensorMeasurement(sensorMeasurement);
-            BluetoothWorker.GetInstance().SendNotification(UuidHelper.DataExchangeNotifyCharacteristicUuid, new DataExchangeInitMessage());
         }
 
         public void Stop()
