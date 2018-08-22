@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StackLayout 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    x:Class="Happimeter.Controls.MoodBar"
+    WidthRequest="32"
+    xmlns:local="clr-namespace:Happimeter.Controls"
+    VerticalOptions="Start"
+    Padding="0"
+    Spacing="0">
+    
+    <StackLayout.Resources>
+        <local:BackgroundColorValueConverter x:Key="colorCnv"></local:BackgroundColorValueConverter>
+    </StackLayout.Resources>
+    <StackLayout.GestureRecognizers>
+        <TapGestureRecognizer Command="{Binding TabbedCommand}"/>
+    </StackLayout.GestureRecognizers>
+    <StackLayout.Children>
+        <StackLayout Padding="3" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"
+                     BackgroundColor="{Binding IsSelected, Converter={StaticResource colorCnv}}">
+            <local:BindableStackLayout
+                ItemsSource="{Binding Colors}"
+                Spacing="0"
+                VerticalOptions="Center"
+                HorizontalOptions="Center">
+                <local:BindableStackLayout.ItemDataTemplate>
+                    <DataTemplate>
+                        <BoxView 
+                            HeightRequest="2" 
+                            Color="{Binding .}" 
+                            HorizontalOptions="FillAndExpand"></BoxView>
+                    </DataTemplate>
+                </local:BindableStackLayout.ItemDataTemplate>
+            </local:BindableStackLayout>
+            <Label FontSize="12" Text="{Binding Date , StringFormat='{0:ddd}'}}" HorizontalOptions="Center"></Label>
+        </StackLayout>
+    </StackLayout.Children>
+</StackLayout>

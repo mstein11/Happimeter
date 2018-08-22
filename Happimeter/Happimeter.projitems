@@ -128,6 +128,19 @@
       <DependentUpon>SettingsDebugPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\SettingsDebugPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\MoodMapPage.xaml.cs">
+      <DependentUpon>MoodMapPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\MoodBar.xaml.cs">
+      <DependentUpon>MoodBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\MoodHistoryCard.xaml.cs">
+      <DependentUpon>MoodHistoryCard.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\MoodBarViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\MoodHistoryCardViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\BindableStackLayout.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\MoodMapViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />
@@ -140,6 +153,7 @@
     <Folder Include="$(MSBuildThisFileDirectory)Events\" />
     <Folder Include="$(MSBuildThisFileDirectory)Controls\" />
     <Folder Include="$(MSBuildThisFileDirectory)Views\Converters\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Views\CustomControls\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\SurveyPage.xaml">
@@ -207,6 +221,18 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\SettingsDebugPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\MoodMapPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Controls\MoodBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Controls\MoodHistoryCard.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>

@@ -13,7 +13,7 @@ namespace Happimeter.Interfaces
         IList<GenericQuestion> GetActiveGenericQuestions();
         Task AddMeasurements(DataExchangeMessage message);
         Task AddSurveyData(SurveyViewModel model);
-        List<SurveyMeasurement> GetSurveyData();
+        List<SurveyMeasurement> GetSurveyData(System.DateTime? from = null, System.DateTime? to = null);
         List<SurveyMeasurement> GetSurveyMeasurements();
         List<PostMoodServiceModel> GetSurveyModelForServer();
         void SetIsUploadedToServerForSurveys(PostMoodServiceModel survey);

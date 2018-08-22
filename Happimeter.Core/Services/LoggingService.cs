@@ -48,7 +48,8 @@ namespace Happimeter.Core.Services
             if (!data.ContainsKey("methodName") && currentMethodName != null)
             {
                 var fullString = currentMethodName.DeclaringType.FullName + "." + currentMethodName.Name;
-                data.Add("methodName", fullString.Substring(fullString.Length - 64, 64));
+                var stringToLog = fullString.Length > 64 ? fullString.Substring(fullString.Length - 64, 64) : fullString;
+                data.Add("methodName", stringToLog);
             }
 
             Analytics.TrackEvent(name, data);

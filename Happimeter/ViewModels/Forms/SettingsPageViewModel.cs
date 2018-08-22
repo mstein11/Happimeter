@@ -296,6 +296,17 @@ namespace Happimeter.ViewModels.Forms
                 })
             });
 
+            listMenuEntries.Add(new ListMenuItemViewModel
+            {
+                ItemTitle = "Map",
+                IconBackgroundColor = Color.FromHex("#9a7a1b"),
+                IconText = "M",
+                OnClickedCommand = new Command(() =>
+                {
+                    ListMenuItemSelected?.Invoke(new MoodMapPage(), null);
+                })
+            });
+
             return listMenuEntries;
         }
     }

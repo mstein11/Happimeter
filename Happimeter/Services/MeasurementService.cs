@@ -248,11 +248,16 @@ namespace Happimeter.Services
             return context.GetAll<SurveyMeasurement>(x => !x.IsUploadedToServer).Count();
         }
 
-        public List<SurveyMeasurement> GetSurveyData()
+        public List<SurveyMeasurement> GetSurveyData(DateTime? from = null, DateTime? to = null)
         {
             var userId = ServiceLocator.Instance.Get<IAccountStoreService>()?.GetAccountUserId() ?? null;
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
-            return context.GetAllWithChildren<SurveyMeasurement>().Where(x => x.UserId == default(int) || x.UserId == userId).ToList();
+            return context.GetAllWithChildren<SurveyMeasurement>()
+                          .Where(x => x.UserId == default(int)
+                                 || x.UserId == userId
+                                 && (from == null || x.Timestamp >= from.Value)
+                                 && (to == null || x.Timestamp <= to.Value))
+                          .ToList();
         }
 
 

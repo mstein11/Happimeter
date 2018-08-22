@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentView 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    x:Class="Happimeter.Controls.MoodHistoryCard"
+    Padding="10"
+    xmlns:local="clr-namespace:Happimeter.Controls">
+    <ContentView.Content>
+        <StackLayout Spacing="0" BackgroundColor="White">
+            <StackLayout Padding="10">
+                <Label FontAttributes="Bold" Text="Your mood timeline"></Label>
+                <StackLayout Orientation="Horizontal" Spacing="3">
+                    <Label IsVisible="{Binding DateRangeCanBeEarlier}" FontAttributes="Bold" TextColor="Gray" FontSize="12" Text="earlier">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding DateRangeEarlierCommand}"/>
+                        </Label.GestureRecognizers>
+                    </Label>
+                    <Label Text="{Binding TimeRangeDisplay}" TextColor="Gray" FontSize="12"></Label>    
+                    <Label FontAttributes="Bold" TextColor="Gray" FontSize="12" Text="later">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding DateRangeLaterCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                </StackLayout>
+            </StackLayout>
+            <ScrollView 
+                HorizontalScrollBarVisibility="Always" 
+                Orientation="Horizontal"
+                BackgroundColor="LightGray"
+                WidthRequest="170"
+                VerticalOptions="FillAndExpand"
+                Padding="10">
+                <!--<StackLayout 
+                    Spacing="10"  
+                    VerticalOptions="Start"
+                    Orientation="Horizontal"
+                    x:Name="CardContent">
+                
+                </StackLayout>-->
+                <local:BindableStackLayout 
+                    Spacing="10"
+                    VerticalOptions="Start"
+                    Orientation="Horizontal"
+                    ItemsSource="{Binding MoodBars}">
+                    <local:BindableStackLayout.ItemDataTemplate>
+                        <DataTemplate>
+                            <local:MoodBar BindingContext="{Binding .}"></local:MoodBar>
+                        </DataTemplate>
+                    </local:BindableStackLayout.ItemDataTemplate>
+                    
+                </local:BindableStackLayout>
+            </ScrollView>
+        </StackLayout>
+    </ContentView.Content>
+</ContentView>

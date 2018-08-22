@@ -29,7 +29,6 @@ namespace Happimeter.Droid
             base.OnCreate();
             AppCenter.Start("a5a4fc8f-8bd6-4b43-a1a9-241453a38c5c",
                    typeof(Analytics), typeof(Crashes));
-
             RegisterActivityLifecycleCallbacks(this);
 
             Droid.DependencyInjection.Container.RegisterElements();
