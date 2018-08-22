@@ -15,20 +15,48 @@ namespace Happimeter.ViewModels.Forms
     {
         public MoodHistoryCardViewModel()
         {
-            QuestionId = 1;
+            QuestionId = 2;
             DateTo = DateTime.Now;
             DateFrom = DateTo - TimeSpan.FromDays(7);
+            DateRangeChanged();
 
             DateRangeEarlierCommand = new Command(() =>
             {
                 DateFrom = DateTo;
                 DateTo = DateFrom.AddDays(7);
+                DateRangeChanged();
             });
             DateRangeLaterCommand = new Command(() =>
             {
                 DateTo = DateFrom;
                 DateFrom = DateTo.AddDays(-7);
+                DateRangeChanged();
             });
+            PleasanceActivated = true;
+            ActivationActivated = false;
+            PleasanceToggledCommand = new Command(() =>
+            {
+                if (PleasanceActivated)
+                {
+                    return;
+                }
+                QuestionId = 2;
+                PleasanceActivated = !PleasanceActivated;
+                ActivationActivated = !ActivationActivated;
+                DateRangeChanged();
+            });
+            ActivationToggledCommand = new Command(() =>
+            {
+                if (ActivationActivated)
+                {
+                    return;
+                }
+                QuestionId = 1;
+                PleasanceActivated = !PleasanceActivated;
+                ActivationActivated = !ActivationActivated;
+                DateRangeChanged();
+            });
+
         }
 
 
@@ -52,10 +80,6 @@ namespace Happimeter.ViewModels.Forms
             set
             {
                 SetProperty(ref _dateFrom, value);
-                if (DateTo != default(DateTime))
-                {
-                    DateRangeChanged();
-                }
                 OnPropertyChanged(nameof(TimeRangeDisplay));
             }
         }
@@ -68,7 +92,7 @@ namespace Happimeter.ViewModels.Forms
                 SetProperty(ref _dateTo, value);
                 if (DateFrom != default(DateTime))
                 {
-                    DateRangeChanged();
+                    //DateRangeChanged();
                 }
                 OnPropertyChanged(nameof(TimeRangeDisplay));
             }
@@ -160,13 +184,38 @@ namespace Happimeter.ViewModels.Forms
                 oneModel.IsSelected = false;
             }
             model.IsSelected = true;
-            _onDateSelected.OnNext(model.Date);
+            _onDateSelected.OnNext((model.Date, QuestionId));
         }
 
-        private readonly Subject<DateTime> _onDateSelected = new Subject<DateTime>();
-        public IObservable<DateTime> WhenDateSelected()
+        private readonly Subject<(DateTime, int)> _onDateSelected = new Subject<(DateTime, int)>();
+        public IObservable<(DateTime, int)> WhenDateSelected()
         {
             return _onDateSelected;
+        }
+
+        private Command _activationToggledCommand;
+        public Command ActivationToggledCommand
+        {
+            get => _activationToggledCommand;
+            set => SetProperty(ref _activationToggledCommand, value);
+        }
+        private bool _activationActivated;
+        public bool ActivationActivated
+        {
+            get => _activationActivated;
+            set => SetProperty(ref _activationActivated, value);
+        }
+        private Command _pleasanceToggledCommand;
+        public Command PleasanceToggledCommand
+        {
+            get => _pleasanceToggledCommand;
+            set => SetProperty(ref _pleasanceToggledCommand, value);
+        }
+        private bool _pleasanceActivated;
+        public bool PleasanceActivated
+        {
+            get => _pleasanceActivated;
+            set => SetProperty(ref _pleasanceActivated, value);
         }
     }
 }

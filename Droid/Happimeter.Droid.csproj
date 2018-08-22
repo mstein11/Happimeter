@@ -309,6 +309,12 @@
     <Reference Include="Xamarin.Forms.GoogleMaps">
       <HintPath>..\packages\Xamarin.Forms.GoogleMaps.3.0.1\lib\MonoAndroid70\Xamarin.Forms.GoogleMaps.dll</HintPath>
     </Reference>
+    <Reference Include="Flex.Android">
+      <HintPath>..\packages\Forms.Controls.FlexButton.0.8.0\lib\monoandroid10\Flex.Android.dll</HintPath>
+    </Reference>
+    <Reference Include="Flex">
+      <HintPath>..\packages\Forms.Controls.FlexButton.0.8.0\lib\monoandroid10\Flex.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainApplication.cs" />

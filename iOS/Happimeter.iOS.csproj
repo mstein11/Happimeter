@@ -265,6 +265,12 @@
     <Reference Include="Xamarin.Forms.GoogleMaps.iOS">
       <HintPath>..\packages\Xamarin.Forms.GoogleMaps.3.0.1\lib\Xamarin.iOS10\Xamarin.Forms.GoogleMaps.iOS.dll</HintPath>
     </Reference>
+    <Reference Include="Flex">
+      <HintPath>..\packages\Forms.Controls.FlexButton.0.8.0\lib\xamarinios10\Flex.dll</HintPath>
+    </Reference>
+    <Reference Include="Flex.iOS">
+      <HintPath>..\packages\Forms.Controls.FlexButton.0.8.0\lib\xamarinios10\Flex.iOS.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
@@ -300,6 +306,14 @@
     <ImageAsset Include="Assets.xcassets\BluetoothIcon.imageset\airdrop%402x.png" />
     <ImageAsset Include="Assets.xcassets\BluetoothIcon.imageset\airdrop%403x.png" />
     <ImageAsset Include="Assets.xcassets\BluetoothIcon.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\left.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\left.imageset\left.png" />
+    <ImageAsset Include="Assets.xcassets\left.imageset\left%402x.png" />
+    <ImageAsset Include="Assets.xcassets\left.imageset\left%403x.png" />
+    <ImageAsset Include="Assets.xcassets\right.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\right.imageset\right.png" />
+    <ImageAsset Include="Assets.xcassets\right.imageset\right%402x.png" />
+    <ImageAsset Include="Assets.xcassets\right.imageset\right%403x.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ViewControllers\TabBarController.cs" />
@@ -352,6 +366,8 @@
     <Folder Include="Assets.xcassets\happinessfactury.imageset\" />
     <Folder Include="Assets.xcassets\happinessfactory.imageset\" />
     <Folder Include="Assets.xcassets\BluetoothIcon.imageset\" />
+    <Folder Include="Assets.xcassets\left.imageset\" />
+    <Folder Include="Assets.xcassets\right.imageset\" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />

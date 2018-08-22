@@ -16,26 +16,36 @@ namespace Happimeter.Views
         public MoodMapPage()
         {
             InitializeComponent();
-            (MoodHistoryCard.BindingContext as MoodHistoryCardViewModel).WhenDateSelected().Subscribe(date =>
+            (MoodHistoryCard.BindingContext as MoodHistoryCardViewModel).WhenDateSelected().Subscribe(dateAndQuestion =>
             {
-                var data = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyData(date, date.AddDays(1));
+                var data = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyData(dateAndQuestion.Item1, dateAndQuestion.Item1.AddDays(1));
                 var locations = data.Select(x =>
                 {
-                    return new Position(x.Latitude, x.Longitude);
+                    return new
+                    {
+                        Position = new Position(x.Latitude, x.Longitude),
+                        IconColor = _getColorFromInt(x.SurveyItemMeasurement.FirstOrDefault(y => y.QuestionId == dateAndQuestion.Item2).Answer)
+                    };
                 });
+                MapView.Pins.Clear();
                 var pins = locations.Select(x => new Pin
                 {
-                    Position = x,
+                    Position = x.Position,
                     Type = PinType.SearchResult,
-                    Icon = BitmapDescriptorFactory.DefaultMarker(Color.Green),
+                    Icon = BitmapDescriptorFactory.DefaultMarker(x.IconColor),
                     Label = ""
                 });
                 foreach (var pin in pins)
                 {
                     MapView.Pins.Add(pin);
                 }
-                MapView.MoveToRegion(MapSpan.FromPositions(locations));
+                MapView.MoveToRegion(MapSpan.FromPositions(locations.Select(x => x.Position)));
             });
+        }
+
+        private Color _getColorFromInt(int val)
+        {
+            return val < 33 ? Color.Red : val < 66 ? Color.Yellow : Color.Green;
         }
     }
 }

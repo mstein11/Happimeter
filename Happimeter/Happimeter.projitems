@@ -140,7 +140,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\MoodBarViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\MoodHistoryCardViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\BindableStackLayout.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\MoodMapViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />

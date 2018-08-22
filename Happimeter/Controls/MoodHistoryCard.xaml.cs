@@ -11,5 +11,10 @@ namespace Happimeter.Controls
             var viewModel = new MoodHistoryCardViewModel();
             BindingContext = viewModel;
         }
+
+        void Handle_Clicked(object sender, System.EventArgs e)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
