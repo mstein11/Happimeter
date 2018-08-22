@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Happimeter.Controls
 {
@@ -66,7 +67,11 @@ namespace Happimeter.Controls
                     var item = e.NewItems[0];
                     var itemTemplate = ItemDataTemplate.CreateContent() as View;
                     itemTemplate.BindingContext = item;
-                    Children.Add(itemTemplate);
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        Children.Add(itemTemplate);
+                    });
+
                 }
             }
         }

@@ -7,6 +7,7 @@ using Happimeter.Interfaces;
 using System.Linq;
 using System.Reactive.Subjects;
 using System.Windows.Input;
+using System.Threading.Tasks;
 
 namespace Happimeter.ViewModels.Forms
 {

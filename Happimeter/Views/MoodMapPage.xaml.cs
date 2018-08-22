@@ -6,9 +6,7 @@ using Xamarin.Forms.GoogleMaps;
 using Happimeter.Core.Helper;
 using Happimeter.Interfaces;
 using System.Linq;
-using CoreLocation;
 using Xamarin.Forms.GoogleMaps.Extensions;
-using Google.Maps;
 using Happimeter.ViewModels.Forms;
 
 namespace Happimeter.Views
