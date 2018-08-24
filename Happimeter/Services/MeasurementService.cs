@@ -12,6 +12,7 @@ using Happimeter.Models.ServiceModels;
 using Happimeter.ViewModels.Forms;
 using System.Collections.ObjectModel;
 using Version.Plugin;
+using System.Runtime.Remoting.Lifetime;
 
 namespace Happimeter.Services
 {
@@ -447,40 +448,38 @@ namespace Happimeter.Services
         /// <returns>The and save generic questions.</returns>
         public async Task<List<GenericQuestion>> DownloadAndSaveGenericQuestions()
         {
-            List<GenericQuestionItemApiResult> genericQuestions = new List<GenericQuestionItemApiResult>();
-            var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
-
             var api = ServiceLocator.Instance.Get<IHappimeterApiService>();
             var questions = await api.GetGenericQuestions();
             if (!questions.IsSuccess)
             {
                 return null;
             }
-            genericQuestions.AddRange(questions.Questions);
-            var dbQuestions = genericQuestions.Select(q => new GenericQuestion
+
+            var newQuestions = questions.Questions.Select(q => new GenericQuestion
             {
-                //GenericQuestionGroupId = groupId,
                 Question = q.Question,
                 QuestionShort = q.QuestionShort,
                 QuestionId = q.Id
             }).ToList();
+            var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             var oldQuestions = context.GetAll<GenericQuestion>();
-            foreach (var question in dbQuestions)
+            foreach (var question in newQuestions)
             {
-                if (oldQuestions.Any(o => o.Deactivated && o.QuestionId == question.QuestionId))
+                var matchedQuestion = oldQuestions.FirstOrDefault(x => x.QuestionId == question.QuestionId);
+                if (matchedQuestion != null)
                 {
-                    question.Deactivated = true;
+                    question.Id = matchedQuestion.Id;
+                    question.Deactivated = matchedQuestion.Deactivated;
+                    question.Activated = matchedQuestion.Activated;
+                    context.Update(question);
+                }
+                else
+                {
+                    context.Add(question);
                 }
             }
-            context.DeleteAll<GenericQuestion>();
 
-
-
-            foreach (var dbQuestion in dbQuestions)
-            {
-                context.Add(dbQuestion);
-            }
-            return dbQuestions;
+            return newQuestions;
         }
     }
 }

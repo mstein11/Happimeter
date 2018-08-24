@@ -19,7 +19,7 @@ namespace Happimeter.Views
             (MoodHistoryCard.BindingContext as MoodHistoryCardViewModel).WhenDateSelected().Subscribe(dateAndQuestion =>
             {
                 var data = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyData(dateAndQuestion.Item1, dateAndQuestion.Item1.AddDays(1));
-                var locations = data.Select(x =>
+                var locations = data.Where(x => x.SurveyItemMeasurement.Any(y => y.QuestionId == dateAndQuestion.Item2)).Select(x =>
                 {
                     return new
                     {
