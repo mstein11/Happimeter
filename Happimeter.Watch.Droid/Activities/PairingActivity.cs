@@ -51,6 +51,12 @@ namespace Happimeter.Watch.Droid.Activities
 					Finish();
 				}
 			});
+
+            FindViewById<Button>(Resource.Id.startOS).Click += delegate
+            {
+                openSMILE.Smile.Setup(this);
+                Finish();
+            };
 			// Create your application here
 		}
 
