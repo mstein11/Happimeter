@@ -6,8 +6,7 @@ using Android.Media.Audiofx;
 //using Plugin.Permissions.Abstractions;
 using System.Threading.Tasks;
 using Android.Runtime;
-
-
+using System.Collections.Generic;
 
 namespace Happimeter.Watch.Droid.openSMILE
 {
@@ -26,14 +25,19 @@ namespace Happimeter.Watch.Droid.openSMILE
             string cacheDir = context.CacheDir.AbsolutePath;
             Directory.CreateDirectory(cacheDir);
 
+            var mainConfigFileName = "openSMILE.conf";
+            string mainConfigFilePath = Path.Combine(cacheDir, mainConfigFileName);
+            CopyAssetTo(context, mainConfigFileName, mainConfigFilePath);
 
-            string configFileName = "openSMILE.conf";
-            string configFileNewPath = Path.Combine(cacheDir, configFileName);
+            var additionalConfigFileNames = new List<string> { "BufferModeRb.conf.inc", "messages.conf.inc", "features.conf.inc" };
 
-            CopyAssetTo(context, configFileName, configFileNewPath);
+            foreach (string configFileName in additionalConfigFileNames) {
+                string configFileNewPath = Path.Combine(cacheDir, configFileName);
+                CopyAssetTo(context, configFileName, configFileNewPath);
+            }
 
             // call SMILEExtract
-            SmileJNI.SMILExtractJNI(configFileNewPath, 1);
+            SmileJNI.SMILExtractJNI(mainConfigFilePath, 1);
 
 
         }
@@ -43,7 +47,7 @@ namespace Happimeter.Watch.Droid.openSMILE
         {
 
             var readStream = context.Assets.Open(assetName);
-            FileStream writeStream = new FileStream(newPath, FileMode.OpenOrCreate, FileAccess.Write);
+            FileStream writeStream = new FileStream(newPath, FileMode.Create, FileAccess.Write);
 
             
             int Length = 256;

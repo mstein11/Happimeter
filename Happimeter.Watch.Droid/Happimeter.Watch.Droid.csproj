@@ -303,6 +303,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\openSMILE.conf" />
+    <AndroidAsset Include="Assets\messages.conf.inc" />
+    <AndroidAsset Include="Assets\features.conf.inc" />
+    <AndroidAsset Include="Assets\BufferModeRb.conf.inc" />
   </ItemGroup>
   <Import Project="..\Happimeter.Core\Happimeter.Core.projitems" Label="Shared" Condition="Exists('..\Happimeter.Core\Happimeter.Core.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
