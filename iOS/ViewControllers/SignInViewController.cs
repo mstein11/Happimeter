@@ -8,10 +8,12 @@ namespace Happimeter.iOS
 {
     public partial class SignInViewController : UINavigationController
     {
-        public SignInViewController (IntPtr handle) : base (handle)
+        public SignInViewController(IntPtr handle) : base(handle)
         {
             var formsPage = new SignInPage();
             var startSurveyVc = formsPage.CreateViewController();
+            SetNavigationBarHidden(true, false);
+            SetNeedsStatusBarAppearanceUpdate();
             PushViewController(startSurveyVc, true);
             startSurveyVc.Title = formsPage.Title;
         }

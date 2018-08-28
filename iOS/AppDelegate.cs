@@ -13,6 +13,7 @@ using Xamarin.Forms;
 using Xfx;
 using Happimeter.Core.Services;
 using UserNotifications;
+using Happimeter.Views;
 
 namespace Happimeter.iOS
 {
@@ -56,10 +57,12 @@ namespace Happimeter.iOS
             }
             else
             {
-                UIStoryboard board = UIStoryboard.FromName("Main", null);
-                UIViewController ctrl = (UIViewController)board.InstantiateViewController("SignInViewController");
-                ctrl.ModalTransitionStyle = UIModalTransitionStyle.FlipHorizontal;
-                Window.RootViewController = ctrl;
+                //UIStoryboard board = UIStoryboard.FromName("Main", null);
+                //UIViewController ctrl = (UIViewController)board.InstantiateViewController("SignInViewController");
+                //ctrl.ModalTransitionStyle = UIModalTransitionStyle.FlipHorizontal;
+                var formsPage = new SignInPage();
+                var formsPageVc = formsPage.CreateViewController();
+                Window.RootViewController = formsPageVc;
                 Window.MakeKeyAndVisible();
                 //application.KeyWindow.RootViewController = ctrl;
 

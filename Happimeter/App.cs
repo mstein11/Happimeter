@@ -93,6 +93,14 @@ namespace Happimeter
         {
             var dict = new ResourceDictionary();
 
+            dict.Add("Checkbox", new Style(typeof(Checkbox))
+            {
+                Setters = {
+                    new Setter {Property = Checkbox.OutlineColorProperty, Value = Color.Black},
+                    new Setter {Property = Checkbox.CheckedOutlineColorProperty, Value = Color.Black},
+                    new Setter {Property = Checkbox.CheckColorProperty, Value = Color.FromHex("#b71c1c")}
+                }
+            });
 
             dict.Add("ButtonWithBackground", new Style(typeof(MyButton))
             {

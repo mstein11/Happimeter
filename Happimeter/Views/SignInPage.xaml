@@ -8,22 +8,64 @@
     Title="Sigin up / Login">
 	<ContentPage.Content>
         <ScrollView>
-            <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                    <Grid HeightRequest="200" RowSpacing="0" ColumnSpacing="0" BackgroundColor="#307AEA">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"></RowDefinition>
-                        </Grid.RowDefinitions>
-                        <Image Opacity="0.4" Source="happinessfactory.png" Aspect="AspectFill" />
-                        <Label Style="{StaticResource HeaderOnBackground}" Grid.Row="0" Text="Happimeter" VerticalOptions="CenterAndExpand" />
-                    </Grid>
-
-                <StackLayout Padding="25, 25, 25, 50" Spacing="15" VerticalOptions="FillAndExpand">
-                    <Label Text="Please use the form below to login or sign up:" />
-                    <xfx:XfxEntry FontSize="12" ErrorDisplay="None" Placeholder="Username" Text="{Binding UserName}" ActivePlaceholderColor="#b71c1c"/>
-                    <xfx:XfxEntry FontSize="12" Placeholder="Password" Text="{Binding Password}" ErrorText="{Binding ErrorText}" IsPassword="true" ActivePlaceholderColor="#b71c1c"/>
+            <Grid VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" RowSpacing="0" ColumnSpacing="0" BackgroundColor="#000000">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Image Opacity="0.3" Source="signin_background.jpg" Aspect="AspectFill" />
+                <StackLayout Spacing="15" VerticalOptions="FillAndExpand">
+                    <StackLayout.Padding>
+                        <OnPlatform x:TypeArguments="Thickness"
+                            iOS="25, 75, 25, 50"
+                            Android="25, 25, 25, 25" />
+                    </StackLayout.Padding>
+                    <Label TextColor="White" FontSize="Large" FontAttributes="Bold" Text="HAPPIMETER" />
+                    <Label TextColor="White" Text="Please use the form below to login or sign up." />
+                    <BoxView HeightRequest="4" WidthRequest="40" BackgroundColor="White" HorizontalOptions="Start" />
+                    
+                    <StackLayout Spacing="15" Padding="0, 60, 0, 0">
+                        <xfx:XfxEntry FontSize="12" ErrorDisplay="None" Placeholder="Email" Text="{Binding UserName}" ActivePlaceholderColor="White" TextColor="White" PlaceholderColor="White" />
+                        <xfx:XfxEntry FontSize="12" Placeholder="Password" Text="{Binding Password}" ErrorText="{Binding ErrorText}" IsPassword="true" ActivePlaceholderColor="White" TextColor="White" PlaceholderColor="White" />
+                        <StackLayout Orientation="Horizontal" Spacing="10">
+                            <local:Checkbox 
+                                
+                                IsChecked="{Binding AgreeToScienceUse}" 
+                                VerticalOptions="Center" 
+                                Style="{StaticResource Checkbox}"
+                                WidthRequest="25" 
+                                HeightRequest="25"
+                                />
+                            <Label VerticalOptions="Center" TextColor="White" FontSize="Small" Text="I agree that my the data collected through this app might be used for scientific purpose." ></Label>
+                        </StackLayout>
+                        <StackLayout Orientation="Horizontal" Spacing="10">
+                            <local:Checkbox 
+                                IsChecked="{Binding AgreeToTerms}" 
+                                VerticalOptions="Center" 
+                                Style="{StaticResource Checkbox}"
+                                WidthRequest="25" 
+                                HeightRequest="25" />
+                            <Label 
+                                VerticalOptions="Center" 
+                                TextColor="White" 
+                                FontSize="Small" Text="I agree to the happimeter privacy policy." >
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="I agree to the happimeter "></Span>
+                                        <Span Text="privacy policy.">
+                                            <Span.GestureRecognizers>
+                                                <TapGestureRecognizer 
+                                                    Command="{ Binding PrivacyPolicyClickedCommand }" />
+                                            </Span.GestureRecognizers>
+                                        </Span>
+                                        <Span Text=" "></Span>
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                        </StackLayout>
+                    </StackLayout>
                     <local:MyButton Style="{StaticResource ButtonWithBackground}" VerticalOptions="EndAndExpand" IsEnabled="{Binding LoginButtonIsEnabled}" Text="{Binding LoginButtonText}" Command="{Binding LoginCommand}"></local:MyButton>
                 </StackLayout>
-            </StackLayout>
+            </Grid>
         </ScrollView>
 	</ContentPage.Content>
 </ContentPage>
