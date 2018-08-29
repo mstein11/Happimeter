@@ -42,8 +42,8 @@ copyInputName = 1
 frameMode = fixed
 // frameListFile = 
 // frameList = 
-frameSize = 0.025000
-frameStep = 0.01
+frameSize = 0.25000
+frameStep = 0.1
 frameCenterSpecial = left
 noPostEOIprocessing = 1
  

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Android.Runtime;
 using Java.Interop;
@@ -23,6 +24,13 @@ namespace Happimeter.Watch.Droid.openSMILE
             IntPtr jniClass,
             IntPtr configfile,
             IntPtr updateProfile
+        );
+
+        [DllImport("smile_jni")]
+        private static extern void Java_com_audeering_opensmile_androidtemplate_SmileJNI_SMILEndJNI(
+            IntPtr env,
+            IntPtr jniClass,
+            IntPtr nll
         );
 
 
@@ -54,8 +62,34 @@ namespace Happimeter.Watch.Droid.openSMILE
             }
         }
 
-        //[DllImport("smile_jni.so", EntryPoint = "SMILEndJNI")]
-        //public static extern void SMILEndJNI();
+
+        public static void SMILEndJNI()
+        {
+
+            IntPtr env = JNIEnv.Handle;
+            IntPtr jniClass = JNIEnv.FindClass(typeof(SmileJNI));
+
+
+            try
+            {
+
+                using (var java_nptr = new Java.Lang.Long(0))
+                {
+                    Java_com_audeering_opensmile_androidtemplate_SmileJNI_SMILEndJNI(
+                        env,
+                        jniClass,
+                        java_nptr.Handle
+                    );
+                }
+
+            }
+            finally
+            {
+
+                JNIEnv.DeleteGlobalRef(jniClass);
+
+            }
+        }
 
 
 
@@ -77,6 +111,7 @@ namespace Happimeter.Watch.Droid.openSMILE
         [Export]
         public static void ReceiveMessage(Java.Lang.String text)
         {
+            Debug.WriteLine("Incoming message");
             if (listener_ != null)
                 listener_.onSmileMessageReceived((string)text);
         }

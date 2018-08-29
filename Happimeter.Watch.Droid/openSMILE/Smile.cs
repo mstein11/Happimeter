@@ -2,19 +2,54 @@
 using System.IO;
 using Android.App;
 using Android.Media.Audiofx;
-//using Plugin.Permissions;
-//using Plugin.Permissions.Abstractions;
 using System.Threading.Tasks;
 using Android.Runtime;
 using System.Collections.Generic;
+using Microsoft.AppCenter;
 
 namespace Happimeter.Watch.Droid.openSMILE
 {
     public static class Smile
     {
 
+        public static bool IsRunning = false;
+        private static bool IsInitialized = false;
+        private static string MainConfigFilePath;
 
-        public static void Setup(Activity context)
+        public static void Run() {
+
+            if (IsRunning) {
+                return;
+            }
+
+            if (!IsInitialized) {
+                Initialize();
+                IsInitialized = true;
+            }
+
+            Task.Run(() => { 
+                SmileJNI.SMILExtractJNI(MainConfigFilePath, 1);
+            });
+
+            IsRunning = true;
+
+        }
+
+        public static void Stop()
+        {
+            if (!IsRunning) {
+                return;
+            }
+
+            Task.Run(() => {
+                SmileJNI.SMILEndJNI();
+            });
+
+            IsRunning = false;
+        }
+
+
+        private static void Initialize()
         {
 
             // JNI onload
@@ -22,12 +57,12 @@ namespace Happimeter.Watch.Droid.openSMILE
 
 
             // must copy all config file to cache directory, s.t. openSMILE can access them
-            string cacheDir = context.CacheDir.AbsolutePath;
+            string cacheDir = Application.Context.CacheDir.AbsolutePath;
             Directory.CreateDirectory(cacheDir);
 
             var mainConfigFileName = "openSMILE.conf";
-            string mainConfigFilePath = Path.Combine(cacheDir, mainConfigFileName);
-            CopyAssetTo(context, mainConfigFileName, mainConfigFilePath);
+            MainConfigFilePath = Path.Combine(cacheDir, mainConfigFileName);
+            CopyAssetTo(mainConfigFileName, MainConfigFilePath);
 
             var additionalConfigFileNames = new List<string> { 
                 "BufferModeRb.conf.inc", 
@@ -39,12 +74,8 @@ namespace Happimeter.Watch.Droid.openSMILE
 
             foreach (string configFileName in additionalConfigFileNames) {
                 string configFileNewPath = Path.Combine(cacheDir, configFileName);
-                CopyAssetTo(context, configFileName, configFileNewPath);
+                CopyAssetTo(configFileName, configFileNewPath);
             }
-
-            // call SMILEExtract
-            SmileJNI.SMILExtractJNI(mainConfigFilePath, 1);
-
 
         }
 
@@ -59,10 +90,10 @@ namespace Happimeter.Watch.Droid.openSMILE
 
 
 
-        private static void CopyAssetTo(Activity context, string assetName, string newPath)
+        private static void CopyAssetTo(string assetName, string newPath)
         {
 
-            var readStream = context.Assets.Open(assetName);
+            var readStream = Application.Context.Assets.Open(assetName);
             FileStream writeStream = new FileStream(newPath, FileMode.Create, FileAccess.Write);
 
             
