@@ -306,6 +306,8 @@
     <AndroidAsset Include="Assets\messages.conf.inc" />
     <AndroidAsset Include="Assets\features.conf.inc" />
     <AndroidAsset Include="Assets\BufferModeRb.conf.inc" />
+    <AndroidAsset Include="Assets\rplp18d_norm.dat" />
+    <AndroidAsset Include="Assets\lstmvad_rplp18d_12.net" />
   </ItemGroup>
   <Import Project="..\Happimeter.Core\Happimeter.Core.projitems" Label="Shared" Condition="Exists('..\Happimeter.Core\Happimeter.Core.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

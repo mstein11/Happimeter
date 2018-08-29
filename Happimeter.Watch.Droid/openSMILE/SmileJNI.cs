@@ -59,17 +59,14 @@ namespace Happimeter.Watch.Droid.openSMILE
 
 
 
-        /**
-         * process the messages from openSMILE (redirect to app activity etc.)
-         */
         public interface Listener
         {
             void onSmileMessageReceived(string text);
         }
         private static Listener listener_;
-        public static void registerListener(Listener listener)
+        public static void RegisterListener(Listener listener)
         {
-            listener_ = listener;
+            SmileJNI.listener_ = listener;
         }
 
         /**
@@ -81,7 +78,7 @@ namespace Happimeter.Watch.Droid.openSMILE
         public static void ReceiveMessage(Java.Lang.String text)
         {
             if (listener_ != null)
-                listener_.onSmileMessageReceived("test");
+                listener_.onSmileMessageReceived((string)text);
         }
 
     }

@@ -29,7 +29,13 @@ namespace Happimeter.Watch.Droid.openSMILE
             string mainConfigFilePath = Path.Combine(cacheDir, mainConfigFileName);
             CopyAssetTo(context, mainConfigFileName, mainConfigFilePath);
 
-            var additionalConfigFileNames = new List<string> { "BufferModeRb.conf.inc", "messages.conf.inc", "features.conf.inc" };
+            var additionalConfigFileNames = new List<string> { 
+                "BufferModeRb.conf.inc", 
+                "messages.conf.inc", 
+                "features.conf.inc", 
+                "lstmvad_rplp18d_12.net",
+                "rplp18d_norm.dat"
+            };
 
             foreach (string configFileName in additionalConfigFileNames) {
                 string configFileNewPath = Path.Combine(cacheDir, configFileName);
@@ -42,8 +48,18 @@ namespace Happimeter.Watch.Droid.openSMILE
 
         }
 
+        /**
+         * process the messages from openSMILE (redirect to app activity etc.)
+         */
 
-        static void CopyAssetTo(Activity context, string assetName, string newPath)
+        public static void RegisterListener(SmileJNI.Listener listener)
+        {
+            SmileJNI.RegisterListener(listener);
+        }
+
+
+
+        private static void CopyAssetTo(Activity context, string assetName, string newPath)
         {
 
             var readStream = context.Assets.Open(assetName);

@@ -8,9 +8,9 @@
 instance[bandEnergy].type=cSimpleMessageSender
 
 [bandEnergy:cSimpleMessageSender]
-reader.dmLevel = melspec;energyB
+reader.dmLevel = vad_VAD_voice
 sendPeriodically = 2
-messageName = energy_act
-messageType = energy
+messageName = vad
+messageType = vad
 messageRecp = jniMessageInterface
 enableDebugSender = 0
