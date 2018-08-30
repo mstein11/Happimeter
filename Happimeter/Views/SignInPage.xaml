@@ -10,22 +10,40 @@
         <ScrollView>
             <Grid VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" RowSpacing="0" ColumnSpacing="0" BackgroundColor="#000000">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="auto"></RowDefinition>
+                    <RowDefinition Height="2*"></RowDefinition>
+                    <RowDefinition Height="auto"></RowDefinition>
                 </Grid.RowDefinitions>
-                <Image Opacity="0.3" Source="signin_background.jpg" Aspect="AspectFill" />
-                <StackLayout Spacing="15" VerticalOptions="FillAndExpand">
+                <Image Opacity="0.3" Source="signin_background.jpg" Aspect="AspectFill" Grid.RowSpan="5" />
+                
+                <!--<StackLayout Spacing="15" VerticalOptions="FillAndExpand">
                     <StackLayout.Padding>
                         <OnPlatform x:TypeArguments="Thickness"
                             iOS="25, 75, 25, 50"
                             Android="25, 25, 25, 25" />
-                    </StackLayout.Padding>
-                    <Label TextColor="White" FontSize="Large" FontAttributes="Bold" Text="HAPPIMETER" />
-                    <Label TextColor="White" Text="Please use the form below to login or sign up." />
-                    <BoxView HeightRequest="4" WidthRequest="40" BackgroundColor="White" HorizontalOptions="Start" />
+                    </StackLayout.Padding>-->
                     
-                    <StackLayout Spacing="15" Padding="0, 60, 0, 0">
-                        <xfx:XfxEntry FontSize="12" ErrorDisplay="None" Placeholder="Email" Text="{Binding UserName}" ActivePlaceholderColor="White" TextColor="White" PlaceholderColor="White" />
-                        <xfx:XfxEntry FontSize="12" Placeholder="Password" Text="{Binding Password}" ErrorText="{Binding ErrorText}" IsPassword="true" ActivePlaceholderColor="White" TextColor="White" PlaceholderColor="White" />
+                    <StackLayout Spacing="15" Grid.Row="0">
+                        <StackLayout.Padding>
+                            <OnPlatform x:TypeArguments="Thickness"
+                                iOS="25, 75, 25, 0"
+                                Android="25, 25, 25, 0" />
+                    </StackLayout.Padding>
+                        <Label TextColor="White" FontSize="Large" FontAttributes="Bold" Text="HAPPIMETER" />
+                        <Label TextColor="White" Text="Please use the form below to login or sign up." />    
+                        <BoxView HeightRequest="4" WidthRequest="40" BackgroundColor="White" HorizontalOptions="Start" />
+                    </StackLayout>
+                    
+                    
+                    
+                    <StackLayout 
+                        Spacing="15" 
+                        Grid.Row="2"
+                        Padding="25, 0, 25, 0">
+                        <xfx:XfxEntry ErrorDisplay="None" Placeholder="Email" Text="{Binding UserName}" ActivePlaceholderColor="White" TextColor="White" PlaceholderColor="White" />
+                        <xfx:XfxEntry Placeholder="Password" Text="{Binding Password}" ErrorText="{Binding ErrorText}" IsPassword="true" ActivePlaceholderColor="White" TextColor="White" PlaceholderColor="White" />
                         <StackLayout Orientation="Horizontal" Spacing="10">
                             <local:Checkbox 
                                 
@@ -47,7 +65,7 @@
                             <Label 
                                 VerticalOptions="Center" 
                                 TextColor="White" 
-                                FontSize="Small" Text="I agree to the happimeter privacy policy." >
+                                FontSize="Small" >
                                 <Label.FormattedText>
                                     <FormattedString>
                                         <Span Text="I agree to the happimeter "></Span>
@@ -63,8 +81,17 @@
                             </Label>
                         </StackLayout>
                     </StackLayout>
-                    <local:MyButton Style="{StaticResource ButtonWithBackground}" VerticalOptions="EndAndExpand" IsEnabled="{Binding LoginButtonIsEnabled}" Text="{Binding LoginButtonText}" Command="{Binding LoginCommand}"></local:MyButton>
+                <StackLayout Grid.Row="4" Padding="25, 0, 25, 25">
+                    <local:MyButton 
+                        Style="{StaticResource ButtonWithBackground}" 
+                        VerticalOptions="EndAndExpand" 
+                        IsEnabled="{Binding LoginButtonIsEnabled}" 
+                        Text="{Binding LoginButtonText}" 
+                        Command="{Binding LoginCommand}"
+                        ></local:MyButton>
                 </StackLayout>
+                    
+                <!--</StackLayout>-->
             </Grid>
         </ScrollView>
 	</ContentPage.Content>

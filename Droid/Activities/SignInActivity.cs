@@ -24,14 +24,25 @@ namespace Happimeter.Droid.Activities
         {
             base.OnCreate(savedInstanceState);
 
+            if (Android.OS.Build.VERSION.SdkInt >= Build.VERSION_CODES.Lollipop)
+            {
+                // only for gingerbread and newer versions
+                Window.ClearFlags(WindowManagerFlags.TranslucentStatus);
+
+                // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+                Window.AddFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
+
+                // finally change the color
+                Window.SetStatusBarColor(Xamarin.Forms.Color.FromHex("#333333").ToAndroid());
+            }
+
+
             var signInPage = new SignInPage();
             var signInPageFrag = signInPage.CreateSupportFragment(this);
 
             var transaction = SupportFragmentManager.BeginTransaction();
             transaction.Replace(Resource.Id.signin_container, signInPageFrag);
             transaction.Commit();
-
-            // Create your application here
         }
     }
 }
