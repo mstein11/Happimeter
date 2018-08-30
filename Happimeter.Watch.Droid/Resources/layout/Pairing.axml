@@ -23,22 +23,4 @@
         android:textSize="40dp"
         android:layout_gravity="center"
         android:gravity="center" />
-    <Button
-        android:id="@+id/startOS"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Test openSMILE"
-        android:textSize="50dp"
-        android:backgroundTint="#ff424242"
-        android:textColor="#ffffff"
-        android:paddingTop="10dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp"
-        android:paddingLeft="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_gravity="center"
-        android:gravity="center" />
 </LinearLayout>

@@ -63,7 +63,13 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
         }
 
 
+        private bool CalledAppStartup = false;
         public void OnApplicationStartup() {
+            if (!CalledAppStartup) {
+                CalledAppStartup = true; 
+            } else {
+                return;
+            }
             if (IsActive) {
                 Start();
             }
