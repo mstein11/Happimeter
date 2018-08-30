@@ -146,6 +146,24 @@
                 android:paddingRight="10dp"
                 android:paddingBottom="10dp"
                 android:paddingLeft="10dp" />
+            <TextView
+                android:text="Audio Feature extraction for turn taking and emotion detection. Might affect Battery runtime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="35dp"
+                android:textColor="#ffffff" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/info_toggle_audio_feature_extraction"
+                android:text=""
+                android:textSize="45dp"
+                android:backgroundTint="#ff424242"
+                android:textColor="#ffffff"
+                android:paddingTop="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp" />
         <!-- <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

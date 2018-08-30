@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Android.Runtime;
 using Java.Interop;
 using Java.Lang;
@@ -113,7 +114,12 @@ namespace Happimeter.Watch.Droid.openSMILE
         {
             Debug.WriteLine("Incoming message");
             if (listener_ != null)
-                listener_.onSmileMessageReceived((string)text);
+            {
+                Task.Run(() =>
+                {
+                    listener_.onSmileMessageReceived((string)text);
+                });
+            }
         }
 
     }

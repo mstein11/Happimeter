@@ -61,6 +61,8 @@ namespace Happimeter.Watch.Droid
                     }
                 });
             });
+            // activates audio feature extraction in this session if user activated it in a previous session
+            ServiceLocator.Instance.Get<IAudioFeaturesService>().OnApplicationStartup();
 
             var pairing = ServiceLocator.Instance.Get<IDatabaseContext>().GetCurrentBluetoothPairing();
             if (pairing != null)

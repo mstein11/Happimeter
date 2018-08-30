@@ -230,6 +230,8 @@
     <Compile Include="MainApplication.cs" />
     <Compile Include="openSMILE\Smile.cs" />
     <Compile Include="openSMILE\SmileJNI.cs" />
+    <Compile Include="ServicesBusinessLogic\IAudioFeaturesService.cs" />
+    <Compile Include="ServicesBusinessLogic\AudioFeaturesService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

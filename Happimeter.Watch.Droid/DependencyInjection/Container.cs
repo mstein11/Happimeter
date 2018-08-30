@@ -19,6 +19,7 @@ namespace Happimeter.Watch.Droid.DependencyInjection
 			ServiceLocator.Instance.Register<ILoggingService, LoggingService>();
 			ServiceLocator.Instance.Register<IAccountStoreService, AccountStoreService>();
 			ServiceLocator.Instance.Register<IDeviceService, DeviceService>();
+            ServiceLocator.Instance.Register<IAudioFeaturesService, AudioFeaturesService>();
 		}
 	}
 }
