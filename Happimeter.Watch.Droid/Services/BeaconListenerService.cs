@@ -5,13 +5,10 @@ using Happimeter.Core.Helper;
 using System.Collections.Generic;
 using Android.Content;
 using Android.Runtime;
-
-using Android.OS;
 using AltBeaconOrg.BoundBeacon.Powersave;
 using Android.App;
 using System.Collections.Concurrent;
 using System.Linq;
-using Plugin.BluetoothLE;
 using Happimeter.Watch.Droid.ServicesBusinessLogic;
 
 namespace Happimeter.Watch.Droid.Services
@@ -74,9 +71,6 @@ namespace Happimeter.Watch.Droid.Services
 
         public void StartListeningForBeacons()
         {
-#if DEBUG
-            //BeaconManager.SetDebug(true);
-#endif
             BeaconManager = BeaconManager.GetInstanceForApplication(Application.Context);
             var iBeaconParser = new BeaconParser();
             //  ibeacon layout
@@ -93,7 +87,7 @@ namespace Happimeter.Watch.Droid.Services
                 {
                     BeaconManager.StopRangingBeaconsInRegion(item);
                 }
-
+                ToMonitor.Clear();
             }
             if (BeaconManager != null)
             {

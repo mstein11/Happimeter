@@ -111,7 +111,7 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
                     BeaconWorker.GetInstance().Start();
                 });
             }
-
+            /*
             if (!BluetoothScannerWorker.GetInstance().IsRunning)
             {
                 Task.Factory.StartNew(() =>
@@ -119,6 +119,7 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
                     BluetoothScannerWorker.GetInstance().Start();
                 });
             }
+            */
         }
 
         /// <summary>

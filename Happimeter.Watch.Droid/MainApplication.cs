@@ -21,6 +21,7 @@ namespace Happimeter.Watch.Droid
                 mBluetoothAdapter.Enable();
             }
 
+            BluetoothMedic.Instance.EnablePeriodicTests(this, BluetoothMedic.ScanTest | BluetoothMedic.TransmitTest);
             BluetoothMedic.Instance.EnablePowerCycleOnFailures(this);             BluetoothMedic.Instance.SetNotificationsEnabled(true, Resource.Drawable.notification_icon_background);
         }
     }
