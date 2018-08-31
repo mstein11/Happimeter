@@ -34,7 +34,7 @@ namespace Happimeter.iOS
         {
             //we need this or our chartview are not working. Probably an issue with the linker
             var ignore_chartView = new Microcharts.Forms.ChartView();
-            Xamarin.FormsGoogleMaps.Init("AIzaSyC9DzMXj6s1rwu3UK70iNLJ4VC32xEtREs");
+            Xamarin.FormsGoogleMaps.Init("AIzaSyAZp2Nj4thfDcS2Jvoy-N-6HgagU13jvuk");
             AppCenter.Start("3119c95f-ca17-4e2d-9ae0-46c5382633f8",
                    typeof(Analytics), typeof(Crashes));
 
