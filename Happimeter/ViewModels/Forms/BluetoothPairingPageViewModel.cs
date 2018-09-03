@@ -121,7 +121,7 @@ namespace Happimeter.ViewModels.Forms
             }
             //var _btService = ServiceLocator.Instance.Get<IBluetoothService1>();
             //_btService.PairDevice(selectedItem);
-            selectedItem.Connect();
+
 
             selectedItem.OnConnectingStateChanged += (sender1, e1) =>
             {
@@ -137,6 +137,8 @@ namespace Happimeter.ViewModels.Forms
 
                 (e.SelectedItem as BluetoothPairingItemViewModel).ShowIndicationForState(state.Value);
             };
+
+            selectedItem.Connect();
         }
 
         public event EventHandler OnPairedDevice;

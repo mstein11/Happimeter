@@ -40,7 +40,7 @@ namespace Happimeter.ViewModels.Forms
                     ServiceLocator
                         .Instance
                         .Get<ISharedDatabaseContext>()
-                        .ResetDatabase();
+                        .ResetDatabaseOnLogout();
 
                     ServiceLocator
                         .Instance

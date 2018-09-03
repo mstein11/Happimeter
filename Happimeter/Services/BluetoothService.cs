@@ -365,7 +365,7 @@ namespace Happimeter.Services
                     Debug.WriteLine("Got PreSurveyMessage");
                     ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.DataExchangeReceivedNotification);
                     var predictionService = ServiceLocator.Instance.Get<IPredictionService>();
-                    var measurementService = ServiceLocator.Instance.Get<IMeasurementService>();
+                    var measurementService = ServiceLocator.Instance.Get<IGenericQuestionService>();
 
                     var downloadPredictionsTask = predictionService.DownloadAndSavePrediction();
                     var downloadQuestionsTask = measurementService.DownloadAndSaveGenericQuestions();
@@ -508,7 +508,7 @@ namespace Happimeter.Services
                 return;
             }
 
-            var genericQuestions = ServiceLocator.Instance.Get<IMeasurementService>().GetActiveGenericQuestions();
+            var genericQuestions = ServiceLocator.Instance.Get<IGenericQuestionService>().GetActiveGenericQuestions();
             var genericQuestionMessage = new GenericQuestionMessage
             {
                 Questions = genericQuestions.ToList()

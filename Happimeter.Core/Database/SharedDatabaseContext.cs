@@ -99,7 +99,7 @@ namespace Happimeter.Core.Database
             }
         }
 
-        public virtual void ResetDatabase()
+        public virtual void ResetDatabaseOnLogout()
         {
             EnsureDatabaseCreated();
             lock (SyncLock)
@@ -114,7 +114,7 @@ namespace Happimeter.Core.Database
                     DeleteAll<SurveyItemMeasurement>();
                     DeleteAll<SurveyMeasurement>();
                     DeleteAll<PredictionEntry>();
-                    DeleteAll<GenericQuestion>();
+                    //DeleteAll<GenericQuestion>();
                     DeleteAll<ProximityEntry>();
                 }
             }

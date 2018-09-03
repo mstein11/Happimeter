@@ -25,7 +25,7 @@ namespace Happimeter.Services
 
         private const double MeterPerSqaureSecondToMilliGForce = 101.93679918451;
 
-
+        /*
         public IList<GenericQuestion> GetGenericQuestions()
         {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
@@ -46,6 +46,7 @@ namespace Happimeter.Services
             question.Activated = isActivated;
             context.Update(question);
         }
+        */
 
         /// <summary>
         ///     Method returns Generic Questions for display in survey.
@@ -54,7 +55,7 @@ namespace Happimeter.Services
         public SurveyViewModel GetSurveyQuestions()
         {
             var questions = new SurveyViewModel();
-            var dbQuestions = GetActiveGenericQuestions();
+            var dbQuestions = ServiceLocator.Instance.Get<IGenericQuestionService>().GetActiveGenericQuestions();
             var additionalQuestions = dbQuestions.Select(x => new SurveyItemViewModel
             {
                 Question = x.Question,
@@ -271,10 +272,6 @@ namespace Happimeter.Services
         {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             var entries = context.GetAllWithChildren<SurveyMeasurement>(x => !x.IsUploadedToServer);
-            var groupId = ServiceLocator
-                .Instance
-                .Get<IConfigService>()
-                .GetConfigValueByKey(ConfigService.GenericQuestionGroupIdKey);
             var result = new List<PostMoodServiceModel>();
 
             foreach (var entry in entries)
@@ -442,7 +439,7 @@ namespace Happimeter.Services
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             return context.GetAllWithChildren<SurveyMeasurement>();
         }
-
+        /*
         /// <summary>
         ///     Returns null, when api return an error (e.g. no internt)
         /// </summary>
@@ -498,5 +495,6 @@ namespace Happimeter.Services
                 return null;
             }
         }
+        */
     }
 }

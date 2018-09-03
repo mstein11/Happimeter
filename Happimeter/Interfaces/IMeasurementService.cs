@@ -10,7 +10,7 @@ namespace Happimeter.Interfaces
     public interface IMeasurementService
     {
         SurveyViewModel GetSurveyQuestions();
-        IList<GenericQuestion> GetActiveGenericQuestions();
+        //IList<GenericQuestion> GetActiveGenericQuestions();
         Task AddMeasurements(DataExchangeMessage message);
         Task AddSurveyData(SurveyViewModel model);
         List<SurveyMeasurement> GetSurveyData(System.DateTime? from = null, System.DateTime? to = null);
@@ -25,9 +25,9 @@ namespace Happimeter.Interfaces
         int CountUnsynchronizedSurveyData();
         void SetIsUploadedToServerForSensorData(PostSensorDataServiceModel sensor);
         bool HasUnsynchronizedChanges();
-        Task<List<GenericQuestion>> DownloadAndSaveGenericQuestions();
+        //Task<List<GenericQuestion>> DownloadAndSaveGenericQuestions();
         MyTabMenuViewModel GetQuestionsToDisplayInTabMenu();
-        IList<GenericQuestion> GetGenericQuestions();
-        void ToggleGenericQuestionActivation(int questionId, bool isActivated);
+        //IList<GenericQuestion> GetGenericQuestions();
+        //void ToggleGenericQuestionActivation(int questionId, bool isActivated);
     }
 }

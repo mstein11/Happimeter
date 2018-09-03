@@ -8,7 +8,6 @@ namespace Happimeter.Core.Services
 {
     public class ConfigService : IConfigService
     {
-        public const string GenericQuestionGroupIdKey = "GENERIC_QUESTION_GROUP";
         public const string WatchNameKey = "WATCH_NAME_KEY";
         public const string BatterySaferMeasurementIntervalId = "BATTERY_SAFER_MEASUREMENT_INTERVAL_ID";
         public const string DeactivateAppStartsOnBoot = "DEACTIVATE_APP_STARTS_ON_BOOT";

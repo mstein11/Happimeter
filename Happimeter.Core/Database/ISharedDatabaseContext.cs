@@ -15,7 +15,7 @@ namespace Happimeter.Core.Database
         void Delete<T>(T entity) where T : new();
         void DeleteAll<T>() where T : new();
 
-        void ResetDatabase();
+        void ResetDatabaseOnLogout();
 
         T GetWithChildren<T>(Expression<Func<T, bool>> whereClause) where T : new();
         T Get<T>(Expression<Func<T, bool>> whereClause) where T : new();
