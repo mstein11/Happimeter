@@ -20,6 +20,10 @@ namespace Happimeter.ViewModels.Forms
             ShowPushQuestionsToWatchButton = hasBtPairing;
 
             NumberOfGenericQuestions = ServiceLocator.Instance.Get<IMeasurementService>().GetSurveyQuestions().SurveyItems.Count() - 2;
+            if (NumberOfGenericQuestions < 0)
+            {
+                NumberOfGenericQuestions = 0;
+            }
             SaveGenericGroupButtonEnabled = true;
 
             PushGenericQuestionToWatchButtonText = "Push Questions to Watch";
