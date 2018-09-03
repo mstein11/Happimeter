@@ -13,6 +13,7 @@ using Happimeter.ViewModels.Forms;
 using System.Collections.ObjectModel;
 using Version.Plugin;
 using System.Runtime.Remoting.Lifetime;
+using System.Diagnostics;
 
 namespace Happimeter.Services
 {
@@ -448,38 +449,54 @@ namespace Happimeter.Services
         /// <returns>The and save generic questions.</returns>
         public async Task<List<GenericQuestion>> DownloadAndSaveGenericQuestions()
         {
-            var api = ServiceLocator.Instance.Get<IHappimeterApiService>();
-            var questions = await api.GetGenericQuestions();
-            if (!questions.IsSuccess)
+            try
             {
+
+
+                System.Diagnostics.Debug.WriteLine("DownloadAndSaveGenericQuestions.Start");
+                var api = ServiceLocator.Instance.Get<IHappimeterApiService>();
+                var questions = await api.GetGenericQuestions();
+                if (!questions.IsSuccess)
+                {
+                    System.Diagnostics.Debug.WriteLine("Questions.NotSuccessful");
+                    return null;
+                }
+
+                var newQuestions = questions.Questions.Select(q => new GenericQuestion
+                {
+                    Question = q.Question,
+                    QuestionShort = q.QuestionShort,
+                    QuestionId = q.Id
+                }).ToList();
+                System.Diagnostics.Debug.WriteLine(newQuestions.Count);
+                var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
+                var oldQuestions = context.GetAll<GenericQuestion>();
+                foreach (var question in newQuestions)
+                {
+                    System.Diagnostics.Debug.WriteLine("DownloadAndSaveGenericQuestions.inForEach");
+                    var matchedQuestion = oldQuestions.FirstOrDefault(x => x.QuestionId == question.QuestionId);
+                    if (matchedQuestion != null)
+                    {
+                        question.Id = matchedQuestion.Id;
+                        question.Deactivated = matchedQuestion.Deactivated;
+                        question.Activated = matchedQuestion.Activated;
+                        context.Update(question);
+                    }
+                    else
+                    {
+                        context.Add(question);
+                    }
+                }
+                System.Diagnostics.Debug.WriteLine("DownloadAndSaveGenericQuestions.Return");
+                return newQuestions;
+            }
+            catch (Exception e)
+            {
+                ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
+                System.Diagnostics.Debug.WriteLine("DownloadAndSaveGenericQuestions.Catch");
+                System.Diagnostics.Debug.WriteLine(e.Message);
                 return null;
             }
-
-            var newQuestions = questions.Questions.Select(q => new GenericQuestion
-            {
-                Question = q.Question,
-                QuestionShort = q.QuestionShort,
-                QuestionId = q.Id
-            }).ToList();
-            var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
-            var oldQuestions = context.GetAll<GenericQuestion>();
-            foreach (var question in newQuestions)
-            {
-                var matchedQuestion = oldQuestions.FirstOrDefault(x => x.QuestionId == question.QuestionId);
-                if (matchedQuestion != null)
-                {
-                    question.Id = matchedQuestion.Id;
-                    question.Deactivated = matchedQuestion.Deactivated;
-                    question.Activated = matchedQuestion.Activated;
-                    context.Update(question);
-                }
-                else
-                {
-                    context.Add(question);
-                }
-            }
-
-            return newQuestions;
         }
     }
 }
