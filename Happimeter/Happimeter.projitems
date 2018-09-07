@@ -143,6 +143,23 @@
     <Compile Include="$(MSBuildThisFileDirectory)Controls\Checkbox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\GenericQuestionService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IGenericQuestionService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\GetTeamsResultModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ApiResultModels\AbstractResultModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\TeamService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\TeamListPage.xaml.cs">
+      <DependentUpon>TeamListPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\ITeamService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\MyFloatingActionButton.xaml.cs">
+      <DependentUpon>MyFloatingActionButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Services\SynchronizationService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\ISynchronizationService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\Teams\TeamListItemViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\Teams\TeamListViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\Teams\JoinTeamViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\JoinTeamResultModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\GetTeamsByNameResultModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />
@@ -156,6 +173,7 @@
     <Folder Include="$(MSBuildThisFileDirectory)Controls\" />
     <Folder Include="$(MSBuildThisFileDirectory)Views\Converters\" />
     <Folder Include="$(MSBuildThisFileDirectory)Views\CustomControls\" />
+    <Folder Include="$(MSBuildThisFileDirectory)ViewModels\Forms\Teams\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\SurveyPage.xaml">
@@ -235,6 +253,14 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Controls\MoodHistoryCard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\TeamListPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Controls\MyFloatingActionButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>

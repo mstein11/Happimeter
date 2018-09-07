@@ -315,6 +315,14 @@
     <Reference Include="Xamarin.Forms.Xaml">
       <HintPath>..\packages\Xamarin.Forms.3.2.0.729530-pre2\lib\MonoAndroid10\Xamarin.Forms.Xaml.dll</HintPath>
     </Reference>
+    <Reference Include="SuaveControls.FloatingActionButton">
+      <HintPath>..\packages\SuaveControls.FloatingActionButton.2018.3.1-pre1\lib\monoandroid80\SuaveControls.FloatingActionButton.dll</HintPath>
+    </Reference>
+    <Reference Include="SuaveControls.FloatingActionButton.Droid">
+      <HintPath>..\packages\SuaveControls.FloatingActionButton.2018.3.1-pre1\lib\monoandroid80\SuaveControls.FloatingActionButton.Droid.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainApplication.cs" />
@@ -337,6 +345,7 @@
     <Compile Include="Renderers\MyButtonRenderer.cs" />
     <Compile Include="Helpers\IDeviceExtension.cs" />
     <Compile Include="Renderers\CheckboxRenderer.cs" />
+    <Compile Include="Renderers\MyFloatingActionButtonRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\AboutAssets.txt" />
@@ -380,6 +389,27 @@
     <AndroidResource Include="Resources\drawable-mdpi\signin_background.jpg" />
     <AndroidResource Include="Resources\drawable-ldpi\signin_background.jpg" />
     <AndroidResource Include="Resources\drawable\signin_background.jpg" />
+    <AndroidResource Include="Resources\drawable\baseline_person_add_24.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\person_add_small.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\person_add.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\person_add_small.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\person_add.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\person_add.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\person_add_small.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\person_add.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\person_add_small.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\person_add.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\person_add_small.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\baseline_close_white_48.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\baseline_close_white_48.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\baseline_close_white_48.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\baseline_close_white_48.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\baseline_close_white_48.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\baseline_check_white_48.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\baseline_check_white_48.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\baseline_check_white_48.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\baseline_check_white_48.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\baseline_check_white_48.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DependencyInjection\" />

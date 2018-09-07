@@ -84,8 +84,7 @@ namespace Happimeter
         {
             if (ServiceLocator.Instance.Get<IAccountStoreService>().IsAuthenticated())
             {
-                await ServiceLocator.Instance.Get<IPredictionService>().DownloadAndSavePrediction();
-                await ServiceLocator.Instance.Get<IProximityService>().DownloadAndSaveProximity();
+                await ServiceLocator.Instance.Get<ISynchronizationService>().Sync();
             }
         }
 
@@ -134,6 +133,14 @@ namespace Happimeter
                     new Setter {Property = Label.FontSizeProperty, Value = 24},
                     new Setter {Property = Label.TextColorProperty, Value = Color.White},
                     new Setter {Property = Label.HorizontalTextAlignmentProperty, Value = TextAlignment.Center},
+                },
+            });
+
+            dict.Add("HintTextStyle", new Style(typeof(Label))
+            {
+                Setters = {
+                    new Setter {Property = Label.FontSizeProperty, Value = Xamarin.Forms.Device.GetNamedSize(NamedSize.Small, typeof(Label))},
+                    new Setter {Property = Label.TextColorProperty, Value = Color.DimGray},
                 },
             });
 

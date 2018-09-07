@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Happimeter.Models.ApiResultModels;
 
 namespace Happimeter.Models.ServiceModels
 {
-    public class GetSignalsModel
+    public class GetSignalsModel : AbstractResultModel
     {
         public GetSignalsModel()
         {
@@ -15,9 +16,6 @@ namespace Happimeter.Models.ServiceModels
         public List<SynchronizationItemModel> Data { get; set; }
         [JsonProperty("data_turn_taking")]
         public List<TurnTakingItemModel> DataTurnTaking { get; set; }
-
-        public HappimeterApiResultInformation ResultType { get; set; }
-        public bool IsSuccess => ResultType == HappimeterApiResultInformation.Success;
     }
 
     public class TurnTakingItemModel

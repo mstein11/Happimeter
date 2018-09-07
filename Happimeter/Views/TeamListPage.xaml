@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    x:Class="Happimeter.Views.TeamListPage"
+    xmlns:controls="clr-namespace:SuaveControls.Views;assembly=SuaveControls.FloatingActionButton"
+    xmlns:local="clr-namespace:Happimeter.Controls"
+    xmlns:xfx="clr-namespace:Xfx;assembly=Xfx.Controls">
+    <ContentPage.Content>
+            <Grid
+                HorizontalOptions="FillAndExpand" 
+                VerticalOptions="FillAndExpand">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="auto"></RowDefinition>
+                    <RowDefinition Height="auto"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="auto"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <ListView 
+                    ItemsSource="{Binding Teams}" 
+                    HasUnevenRows="true"
+                    SeparatorVisibility="None"
+                    Grid.RowSpan="3"
+                    Grid.ColumnSpan="2">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Frame HeightRequest="100" Padding="5" Margin="20">
+                                    <Label Text="{Binding Name}"></Label>
+                                </Frame>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <StackLayout x:Name="Overlay" Opacity="0" Grid.RowSpan="3" Grid.ColumnSpan="2" BackgroundColor="#000000" IsVisible="false">
+                    
+                </StackLayout>
+                <ScrollView Grid.Row="1" Grid.ColumnSpan="2" Padding="15, 0, 15, 85" x:Name="FormContentContainer">
+                    <Frame Padding="15" BackgroundColor="White">
+                        <StackLayout Spacing="15">
+                            <Label Text="JOIN A TEAM" FontSize="Large"></Label>
+                            <xfx:XfxEntry ErrorDisplay="None" Placeholder="Teamname" Text="{Binding JoinTeamViewModel.Name}"  />
+                            <xfx:XfxEntry Placeholder="Password" Text="{Binding JoinTeamViewModel.Password}" ErrorText="{Binding JoinTeamViewModel.Error}" IsPassword="true" />
+                            <Label Text="Please fill the above form to join a Team" IsVisible="{Binding JoinTeamViewModel.NormalTextIsVisible}" Style="{StaticResource HintTextStyle}"></Label>
+                            <Label Text="Loading..." IsVisible="{Binding JoinTeamViewModel.IsLoading}" Style="{StaticResource HintTextStyle}"></Label>
+                            <Label TextColor="Green" Text="Team successfully joined" IsVisible="{Binding JoinTeamViewModel.SuccessMessageIsVisible}" Style="{StaticResource HintTextStyle}"></Label>
+                        </StackLayout>
+                    </Frame>
+                </ScrollView>
+                <StackLayout Orientation="Vertical" Spacing="5" Padding="30, 15, 30, 15" Grid.Row="2" Grid.Column="1" HorizontalOptions="End" x:Name="JoinContainer">
+                    <local:MyFloatingActionButton Padding="10" HorizontalOptions="Center" WidthRequest="50" HeightRequest="50" VerticalOptions="CenterAndExpand" Image="person_add_small.png" ButtonColor="#b71c1c" Clicked="Handle_Clicked">
+                        <local:MyFloatingActionButton.WidthRequest>
+                            <OnPlatform iOS="50" Android="80"></OnPlatform>
+                        </local:MyFloatingActionButton.WidthRequest>    
+                        <local:MyFloatingActionButton.HeightRequest>
+                            <OnPlatform iOS="50" Android="90"></OnPlatform>
+                        </local:MyFloatingActionButton.HeightRequest>
+                    </local:MyFloatingActionButton>
+                    <Label FontSize="Small" TextColor="White" HorizontalOptions="Center" Text="Join Team" BackgroundColor="Gray"></Label>
+                </StackLayout>
+                <StackLayout Orientation="Horizontal" Spacing="0" Padding="15" Grid.Row="2" Grid.Column="1" HorizontalOptions="Center" x:Name="FormActionContainer">
+                    <StackLayout Orientation="Vertical" Spacing="5" Padding="15, 0, 15, 0" Grid.Row="1" Grid.Column="1" HorizontalOptions="Center">
+                        <local:MyFloatingActionButton Padding="10" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" Image="baseline_check_white_48.png" ButtonColor="#b71c1c" Command="{Binding JoinTeamViewModel.JoinTeamCommand}">
+                            <local:MyFloatingActionButton.WidthRequest>
+                                <OnPlatform iOS="50" Android="80"></OnPlatform>
+                            </local:MyFloatingActionButton.WidthRequest>    
+                            <local:MyFloatingActionButton.HeightRequest>
+                                <OnPlatform iOS="50" Android="90"></OnPlatform>
+                            </local:MyFloatingActionButton.HeightRequest>    
+                        </local:MyFloatingActionButton>
+                        <Label FontSize="Small" TextColor="White" HorizontalOptions="Center" Text="Save"></Label>
+                    </StackLayout>
+                   <StackLayout Orientation="Vertical" Spacing="5" Padding="15, 0, 15, 0" Grid.Row="1" Grid.Column="1" HorizontalOptions="Center">
+                        <local:MyFloatingActionButton Padding="10" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" Image="baseline_close_white_48.png" ButtonColor="Gray" Clicked="Handle_Close">
+                            <local:MyFloatingActionButton.WidthRequest>
+                                <OnPlatform iOS="50" Android="80"></OnPlatform>
+                            </local:MyFloatingActionButton.WidthRequest>    
+                            <local:MyFloatingActionButton.HeightRequest>
+                                <OnPlatform iOS="50" Android="90"></OnPlatform>
+                            </local:MyFloatingActionButton.HeightRequest>    
+                        </local:MyFloatingActionButton>
+                        <Label FontSize="Small" TextColor="White" HorizontalOptions="Center" Text="Close"></Label>
+                    </StackLayout>
+                </StackLayout>
+            </Grid>
+    </ContentPage.Content>
+</ContentPage>

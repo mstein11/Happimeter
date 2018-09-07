@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Happimeter.Models.ApiResultModels;
 
 namespace Happimeter.Models.ServiceModels
 {
-    public class GetGenericQuestionApiResult
+    public class GetGenericQuestionApiResult : AbstractResultModel
     {
         public GetGenericQuestionApiResult()
         {
@@ -12,9 +13,6 @@ namespace Happimeter.Models.ServiceModels
         }
 
         public List<GenericQuestionItemApiResult> Questions { get; set; }
-
-        public HappimeterApiResultInformation ResultType { get; set; }
-        public bool IsSuccess => ResultType == HappimeterApiResultInformation.Success;
     }
 
     public class GenericQuestionItemApiResult

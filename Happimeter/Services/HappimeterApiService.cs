@@ -10,9 +10,9 @@ using Happimeter.Models.ApiResultModels;
 using Happimeter.Models.ServiceModels;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
-using Xamarin.Forms;
 using Happimeter.Core.Services;
 using Happimeter.Core.Database;
+using System.Collections.Generic;
 
 namespace Happimeter.Services
 {
@@ -36,6 +36,9 @@ namespace Happimeter.Services
         private const string ApiPathPredictions = "/v1/classifier/prediction";
         private const string ApiPathProximity = "/v1/proximity";
         private const string ApiPathSignals = "/v1/signals";
+
+        private const string ApiPathGetTeams = "/v1/teams";
+        private const string ApiPathTeamsEndpoint = "/v1/teams";
 
 
         private static string GetUrlForPath(string path)
@@ -181,45 +184,6 @@ namespace Happimeter.Services
                 methodResult.ResultType = AuthResultTypes.ErrorUnknown;
             }
 
-
-            return methodResult;
-        }
-
-        public async Task<GetMeResultModel> GetMe()
-        {
-            var methodResult = new GetMeResultModel();
-            var url = GetUrlForPath(ApiPathAuth);
-            HttpResponseMessage result = null;
-            try
-            {
-                result = await _restService.Get(url);
-            }
-            catch (Exception e) when (
-                e is HttpRequestException
-                || e is WebException
-            )
-            {
-                ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
-                methodResult.ResultType = HappimeterApiResultInformation.NoInternet;
-                return methodResult;
-            }
-            var stringResult = await result.Content.ReadAsStringAsync();
-            var jObjectResult = JObject.Parse(stringResult);
-            var status = jObjectResult["status"].ToObject<int>();
-            if (status == 200)
-            {
-                var apiResults = jObjectResult["auth"].ToObject<GetMeResultModel>();
-                methodResult = apiResults;
-                methodResult.ResultType = HappimeterApiResultInformation.Success;
-            }
-            else if (status == 510)
-            {
-                methodResult.ResultType = HappimeterApiResultInformation.AuthenticationError;
-            }
-            else
-            {
-                methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
-            }
 
             return methodResult;
         }
@@ -423,197 +387,6 @@ namespace Happimeter.Services
             }
         }
 
-        public async Task<GetGenericQuestionApiResult> GetGenericQuestions()
-        {
-            var methodResult = new GetGenericQuestionApiResult();
-            var url = GetUrlForPath(ApiPathGetGenericQuestion);
-            HttpResponseMessage result = null;
-            GetGenericQuestionApiResult questions = null;
-            try
-            {
-                result = await _restService.Get(url);
-                var stringResult = await result.Content.ReadAsStringAsync();
-                questions = Newtonsoft.Json.JsonConvert.DeserializeObject<GetGenericQuestionApiResult>(stringResult);
-            }
-            catch (Exception e) when (
-                e is HttpRequestException
-                || e is WebException
-            )
-            {
-                ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
-                Debug.WriteLine(e.Message);
-                methodResult.ResultType = HappimeterApiResultInformation.NoInternet;
-                return methodResult;
-            }
-            catch (Exception e)
-            {
-                ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
-                Debug.WriteLine(e.Message);
-                Debug.WriteLine(e.GetType());
-                methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
-                return methodResult;
-            }
-
-            if (result.IsSuccessStatusCode)
-            {
-                methodResult = questions;
-                methodResult.ResultType = HappimeterApiResultInformation.Success;
-            }
-            else if (result.StatusCode == HttpStatusCode.Forbidden)
-            {
-                methodResult.ResultType = HappimeterApiResultInformation.AuthenticationError;
-            }
-            else
-            {
-                methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
-            }
-
-            return methodResult;
-        }
-
-        public async Task<GetProximityResultModel> GetProximityData(DateTime since)
-        {
-            var url = GetUrlForPath(ApiPathProximity);
-
-            url += $"/{since.ToString("yyyy-MM-dd HH:mm:ss")}";
-            var methodResult = new GetProximityResultModel();
-            HttpResponseMessage result = null;
-            GetProximityResultModel proximity = null;
-            try
-            {
-                result = await _restService.Get(url);
-                var stringResult = await result.Content.ReadAsStringAsync();
-                proximity = Newtonsoft.Json.JsonConvert.DeserializeObject<GetProximityResultModel>(stringResult);
-            }
-            catch (Exception e) when (
-                e is HttpRequestException
-                || e is WebException
-            )
-            {
-                ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
-                Debug.WriteLine(e.Message);
-                methodResult.ResultType = HappimeterApiResultInformation.NoInternet;
-                return methodResult;
-            }
-            catch (Exception e)
-            {
-                ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
-                Debug.WriteLine(e.Message);
-                Debug.WriteLine(e.GetType());
-                methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
-                return methodResult;
-            }
-            if (result.IsSuccessStatusCode && proximity.IsSuccess)
-            {
-                methodResult = proximity;
-                methodResult.ResultType = HappimeterApiResultInformation.Success;
-            }
-            else if (result.StatusCode == HttpStatusCode.Forbidden)
-            {
-                methodResult.ResultType = HappimeterApiResultInformation.AuthenticationError;
-            }
-            else
-            {
-                methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
-            }
-            return methodResult;
-        }
-
-        public async Task<GetSignalsModel> GetSignals(DateTime forDay)
-        {
-            var url = GetUrlForPath(ApiPathSignals);
-            var from = forDay.Date.ToUniversalTime();
-            var until = from.AddDays(1);
-            url += $"?timestamps[]={from.ToString("yyyy-MM-dd HH:mm:ss")}&timestamps[]={until.ToString("yyyy-MM-dd HH:mm:ss")}";
-            var methodResult = new GetSignalsModel();
-            HttpResponseMessage result = null;
-            GetSignalsModel signals = null;
-            try
-            {
-                result = await _restService.Get(url);
-                var stringResult = await result.Content.ReadAsStringAsync();
-                signals = Newtonsoft.Json.JsonConvert.DeserializeObject<GetSignalsModel>(stringResult);
-            }
-            catch (Exception e) when (
-                e is HttpRequestException
-                || e is WebException
-            )
-            {
-                ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
-                Debug.WriteLine(e.Message);
-                methodResult.ResultType = HappimeterApiResultInformation.NoInternet;
-                return methodResult;
-            }
-            catch (Exception e)
-            {
-                ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
-                Debug.WriteLine(e.Message);
-                Debug.WriteLine(e.GetType());
-                methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
-                return methodResult;
-            }
-            if (result.IsSuccessStatusCode && signals.IsSuccess)
-            {
-                methodResult = signals;
-                methodResult.ResultType = HappimeterApiResultInformation.Success;
-            }
-            else if (result.StatusCode == HttpStatusCode.Forbidden)
-            {
-                methodResult.ResultType = HappimeterApiResultInformation.AuthenticationError;
-            }
-            else
-            {
-                methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
-            }
-            return methodResult;
-        }
-
-        public async Task<GetPredictionsResultModel> GetPredictions()
-        {
-            var url = GetUrlForPath(ApiPathPredictions);
-            var methodResult = new GetPredictionsResultModel();
-            HttpResponseMessage result = null;
-            GetPredictionsResultModel predictions;
-            try
-            {
-                result = await _restService.Get(url);
-                var stringResult = await result.Content.ReadAsStringAsync();
-                predictions = Newtonsoft.Json.JsonConvert.DeserializeObject<GetPredictionsResultModel>(stringResult);
-            }
-            catch (Exception e) when (
-                e is HttpRequestException
-                || e is WebException
-            )
-            {
-                ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
-                Debug.WriteLine(e.Message);
-                methodResult.ResultType = HappimeterApiResultInformation.NoInternet;
-                return methodResult;
-            }
-            catch (Exception e)
-            {
-                ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
-                Debug.WriteLine(e.Message);
-                Debug.WriteLine(e.GetType());
-                methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
-                return methodResult;
-            }
-            if (result.IsSuccessStatusCode && predictions.IsSuccess)
-            {
-                methodResult = predictions;
-                methodResult.ResultType = HappimeterApiResultInformation.Success;
-            }
-            else if (result.StatusCode == HttpStatusCode.Forbidden)
-            {
-                methodResult.ResultType = HappimeterApiResultInformation.AuthenticationError;
-            }
-            else
-            {
-                methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
-            }
-            return methodResult;
-        }
-
         private const string ApiPathPostDatabase = "/v1/_save_phone_database_file";
         public async Task<bool> UploadDatabaseForDebug()
         {
@@ -635,6 +408,172 @@ namespace Happimeter.Services
             }
 
             return false;
+        }
+
+        public async Task<GetMeResultModel> GetMe()
+        {
+            var methodResult = new GetMeResultModel();
+            var url = GetUrlForPath(ApiPathAuth);
+            HttpResponseMessage result = null;
+            try
+            {
+                result = await _restService.Get(url);
+            }
+            catch (Exception e) when (
+                e is HttpRequestException
+                || e is WebException
+            )
+            {
+                ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
+                methodResult.ResultType = HappimeterApiResultInformation.NoInternet;
+                return methodResult;
+            }
+            var stringResult = await result.Content.ReadAsStringAsync();
+            var jObjectResult = JObject.Parse(stringResult);
+            var status = jObjectResult["status"].ToObject<int>();
+            if (status == 200)
+            {
+                var apiResults = jObjectResult["auth"].ToObject<GetMeResultModel>();
+                methodResult = apiResults;
+                methodResult.ResultType = HappimeterApiResultInformation.Success;
+            }
+            else if (status == 510)
+            {
+                methodResult.ResultType = HappimeterApiResultInformation.AuthenticationError;
+            }
+            else
+            {
+                methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
+            }
+
+            return methodResult;
+        }
+
+
+        public async Task<GetGenericQuestionApiResult> GetGenericQuestions()
+        {
+            var methodResult = new GetGenericQuestionApiResult();
+            var url = GetUrlForPath(ApiPathGetGenericQuestion);
+
+            return await Get<GetGenericQuestionApiResult>(url);
+        }
+
+        public async Task<GetProximityResultModel> GetProximityData(DateTime since)
+        {
+            var url = GetUrlForPath(ApiPathProximity);
+
+            url += $"/{since.ToString("yyyy-MM-dd HH:mm:ss")}";
+
+            return await Get<GetProximityResultModel>(url);
+        }
+
+        public async Task<GetSignalsModel> GetSignals(DateTime forDay)
+        {
+            var url = GetUrlForPath(ApiPathSignals);
+            var from = forDay.Date.ToUniversalTime();
+            var until = from.AddDays(1);
+            url += $"?timestamps[]={from.ToString("yyyy-MM-dd HH:mm:ss")}&timestamps[]={until.ToString("yyyy-MM-dd HH:mm:ss")}";
+
+            return await Get<GetSignalsModel>(url);
+        }
+
+        public async Task<GetPredictionsResultModel> GetPredictions()
+        {
+            var url = GetUrlForPath(ApiPathPredictions);
+            return await Get<GetPredictionsResultModel>(url);
+        }
+
+        public async Task<GetTeamsResultModel> GetTeams()
+        {
+            var url = GetUrlForPath(ApiPathTeamsEndpoint);
+            return await Get<GetTeamsResultModel>(url);
+        }
+
+        public async Task<GetTeamsByNameResultModel> GetTeamsByName(string name)
+        {
+            var url = $"{GetUrlForPath(ApiPathTeamsEndpoint)}/{name}";
+            return await Get<GetTeamsByNameResultModel>(url);
+        }
+
+        public async Task<JoinTeamResultModel> JoinTeam(int teamId, string password)
+        {
+            var methodResult = new JoinTeamResultModel();
+            var url = $"{GetUrlForPath(ApiPathTeamsEndpoint)}/{teamId}";
+            var data = new { password };
+            HttpResponseMessage result = null;
+            try
+            {
+                result = await _restService.Post(url, data);
+            }
+            catch (Exception e) when (
+                e is HttpRequestException
+                || e is WebException
+            )
+            {
+                ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
+                methodResult.ResultType = HappimeterApiResultInformation.NoInternet;
+                return methodResult;
+            }
+            catch (Exception e)
+            {
+                ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
+                methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
+                return methodResult;
+            }
+            var responseString = await result.Content.ReadAsStringAsync();
+            var apiResult = Newtonsoft.Json.JsonConvert.DeserializeObject<JoinTeamResultModel>(responseString);
+            apiResult.ResultType = HappimeterApiResultInformation.Success;
+            return apiResult;
+        }
+
+        private async Task<T> Get<T>(string url) where T : AbstractResultModel, new()
+        {
+
+            var methodResult = new T();
+            HttpResponseMessage result = null;
+            var errorDataDict = new Dictionary<string, string> {
+                    {"url", url}
+                };
+
+            T apiResultModel;
+            try
+            {
+                result = await _restService.Get(url);
+                var stringResult = await result.Content.ReadAsStringAsync();
+                apiResultModel = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(stringResult);
+            }
+            catch (Exception e) when (
+                e is HttpRequestException
+                || e is WebException
+            )
+            {
+                ServiceLocator.Instance.Get<ILoggingService>().LogException(e, errorDataDict);
+                Debug.WriteLine(e.Message);
+                methodResult.ResultType = HappimeterApiResultInformation.NoInternet;
+                return methodResult;
+            }
+            catch (Exception e)
+            {
+                ServiceLocator.Instance.Get<ILoggingService>().LogException(e, errorDataDict);
+                Debug.WriteLine(e.Message);
+                Debug.WriteLine(e.GetType());
+                methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
+                return methodResult;
+            }
+            if (result.IsSuccessStatusCode && apiResultModel.IsSuccess)
+            {
+                methodResult = apiResultModel;
+                methodResult.ResultType = HappimeterApiResultInformation.Success;
+            }
+            else if (result.StatusCode == HttpStatusCode.Forbidden)
+            {
+                methodResult.ResultType = HappimeterApiResultInformation.AuthenticationError;
+            }
+            else
+            {
+                methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
+            }
+            return methodResult;
         }
     }
 }

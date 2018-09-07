@@ -14,6 +14,7 @@ using Xfx;
 using Happimeter.Core.Services;
 using UserNotifications;
 using Happimeter.Views;
+using SuaveControls.FloatingActionButton.iOS.Renderers;
 
 namespace Happimeter.iOS
 {
@@ -42,6 +43,7 @@ namespace Happimeter.iOS
             Happimeter.iOS.DependencyInjection.Container.RegisterElements();
             XfxControls.Init();
             Forms.Init();
+            FloatingActionButtonRenderer.InitRenderer();
             App.Initialize();
             CrossBleAdapter.Init(BleAdapterConfiguration.DefaultBackgroudingConfig);
             ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.DebugSnapshot);

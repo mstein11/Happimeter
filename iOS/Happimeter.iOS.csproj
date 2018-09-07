@@ -274,6 +274,12 @@
       <HintPath>..\packages\Xamarin.Forms.3.2.0.729530-pre2\lib\Xamarin.iOS10\Xamarin.Forms.Xaml.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="SuaveControls.FloatingActionButton">
+      <HintPath>..\packages\SuaveControls.FloatingActionButton.2018.3.1-pre1\lib\xamarinios10\SuaveControls.FloatingActionButton.dll</HintPath>
+    </Reference>
+    <Reference Include="SuaveControls.FloatingActionButton.iOS">
+      <HintPath>..\packages\SuaveControls.FloatingActionButton.2018.3.1-pre1\lib\xamarinios10\SuaveControls.FloatingActionButton.iOS.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
@@ -313,6 +319,22 @@
     <ImageAsset Include="Assets.xcassets\signin_background.imageset\signin_background.jpeg" />
     <ImageAsset Include="Assets.xcassets\signin_background.imageset\signin_background%402.jpg" />
     <ImageAsset Include="Assets.xcassets\signin_background.imageset\signin_background.jpg" />
+    <ImageAsset Include="Assets.xcassets\person_add.imageset\baseline_person_add_white_48pt_1x.png" />
+    <ImageAsset Include="Assets.xcassets\person_add.imageset\baseline_person_add_white_48pt_2x.png" />
+    <ImageAsset Include="Assets.xcassets\person_add.imageset\baseline_person_add_white_48pt_3x.png" />
+    <ImageAsset Include="Assets.xcassets\person_add.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\person_add_small.imageset\baseline_person_add_white_24pt_1x.png" />
+    <ImageAsset Include="Assets.xcassets\person_add_small.imageset\baseline_person_add_white_48pt_2x.png" />
+    <ImageAsset Include="Assets.xcassets\person_add_small.imageset\baseline_person_add_white_48pt_3x.png" />
+    <ImageAsset Include="Assets.xcassets\person_add_small.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\baseline_check_white_48.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\baseline_close_white_48.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\baseline_close_white_48.imageset\baseline_close_white_48%401x.png" />
+    <ImageAsset Include="Assets.xcassets\baseline_close_white_48.imageset\baseline_close_white_48%402x.png" />
+    <ImageAsset Include="Assets.xcassets\baseline_close_white_48.imageset\baseline_close_white_48%403x.png" />
+    <ImageAsset Include="Assets.xcassets\baseline_check_white_48.imageset\baseline_check_white_48%401x.png" />
+    <ImageAsset Include="Assets.xcassets\baseline_check_white_48.imageset\baseline_check_white_48%402x.png" />
+    <ImageAsset Include="Assets.xcassets\baseline_check_white_48.imageset\baseline_check_white_48%403x.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ViewControllers\TabBarController.cs" />
@@ -369,6 +391,10 @@
     <Folder Include="Assets.xcassets\left.imageset\" />
     <Folder Include="Assets.xcassets\right.imageset\" />
     <Folder Include="Assets.xcassets\signin_background.imageset\" />
+    <Folder Include="Assets.xcassets\person_add.imageset\" />
+    <Folder Include="Assets.xcassets\person_add_small.imageset\" />
+    <Folder Include="Assets.xcassets\baseline_check_white_48.imageset\" />
+    <Folder Include="Assets.xcassets\baseline_close_white_48.imageset\" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />

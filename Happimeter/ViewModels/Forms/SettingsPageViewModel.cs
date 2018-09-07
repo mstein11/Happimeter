@@ -307,6 +307,17 @@ namespace Happimeter.ViewModels.Forms
                 })
             });
 
+            listMenuEntries.Add(new ListMenuItemViewModel
+            {
+                ItemTitle = "Teams",
+                IconBackgroundColor = Color.FromHex("#9a7a1b"),
+                IconText = "T",
+                OnClickedCommand = new Command(() =>
+                {
+                    ListMenuItemSelected?.Invoke(new TeamListPage(), null);
+                })
+            });
+
             return listMenuEntries;
         }
     }

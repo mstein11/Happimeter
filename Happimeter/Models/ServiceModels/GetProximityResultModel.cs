@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Happimeter.Models.ApiResultModels;
 
 namespace Happimeter.Models.ServiceModels
 {
-    public class GetProximityResultModel
+    public class GetProximityResultModel : AbstractResultModel
     {
         public GetProximityResultModel()
         {
