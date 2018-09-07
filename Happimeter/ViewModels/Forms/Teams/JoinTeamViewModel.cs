@@ -2,6 +2,7 @@
 using Happimeter.Interfaces;
 using Happimeter.Core.Helper;
 using Foundation;
+using System.Reactive.Subjects;
 namespace Happimeter.ViewModels.Forms.Teams
 {
     public class JoinTeamViewModel : BaseViewModel
@@ -22,25 +23,25 @@ namespace Happimeter.ViewModels.Forms.Teams
                     return;
                 }
                 var result = await _teamService.JoinTeam(Name, Password);
-                if (result == Services.JoinTeamResult.InternetError)
+                if (result.Item1 == Services.JoinTeamResult.InternetError)
                 {
                     NormalTextIsVisible = true;
                     Error = "No internet connection, please try again later!";
                     return;
                 }
-                else if (result == Services.JoinTeamResult.WrongTeam)
+                else if (result.Item1 == Services.JoinTeamResult.WrongTeam)
                 {
                     NormalTextIsVisible = true;
                     Error = "The team you tried to join does not exist";
                     return;
                 }
-                else if (result == Services.JoinTeamResult.WrongPassword)
+                else if (result.Item1 == Services.JoinTeamResult.WrongPassword)
                 {
                     NormalTextIsVisible = true;
                     Error = "You provided the wrong password";
                     return;
                 }
-                else if (result == Services.JoinTeamResult.UnknownError)
+                else if (result.Item1 == Services.JoinTeamResult.UnknownError)
                 {
                     NormalTextIsVisible = true;
                     Error = "An unknown error, please try again later";
@@ -48,7 +49,14 @@ namespace Happimeter.ViewModels.Forms.Teams
                 }
                 SuccessMessageIsVisible = true;
                 //todo: reload view
+                TeamJoinedSubject.OnNext(result.Item2.Value);
             });
+        }
+
+        private Subject<int> TeamJoinedSubject = new Subject<int>();
+        public IObservable<int> WhenTeamSuccessfullyJoined()
+        {
+            return TeamJoinedSubject;
         }
 
         private string _name;

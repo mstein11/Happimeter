@@ -18,6 +18,11 @@ namespace Happimeter.Views
             InitializeComponent();
             ViewModel = new TeamListViewModel();
             BindingContext = ViewModel;
+            ViewModel.JoinTeamViewModel.WhenTeamSuccessfullyJoined().Subscribe(async x =>
+            {
+                await Task.Delay(1000);
+                await _handleClose();
+            });
         }
 
         async void Handle_Clicked(object sender, System.EventArgs e)
@@ -26,6 +31,10 @@ namespace Happimeter.Views
         }
 
         async void Handle_Close(object sender, System.EventArgs e)
+        {
+            await _handleClose();
+        }
+        private async Task _handleClose()
         {
             await AnimateOut();
             ViewModel.JoinTeamViewModel.Reset();

@@ -67,23 +67,28 @@ namespace Happimeter.Services
             return _sharedDatabaseContext.GetAll<TeamEntry>();
         }
 
-        public void LeaveTeam()
+        public TeamEntry GetTeam(int id)
+        {
+            return _sharedDatabaseContext.Get<TeamEntry>(x => x.Id == id);
+        }
+
+        public void LeaveTeam(int id)
         {
             //todo: 
         }
 
-        public async Task<JoinTeamResult> JoinTeam(string name, string password)
+        public async Task<(JoinTeamResult, int?)> JoinTeam(string name, string password)
         {
             var apiResponse = await _apiService.GetTeamsByName(name);
             if (!apiResponse.IsSuccess || apiResponse.Status != 200)
             {
                 //todo:
-                return JoinTeamResult.InternetError;
+                return (JoinTeamResult.InternetError, null);
             }
             else if (!apiResponse.Teams.Any())
             {
                 //todo:
-                return JoinTeamResult.WrongTeam;
+                return (JoinTeamResult.WrongTeam, null);
             }
 
             //api uses a LIKE to get the teams but it does not order the results by likelyness, the result seem to be ordered randomly
@@ -96,15 +101,15 @@ namespace Happimeter.Services
             var result = await _apiService.JoinTeam(bestMatch.Id, password);
             if (result.ResultType != Models.ServiceModels.HappimeterApiResultInformation.Success)
             {
-                return JoinTeamResult.InternetError;
+                return (JoinTeamResult.InternetError, null);
             }
             else if (!result.IsSuccess)
             {
-                return JoinTeamResult.WrongPassword;
+                return (JoinTeamResult.WrongPassword, null);
             }
 
             await DownloadAndSave();
-            return JoinTeamResult.Success;
+            return (JoinTeamResult.Success, bestMatch.Id);
         }
     }
 
