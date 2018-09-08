@@ -15,6 +15,8 @@ using Happimeter.Core.Services;
 using UserNotifications;
 using Happimeter.Views;
 using SuaveControls.FloatingActionButton.iOS.Renderers;
+using FFImageLoading.Forms.Platform;
+using FFImageLoading.Svg.Forms;
 
 namespace Happimeter.iOS
 {
@@ -43,6 +45,8 @@ namespace Happimeter.iOS
             Happimeter.iOS.DependencyInjection.Container.RegisterElements();
             XfxControls.Init();
             Forms.Init();
+            CachedImageRenderer.Init();
+            var ignore = typeof(SvgCachedImage);
             FloatingActionButtonRenderer.InitRenderer();
             App.Initialize();
             CrossBleAdapter.Init(BleAdapterConfiguration.DefaultBackgroudingConfig);

@@ -7,6 +7,9 @@
     xmlns:local="clr-namespace:Happimeter.Controls"
     xmlns:converter="clr-namespace:Happimeter.Converter"
     xmlns:xfx="clr-namespace:Xfx;assembly=Xfx.Controls"
+    xmlns:ffstatic="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading"
+    xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+    xmlns:fftransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Transformations"
     BackgroundColor="LightGray">
     <ContentPage.Content>
         <Grid
@@ -30,7 +33,11 @@
                 Grid.ColumnSpan="2"
                 RowsSelectable="false"
                 BackgroundColor="LightGray"
-                IsVisible="{Binding Teams, Converter={StaticResource anyConverter}}">
+                IsVisible="{Binding Teams, Converter={StaticResource anyConverter}}"
+                IsPullToRefreshEnabled="true"
+                RefreshCommand="{Binding RefreshListCommand}"
+                IsRefreshing="{Binding IsRefreshing}"
+                x:Name="TeamListView">
                 <local:HMListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
@@ -38,7 +45,13 @@
                                 <StackLayout Orientation="Vertical">
                                     <Label Text="{Binding Name}" HorizontalTextAlignment="Center" FontSize="Large"></Label>
                                     <Label Text="(Admin)" HorizontalTextAlignment="Center" Style="{StaticResource HintTextStyle}" IsVisible="{Binding IsAdmin}"></Label>
-                                    <Image></Image>
+                                    <ffimageloading:CachedImage HorizontalOptions="Center" WidthRequest="75" HeightRequest="75" Source="{Binding MoodIconImagePath}">
+                                        <ffimageloading:CachedImage.Transformations>
+                                            <fftransformations:RoundedTransformation Radius="60"/>    
+                                            <fftransformations:ColorSpaceTransformation RGBAWMatrix="{x:Static ffstatic:FFColorMatrix.InvertColorMatrix}"/>    
+                                        </ffimageloading:CachedImage.Transformations>
+                                    </ffimageloading:CachedImage>
+                                    <Label Text="{Binding MoodString}" HorizontalTextAlignment="Center" Style="{StaticResource HintTextStyle}"></Label>
                                     <local:MyButton 
                                         Style="{StaticResource ButtonWithBackground}" 
                                         Text="{Binding LeaveDeleteButtonText}"

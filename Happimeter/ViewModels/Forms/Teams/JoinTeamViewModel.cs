@@ -18,14 +18,14 @@ namespace Happimeter.ViewModels.Forms.Teams
                 if (Name == null)
                 {
                     NormalTextIsVisible = true;
-                    Error = "You must provide a Teamname to join a team!";
+                    Error = "You must provide a Teamname to join a team";
                     return;
                 }
                 var result = await _teamService.JoinTeam(Name, Password);
                 if (result.Item1 == Services.JoinTeamResult.InternetError)
                 {
                     NormalTextIsVisible = true;
-                    Error = "No internet connection, please try again later!";
+                    Error = "No internet connection, please try again later";
                     return;
                 }
                 else if (result.Item1 == Services.JoinTeamResult.WrongTeam)
@@ -38,6 +38,12 @@ namespace Happimeter.ViewModels.Forms.Teams
                 {
                     NormalTextIsVisible = true;
                     Error = "You provided the wrong password";
+                    return;
+                }
+                else if (result.Item1 == Services.JoinTeamResult.AlreadyMember)
+                {
+                    NormalTextIsVisible = true;
+                    Error = "You are already a member of that team";
                     return;
                 }
                 else if (result.Item1 == Services.JoinTeamResult.UnknownError)

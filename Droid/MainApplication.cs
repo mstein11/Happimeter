@@ -11,6 +11,8 @@ using Plugin.CurrentActivity;
 using Plugin.BluetoothLE;
 using Xfx;
 using AltBeaconOrg.Bluetooth;
+using FFImageLoading.Svg.Forms;
+using FFImageLoading.Forms.Droid;
 
 namespace Happimeter.Droid
 {
@@ -51,6 +53,8 @@ namespace Happimeter.Droid
             {
                 XfxControls.Init();
                 Xamarin.Forms.Forms.Init(this, savedInstanceState);
+                var ignore = typeof(SvgCachedImage);
+                FFImageLoading.Forms.Platform.CachedImageRenderer.Init(true);
                 App.Initialize();
                 _isInitialized = true;
             }

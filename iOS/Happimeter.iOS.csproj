@@ -280,6 +280,30 @@
     <Reference Include="SuaveControls.FloatingActionButton.iOS">
       <HintPath>..\packages\SuaveControls.FloatingActionButton.2018.3.1-pre1\lib\xamarinios10\SuaveControls.FloatingActionButton.iOS.dll</HintPath>
     </Reference>
+    <Reference Include="WebP.Touch">
+      <HintPath>..\packages\WebP.Touch.1.0.8\lib\Xamarin.iOS10\WebP.Touch.dll</HintPath>
+    </Reference>
+    <Reference Include="FFImageLoading">
+      <HintPath>..\packages\Xamarin.FFImageLoading.2.4.3.840\lib\Xamarin.iOS10\FFImageLoading.dll</HintPath>
+    </Reference>
+    <Reference Include="FFImageLoading.Platform">
+      <HintPath>..\packages\Xamarin.FFImageLoading.2.4.3.840\lib\Xamarin.iOS10\FFImageLoading.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="FFImageLoading.Svg.Platform">
+      <HintPath>..\packages\Xamarin.FFImageLoading.Svg.2.4.3.840\lib\Xamarin.iOS10\FFImageLoading.Svg.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="FFImageLoading.Forms">
+      <HintPath>..\packages\Xamarin.FFImageLoading.Forms.2.4.3.840\lib\Xamarin.iOS10\FFImageLoading.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="FFImageLoading.Forms.Platform">
+      <HintPath>..\packages\Xamarin.FFImageLoading.Forms.2.4.3.840\lib\Xamarin.iOS10\FFImageLoading.Forms.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="FFImageLoading.Svg.Forms">
+      <HintPath>..\packages\Xamarin.FFImageLoading.Svg.Forms.2.4.3.840\lib\Xamarin.iOS10\FFImageLoading.Svg.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="FFImageLoading.Transformations">
+      <HintPath>..\packages\Xamarin.FFImageLoading.Transformations.2.4.3.840\lib\Xamarin.iOS10\FFImageLoading.Transformations.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
@@ -335,6 +359,7 @@
     <ImageAsset Include="Assets.xcassets\baseline_check_white_48.imageset\baseline_check_white_48%401x.png" />
     <ImageAsset Include="Assets.xcassets\baseline_check_white_48.imageset\baseline_check_white_48%402x.png" />
     <ImageAsset Include="Assets.xcassets\baseline_check_white_48.imageset\baseline_check_white_48%403x.png" />
+    <ImageAsset Include="Assets.xcassets\Image.imageset\Contents.json" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ViewControllers\TabBarController.cs" />
@@ -396,10 +421,23 @@
     <Folder Include="Assets.xcassets\person_add_small.imageset\" />
     <Folder Include="Assets.xcassets\baseline_check_white_48.imageset\" />
     <Folder Include="Assets.xcassets\baseline_close_white_48.imageset\" />
+    <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
     <ITunesArtwork Include="iTunesArtwork%402x" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\QuestionMark.png" />
+    <BundleResource Include="Resources\TransparentMood_1.png" />
+    <BundleResource Include="Resources\TransparentMood_2.png" />
+    <BundleResource Include="Resources\TransparentMood_3.png" />
+    <BundleResource Include="Resources\TransparentMood_4.png" />
+    <BundleResource Include="Resources\TransparentMood_5.png" />
+    <BundleResource Include="Resources\TransparentMood_6.png" />
+    <BundleResource Include="Resources\TransparentMood_7.png" />
+    <BundleResource Include="Resources\TransparentMood_8.png" />
+    <BundleResource Include="Resources\TransparentMood_9.png" />
   </ItemGroup>
   <Import Project="..\Happimeter.Core\Happimeter.Core.projitems" Label="Shared" Condition="Exists('..\Happimeter.Core\Happimeter.Core.projitems')" />
   <Import Project="..\Happimeter\Happimeter.projitems" Label="Shared" Condition="Exists('..\Happimeter\Happimeter.projitems')" />

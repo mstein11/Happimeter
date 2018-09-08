@@ -4,20 +4,19 @@ using Happimeter.Interfaces;
 using Happimeter.Core.Helper;
 using System.Reactive.Subjects;
 using Xamarin.Forms;
+using Happimeter.Helpers;
+
 namespace Happimeter.ViewModels.Forms.Teams
 {
     public class TeamListItemViewModel : BaseViewModel
     {
-        private readonly TeamEntry teamObj;
+        private TeamEntry teamObj;
         private ITeamService _teamService;
         public TeamListItemViewModel(TeamEntry team)
         {
-            teamObj = team;
+            Update(team);
             _teamService = ServiceLocator.Instance.Get<ITeamService>();
 
-            Id = team.Id;
-            Name = team.Name;
-            IsAdmin = team.IsAdmin;
             LeaveDeleteButtonText = IsAdmin ? "Delete Team" : "Leave Team";
             LeaveTeamCommand = new Command(async () =>
             {
@@ -50,6 +49,20 @@ namespace Happimeter.ViewModels.Forms.Teams
                 }
                 TeamLeftSubject.OnNext(Id);
             });
+
+        }
+
+        public void Update(TeamEntry team)
+        {
+            teamObj = team;
+            Id = team.Id;
+            Name = team.Name;
+            IsAdmin = team.IsAdmin;
+            MoodIconImagePath = UiHelper.GetImagePathForMood(teamObj.Activation, teamObj.Pleasance);
+            MoodString = teamObj.Activation == null
+                                || teamObj.Pleasance == null ?
+                                "(Unknown Mood)" :
+                                $"(Pleasance: {teamObj.Pleasance:0.##} - Activation: {teamObj.Activation:0.##})";
         }
 
         private int _id;
@@ -64,6 +77,13 @@ namespace Happimeter.ViewModels.Forms.Teams
         {
             get => _name;
             set => SetProperty(ref _name, value);
+        }
+
+        private string _moodString;
+        public string MoodString
+        {
+            get => _moodString;
+            set => SetProperty(ref _moodString, value);
         }
 
         private bool _idAdmin;
@@ -92,6 +112,13 @@ namespace Happimeter.ViewModels.Forms.Teams
         public IObservable<int> WhenTeamLeft()
         {
             return TeamLeftSubject;
+        }
+
+        private string _moodIconImagePath;
+        public string MoodIconImagePath
+        {
+            get => _moodIconImagePath;
+            set => SetProperty(ref _moodIconImagePath, value);
         }
     }
 }

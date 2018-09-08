@@ -9,5 +9,8 @@ namespace Happimeter.Core.Database
         public int Id { get; set; }
         public string Name { get; set; }
         public bool IsAdmin { get; set; }
+
+        public double? Activation { get; set; }
+        public double? Pleasance { get; set; }
     }
 }

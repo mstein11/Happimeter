@@ -323,6 +323,27 @@
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="FFImageLoading">
+      <HintPath>..\packages\Xamarin.FFImageLoading.2.4.3.840\lib\MonoAndroid10\FFImageLoading.dll</HintPath>
+    </Reference>
+    <Reference Include="FFImageLoading.Platform">
+      <HintPath>..\packages\Xamarin.FFImageLoading.2.4.3.840\lib\MonoAndroid10\FFImageLoading.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="FFImageLoading.Svg.Platform">
+      <HintPath>..\packages\Xamarin.FFImageLoading.Svg.2.4.3.840\lib\MonoAndroid10\FFImageLoading.Svg.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="FFImageLoading.Forms">
+      <HintPath>..\packages\Xamarin.FFImageLoading.Forms.2.4.3.840\lib\MonoAndroid10\FFImageLoading.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="FFImageLoading.Forms.Platform">
+      <HintPath>..\packages\Xamarin.FFImageLoading.Forms.2.4.3.840\lib\MonoAndroid10\FFImageLoading.Forms.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="FFImageLoading.Svg.Forms">
+      <HintPath>..\packages\Xamarin.FFImageLoading.Svg.Forms.2.4.3.840\lib\MonoAndroid10\FFImageLoading.Svg.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="FFImageLoading.Transformations">
+      <HintPath>..\packages\Xamarin.FFImageLoading.Transformations.2.4.3.840\lib\MonoAndroid10\FFImageLoading.Transformations.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainApplication.cs" />
@@ -411,6 +432,16 @@
     <AndroidResource Include="Resources\drawable-xhdpi\baseline_check_white_48.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\baseline_check_white_48.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\baseline_check_white_48.png" />
+    <AndroidResource Include="Resources\drawable\QuestionMark.png" />
+    <AndroidResource Include="Resources\drawable\TransparentMood_1.png" />
+    <AndroidResource Include="Resources\drawable\TransparentMood_2.png" />
+    <AndroidResource Include="Resources\drawable\TransparentMood_3.png" />
+    <AndroidResource Include="Resources\drawable\TransparentMood_4.png" />
+    <AndroidResource Include="Resources\drawable\TransparentMood_5.png" />
+    <AndroidResource Include="Resources\drawable\TransparentMood_6.png" />
+    <AndroidResource Include="Resources\drawable\TransparentMood_7.png" />
+    <AndroidResource Include="Resources\drawable\TransparentMood_8.png" />
+    <AndroidResource Include="Resources\drawable\TransparentMood_9.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DependencyInjection\" />

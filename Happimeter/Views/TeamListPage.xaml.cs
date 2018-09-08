@@ -7,6 +7,7 @@ using Happimeter.ViewModels.Forms.Teams;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using Happimeter.Converter;
+using System.Linq;
 
 namespace Happimeter.Views
 {
@@ -16,15 +17,17 @@ namespace Happimeter.Views
         public TeamListPage()
         {
             Resources = App.ResourceDict;
-
             InitializeComponent();
+            Title = "Your Teams";
             ViewModel = new TeamListViewModel();
             BindingContext = ViewModel;
             ViewModel.JoinTeamViewModel.WhenTeamSuccessfullyJoined().Subscribe(async x =>
             {
                 await Task.Delay(500);
                 await _handleClose();
+                TeamListView.ScrollTo(ViewModel.Teams.FirstOrDefault(team => team.Id == x), ScrollToPosition.Center, true);
             });
+            ViewModel.RefreshListCommand?.Execute(null);
         }
 
         async void Handle_Clicked(object sender, System.EventArgs e)

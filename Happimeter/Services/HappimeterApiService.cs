@@ -571,6 +571,11 @@ namespace Happimeter.Services
                 result = await _restService.Get(url);
                 var stringResult = await result.Content.ReadAsStringAsync();
                 apiResultModel = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(stringResult);
+                if (apiResultModel.Status == default(int))
+                {
+                    //asume the result object does not have the common format.
+                    apiResultModel.Status = result.IsSuccessStatusCode ? 200 : 500;
+                }
             }
             catch (Exception e) when (
                 e is HttpRequestException

@@ -22,5 +22,9 @@ namespace Happimeter.Models.ServiceModels
         public string Name { get; set; }
         [JsonPropertyAttribute("is_admin")]
         public bool IsAdmin { get; set; }
+        [JsonPropertyAttribute("activation")]
+        public double? Activation { get; set; }
+        [JsonPropertyAttribute("pleasance")]
+        public double? Pleasance { get; set; }
     }
 }

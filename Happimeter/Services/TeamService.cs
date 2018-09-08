@@ -6,6 +6,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System;
 using Happimeter.Core.Services;
+using System.Reactive.Linq;
 
 namespace Happimeter.Services
 {
@@ -14,11 +15,14 @@ namespace Happimeter.Services
         private readonly ISharedDatabaseContext _sharedDatabaseContext;
         private readonly IHappimeterApiService _apiService;
         private readonly ILoggingService _loggingService;
+        private readonly IGenericQuestionService _genericQuestionService;
         public TeamService()
         {
             _sharedDatabaseContext = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             _apiService = ServiceLocator.Instance.Get<IHappimeterApiService>();
             _loggingService = ServiceLocator.Instance.Get<ILoggingService>();
+            _genericQuestionService = ServiceLocator.Instance.Get<IGenericQuestionService>();
+
         }
 
         public async Task DownloadAndSave()
@@ -36,7 +40,9 @@ namespace Happimeter.Services
                 {
                     Id = x.Id,
                     IsAdmin = x.IsAdmin,
-                    Name = x.Name
+                    Name = x.Name,
+                    Activation = x.Activation,
+                    Pleasance = x.Pleasance
                 }).ToList();
 
                 foreach (var team in teams)
@@ -47,6 +53,8 @@ namespace Happimeter.Services
                         oldTeams.Remove(oldCurrentTeam);
                         oldCurrentTeam.IsAdmin = team.IsAdmin;
                         oldCurrentTeam.Name = team.Name;
+                        oldCurrentTeam.Activation = team.Activation;
+                        oldCurrentTeam.Pleasance = team.Pleasance;
                         _sharedDatabaseContext.Update(oldCurrentTeam);
                     }
                     else
@@ -103,10 +111,14 @@ namespace Happimeter.Services
 
             //api uses a LIKE to get the teams but it does not order the results by likelyness, the result seem to be ordered randomly
             //to ensure, that we use a perfect match is available, we need the below code
-            var bestMatch = apiResponse.Teams.FirstOrDefault(x => x.Name == name);
+            var bestMatch = apiResponse.Teams.FirstOrDefault(x => x.Name.ToUpper() == name.ToUpper());
             if (bestMatch == null)
             {
                 bestMatch = apiResponse.Teams.FirstOrDefault();
+            }
+            if (GetTeams().Any(x => x.Id == bestMatch.Id))
+            {
+                return (JoinTeamResult.AlreadyMember, bestMatch.Id);
             }
             var result = await _apiService.JoinTeam(bestMatch.Id, password);
             if (result.ResultType != Models.ServiceModels.HappimeterApiResultInformation.Success)
@@ -119,7 +131,29 @@ namespace Happimeter.Services
             }
 
             await DownloadAndSave();
+            await _genericQuestionService.DownloadAndSaveGenericQuestions();
             return (JoinTeamResult.Success, bestMatch.Id);
+        }
+
+        public IObservable<IList<TeamEntry>> WhenTeamAdded()
+        {
+            return _sharedDatabaseContext
+                .WhenEntryAdded<TeamEntry>()
+                .Select(x => x.Entites.Cast<TeamEntry>().ToList());
+        }
+
+        public IObservable<IList<TeamEntry>> WhenTeamChanged()
+        {
+            return _sharedDatabaseContext
+                .WhenEntryChanged<TeamEntry>()
+                .Select(x => x.Entites.Cast<TeamEntry>().ToList());
+        }
+
+        public IObservable<IList<TeamEntry>> WhenTeamDeleted()
+        {
+            return _sharedDatabaseContext
+                .WhenEntryDeleted<TeamEntry>()
+                .Select(x => x.Entites.Cast<TeamEntry>().ToList());
         }
     }
 
@@ -129,6 +163,7 @@ namespace Happimeter.Services
         InternetError,
         UnknownError,
         WrongTeam,
-        WrongPassword
+        WrongPassword,
+        AlreadyMember
     }
 }
