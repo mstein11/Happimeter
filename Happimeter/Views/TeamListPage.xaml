@@ -5,14 +5,16 @@
     x:Class="Happimeter.Views.TeamListPage"
     xmlns:controls="clr-namespace:SuaveControls.Views;assembly=SuaveControls.FloatingActionButton"
     xmlns:local="clr-namespace:Happimeter.Controls"
-    xmlns:xfx="clr-namespace:Xfx;assembly=Xfx.Controls">
+    xmlns:converter="clr-namespace:Happimeter.Converter"
+    xmlns:xfx="clr-namespace:Xfx;assembly=Xfx.Controls"
+    BackgroundColor="LightGray">
     <ContentPage.Content>
         <Grid
             HorizontalOptions="FillAndExpand" 
             VerticalOptions="FillAndExpand">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="auto"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
@@ -20,22 +22,26 @@
                 <ColumnDefinition Width="auto"></ColumnDefinition>
             </Grid.ColumnDefinitions>
                
-            <ListView 
+            <local:HMListView 
                 ItemsSource="{Binding Teams}" 
                 HasUnevenRows="true"
                 SeparatorVisibility="None"
                 Grid.RowSpan="3"
-                Grid.ColumnSpan="2">
-                <ListView.ItemTemplate>
+                Grid.ColumnSpan="2"
+                RowsSelectable="false"
+                BackgroundColor="LightGray"
+                IsVisible="{Binding Teams, Converter={StaticResource anyConverter}}">
+                <local:HMListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <Frame Padding="10" Margin="20">
+                            <Frame Padding="10" Margin="20" BackgroundColor="White">
                                 <StackLayout Orientation="Vertical">
                                     <Label Text="{Binding Name}" HorizontalTextAlignment="Center" FontSize="Large"></Label>
+                                    <Label Text="(Admin)" HorizontalTextAlignment="Center" Style="{StaticResource HintTextStyle}" IsVisible="{Binding IsAdmin}"></Label>
                                     <Image></Image>
                                     <local:MyButton 
                                         Style="{StaticResource ButtonWithBackground}" 
-                                        Text="Leave Team"
+                                        Text="{Binding LeaveDeleteButtonText}"
                                         Padding="25, 10, 25, 10"
                                         HorizontalOptions="Center"
                                         Command="{Binding LeaveTeamCommand}">
@@ -44,12 +50,22 @@
                             </Frame>
                         </ViewCell>
                     </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                </local:HMListView.ItemTemplate>
+            </local:HMListView>
+            <StackLayout Grid.ColumnSpan="2" Grid.RowSpan="2" Padding="25" Spacing="25" Orientation="Vertical" IsVisible="{Binding Teams, Converter={StaticResource notAnyConverter}}">
+                <Label Text="Your are not part of any team." Style="{StaticResource HintTextStyle}" HorizontalTextAlignment="Center"/>
+                <local:MyButton 
+                        Style="{StaticResource ButtonWithBackground}" 
+                        Text="Join a Team"
+                        Padding="25, 10, 25, 10"
+                        HorizontalOptions="Center"
+                        Clicked="Handle_Clicked">
+                </local:MyButton>
+            </StackLayout>
             <StackLayout x:Name="Overlay" Opacity="0" Grid.RowSpan="3" Grid.ColumnSpan="2" BackgroundColor="#000000" IsVisible="false">
                 
             </StackLayout>
-            <ScrollView Grid.Row="1" Grid.ColumnSpan="2" Padding="15, 0, 15, 85" x:Name="FormContentContainer">
+            <ScrollView Grid.Row="0" Grid.ColumnSpan="2" x:Name="FormContentContainer" Padding="15">
                 <Frame Padding="15" BackgroundColor="White">
                     <StackLayout Spacing="15">
                         <Label Text="JOIN A TEAM" FontSize="Large"></Label>
@@ -62,37 +78,26 @@
                 </Frame>
             </ScrollView>
             <StackLayout Orientation="Vertical" Spacing="5" Padding="30, 15, 30, 15" Grid.Row="2" Grid.Column="1" HorizontalOptions="End" x:Name="JoinContainer">
-                <local:MyFloatingActionButton Padding="10" HorizontalOptions="Center" WidthRequest="50" HeightRequest="50" VerticalOptions="CenterAndExpand" Image="person_add_small.png" ButtonColor="#b71c1c" Clicked="Handle_Clicked">
-                    <local:MyFloatingActionButton.WidthRequest>
-                        <OnPlatform iOS="50" Android="80"></OnPlatform>
-                    </local:MyFloatingActionButton.WidthRequest>    
-                    <local:MyFloatingActionButton.HeightRequest>
-                        <OnPlatform iOS="50" Android="90"></OnPlatform>
-                    </local:MyFloatingActionButton.HeightRequest>
-                </local:MyFloatingActionButton>
+                <local:MyFloatingActionButton 
+                    Style="{StaticResource FloatingActionButtonStyle}"
+                    Image="person_add_small.png" 
+                    Clicked="Handle_Clicked" />
                 <Label FontSize="Small" TextColor="White" HorizontalOptions="Center" Text="Join Team" BackgroundColor="Gray"></Label>
             </StackLayout>
-            <StackLayout Orientation="Horizontal" Spacing="0" Padding="15" Grid.Row="2" Grid.Column="1" HorizontalOptions="Center" x:Name="FormActionContainer">
-                <StackLayout Orientation="Vertical" Spacing="5" Padding="15, 0, 15, 0" Grid.Row="1" Grid.Column="1" HorizontalOptions="Center">
-                    <local:MyFloatingActionButton Padding="10" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" Image="baseline_check_white_48.png" ButtonColor="#b71c1c" Command="{Binding JoinTeamViewModel.JoinTeamCommand}">
-                        <local:MyFloatingActionButton.WidthRequest>
-                            <OnPlatform iOS="50" Android="80"></OnPlatform>
-                        </local:MyFloatingActionButton.WidthRequest>    
-                        <local:MyFloatingActionButton.HeightRequest>
-                            <OnPlatform iOS="50" Android="90"></OnPlatform>
-                        </local:MyFloatingActionButton.HeightRequest>    
-                    </local:MyFloatingActionButton>
+            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="0" Padding="15" Grid.Row="2" Grid.Column="1"  x:Name="FormActionContainer">
+                <StackLayout Orientation="Vertical" Spacing="5" Padding="15, 0, 15, 0" HorizontalOptions="Center">
+                    <local:MyFloatingActionButton 
+                        Style="{StaticResource FloatingActionButtonStyle}"
+                        Image="baseline_check_white_48.png" 
+                        Command="{Binding JoinTeamViewModel.JoinTeamCommand}" />
                     <Label FontSize="Small" TextColor="White" HorizontalOptions="Center" Text="Save"></Label>
                 </StackLayout>
-               <StackLayout Orientation="Vertical" Spacing="5" Padding="15, 0, 15, 0" Grid.Row="1" Grid.Column="1" HorizontalOptions="Center">
-                    <local:MyFloatingActionButton Padding="10" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" Image="baseline_close_white_48.png" ButtonColor="Gray" Clicked="Handle_Close">
-                        <local:MyFloatingActionButton.WidthRequest>
-                            <OnPlatform iOS="50" Android="80"></OnPlatform>
-                        </local:MyFloatingActionButton.WidthRequest>    
-                        <local:MyFloatingActionButton.HeightRequest>
-                            <OnPlatform iOS="50" Android="90"></OnPlatform>
-                        </local:MyFloatingActionButton.HeightRequest>    
-                    </local:MyFloatingActionButton>
+               <StackLayout Orientation="Vertical" Spacing="5" Padding="15, 0, 15, 0" HorizontalOptions="Center">
+                    <local:MyFloatingActionButton 
+                        Style="{StaticResource FloatingActionButtonStyle}"
+                        Image="baseline_close_white_48.png" 
+                        ButtonColor="Gray" 
+                        Clicked="Handle_Close" />
                     <Label FontSize="Small" TextColor="White" HorizontalOptions="Center" Text="Close"></Label>
                 </StackLayout>
             </StackLayout>

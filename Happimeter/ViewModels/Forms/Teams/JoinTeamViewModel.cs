@@ -1,7 +1,6 @@
 ﻿using System;
 using Happimeter.Interfaces;
 using Happimeter.Core.Helper;
-using Foundation;
 using System.Reactive.Subjects;
 namespace Happimeter.ViewModels.Forms.Teams
 {
@@ -131,7 +130,7 @@ namespace Happimeter.ViewModels.Forms.Teams
             Name = default(string);
             Password = default(string);
             Error = default(string);
-            IsLoading = default(bool);
+            NormalTextIsVisible = true;
         }
 
         public Command JoinTeamCommand { get; set; }

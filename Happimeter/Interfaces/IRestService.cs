@@ -8,6 +8,7 @@ namespace Happimeter.Interfaces
         void AddAuthorizationTokenToInstance(string token);
         Task<HttpResponseMessage> Get(string url);
         Task<HttpResponseMessage> Post(string url, object data);
+        Task<HttpResponseMessage> Delete(string url);
         Task<HttpResponseMessage> FileUpload(string url, string path);
     }
 }

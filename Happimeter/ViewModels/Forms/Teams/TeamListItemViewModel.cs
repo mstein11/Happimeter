@@ -3,6 +3,7 @@ using Happimeter.Core.Database;
 using Happimeter.Interfaces;
 using Happimeter.Core.Helper;
 using System.Reactive.Subjects;
+using Xamarin.Forms;
 namespace Happimeter.ViewModels.Forms.Teams
 {
     public class TeamListItemViewModel : BaseViewModel
@@ -17,10 +18,36 @@ namespace Happimeter.ViewModels.Forms.Teams
             Id = team.Id;
             Name = team.Name;
             IsAdmin = team.IsAdmin;
-            LeaveTeamCommand = new Command(() =>
+            LeaveDeleteButtonText = IsAdmin ? "Delete Team" : "Leave Team";
+            LeaveTeamCommand = new Command(async () =>
             {
-                _teamService.LeaveTeam(Id);
-                //todo: check if successfull
+                var result = await Application
+                    .Current
+                    .MainPage
+                    .DisplayAlert("Confirm",
+                                  $"Are you sure that you want to " +
+                                  $"{ (IsAdmin ? "delete" : "leave")} this team?",
+                                  IsAdmin ? "Delete Team" : "Leave Team", "Cancel");
+                if (!result)
+                {
+                    return;
+                }
+
+                LeaveDeleteButtonText = "Loading...";
+                var success = await _teamService.LeaveTeam(Id);
+                LeaveDeleteButtonText = IsAdmin ? "Delete Team" : "Leave Team";
+                if (!success)
+                {
+                    await Application
+                        .Current
+                        .MainPage
+                        .DisplayAlert("Error",
+                                      "There was an error leaving the team. " +
+                                      "Either you have no internet connection " +
+                                      "or you already left the team.", "ok");
+                    return;
+
+                }
                 TeamLeftSubject.OnNext(Id);
             });
         }
@@ -44,6 +71,20 @@ namespace Happimeter.ViewModels.Forms.Teams
         {
             get => _idAdmin;
             set => SetProperty(ref _idAdmin, value);
+        }
+
+        private bool _isLeaving;
+        public bool IsLeaving
+        {
+            get => _isLeaving;
+            set => SetProperty(ref _isLeaving, value);
+        }
+
+        private string _leaveDeleteButtonText;
+        public string LeaveDeleteButtonText
+        {
+            get => _leaveDeleteButtonText;
+            set => SetProperty(ref _leaveDeleteButtonText, value);
         }
 
         public Command LeaveTeamCommand { get; set; }

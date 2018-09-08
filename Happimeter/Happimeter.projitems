@@ -160,6 +160,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Forms\Teams\JoinTeamViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\JoinTeamResultModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\GetTeamsByNameResultModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ServiceModels\LeaveTeamResultModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\HMListView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converter\AnyValueConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converter\NotAnyValueConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />
@@ -174,6 +178,7 @@
     <Folder Include="$(MSBuildThisFileDirectory)Views\Converters\" />
     <Folder Include="$(MSBuildThisFileDirectory)Views\CustomControls\" />
     <Folder Include="$(MSBuildThisFileDirectory)ViewModels\Forms\Teams\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Converter\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\SurveyPage.xaml">

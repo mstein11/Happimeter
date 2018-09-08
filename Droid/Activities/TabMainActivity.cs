@@ -42,6 +42,8 @@ namespace Happimeter.Droid.Activities
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            //Keyboard overlays content, like in iOS
+            Window.SetSoftInputMode(SoftInput.AdjustPan);
             Xamarin.FormsGoogleMaps.Init(this, savedInstanceState);
             Instance = this;
 

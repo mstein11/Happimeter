@@ -45,6 +45,11 @@ namespace Happimeter.Services
             return await _httpClient.PostAsync(url, content);
         }
 
+        public async Task<HttpResponseMessage> Delete(string url)
+        {
+            return await _httpClient.DeleteAsync(url);
+        }
+
         public async Task<HttpResponseMessage> FileUpload(string url, string path)
         {
             var bytes = File.ReadAllBytes(path);

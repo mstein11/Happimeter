@@ -346,6 +346,7 @@
     <Compile Include="Helpers\IDeviceExtension.cs" />
     <Compile Include="Renderers\CheckboxRenderer.cs" />
     <Compile Include="Renderers\MyFloatingActionButtonRenderer.cs" />
+    <Compile Include="Renderers\HMListViewRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\AboutAssets.txt" />

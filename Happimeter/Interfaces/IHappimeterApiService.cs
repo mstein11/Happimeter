@@ -22,5 +22,6 @@ namespace Happimeter.Interfaces
         Task<bool> UploadDatabaseForDebug();
         Task<GetTeamsByNameResultModel> GetTeamsByName(string name);
         Task<JoinTeamResultModel> JoinTeam(int teamId, string password);
+        Task<LeaveTeamResultModel> LeaveTeam(int teamId);
     }
 }

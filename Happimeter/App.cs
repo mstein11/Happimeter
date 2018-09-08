@@ -12,6 +12,8 @@ using Happimeter.Services;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 using Happimeter.Core.Services;
+using Happimeter.Converter;
+using SuaveControls.Views;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace Happimeter
@@ -144,6 +146,18 @@ namespace Happimeter
                 },
             });
 
+            dict.Add("FloatingActionButtonStyle", new Style(typeof(FloatingActionButton))
+            {
+                Setters = {
+                    new Setter {Property = Button.PaddingProperty, Value = 10},
+                    new Setter {Property = View.HorizontalOptionsProperty, Value = LayoutOptions.Center},
+                    new Setter {Property = View.VerticalOptionsProperty, Value = LayoutOptions.CenterAndExpand},
+                    new Setter {Property = FloatingActionButton.ButtonColorProperty, Value = Color.FromHex("#b71c1c")}
+                },
+            });
+
+            dict.Add("anyConverter", new AnyValueConverter());
+            dict.Add("notAnyConverter", new NotAnyValueConverter());
             //dict.Add("notConverter", new NotConverter());
 
             ResourceDict = dict;

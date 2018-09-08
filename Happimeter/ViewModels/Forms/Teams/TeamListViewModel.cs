@@ -20,17 +20,29 @@ namespace Happimeter.ViewModels.Forms.Teams
             {
                 var itemViewModel = new TeamListItemViewModel(team);
                 Teams.Add(itemViewModel);
-                IDisposable subsciption;
+                IDisposable subsciption = null;
                 subsciption = itemViewModel.WhenTeamLeft().Subscribe(x =>
                 {
                     var teamToRemove = Teams.FirstOrDefault(t => t.Id == x);
                     Teams.Remove(teamToRemove);
+                    OnPropertyChanged(nameof(Teams));
+                    subsciption.Dispose();
                 });
             }
             JoinTeamViewModel.WhenTeamSuccessfullyJoined().Subscribe(teamId =>
             {
                 var team = _teamService.GetTeam(teamId);
-                Teams.Add(new TeamListItemViewModel(team));
+                var teamVm = new TeamListItemViewModel(team);
+                Teams.Add(teamVm);
+                IDisposable subsciption = null;
+                subsciption = teamVm.WhenTeamLeft().Subscribe(x =>
+                {
+                    var teamToRemove = Teams.FirstOrDefault(t => t.Id == x);
+                    Teams.Remove(teamToRemove);
+                    OnPropertyChanged(nameof(Teams));
+                    subsciption.Dispose();
+                });
+                OnPropertyChanged(nameof(Teams));
             });
         }
 

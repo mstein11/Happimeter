@@ -370,6 +370,7 @@
     </Compile>
     <Compile Include="Renderers\MyButtonRenderer.cs" />
     <Compile Include="Renderers\CheckboxRenderer.cs" />
+    <Compile Include="Renderers\HMListViewRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Entitlements.plist" />

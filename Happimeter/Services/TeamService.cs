@@ -6,7 +6,6 @@ using System.Linq;
 using System.Collections.Generic;
 using System;
 using Happimeter.Core.Services;
-using System.Security.Policy;
 
 namespace Happimeter.Services
 {
@@ -45,6 +44,7 @@ namespace Happimeter.Services
                     var oldCurrentTeam = oldTeams.FirstOrDefault(x => x.Id == team.Id);
                     if (oldCurrentTeam != null)
                     {
+                        oldTeams.Remove(oldCurrentTeam);
                         oldCurrentTeam.IsAdmin = team.IsAdmin;
                         oldCurrentTeam.Name = team.Name;
                         _sharedDatabaseContext.Update(oldCurrentTeam);
@@ -53,6 +53,10 @@ namespace Happimeter.Services
                     {
                         _sharedDatabaseContext.Add(team);
                     }
+                }
+                foreach (var oldTeamToDelete in oldTeams)
+                {
+                    _sharedDatabaseContext.Delete(oldTeamToDelete);
                 }
             }
             catch (Exception e)
@@ -72,9 +76,15 @@ namespace Happimeter.Services
             return _sharedDatabaseContext.Get<TeamEntry>(x => x.Id == id);
         }
 
-        public void LeaveTeam(int id)
+        public async Task<bool> LeaveTeam(int id)
         {
-            //todo: 
+            var res = await _apiService.LeaveTeam(id);
+            if (!res.IsSuccess)
+            {
+                return false;
+            }
+            _sharedDatabaseContext.Delete(GetTeam(id));
+            return true;
         }
 
         public async Task<(JoinTeamResult, int?)> JoinTeam(string name, string password)

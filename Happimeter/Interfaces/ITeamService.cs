@@ -11,6 +11,6 @@ namespace Happimeter.Interfaces
         IList<TeamEntry> GetTeams();
         TeamEntry GetTeam(int id);
         Task<(JoinTeamResult, int?)> JoinTeam(string name, string password);
-        void LeaveTeam(int id);
+        Task<bool> LeaveTeam(int id);
     }
 }

@@ -526,6 +526,36 @@ namespace Happimeter.Services
             return apiResult;
         }
 
+        public async Task<LeaveTeamResultModel> LeaveTeam(int teamId)
+        {
+            var methodResult = new LeaveTeamResultModel();
+            var url = $"{GetUrlForPath(ApiPathTeamsEndpoint)}/{teamId}";
+            HttpResponseMessage result = null;
+            try
+            {
+                result = await _restService.Delete(url);
+            }
+            catch (Exception e) when (
+                e is HttpRequestException
+                || e is WebException
+            )
+            {
+                ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
+                methodResult.ResultType = HappimeterApiResultInformation.NoInternet;
+                return methodResult;
+            }
+            catch (Exception e)
+            {
+                ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
+                methodResult.ResultType = HappimeterApiResultInformation.UnknownError;
+                return methodResult;
+            }
+            var responseString = await result.Content.ReadAsStringAsync();
+            var apiResult = Newtonsoft.Json.JsonConvert.DeserializeObject<LeaveTeamResultModel>(responseString);
+            apiResult.ResultType = HappimeterApiResultInformation.Success;
+            return apiResult;
+        }
+
         private async Task<T> Get<T>(string url) where T : AbstractResultModel, new()
         {
 
