@@ -10,12 +10,13 @@ using System;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using Happimeter.Watch.Droid.Workers;
+using System.Collections.Concurrent;
 
 namespace Happimeter.Watch.Droid.ServicesBusinessLogic
 {
     public class AudioFeaturesService : IAudioFeaturesService
     {
-        
+        public ConcurrentBag<double> VadMeasures { get; set; } = new ConcurrentBag<double>();
         private const string IsActiveKey = "FEATURE_EXTRACTION_ACTIVE";
         private bool IsInitialized = false;
 
@@ -64,18 +65,24 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
 
 
         private bool CalledAppStartup = false;
-        public void OnApplicationStartup() {
-            if (!CalledAppStartup) {
-                CalledAppStartup = true; 
-            } else {
+        public void OnApplicationStartup()
+        {
+            if (!CalledAppStartup)
+            {
+                CalledAppStartup = true;
+            }
+            else
+            {
                 return;
             }
-            if (IsActive) {
-                Start();
+            if (IsActive)
+            {
+                //Start();
             }
         }
 
-        private void Start() {
+        private void Start()
+        {
             if (!IsInitialized)
             {
                 Initialize();
@@ -84,8 +91,9 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
             Smile.Run();
         }
 
-        private void Stop() {
-            Smile.Stop();            
+        private void Stop()
+        {
+            Smile.Stop();
         }
 
 
@@ -94,7 +102,8 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
         private class SmileMessage
         {
             [JsonObject]
-            public class floatData {
+            public class floatData
+            {
                 [JsonProperty("0")]
                 public float Vad { get; set; }
             }
@@ -102,7 +111,7 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
             [JsonProperty("msgname", Required = Required.Always)]
             public string Msgname { get; set; }
             [JsonProperty("msgtype", Required = Required.Always)]
-            public string Msgtype { get; set;  }
+            public string Msgtype { get; set; }
             [JsonProperty("smileTime")]
             public float SmileTime { get; set; }
             [JsonProperty("floatData")]
@@ -111,6 +120,11 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
 
         private class FeatureListener : SmileJNI.Listener
         {
+            private readonly IAudioFeaturesService _service;
+            public FeatureListener(AudioFeaturesService service)
+            {
+                _service = service;
+            }
             public void onSmileMessageReceived(string text)
             {
                 var json = text.Replace("(null)", "null");
@@ -121,25 +135,18 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
                 dbRecord.Vad = msg.FloatData.Vad;
                 dbRecord.Timestamp = DateTime.UtcNow;
 
-                /**
-                 * TODO: Push record to database
-                 */
-
-
+                _service.VadMeasures.Add(dbRecord.Vad);
                 // BluetoothWorker.GetInstance().SendNotification(UuidHelper.DataExchangeNotifyCharacteristicUuid, new DataExchangeInitMessage());
 
-                                     
+
             }
         }
 
         private void Initialize()
         {
-
-            var Fl = new FeatureListener();
+            var Fl = new FeatureListener(this);
             Smile.RegisterListener(Fl);
             Debug.WriteLine("Registered audio feature listener");
         }
-
-
     }
 }

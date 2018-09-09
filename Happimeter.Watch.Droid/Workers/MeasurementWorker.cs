@@ -53,6 +53,7 @@ namespace Happimeter.Watch.Droid.Workers
             }
         }
 
+        private readonly IAudioFeaturesService _audioFeatureService;
         private readonly bool _playServicesReady;
         private FusedLocationProviderClient fusedLocationProviderClient;
         private ActivityRecognitionClient activityRecognitionClient;
@@ -71,6 +72,7 @@ namespace Happimeter.Watch.Droid.Workers
         {
             Context = context;
             _playServicesReady = IsGooglePlayServicesInstalled();
+            _audioFeatureService = ServiceLocator.Instance.Get<IAudioFeaturesService>();
             if (_playServicesReady)
             {
                 fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(Context);
@@ -381,6 +383,25 @@ namespace Happimeter.Watch.Droid.Workers
                 });
             }
 
+            var vadMeasures = _audioFeatureService.VadMeasures;
+            _audioFeatureService.VadMeasures.Clear();
+            if (vadMeasures.Any())
+            {
+                sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
+                {
+                    Type = MeasurementItemTypes.Microphone,
+                    NumberOfMeasures = vadMeasures.Count(),
+                    Average = vadMeasures.Average(),
+                    StdDev = vadMeasures.StdDev(),
+                    Magnitude = vadMeasures.Sum(),
+                    Quantile1 = vadMeasures.Quantile1(),
+                    Quantile2 = vadMeasures.Quantile2(),
+                    Quantile3 = vadMeasures.Quantile3(),
+                    Min = vadMeasures.Min(),
+                    Max = vadMeasures.Max()
+                });
+            }
+
             sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
             {
                 Type = MeasurementItemTypes.Vmc,
@@ -490,6 +511,11 @@ namespace Happimeter.Watch.Droid.Workers
                 await activityRecognitionClient.RemoveActivityUpdatesAsync(ActivityDetectionPendingIntent);
             }
 
+            if (_audioFeatureService.IsActive)
+            {
+                _audioFeatureService.Toggle();
+            }
+
             BluetoothScannerWorker.GetInstance().Stop();
         }
 
@@ -528,6 +554,11 @@ namespace Happimeter.Watch.Droid.Workers
             if (_playServicesReady)
             {
                 await activityRecognitionClient.RequestActivityUpdatesAsync(60 * 1000, ActivityDetectionPendingIntent);
+            }
+
+            if (!_audioFeatureService.IsActive)
+            {
+                _audioFeatureService.Toggle();
             }
 
             BluetoothScannerWorker.GetInstance().Start();
