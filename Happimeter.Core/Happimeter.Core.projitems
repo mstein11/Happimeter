@@ -53,6 +53,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\IAccountStoreService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\MeasurementModeModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Database\AudioFeatures.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Database\TeamEntry.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Models\" />

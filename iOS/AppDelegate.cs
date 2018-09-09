@@ -13,6 +13,10 @@ using Xamarin.Forms;
 using Xfx;
 using Happimeter.Core.Services;
 using UserNotifications;
+using Happimeter.Views;
+using SuaveControls.FloatingActionButton.iOS.Renderers;
+using FFImageLoading.Forms.Platform;
+using FFImageLoading.Svg.Forms;
 
 namespace Happimeter.iOS
 {
@@ -33,7 +37,7 @@ namespace Happimeter.iOS
         {
             //we need this or our chartview are not working. Probably an issue with the linker
             var ignore_chartView = new Microcharts.Forms.ChartView();
-            Xamarin.FormsGoogleMaps.Init("AIzaSyC9DzMXj6s1rwu3UK70iNLJ4VC32xEtREs");
+            Xamarin.FormsGoogleMaps.Init("AIzaSyAZp2Nj4thfDcS2Jvoy-N-6HgagU13jvuk");
             AppCenter.Start("3119c95f-ca17-4e2d-9ae0-46c5382633f8",
                    typeof(Analytics), typeof(Crashes));
 
@@ -41,6 +45,9 @@ namespace Happimeter.iOS
             Happimeter.iOS.DependencyInjection.Container.RegisterElements();
             XfxControls.Init();
             Forms.Init();
+            CachedImageRenderer.Init();
+            var ignore = typeof(SvgCachedImage);
+            FloatingActionButtonRenderer.InitRenderer();
             App.Initialize();
             CrossBleAdapter.Init(BleAdapterConfiguration.DefaultBackgroudingConfig);
             ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.DebugSnapshot);
@@ -56,10 +63,12 @@ namespace Happimeter.iOS
             }
             else
             {
-                UIStoryboard board = UIStoryboard.FromName("Main", null);
-                UIViewController ctrl = (UIViewController)board.InstantiateViewController("SignInViewController");
-                ctrl.ModalTransitionStyle = UIModalTransitionStyle.FlipHorizontal;
-                Window.RootViewController = ctrl;
+                //UIStoryboard board = UIStoryboard.FromName("Main", null);
+                //UIViewController ctrl = (UIViewController)board.InstantiateViewController("SignInViewController");
+                //ctrl.ModalTransitionStyle = UIModalTransitionStyle.FlipHorizontal;
+                var formsPage = new SignInPage();
+                var formsPageVc = formsPage.CreateViewController();
+                Window.RootViewController = formsPageVc;
                 Window.MakeKeyAndVisible();
                 //application.KeyWindow.RootViewController = ctrl;
 

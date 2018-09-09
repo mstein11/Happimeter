@@ -12,6 +12,8 @@ using Happimeter.Services;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 using Happimeter.Core.Services;
+using Happimeter.Converter;
+using SuaveControls.Views;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace Happimeter
@@ -84,8 +86,7 @@ namespace Happimeter
         {
             if (ServiceLocator.Instance.Get<IAccountStoreService>().IsAuthenticated())
             {
-                await ServiceLocator.Instance.Get<IPredictionService>().DownloadAndSavePrediction();
-                await ServiceLocator.Instance.Get<IProximityService>().DownloadAndSaveProximity();
+                await ServiceLocator.Instance.Get<ISynchronizationService>().Sync();
             }
         }
 
@@ -93,6 +94,14 @@ namespace Happimeter
         {
             var dict = new ResourceDictionary();
 
+            dict.Add("Checkbox", new Style(typeof(Checkbox))
+            {
+                Setters = {
+                    new Setter {Property = Checkbox.OutlineColorProperty, Value = Color.Black},
+                    new Setter {Property = Checkbox.CheckedOutlineColorProperty, Value = Color.Black},
+                    new Setter {Property = Checkbox.CheckColorProperty, Value = Color.FromHex("#b71c1c")}
+                }
+            });
 
             dict.Add("ButtonWithBackground", new Style(typeof(MyButton))
             {
@@ -129,6 +138,26 @@ namespace Happimeter
                 },
             });
 
+            dict.Add("HintTextStyle", new Style(typeof(Label))
+            {
+                Setters = {
+                    new Setter {Property = Label.FontSizeProperty, Value = Xamarin.Forms.Device.GetNamedSize(NamedSize.Small, typeof(Label))},
+                    new Setter {Property = Label.TextColorProperty, Value = Color.DimGray},
+                },
+            });
+
+            dict.Add("FloatingActionButtonStyle", new Style(typeof(FloatingActionButton))
+            {
+                Setters = {
+                    new Setter {Property = Button.PaddingProperty, Value = 10},
+                    new Setter {Property = View.HorizontalOptionsProperty, Value = LayoutOptions.Center},
+                    new Setter {Property = View.VerticalOptionsProperty, Value = LayoutOptions.CenterAndExpand},
+                    new Setter {Property = FloatingActionButton.ButtonColorProperty, Value = Color.FromHex("#b71c1c")}
+                },
+            });
+
+            dict.Add("anyConverter", new AnyValueConverter());
+            dict.Add("notAnyConverter", new NotAnyValueConverter());
             //dict.Add("notConverter", new NotConverter());
 
             ResourceDict = dict;

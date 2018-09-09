@@ -22,7 +22,7 @@ namespace Happimeter.Services
             _store = AccountStore.Create();
         }
 
-        public void SaveAccount(string userName, string token, int userId, DateTime expires)
+        public async void SaveAccount(string userName, string token, int userId, DateTime expires)
         {
             var account = new Account();
             account.Username = userName;
@@ -31,7 +31,7 @@ namespace Happimeter.Services
             account.Properties.Add(UserIdPropertyName, userId.ToString());
             _store.Save(account, AppName);
             ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.LoginEvent);
-            ServiceLocator.Instance.Get<IPredictionService>().DownloadAndSavePrediction();
+            await ServiceLocator.Instance.Get<ISynchronizationService>().Sync();
         }
 
         public Account GetAccount()

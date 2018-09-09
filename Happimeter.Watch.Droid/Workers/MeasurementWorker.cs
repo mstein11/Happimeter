@@ -33,7 +33,7 @@ namespace Happimeter.Watch.Droid.Workers
         public ConcurrentBag<double> StepMeasures = new ConcurrentBag<double>();
         public ConcurrentBag<double> LightMeasures = new ConcurrentBag<double>();
 
-        public int StepsFromLastMeasurement = 0;
+        public int StepsFromLastMeasurement;
 
         private SensorManager _sensorManager { get; set; }
         private SensorListener _accelerometerListener { get; set; }
@@ -46,21 +46,18 @@ namespace Happimeter.Watch.Droid.Workers
         private Context _context;
         public Context Context
         {
-            get
-            {
-                return _context != null ? _context : BackgroundService.ServiceContext;
-            }
+            get => _context ?? BackgroundService.ServiceContext;
             set
             {
                 _context = value;
             }
         }
 
-        private bool _playServicesReady = false;
+        private readonly bool _playServicesReady;
         private FusedLocationProviderClient fusedLocationProviderClient;
         private ActivityRecognitionClient activityRecognitionClient;
         private LocationManager _locationManager;
-        private string locationProvider;
+        private readonly string locationProvider;
         private PendingIntent ActivityDetectionPendingIntent
         {
             get
@@ -152,7 +149,6 @@ namespace Happimeter.Watch.Droid.Workers
             }
             while (IsRunning)
             {
-                //StartSensors();
                 try
                 {
                     await Task.Delay(TimeSpan.FromSeconds(60), _cancelationTokenSource.Token);
@@ -463,11 +459,11 @@ namespace Happimeter.Watch.Droid.Workers
             ServiceLocator.Instance.Get<IMeasurementService>().AddSensorMeasurement(sensorMeasurement);
         }
 
-        public void Stop()
+        public async void Stop()
         {
             IsRunning = false;
             _cancelationTokenSource?.Cancel();
-            StopSensors();
+            await StopSensors();
         }
 
         private async Task StopSensors()
@@ -493,12 +489,14 @@ namespace Happimeter.Watch.Droid.Workers
             {
                 await activityRecognitionClient.RemoveActivityUpdatesAsync(ActivityDetectionPendingIntent);
             }
+
+            BluetoothScannerWorker.GetInstance().Stop();
         }
 
         private async Task StartSensors()
         {
             _sensorManager = (SensorManager)Application.Context.GetSystemService(Android.Content.Context.SensorService);
-            StopSensors();
+            await StopSensors();
             var light = _sensorManager.GetDefaultSensor(SensorType.Light);
             if (light != null)
             {
@@ -531,6 +529,8 @@ namespace Happimeter.Watch.Droid.Workers
             {
                 await activityRecognitionClient.RequestActivityUpdatesAsync(60 * 1000, ActivityDetectionPendingIntent);
             }
+
+            BluetoothScannerWorker.GetInstance().Start();
         }
 
         bool IsGooglePlayServicesInstalled()

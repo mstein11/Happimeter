@@ -40,7 +40,7 @@ namespace Happimeter.ViewModels.Forms
                     ServiceLocator
                         .Instance
                         .Get<ISharedDatabaseContext>()
-                        .ResetDatabase();
+                        .ResetDatabaseOnLogout();
 
                     ServiceLocator
                         .Instance
@@ -260,9 +260,19 @@ namespace Happimeter.ViewModels.Forms
         private List<ListMenuItemViewModel> GetMenuViewModel(bool hasBtPairing)
         {
             var listMenuEntries = new List<ListMenuItemViewModel> {
+                new ListMenuItemViewModel
+                {
+                    ItemTitle = "Teams",
+                    IconBackgroundColor = Color.FromHex("#b71c1c"),
+                    IconText = "T",
+                    OnClickedCommand = new Command(() =>
+                    {
+                        ListMenuItemSelected?.Invoke(new TeamListPage(), null);
+                    }),
+                },
                 new ListMenuItemViewModel {
                     ItemTitle = "Generic Questions",
-                    IconBackgroundColor = Color.FromHex("#c62828"),
+                    IconBackgroundColor = Color.FromHex("#880e4f"),
                     IconText = "G",
                     OnClickedCommand = new Command(() => {
                         ListMenuItemSelected?.Invoke(new SettingsGenericQuestionPage(), null);
@@ -275,7 +285,7 @@ namespace Happimeter.ViewModels.Forms
                 listMenuEntries.Add(new ListMenuItemViewModel
                 {
                     ItemTitle = "Watch Config",
-                    IconBackgroundColor = Color.FromHex("#6a1b9a"),
+                    IconBackgroundColor = Color.FromHex("#4a148c"),
                     IconText = "W",
                     OnClickedCommand = new Command(() =>
                     {
@@ -286,7 +296,7 @@ namespace Happimeter.ViewModels.Forms
             listMenuEntries.Add(new ListMenuItemViewModel
             {
                 ItemTitle = "Debug",
-                IconBackgroundColor = Color.FromHex("#9a7a1b"),
+                IconBackgroundColor = Color.FromHex("#311b92"),
                 IconText = "D",
                 OnClickedCommand = new Command(() =>
                 {
@@ -299,7 +309,7 @@ namespace Happimeter.ViewModels.Forms
             listMenuEntries.Add(new ListMenuItemViewModel
             {
                 ItemTitle = "Map",
-                IconBackgroundColor = Color.FromHex("#9a7a1b"),
+                IconBackgroundColor = Color.FromHex("#1a237e"),
                 IconText = "M",
                 OnClickedCommand = new Command(() =>
                 {

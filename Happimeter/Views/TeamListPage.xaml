@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    x:Class="Happimeter.Views.TeamListPage"
+    xmlns:controls="clr-namespace:SuaveControls.Views;assembly=SuaveControls.FloatingActionButton"
+    xmlns:local="clr-namespace:Happimeter.Controls"
+    xmlns:converter="clr-namespace:Happimeter.Converter"
+    xmlns:xfx="clr-namespace:Xfx;assembly=Xfx.Controls"
+    xmlns:ffstatic="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading"
+    xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+    xmlns:fftransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Transformations"
+    BackgroundColor="LightGray">
+    <ContentPage.Content>
+        <Grid
+            HorizontalOptions="FillAndExpand" 
+            VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+               
+            <local:HMListView 
+                ItemsSource="{Binding Teams}" 
+                HasUnevenRows="true"
+                SeparatorVisibility="None"
+                Grid.RowSpan="3"
+                Grid.ColumnSpan="2"
+                RowsSelectable="false"
+                BackgroundColor="LightGray"
+                IsVisible="{Binding Teams, Converter={StaticResource anyConverter}}"
+                IsPullToRefreshEnabled="true"
+                RefreshCommand="{Binding RefreshListCommand}"
+                IsRefreshing="{Binding IsRefreshing}"
+                x:Name="TeamListView">
+                <local:HMListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Frame Padding="10" Margin="20" BackgroundColor="White">
+                                <StackLayout Orientation="Vertical">
+                                    <Label Text="{Binding Name}" HorizontalTextAlignment="Center" FontSize="Large"></Label>
+                                    <Label Text="(Admin)" HorizontalTextAlignment="Center" Style="{StaticResource HintTextStyle}" IsVisible="{Binding IsAdmin}"></Label>
+                                    <ffimageloading:CachedImage HorizontalOptions="Center" WidthRequest="75" HeightRequest="75" Source="{Binding MoodIconImagePath}">
+                                        <ffimageloading:CachedImage.Transformations>
+                                            <fftransformations:RoundedTransformation Radius="60"/>    
+                                            <fftransformations:ColorSpaceTransformation RGBAWMatrix="{x:Static ffstatic:FFColorMatrix.InvertColorMatrix}"/>    
+                                        </ffimageloading:CachedImage.Transformations>
+                                    </ffimageloading:CachedImage>
+                                    <Label Text="{Binding MoodString}" HorizontalTextAlignment="Center" Style="{StaticResource HintTextStyle}"></Label>
+                                    <local:MyButton 
+                                        Style="{StaticResource ButtonWithBackground}" 
+                                        Text="{Binding LeaveDeleteButtonText}"
+                                        Padding="25, 10, 25, 10"
+                                        HorizontalOptions="Center"
+                                        Command="{Binding LeaveTeamCommand}">
+                                    </local:MyButton>
+                                </StackLayout>
+                            </Frame>
+                        </ViewCell>
+                    </DataTemplate>
+                </local:HMListView.ItemTemplate>
+            </local:HMListView>
+            <StackLayout Grid.ColumnSpan="2" Grid.RowSpan="2" Padding="25" Spacing="25" Orientation="Vertical" IsVisible="{Binding Teams, Converter={StaticResource notAnyConverter}}">
+                <Label Text="Your are not part of any team." Style="{StaticResource HintTextStyle}" HorizontalTextAlignment="Center"/>
+                <local:MyButton 
+                        Style="{StaticResource ButtonWithBackground}" 
+                        Text="Join a Team"
+                        Padding="25, 10, 25, 10"
+                        HorizontalOptions="Center"
+                        Clicked="Handle_Clicked">
+                </local:MyButton>
+            </StackLayout>
+            <StackLayout x:Name="Overlay" Opacity="0" Grid.RowSpan="3" Grid.ColumnSpan="2" BackgroundColor="#000000" IsVisible="false">
+                
+            </StackLayout>
+            <ScrollView Grid.Row="0" Grid.ColumnSpan="2" x:Name="FormContentContainer" Padding="15">
+                <Frame Padding="15" BackgroundColor="White">
+                    <StackLayout Spacing="15">
+                        <Label Text="JOIN A TEAM" FontSize="Large"></Label>
+                        <xfx:XfxEntry ErrorDisplay="None" Placeholder="Teamname" Text="{Binding JoinTeamViewModel.Name}"  />
+                        <xfx:XfxEntry Placeholder="Password" Text="{Binding JoinTeamViewModel.Password}" ErrorText="{Binding JoinTeamViewModel.Error}" IsPassword="true" />
+                        <Label Text="Please fill the above form to join a Team" IsVisible="{Binding JoinTeamViewModel.NormalTextIsVisible}" Style="{StaticResource HintTextStyle}"></Label>
+                        <Label Text="Loading..." IsVisible="{Binding JoinTeamViewModel.IsLoading}" Style="{StaticResource HintTextStyle}"></Label>
+                        <Label TextColor="Green" Text="Team successfully joined" IsVisible="{Binding JoinTeamViewModel.SuccessMessageIsVisible}" Style="{StaticResource HintTextStyle}"></Label>
+                    </StackLayout>
+                </Frame>
+            </ScrollView>
+            <StackLayout Orientation="Vertical" Spacing="5" Padding="30, 15, 30, 15" Grid.Row="2" Grid.Column="1" HorizontalOptions="End" x:Name="JoinContainer">
+                <local:MyFloatingActionButton 
+                    Style="{StaticResource FloatingActionButtonStyle}"
+                    Image="person_add_small.png" 
+                    Clicked="Handle_Clicked" />
+                <Label FontSize="Small" TextColor="White" HorizontalOptions="Center" Text="Join Team" BackgroundColor="Gray"></Label>
+            </StackLayout>
+            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="0" Padding="15" Grid.Row="2" Grid.Column="1"  x:Name="FormActionContainer">
+                <StackLayout Orientation="Vertical" Spacing="5" Padding="15, 0, 15, 0" HorizontalOptions="Center">
+                    <local:MyFloatingActionButton 
+                        Style="{StaticResource FloatingActionButtonStyle}"
+                        Image="baseline_check_white_48.png" 
+                        Command="{Binding JoinTeamViewModel.JoinTeamCommand}" />
+                    <Label FontSize="Small" TextColor="White" HorizontalOptions="Center" Text="Save"></Label>
+                </StackLayout>
+               <StackLayout Orientation="Vertical" Spacing="5" Padding="15, 0, 15, 0" HorizontalOptions="Center">
+                    <local:MyFloatingActionButton 
+                        Style="{StaticResource FloatingActionButtonStyle}"
+                        Image="baseline_close_white_48.png" 
+                        ButtonColor="Gray" 
+                        Clicked="Handle_Close" />
+                    <Label FontSize="Small" TextColor="White" HorizontalOptions="Center" Text="Close"></Label>
+                </StackLayout>
+            </StackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

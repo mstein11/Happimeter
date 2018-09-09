@@ -9,6 +9,8 @@ using Happimeter.Interfaces;
 using System.Diagnostics;
 using Happimeter.Core.Helpers;
 using System.Runtime.Remoting.Messaging;
+using Microsoft.AppCenter;
+using Xamarin.Forms;
 
 namespace Happimeter.ViewModels.Forms
 {
@@ -135,14 +137,17 @@ namespace Happimeter.ViewModels.Forms
             });
             ServiceLocator.Instance.Get<ISharedDatabaseContext>().WhenEntryAdded<GenericQuestion>().Subscribe(x =>
             {
-                foreach (var newQuestionObj in x.Entites)
+                Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
                 {
-                    var newQuestion = (GenericQuestion)newQuestionObj;
-                    if (newQuestion.QuestionShort != null && TabMenuViewModel.Items.All(item => item.Id != newQuestion.QuestionId))
+                    foreach (var newQuestionObj in x.Entites)
                     {
-                        TabMenuViewModel.Items.Add(new TabMenuItemViewModel { Text = newQuestion.QuestionShort, Id = newQuestion.QuestionId });
+                        var newQuestion = (GenericQuestion)newQuestionObj;
+                        if (newQuestion.QuestionShort != null && TabMenuViewModel.Items.All(item => item.Id != newQuestion.QuestionId))
+                        {
+                            TabMenuViewModel.Items.Add(new TabMenuItemViewModel { Text = newQuestion.QuestionShort, Id = newQuestion.QuestionId });
+                        }
                     }
-                }
+                });
             });
 
             TabMenuViewModel.Items.FirstOrDefault(x => x.Id == (int)CurrentType).IsActive = true;

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<controls:FloatingActionButton 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    x:Class="Happimeter.Controls.MyFloatingActionButton"
+    xmlns:controls="clr-namespace:SuaveControls.Views;assembly=SuaveControls.FloatingActionButton">
+</controls:FloatingActionButton>

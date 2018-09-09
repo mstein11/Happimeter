@@ -66,6 +66,7 @@ namespace Happimeter.Core.Database
             databaseTables.Add(typeof(GenericQuestion));
             databaseTables.Add(typeof(PredictionEntry));
             databaseTables.Add(typeof(ProximityEntry));
+            databaseTables.Add(typeof(TeamEntry));
 
 
             //here we give the possibility to alter the list of tables created by subprojects (e.g. different devices)
@@ -99,7 +100,7 @@ namespace Happimeter.Core.Database
             }
         }
 
-        public virtual void ResetDatabase()
+        public virtual void ResetDatabaseOnLogout()
         {
             EnsureDatabaseCreated();
             lock (SyncLock)
@@ -114,8 +115,10 @@ namespace Happimeter.Core.Database
                     DeleteAll<SurveyItemMeasurement>();
                     DeleteAll<SurveyMeasurement>();
                     DeleteAll<PredictionEntry>();
-                    DeleteAll<GenericQuestion>();
+                    //DeleteAll<GenericQuestion>();
                     DeleteAll<ProximityEntry>();
+                    DeleteAll<TeamEntry>();
+
                 }
             }
         }
@@ -306,6 +309,15 @@ namespace Happimeter.Core.Database
             }
             DatabaseEntriesChangedSubject.OnNext(new DatabaseChangedEventArgs(entity, typeof(T), DatabaseChangedEventTypes.Added));
         }
+
+        public virtual void AddAll<T>(IList<T> entitites) where T : new()
+        {
+            foreach (var entity in entitites)
+            {
+                Add(entity);
+            }
+        }
+
 
         public virtual void AddGraph<T>(T entity) where T : new()
         {

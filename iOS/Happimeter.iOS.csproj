@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Xamarin.Forms.3.2.0.729530-pre2\build\netstandard2.0\Xamarin.Forms.props" Condition="Exists('..\packages\Xamarin.Forms.3.2.0.729530-pre2\build\netstandard2.0\Xamarin.Forms.props')" />
   <Import Project="..\packages\Xamarin.Build.Download.0.4.7\build\Xamarin.Build.Download.props" Condition="Exists('..\packages\Xamarin.Build.Download.0.4.7\build\Xamarin.Build.Download.props')" />
-  <Import Project="..\packages\Xamarin.Forms.3.1.0.697729\build\netstandard2.0\Xamarin.Forms.props" Condition="Exists('..\packages\Xamarin.Forms.3.1.0.697729\build\netstandard2.0\Xamarin.Forms.props')" />
   <Import Project="..\packages\Xamarin.Forms.3.1.0.637273\build\netstandard2.0\Xamarin.Forms.props" Condition="Exists('..\packages\Xamarin.Forms.3.1.0.637273\build\netstandard2.0\Xamarin.Forms.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -43,7 +43,7 @@
     <MtouchFloat32>true</MtouchFloat32>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchLink>SdkOnly</MtouchLink>
-    <MtouchArch>ARMv7, ARMv7s, ARM64</MtouchArch>
+    <MtouchArch>ARMv7, ARM64</MtouchArch>
     <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
     <PlatformTarget>x86</PlatformTarget>
     <CodesignProvision>VS: edu.mit.Happimeter Development</CodesignProvision>
@@ -240,22 +240,6 @@
     <Reference Include="Plugin.LocalNotifications">
       <HintPath>..\packages\Xam.Plugins.Notifier.3.0.1\lib\Xamarin.iOS10\Plugin.LocalNotifications.dll</HintPath>
     </Reference>
-    <Reference Include="Xamarin.Forms.Core">
-      <HintPath>..\packages\Xamarin.Forms.3.1.0.697729\lib\Xamarin.iOS10\Xamarin.Forms.Core.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Xamarin.Forms.Platform">
-      <HintPath>..\packages\Xamarin.Forms.3.1.0.697729\lib\Xamarin.iOS10\Xamarin.Forms.Platform.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Xamarin.Forms.Platform.iOS">
-      <HintPath>..\packages\Xamarin.Forms.3.1.0.697729\lib\Xamarin.iOS10\Xamarin.Forms.Platform.iOS.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Xamarin.Forms.Xaml">
-      <HintPath>..\packages\Xamarin.Forms.3.1.0.697729\lib\Xamarin.iOS10\Xamarin.Forms.Xaml.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Google.Maps">
       <HintPath>..\packages\Xamarin.Google.iOS.Maps.2.5.0\lib\Xamarin.iOS10\Google.Maps.dll</HintPath>
     </Reference>
@@ -270,6 +254,55 @@
     </Reference>
     <Reference Include="Flex.iOS">
       <HintPath>..\packages\Forms.Controls.FlexButton.0.8.0\lib\xamarinios10\Flex.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="SaturdayMP.XPlugins.iOS.BEMCheckBox">
+      <HintPath>..\packages\SaturdayMP.XPlugins.iOS.BEMCheckBox.1.4.3\lib\Xamarin.iOS10\SaturdayMP.XPlugins.iOS.BEMCheckBox.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Core">
+      <HintPath>..\packages\Xamarin.Forms.3.2.0.729530-pre2\lib\Xamarin.iOS10\Xamarin.Forms.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Platform">
+      <HintPath>..\packages\Xamarin.Forms.3.2.0.729530-pre2\lib\Xamarin.iOS10\Xamarin.Forms.Platform.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Platform.iOS">
+      <HintPath>..\packages\Xamarin.Forms.3.2.0.729530-pre2\lib\Xamarin.iOS10\Xamarin.Forms.Platform.iOS.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Xaml">
+      <HintPath>..\packages\Xamarin.Forms.3.2.0.729530-pre2\lib\Xamarin.iOS10\Xamarin.Forms.Xaml.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SuaveControls.FloatingActionButton">
+      <HintPath>..\packages\SuaveControls.FloatingActionButton.2018.3.1-pre1\lib\xamarinios10\SuaveControls.FloatingActionButton.dll</HintPath>
+    </Reference>
+    <Reference Include="SuaveControls.FloatingActionButton.iOS">
+      <HintPath>..\packages\SuaveControls.FloatingActionButton.2018.3.1-pre1\lib\xamarinios10\SuaveControls.FloatingActionButton.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="WebP.Touch">
+      <HintPath>..\packages\WebP.Touch.1.0.8\lib\Xamarin.iOS10\WebP.Touch.dll</HintPath>
+    </Reference>
+    <Reference Include="FFImageLoading">
+      <HintPath>..\packages\Xamarin.FFImageLoading.2.4.3.840\lib\Xamarin.iOS10\FFImageLoading.dll</HintPath>
+    </Reference>
+    <Reference Include="FFImageLoading.Platform">
+      <HintPath>..\packages\Xamarin.FFImageLoading.2.4.3.840\lib\Xamarin.iOS10\FFImageLoading.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="FFImageLoading.Svg.Platform">
+      <HintPath>..\packages\Xamarin.FFImageLoading.Svg.2.4.3.840\lib\Xamarin.iOS10\FFImageLoading.Svg.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="FFImageLoading.Forms">
+      <HintPath>..\packages\Xamarin.FFImageLoading.Forms.2.4.3.840\lib\Xamarin.iOS10\FFImageLoading.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="FFImageLoading.Forms.Platform">
+      <HintPath>..\packages\Xamarin.FFImageLoading.Forms.2.4.3.840\lib\Xamarin.iOS10\FFImageLoading.Forms.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="FFImageLoading.Svg.Forms">
+      <HintPath>..\packages\Xamarin.FFImageLoading.Svg.Forms.2.4.3.840\lib\Xamarin.iOS10\FFImageLoading.Svg.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="FFImageLoading.Transformations">
+      <HintPath>..\packages\Xamarin.FFImageLoading.Transformations.2.4.3.840\lib\Xamarin.iOS10\FFImageLoading.Transformations.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -306,14 +339,27 @@
     <ImageAsset Include="Assets.xcassets\BluetoothIcon.imageset\airdrop%402x.png" />
     <ImageAsset Include="Assets.xcassets\BluetoothIcon.imageset\airdrop%403x.png" />
     <ImageAsset Include="Assets.xcassets\BluetoothIcon.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\left.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\left.imageset\left.png" />
-    <ImageAsset Include="Assets.xcassets\left.imageset\left%402x.png" />
-    <ImageAsset Include="Assets.xcassets\left.imageset\left%403x.png" />
-    <ImageAsset Include="Assets.xcassets\right.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\right.imageset\right.png" />
-    <ImageAsset Include="Assets.xcassets\right.imageset\right%402x.png" />
-    <ImageAsset Include="Assets.xcassets\right.imageset\right%403x.png" />
+    <ImageAsset Include="Assets.xcassets\signin_background.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\signin_background.imageset\signin_background.jpeg" />
+    <ImageAsset Include="Assets.xcassets\signin_background.imageset\signin_background%402.jpg" />
+    <ImageAsset Include="Assets.xcassets\signin_background.imageset\signin_background.jpg" />
+    <ImageAsset Include="Assets.xcassets\person_add.imageset\baseline_person_add_white_48pt_1x.png" />
+    <ImageAsset Include="Assets.xcassets\person_add.imageset\baseline_person_add_white_48pt_2x.png" />
+    <ImageAsset Include="Assets.xcassets\person_add.imageset\baseline_person_add_white_48pt_3x.png" />
+    <ImageAsset Include="Assets.xcassets\person_add.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\person_add_small.imageset\baseline_person_add_white_24pt_1x.png" />
+    <ImageAsset Include="Assets.xcassets\person_add_small.imageset\baseline_person_add_white_48pt_2x.png" />
+    <ImageAsset Include="Assets.xcassets\person_add_small.imageset\baseline_person_add_white_48pt_3x.png" />
+    <ImageAsset Include="Assets.xcassets\person_add_small.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\baseline_check_white_48.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\baseline_close_white_48.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\baseline_close_white_48.imageset\baseline_close_white_48%401x.png" />
+    <ImageAsset Include="Assets.xcassets\baseline_close_white_48.imageset\baseline_close_white_48%402x.png" />
+    <ImageAsset Include="Assets.xcassets\baseline_close_white_48.imageset\baseline_close_white_48%403x.png" />
+    <ImageAsset Include="Assets.xcassets\baseline_check_white_48.imageset\baseline_check_white_48%401x.png" />
+    <ImageAsset Include="Assets.xcassets\baseline_check_white_48.imageset\baseline_check_white_48%402x.png" />
+    <ImageAsset Include="Assets.xcassets\baseline_check_white_48.imageset\baseline_check_white_48%403x.png" />
+    <ImageAsset Include="Assets.xcassets\Image.imageset\Contents.json" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ViewControllers\TabBarController.cs" />
@@ -348,6 +394,8 @@
       <DependentUpon>SignInViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="Renderers\MyButtonRenderer.cs" />
+    <Compile Include="Renderers\CheckboxRenderer.cs" />
+    <Compile Include="Renderers\HMListViewRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Entitlements.plist" />
@@ -368,10 +416,28 @@
     <Folder Include="Assets.xcassets\BluetoothIcon.imageset\" />
     <Folder Include="Assets.xcassets\left.imageset\" />
     <Folder Include="Assets.xcassets\right.imageset\" />
+    <Folder Include="Assets.xcassets\signin_background.imageset\" />
+    <Folder Include="Assets.xcassets\person_add.imageset\" />
+    <Folder Include="Assets.xcassets\person_add_small.imageset\" />
+    <Folder Include="Assets.xcassets\baseline_check_white_48.imageset\" />
+    <Folder Include="Assets.xcassets\baseline_close_white_48.imageset\" />
+    <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
     <ITunesArtwork Include="iTunesArtwork%402x" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\QuestionMark.png" />
+    <BundleResource Include="Resources\TransparentMood_1.png" />
+    <BundleResource Include="Resources\TransparentMood_2.png" />
+    <BundleResource Include="Resources\TransparentMood_3.png" />
+    <BundleResource Include="Resources\TransparentMood_4.png" />
+    <BundleResource Include="Resources\TransparentMood_5.png" />
+    <BundleResource Include="Resources\TransparentMood_6.png" />
+    <BundleResource Include="Resources\TransparentMood_7.png" />
+    <BundleResource Include="Resources\TransparentMood_8.png" />
+    <BundleResource Include="Resources\TransparentMood_9.png" />
   </ItemGroup>
   <Import Project="..\Happimeter.Core\Happimeter.Core.projitems" Label="Shared" Condition="Exists('..\Happimeter.Core\Happimeter.Core.projitems')" />
   <Import Project="..\Happimeter\Happimeter.projitems" Label="Shared" Condition="Exists('..\Happimeter\Happimeter.projitems')" />
@@ -379,7 +445,7 @@
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Import Project="..\packages\Xamarin.Forms.3.1.0.637273\build\netstandard2.0\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.3.1.0.637273\build\netstandard2.0\Xamarin.Forms.targets')" />
   <Import Project="..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
-  <Import Project="..\packages\Xamarin.Forms.3.1.0.697729\build\netstandard2.0\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.3.1.0.697729\build\netstandard2.0\Xamarin.Forms.targets')" />
   <Import Project="..\packages\Xamarin.Build.Download.0.4.7\build\Xamarin.Build.Download.targets" Condition="Exists('..\packages\Xamarin.Build.Download.0.4.7\build\Xamarin.Build.Download.targets')" />
   <Import Project="..\packages\Xamarin.Google.iOS.Maps.2.5.0\build\Xamarin.Google.iOS.Maps.targets" Condition="Exists('..\packages\Xamarin.Google.iOS.Maps.2.5.0\build\Xamarin.Google.iOS.Maps.targets')" />
+  <Import Project="..\packages\Xamarin.Forms.3.2.0.729530-pre2\build\netstandard2.0\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.3.2.0.729530-pre2\build\netstandard2.0\Xamarin.Forms.targets')" />
 </Project>

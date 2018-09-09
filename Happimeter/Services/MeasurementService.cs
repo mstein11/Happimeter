@@ -13,6 +13,7 @@ using Happimeter.ViewModels.Forms;
 using System.Collections.ObjectModel;
 using Version.Plugin;
 using System.Runtime.Remoting.Lifetime;
+using System.Diagnostics;
 
 namespace Happimeter.Services
 {
@@ -24,7 +25,7 @@ namespace Happimeter.Services
 
         private const double MeterPerSqaureSecondToMilliGForce = 101.93679918451;
 
-
+        /*
         public IList<GenericQuestion> GetGenericQuestions()
         {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
@@ -45,6 +46,7 @@ namespace Happimeter.Services
             question.Activated = isActivated;
             context.Update(question);
         }
+        */
 
         /// <summary>
         ///     Method returns Generic Questions for display in survey.
@@ -53,7 +55,7 @@ namespace Happimeter.Services
         public SurveyViewModel GetSurveyQuestions()
         {
             var questions = new SurveyViewModel();
-            var dbQuestions = GetActiveGenericQuestions();
+            var dbQuestions = ServiceLocator.Instance.Get<IGenericQuestionService>().GetActiveGenericQuestions();
             var additionalQuestions = dbQuestions.Select(x => new SurveyItemViewModel
             {
                 Question = x.Question,
@@ -270,10 +272,6 @@ namespace Happimeter.Services
         {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             var entries = context.GetAllWithChildren<SurveyMeasurement>(x => !x.IsUploadedToServer);
-            var groupId = ServiceLocator
-                .Instance
-                .Get<IConfigService>()
-                .GetConfigValueByKey(ConfigService.GenericQuestionGroupIdKey);
             var result = new List<PostMoodServiceModel>();
 
             foreach (var entry in entries)
@@ -441,45 +439,62 @@ namespace Happimeter.Services
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             return context.GetAllWithChildren<SurveyMeasurement>();
         }
-
+        /*
         /// <summary>
         ///     Returns null, when api return an error (e.g. no internt)
         /// </summary>
         /// <returns>The and save generic questions.</returns>
         public async Task<List<GenericQuestion>> DownloadAndSaveGenericQuestions()
         {
-            var api = ServiceLocator.Instance.Get<IHappimeterApiService>();
-            var questions = await api.GetGenericQuestions();
-            if (!questions.IsSuccess)
+            try
             {
+
+
+                System.Diagnostics.Debug.WriteLine("DownloadAndSaveGenericQuestions.Start");
+                var api = ServiceLocator.Instance.Get<IHappimeterApiService>();
+                var questions = await api.GetGenericQuestions();
+                if (!questions.IsSuccess)
+                {
+                    System.Diagnostics.Debug.WriteLine("Questions.NotSuccessful");
+                    return null;
+                }
+
+                var newQuestions = questions.Questions.Select(q => new GenericQuestion
+                {
+                    Question = q.Question,
+                    QuestionShort = q.QuestionShort,
+                    QuestionId = q.Id
+                }).ToList();
+                System.Diagnostics.Debug.WriteLine(newQuestions.Count);
+                var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
+                var oldQuestions = context.GetAll<GenericQuestion>();
+                foreach (var question in newQuestions)
+                {
+                    System.Diagnostics.Debug.WriteLine("DownloadAndSaveGenericQuestions.inForEach");
+                    var matchedQuestion = oldQuestions.FirstOrDefault(x => x.QuestionId == question.QuestionId);
+                    if (matchedQuestion != null)
+                    {
+                        question.Id = matchedQuestion.Id;
+                        question.Deactivated = matchedQuestion.Deactivated;
+                        question.Activated = matchedQuestion.Activated;
+                        context.Update(question);
+                    }
+                    else
+                    {
+                        context.Add(question);
+                    }
+                }
+                System.Diagnostics.Debug.WriteLine("DownloadAndSaveGenericQuestions.Return");
+                return newQuestions;
+            }
+            catch (Exception e)
+            {
+                ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
+                System.Diagnostics.Debug.WriteLine("DownloadAndSaveGenericQuestions.Catch");
+                System.Diagnostics.Debug.WriteLine(e.Message);
                 return null;
             }
-
-            var newQuestions = questions.Questions.Select(q => new GenericQuestion
-            {
-                Question = q.Question,
-                QuestionShort = q.QuestionShort,
-                QuestionId = q.Id
-            }).ToList();
-            var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
-            var oldQuestions = context.GetAll<GenericQuestion>();
-            foreach (var question in newQuestions)
-            {
-                var matchedQuestion = oldQuestions.FirstOrDefault(x => x.QuestionId == question.QuestionId);
-                if (matchedQuestion != null)
-                {
-                    question.Id = matchedQuestion.Id;
-                    question.Deactivated = matchedQuestion.Deactivated;
-                    question.Activated = matchedQuestion.Activated;
-                    context.Update(question);
-                }
-                else
-                {
-                    context.Add(question);
-                }
-            }
-
-            return newQuestions;
         }
+        */
     }
 }

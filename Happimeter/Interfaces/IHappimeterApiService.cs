@@ -17,7 +17,11 @@ namespace Happimeter.Interfaces
         Task<GetGenericQuestionApiResult> GetGenericQuestions();
         Task<GetPredictionsResultModel> GetPredictions();
         Task<GetProximityResultModel> GetProximityData(DateTime since);
+        Task<GetTeamsResultModel> GetTeams();
         Task<GetSignalsModel> GetSignals(DateTime forDay);
         Task<bool> UploadDatabaseForDebug();
+        Task<GetTeamsByNameResultModel> GetTeamsByName(string name);
+        Task<JoinTeamResultModel> JoinTeam(int teamId, string password);
+        Task<LeaveTeamResultModel> LeaveTeam(int teamId);
     }
 }

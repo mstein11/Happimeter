@@ -10,12 +10,13 @@ namespace Happimeter.Core.Database
         void CreateDatabase();
         string GetDatabasePath();
         void Add<T>(T entity) where T : new();
+        void AddAll<T>(IList<T> entitites) where T : new();
         void AddGraph<T>(T entity) where T : new();
         void Update<T>(T entity) where T : new();
         void Delete<T>(T entity) where T : new();
         void DeleteAll<T>() where T : new();
 
-        void ResetDatabase();
+        void ResetDatabaseOnLogout();
 
         T GetWithChildren<T>(Expression<Func<T, bool>> whereClause) where T : new();
         T Get<T>(Expression<Func<T, bool>> whereClause) where T : new();
