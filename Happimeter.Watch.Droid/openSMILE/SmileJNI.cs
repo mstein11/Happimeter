@@ -10,13 +10,15 @@ namespace Happimeter.Watch.Droid.openSMILE
 {
 
     [Register("edu.mit.Happimeter_Watch_Droid.SmileJNI")]
-    public class SmileJNI : Java.Lang.Object {
+    public class SmileJNI : Java.Lang.Object
+    {
 
 
-        public static void Load() {
-            
+        public static void Load()
+        {
+
             JavaSystem.LoadLibrary("smile_jni");
-      
+
         }
 
         [DllImport("smile_jni")]
@@ -38,7 +40,8 @@ namespace Happimeter.Watch.Droid.openSMILE
         public static void SMILExtractJNI(
             string configfile,
             int updateProfile
-        ) {
+        )
+        {
 
             IntPtr env = JNIEnv.Handle;
             IntPtr jniClass = JNIEnv.FindClass(typeof(SmileJNI));
@@ -46,8 +49,8 @@ namespace Happimeter.Watch.Droid.openSMILE
 
             try
             {
-                using (var java_configfile = new Java.Lang.String(configfile)) 
-                using(var java_updateProfile = new Java.Lang.Integer(updateProfile))
+                using (var java_configfile = new Java.Lang.String(configfile))
+                using (var java_updateProfile = new Java.Lang.Integer(updateProfile))
                 {
                     Java_com_audeering_opensmile_androidtemplate_SmileJNI_SMILExtractJNI(
                         env,
@@ -56,8 +59,10 @@ namespace Happimeter.Watch.Droid.openSMILE
                         java_updateProfile.Handle
                     );
                 }
-            } finally {
-  
+            }
+            finally
+            {
+
                 JNIEnv.DeleteGlobalRef(jniClass);
 
             }
