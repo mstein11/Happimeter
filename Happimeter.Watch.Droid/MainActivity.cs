@@ -19,6 +19,7 @@ using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Happimeter.Watch.Droid.Workers;
+using Happimeter.Watch.Droid.openSMILE;
 
 namespace Happimeter.Watch.Droid
 {
@@ -62,8 +63,8 @@ namespace Happimeter.Watch.Droid
                 });
             });
             // activates audio feature extraction in this session if user activated it in a previous session
-            ServiceLocator.Instance.Get<IAudioFeaturesService>().OnApplicationStartup();
-
+            //ServiceLocator.Instance.Get<IAudioFeaturesService>().OnApplicationStartup();
+            Smile.Initialize();
             var pairing = ServiceLocator.Instance.Get<IDatabaseContext>().GetCurrentBluetoothPairing();
             if (pairing != null)
             {

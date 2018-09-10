@@ -77,7 +77,7 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
             }
             if (IsActive)
             {
-                //Start();
+                Start();
             }
         }
 
@@ -134,7 +134,7 @@ namespace Happimeter.Watch.Droid.ServicesBusinessLogic
                 var dbRecord = new AudioFeatures();
                 dbRecord.Vad = msg.FloatData.Vad;
                 dbRecord.Timestamp = DateTime.UtcNow;
-
+                Debug.WriteLine(dbRecord.Vad);
                 _service.VadMeasures.Add(dbRecord.Vad);
                 // BluetoothWorker.GetInstance().SendNotification(UuidHelper.DataExchangeNotifyCharacteristicUuid, new DataExchangeInitMessage());
 

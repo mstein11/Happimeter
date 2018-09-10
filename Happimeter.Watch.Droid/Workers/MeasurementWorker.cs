@@ -383,13 +383,13 @@ namespace Happimeter.Watch.Droid.Workers
                 });
             }
 
-            var vadMeasures = _audioFeatureService.VadMeasures;
+            var vadMeasures = _audioFeatureService.VadMeasures.ToList();
             _audioFeatureService.VadMeasures.Clear();
             if (vadMeasures.Any())
             {
                 sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
                 {
-                    Type = MeasurementItemTypes.Microphone,
+                    Type = MeasurementItemTypes.Vad,
                     NumberOfMeasures = vadMeasures.Count(),
                     Average = vadMeasures.Average(),
                     StdDev = vadMeasures.StdDev(),
@@ -401,6 +401,7 @@ namespace Happimeter.Watch.Droid.Workers
                     Max = vadMeasures.Max()
                 });
             }
+
 
             sensorMeasurement.SensorItemMeasures.Add(new SensorItemMeasurement
             {

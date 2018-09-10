@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Android.Runtime;
 using System.Collections.Generic;
 using Microsoft.AppCenter;
+using Android.Net.Wifi.Aware;
 
 namespace Happimeter.Watch.Droid.openSMILE
 {
@@ -16,18 +17,31 @@ namespace Happimeter.Watch.Droid.openSMILE
         private static bool IsInitialized = false;
         private static string MainConfigFilePath;
 
-        public static void Run() {
+        public static void Initialize()
+        {
+            if (!IsInitialized)
+            {
+                _initialize();
+                IsInitialized = true;
+            }
+        }
 
-            if (IsRunning) {
+        public static void Run()
+        {
+
+            if (IsRunning)
+            {
                 return;
             }
 
-            if (!IsInitialized) {
-                Initialize();
+            if (!IsInitialized)
+            {
+                _initialize();
                 IsInitialized = true;
             }
 
-            Task.Run(() => { 
+            Task.Run(() =>
+            {
                 SmileJNI.SMILExtractJNI(MainConfigFilePath, 1);
             });
 
@@ -37,11 +51,13 @@ namespace Happimeter.Watch.Droid.openSMILE
 
         public static void Stop()
         {
-            if (!IsRunning) {
+            if (!IsRunning)
+            {
                 return;
             }
 
-            Task.Run(() => {
+            Task.Run(() =>
+            {
                 SmileJNI.SMILEndJNI();
             });
 
@@ -49,7 +65,7 @@ namespace Happimeter.Watch.Droid.openSMILE
         }
 
 
-        private static void Initialize()
+        private static void _initialize()
         {
 
             // JNI onload
@@ -64,15 +80,16 @@ namespace Happimeter.Watch.Droid.openSMILE
             MainConfigFilePath = Path.Combine(cacheDir, mainConfigFileName);
             CopyAssetTo(mainConfigFileName, MainConfigFilePath);
 
-            var additionalConfigFileNames = new List<string> { 
-                "BufferModeRb.conf.inc", 
-                "messages.conf.inc", 
-                "features.conf.inc", 
+            var additionalConfigFileNames = new List<string> {
+                "BufferModeRb.conf.inc",
+                "messages.conf.inc",
+                "features.conf.inc",
                 "lstmvad_rplp18d_12.net",
                 "rplp18d_norm.dat"
             };
 
-            foreach (string configFileName in additionalConfigFileNames) {
+            foreach (string configFileName in additionalConfigFileNames)
+            {
                 string configFileNewPath = Path.Combine(cacheDir, configFileName);
                 CopyAssetTo(configFileName, configFileNewPath);
             }
@@ -96,7 +113,7 @@ namespace Happimeter.Watch.Droid.openSMILE
             var readStream = Application.Context.Assets.Open(assetName);
             FileStream writeStream = new FileStream(newPath, FileMode.Create, FileAccess.Write);
 
-            
+
             int Length = 256;
             Byte[] buffer = new Byte[Length];
             int bytesRead = readStream.Read(buffer, 0, Length);
