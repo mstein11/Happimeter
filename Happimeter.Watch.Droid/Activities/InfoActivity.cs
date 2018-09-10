@@ -85,6 +85,7 @@ namespace Happimeter.Watch.Droid.Activities
             /**
              * Audio Feature extraction start/stop button
              */
+            /*
             UpdateAudioFeatureExtrctionButtonText();
             var AFEToggle = FindViewById<Button>(Resource.Id.info_toggle_audio_feature_extraction);
             AFEToggle.Click += (object sender, EventArgs e) =>
@@ -94,13 +95,15 @@ namespace Happimeter.Watch.Droid.Activities
                 UpdateAudioFeatureExtrctionButtonText();
 
             };
+            */
 
         }
-
-        private void UpdateAudioFeatureExtrctionButtonText() {
+        /*
+        private void UpdateAudioFeatureExtrctionButtonText()
+        {
             var AFEService = ServiceLocator.Instance.Get<IAudioFeaturesService>();
             var AFEActive = AFEService.IsActive;
-            var AFEToggle = FindViewById<Button>(Resource.Id.info_toggle_audio_feature_extraction);
+            /*var AFEToggle = FindViewById<Button>(Resource.Id.info_toggle_audio_feature_extraction);
             if (AFEActive)
             {
                 AFEToggle.Text = "Deactivate Audio Feature Extraction";
@@ -109,8 +112,8 @@ namespace Happimeter.Watch.Droid.Activities
             {
                 AFEToggle.Text = "Activate Audio Feature extraction";
             }
-        }
-
+    }
+    */
         private void UpdateInfos(InfoScreenMeasurements model)
         {
             if (model == null)

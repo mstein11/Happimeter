@@ -571,38 +571,38 @@ namespace Happimeter.Watch.Droid
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f0c003b
-			public const int PairingDeviceName = 2131492923;
-			
-			// aapt resource value: 0x7f0c003d
-			public const int PairingRequestAccept = 2131492925;
-			
-			// aapt resource value: 0x7f0c003e
-			public const int PairingRequestDecline = 2131492926;
+			// aapt resource value: 0x7f0c003a
+			public const int PairingDeviceName = 2131492922;
 			
 			// aapt resource value: 0x7f0c003c
-			public const int PairingRequestDeviceName = 2131492924;
+			public const int PairingRequestAccept = 2131492924;
 			
-			// aapt resource value: 0x7f0c003f
-			public const int PairingRequestLoading = 2131492927;
+			// aapt resource value: 0x7f0c003d
+			public const int PairingRequestDecline = 2131492925;
 			
-			// aapt resource value: 0x7f0c002a
-			public const int action0 = 2131492906;
+			// aapt resource value: 0x7f0c003b
+			public const int PairingRequestDeviceName = 2131492923;
 			
-			// aapt resource value: 0x7f0c0027
-			public const int action_container = 2131492903;
-			
-			// aapt resource value: 0x7f0c002e
-			public const int action_divider = 2131492910;
-			
-			// aapt resource value: 0x7f0c0028
-			public const int action_image = 2131492904;
+			// aapt resource value: 0x7f0c003e
+			public const int PairingRequestLoading = 2131492926;
 			
 			// aapt resource value: 0x7f0c0029
-			public const int action_text = 2131492905;
+			public const int action0 = 2131492905;
 			
-			// aapt resource value: 0x7f0c0038
-			public const int actions = 2131492920;
+			// aapt resource value: 0x7f0c0026
+			public const int action_container = 2131492902;
+			
+			// aapt resource value: 0x7f0c002d
+			public const int action_divider = 2131492909;
+			
+			// aapt resource value: 0x7f0c0027
+			public const int action_image = 2131492903;
+			
+			// aapt resource value: 0x7f0c0028
+			public const int action_text = 2131492904;
+			
+			// aapt resource value: 0x7f0c0037
+			public const int actions = 2131492919;
 			
 			// aapt resource value: 0x7f0c0005
 			public const int adjust_height = 2131492869;
@@ -619,17 +619,17 @@ namespace Happimeter.Watch.Droid
 			// aapt resource value: 0x7f0c000f
 			public const int blocking = 2131492879;
 			
-			// aapt resource value: 0x7f0c002b
-			public const int cancel_action = 2131492907;
+			// aapt resource value: 0x7f0c002a
+			public const int cancel_action = 2131492906;
 			
-			// aapt resource value: 0x7f0c0033
-			public const int chronometer = 2131492915;
+			// aapt resource value: 0x7f0c0032
+			public const int chronometer = 2131492914;
 			
 			// aapt resource value: 0x7f0c000c
 			public const int dark = 2131492876;
 			
-			// aapt resource value: 0x7f0c003a
-			public const int end_padder = 2131492922;
+			// aapt resource value: 0x7f0c0039
+			public const int end_padder = 2131492921;
 			
 			// aapt resource value: 0x7f0c0014
 			public const int finishSurvey_MainText = 2131492884;
@@ -637,20 +637,20 @@ namespace Happimeter.Watch.Droid
 			// aapt resource value: 0x7f0c0010
 			public const int forever = 2131492880;
 			
-			// aapt resource value: 0x7f0c0040
-			public const int fragment_container = 2131492928;
+			// aapt resource value: 0x7f0c003f
+			public const int fragment_container = 2131492927;
 			
-			// aapt resource value: 0x7f0c0035
-			public const int icon = 2131492917;
+			// aapt resource value: 0x7f0c0034
+			public const int icon = 2131492916;
 			
-			// aapt resource value: 0x7f0c0039
-			public const int icon_group = 2131492921;
+			// aapt resource value: 0x7f0c0038
+			public const int icon_group = 2131492920;
 			
 			// aapt resource value: 0x7f0c0008
 			public const int icon_only = 2131492872;
 			
-			// aapt resource value: 0x7f0c0034
-			public const int info = 2131492916;
+			// aapt resource value: 0x7f0c0033
+			public const int info = 2131492915;
 			
 			// aapt resource value: 0x7f0c001c
 			public const int info_close_to_value = 2131492892;
@@ -670,9 +670,6 @@ namespace Happimeter.Watch.Droid
 			// aapt resource value: 0x7f0c001d
 			public const int info_timestamp = 2131492893;
 			
-			// aapt resource value: 0x7f0c0021
-			public const int info_toggle_audio_feature_extraction = 2131492897;
-			
 			// aapt resource value: 0x7f0c0020
 			public const int info_toggle_start_on_boot_button = 2131492896;
 			
@@ -688,17 +685,17 @@ namespace Happimeter.Watch.Droid
 			// aapt resource value: 0x7f0c0001
 			public const int line3 = 2131492865;
 			
+			// aapt resource value: 0x7f0c0023
+			public const int main_info_button = 2131492899;
+			
 			// aapt resource value: 0x7f0c0024
-			public const int main_info_button = 2131492900;
+			public const int main_info_subtext_paired_status = 2131492900;
 			
-			// aapt resource value: 0x7f0c0025
-			public const int main_info_subtext_paired_status = 2131492901;
+			// aapt resource value: 0x7f0c0021
+			public const int main_mood_input_icon = 2131492897;
 			
-			// aapt resource value: 0x7f0c0022
-			public const int main_mood_input_icon = 2131492898;
-			
-			// aapt resource value: 0x7f0c002d
-			public const int media_actions = 2131492909;
+			// aapt resource value: 0x7f0c002c
+			public const int media_actions = 2131492908;
 			
 			// aapt resource value: 0x7f0c0016
 			public const int moodImageView = 2131492886;
@@ -709,38 +706,38 @@ namespace Happimeter.Watch.Droid
 			// aapt resource value: 0x7f0c0012
 			public const int normal = 2131492882;
 			
-			// aapt resource value: 0x7f0c0037
-			public const int notification_background = 2131492919;
-			
-			// aapt resource value: 0x7f0c0030
-			public const int notification_main_column = 2131492912;
+			// aapt resource value: 0x7f0c0036
+			public const int notification_background = 2131492918;
 			
 			// aapt resource value: 0x7f0c002f
-			public const int notification_main_column_container = 2131492911;
+			public const int notification_main_column = 2131492911;
 			
-			// aapt resource value: 0x7f0c0042
-			public const int prediction_right = 2131492930;
-			
-			// aapt resource value: 0x7f0c0043
-			public const int prediction_wrong = 2131492931;
+			// aapt resource value: 0x7f0c002e
+			public const int notification_main_column_container = 2131492910;
 			
 			// aapt resource value: 0x7f0c0041
-			public const int predictions_text = 2131492929;
+			public const int prediction_right = 2131492929;
 			
-			// aapt resource value: 0x7f0c0026
-			public const int removePairingButton = 2131492902;
+			// aapt resource value: 0x7f0c0042
+			public const int prediction_wrong = 2131492930;
 			
-			// aapt resource value: 0x7f0c0036
-			public const int right_icon = 2131492918;
+			// aapt resource value: 0x7f0c0040
+			public const int predictions_text = 2131492928;
 			
-			// aapt resource value: 0x7f0c0031
-			public const int right_side = 2131492913;
+			// aapt resource value: 0x7f0c0025
+			public const int removePairingButton = 2131492901;
+			
+			// aapt resource value: 0x7f0c0035
+			public const int right_icon = 2131492917;
+			
+			// aapt resource value: 0x7f0c0030
+			public const int right_side = 2131492912;
 			
 			// aapt resource value: 0x7f0c0009
 			public const int standard = 2131492873;
 			
-			// aapt resource value: 0x7f0c002c
-			public const int status_bar_latest_event_content = 2131492908;
+			// aapt resource value: 0x7f0c002b
+			public const int status_bar_latest_event_content = 2131492907;
 			
 			// aapt resource value: 0x7f0c0017
 			public const int surveyAnserIndicator = 2131492887;
@@ -748,11 +745,11 @@ namespace Happimeter.Watch.Droid
 			// aapt resource value: 0x7f0c0018
 			public const int surveyAnswerSeekbar = 2131492888;
 			
-			// aapt resource value: 0x7f0c0023
-			public const int surveyButton = 2131492899;
+			// aapt resource value: 0x7f0c0022
+			public const int surveyButton = 2131492898;
 			
-			// aapt resource value: 0x7f0c0044
-			public const int surveyConfirmBurron = 2131492932;
+			// aapt resource value: 0x7f0c0043
+			public const int surveyConfirmBurron = 2131492931;
 			
 			// aapt resource value: 0x7f0c0015
 			public const int surveyQuestion = 2131492885;
@@ -766,8 +763,8 @@ namespace Happimeter.Watch.Droid
 			// aapt resource value: 0x7f0c0019
 			public const int textView1 = 2131492889;
 			
-			// aapt resource value: 0x7f0c0032
-			public const int time = 2131492914;
+			// aapt resource value: 0x7f0c0031
+			public const int time = 2131492913;
 			
 			// aapt resource value: 0x7f0c0004
 			public const int title = 2131492868;
