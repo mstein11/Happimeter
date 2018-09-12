@@ -17,6 +17,7 @@ using Happimeter.Views;
 using SuaveControls.FloatingActionButton.iOS.Renderers;
 using FFImageLoading.Forms.Platform;
 using FFImageLoading.Svg.Forms;
+using Plugin.FirebasePushNotification;
 
 namespace Happimeter.iOS
 {
@@ -41,10 +42,27 @@ namespace Happimeter.iOS
             AppCenter.Start("3119c95f-ca17-4e2d-9ae0-46c5382633f8",
                    typeof(Analytics), typeof(Crashes));
 
-
             Happimeter.iOS.DependencyInjection.Container.RegisterElements();
             XfxControls.Init();
             Forms.Init();
+            FirebasePushNotificationManager.Initialize(launchOptions, true);
+            CrossFirebasePushNotification.Current.OnTokenRefresh += (s, p) =>
+            {
+                System.Diagnostics.Debug.WriteLine($"TOKEN : {p.Token}");
+            };
+            CrossFirebasePushNotification.Current.OnNotificationReceived += (s, p) =>
+            {
+
+                System.Diagnostics.Debug.WriteLine("Received");
+
+            };
+
+            CrossFirebasePushNotification.Current.OnNotificationError += (source, e) =>
+            {
+                System.Diagnostics.Debug.WriteLine("OnError");
+            };
+
+            FirebasePushNotificationManager.CurrentNotificationPresentationOption = UNNotificationPresentationOptions.Alert | UNNotificationPresentationOptions.Badge;
             CachedImageRenderer.Init();
             var ignore = typeof(SvgCachedImage);
             FloatingActionButtonRenderer.InitRenderer();
@@ -135,6 +153,33 @@ namespace Happimeter.iOS
         {
             Console.WriteLine("WILL TERMINATE");
             // Called when the application is about to terminate. Save data, if needed. See also DidEnterBackground.
+        }
+
+        public override void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
+        {
+            FirebasePushNotificationManager.DidRegisterRemoteNotifications(deviceToken);
+        }
+
+        public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)
+        {
+            FirebasePushNotificationManager.RemoteNotificationRegistrationFailed(error);
+
+        }
+        // To receive notifications in foregroung on iOS 9 and below.
+        // To receive notifications in background in any iOS version
+        public override void DidReceiveRemoteNotification(UIApplication application, NSDictionary userInfo, Action<UIBackgroundFetchResult> completionHandler)
+        {
+            // If you are receiving a notification message while your app is in the background,
+            // this callback will not be fired 'till the user taps on the notification launching the application.
+
+            // If you disable method swizzling, you'll need to call this method. 
+            // This lets FCM track message delivery and analytics, which is performed
+            // automatically with method swizzling enabled.
+            FirebasePushNotificationManager.DidReceiveMessage(userInfo);
+            // Do your magic to handle the notification data
+            System.Console.WriteLine(userInfo);
+
+            completionHandler(UIBackgroundFetchResult.NewData);
         }
     }
 

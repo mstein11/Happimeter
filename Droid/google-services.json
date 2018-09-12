@@ -1,0 +1,73 @@
+{
+  "project_info": {
+    "project_number": "901631510868",
+    "firebase_url": "https://happimeter-1493682963733.firebaseio.com",
+    "project_id": "happimeter-1493682963733",
+    "storage_bucket": "happimeter-1493682963733.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:901631510868:android:4e5c8b6df5952e8e",
+        "android_client_info": {
+          "package_name": "edu.mit.Happimeter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "901631510868-flrcr07qp770s4qrbk81qc3001768cai.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8U2XEnlZ0kiOJHZcxf2TFgSWNi-rei2g"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:901631510868:android:137043bd2438625b",
+        "android_client_info": {
+          "package_name": "edu.mit.happimeter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "901631510868-flrcr07qp770s4qrbk81qc3001768cai.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8U2XEnlZ0kiOJHZcxf2TFgSWNi-rei2g"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

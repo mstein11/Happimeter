@@ -9,7 +9,7 @@
 	<key>CFBundleIdentifier</key>
 	<string>edu.mit.Happimeter</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.6.8</string>
+	<string>1.6.9</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MinimumOSVersion</key>
@@ -47,6 +47,7 @@
 	<array>
 		<string>bluetooth-central</string>
 		<string>bluetooth-peripheral</string>
+		<string>remote-notification</string>
 	</array>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>We are using BT to communicate with wearable devices</string>
@@ -59,6 +60,8 @@
 	<key>NSCalendarsUsageDescription</key>
 	<string>Needs Calendar Permission</string>
 	<key>CFBundleVersion</key>
-	<string>1.6.8</string>
+	<string>1536763024</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
 </dict>
 </plist>
