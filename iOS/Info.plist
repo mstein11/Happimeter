@@ -60,7 +60,7 @@
 	<key>NSCalendarsUsageDescription</key>
 	<string>Needs Calendar Permission</string>
 	<key>CFBundleVersion</key>
-	<string>1536763024</string>
+	<string>1536764014</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
 </dict>

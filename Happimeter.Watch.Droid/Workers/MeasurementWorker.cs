@@ -514,7 +514,7 @@ namespace Happimeter.Watch.Droid.Workers
 
             if (_audioFeatureService.IsActive)
             {
-                _audioFeatureService.Toggle();
+                //_audioFeatureService.Toggle();
             }
 
             BluetoothScannerWorker.GetInstance().Stop();
@@ -559,7 +559,7 @@ namespace Happimeter.Watch.Droid.Workers
 
             if (!_audioFeatureService.IsActive)
             {
-                _audioFeatureService.Toggle();
+                //_audioFeatureService.Toggle();
             }
 
             BluetoothScannerWorker.GetInstance().Start();

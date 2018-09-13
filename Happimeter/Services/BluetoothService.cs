@@ -565,6 +565,39 @@ namespace Happimeter.Services
             }
         }
 
+        public async Task SendAskForMood(Action<BluetoothWriteEvent> statusUpdate = null)
+        {
+            statusUpdate?.Invoke(BluetoothWriteEvent.Initialized);
+            await Init();
+            var charac = await CharacteristicsReplaySubject
+                .Where(x => x.Uuid == UuidHelper.GenericQuestionCharacteristicUuid)
+                .FirstOrDefaultAsync()
+                .Timeout(TimeSpan.FromSeconds(_messageTimeoutSeconds))
+                .Catch((Exception arg) =>
+                {
+                    return Observable.Return<IGattCharacteristic>(null);
+                });
+            statusUpdate?.Invoke(BluetoothWriteEvent.Connected);
+            if (charac == null)
+            {
+                //we did not find the characteristic within the give timeframe
+                statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnConnectingToDevice);
+                return;
+            }
+
+            var message = new AskMoodMessage();
+
+            var result = await WriteAsync(charac, message);
+            if (result)
+            {
+                statusUpdate?.Invoke(BluetoothWriteEvent.Complete);
+            }
+            else
+            {
+                statusUpdate?.Invoke(BluetoothWriteEvent.ErrorOnWrite);
+            }
+        }
+
         private Dictionary<Guid, bool> IsBusy = new Dictionary<Guid, bool>();
         public async void ExchangeData()
         {

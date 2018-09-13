@@ -113,17 +113,6 @@ namespace Happimeter.Droid
 #else
             FirebasePushNotificationManager.Initialize(this,false);
 #endif
-
-            //Handle notification when app is closed here
-            CrossFirebasePushNotification.Current.OnNotificationReceived += (s, p) =>
-            {
-                System.Diagnostics.Debug.WriteLine("Hello noti");
-            };
-            CrossFirebasePushNotification.Current.OnTokenRefresh += (s, p) =>
-            {
-                System.Diagnostics.Debug.WriteLine($"TOKEN : {p.Token}");
-                //todo: save token to server
-            };
         }
 
     }

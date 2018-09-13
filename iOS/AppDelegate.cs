@@ -46,23 +46,7 @@ namespace Happimeter.iOS
             XfxControls.Init();
             Forms.Init();
             FirebasePushNotificationManager.Initialize(launchOptions, true);
-            CrossFirebasePushNotification.Current.OnTokenRefresh += (s, p) =>
-            {
-                System.Diagnostics.Debug.WriteLine($"TOKEN : {p.Token}");
-            };
-            CrossFirebasePushNotification.Current.OnNotificationReceived += (s, p) =>
-            {
 
-                System.Diagnostics.Debug.WriteLine("Received");
-
-            };
-
-            CrossFirebasePushNotification.Current.OnNotificationError += (source, e) =>
-            {
-                System.Diagnostics.Debug.WriteLine("OnError");
-            };
-
-            FirebasePushNotificationManager.CurrentNotificationPresentationOption = UNNotificationPresentationOptions.Alert | UNNotificationPresentationOptions.Badge;
             CachedImageRenderer.Init();
             var ignore = typeof(SvgCachedImage);
             FloatingActionButtonRenderer.InitRenderer();

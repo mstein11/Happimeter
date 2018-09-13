@@ -14,6 +14,7 @@ using Plugin.Permissions.Abstractions;
 using Happimeter.Core.Services;
 using Happimeter.Converter;
 using SuaveControls.Views;
+using Plugin.FirebasePushNotification;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace Happimeter
@@ -42,12 +43,8 @@ namespace Happimeter
 
         public static async void Initialize()
         {
-            if (UseMockDataStore)
-                ServiceLocator.Instance.Register<IDataStore<Item>, MockDataStore>();
-            else
-                ServiceLocator.Instance.Register<IDataStore<Item>, CloudDataStore>();
-
             Container.RegisterElements();
+            SetupNotification();
             await ServerSync();
             var sharedDb = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
             var pairing = sharedDb.Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive);
@@ -88,6 +85,32 @@ namespace Happimeter
             {
                 await ServiceLocator.Instance.Get<ISynchronizationService>().Sync();
             }
+        }
+
+        private static void SetupNotification()
+        {
+            CrossFirebasePushNotification.Current.OnTokenRefresh += (s, p) =>
+            {
+                System.Diagnostics.Debug.WriteLine($"TOKEN : {p.Token}");
+            };
+
+            CrossFirebasePushNotification.Current.OnNotificationReceived += async (s, p) =>
+            {
+                await ServiceLocator.Instance.Get<IDeviceInformationService>().RunCodeInBackgroundMode(async () =>
+                {
+                    System.Diagnostics.Debug.WriteLine("Received");
+                    var sharedDb = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
+                    var pairing = sharedDb.Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive);
+                    if (pairing != null)
+                    {
+                        await ServiceLocator.Instance.Get<IBluetoothService>().SendAskForMood();
+                    }
+                });
+            };
+            CrossFirebasePushNotification.Current.OnNotificationError += (source, e) =>
+            {
+                System.Diagnostics.Debug.WriteLine("OnError");
+            };
         }
 
         private static void InitResourceDict()

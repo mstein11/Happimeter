@@ -165,6 +165,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Converter\AnyValueConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converter\NotAnyValueConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\UiHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Main.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />
