@@ -79,3 +79,6 @@ The logic for calculating, aggregating and storing the measures taken from the d
 
 # Affiliation
 This Project was developed as part of the Happimeter project at MIT Center for Collective Intelligence.
+=======
+# happimeter-watch
+This repo contains the source of the watch app
