@@ -63,6 +63,8 @@ namespace Happimeter.Droid
                 var ignore = typeof(SvgCachedImage);
                 FFImageLoading.Forms.Platform.CachedImageRenderer.Init(true);
                 App.Initialize();
+                ServiceLocator.Instance.Get<INotificationService>()
+                          .SubscibeToChannel(Happimeter.Services.NotificationService.NotificationChannelAllDevices);
                 _isInitialized = true;
             }
         }
@@ -108,10 +110,6 @@ namespace Happimeter.Droid
                 //Change for your default notification channel name here
                 FirebasePushNotificationManager.DefaultNotificationChannelName = "General";
             }
-
-            ServiceLocator.Instance.Get<INotificationService>().SetupNotificationHooks();
-            ServiceLocator.Instance.Get<INotificationService>()
-                          .SubscibeToChannel(Happimeter.Services.NotificationService.NotificationChannelAllDevices);
 
             //If debug you should reset the token each time.
 #if DEBUG
