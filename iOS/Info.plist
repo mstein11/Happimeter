@@ -8,8 +8,6 @@
 	<string>Happimeter</string>
 	<key>CFBundleIdentifier</key>
 	<string>edu.mit.Happimeter</string>
-	<key>CFBundleShortVersionString</key>
-	<string>1.6.9</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MinimumOSVersion</key>
@@ -59,9 +57,11 @@
 	<string>We use your Location in order to wake up the app when it is close to an iBeacon</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Needs Calendar Permission</string>
-	<key>CFBundleVersion</key>
-	<string>1536764014</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
+	<key>CFBundleShortVersionString</key>
+	<string>2.0.0</string>
+	<key>CFBundleVersion</key>
+	<string>2.0.0</string>
 </dict>
 </plist>
