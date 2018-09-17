@@ -116,6 +116,18 @@ namespace Happimeter.Services
             return methodResult;
         }
 
+        public async Task<object> UpdateNotificationDeviceToken(string token)
+        {
+            //todo:
+            Debug.WriteLine("ATTENTION: Devicetoken api method not yet implemented.");
+            if (!_accountStore.IsAuthenticated())
+            {
+                Debug.WriteLine("We are not authenticated. Thus we can not save the deviceToken for notifications");
+                return await Task.FromResult<object>(null); ;
+            }
+            return await Task.FromResult<object>(null);
+        }
+
         public async Task<AuthResultModel> Auth(string email, string password)
         {
             var methodResult = new AuthResultModel();

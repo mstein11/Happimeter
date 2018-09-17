@@ -26,6 +26,7 @@ namespace Happimeter.DependencyInjection
             ServiceLocator.Instance.Register<IGenericQuestionService, GenericQuestionService>();
             ServiceLocator.Instance.Register<ITeamService, TeamService>();
             ServiceLocator.Instance.Register<ISynchronizationService, SynchronizationService>();
+            ServiceLocator.Instance.Register<INotificationService, NotificationService>();
         }
     }
 }

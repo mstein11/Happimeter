@@ -9,6 +9,7 @@ namespace Happimeter.Interfaces
     {
         Task<AuthResultModel> Auth(string email, string password);
         Task<RegisterUserResultModel> CreateAccount(string email, string password);
+        Task<object> UpdateNotificationDeviceToken(string token);
         Task<GetMeResultModel> GetMe();
         Task<HappimeterApiResultInformation> UploadMood();
         event EventHandler<SynchronizeDataEventArgs> UploadMoodStatusUpdate;

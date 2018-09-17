@@ -15,6 +15,7 @@ using Happimeter.Core.Services;
 using Happimeter.Converter;
 using SuaveControls.Views;
 using Plugin.FirebasePushNotification;
+using System.Diagnostics;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace Happimeter
@@ -89,28 +90,7 @@ namespace Happimeter
 
         private static void SetupNotification()
         {
-            CrossFirebasePushNotification.Current.OnTokenRefresh += (s, p) =>
-            {
-                System.Diagnostics.Debug.WriteLine($"TOKEN : {p.Token}");
-            };
-
-            CrossFirebasePushNotification.Current.OnNotificationReceived += async (s, p) =>
-            {
-                await ServiceLocator.Instance.Get<IDeviceInformationService>().RunCodeInBackgroundMode(async () =>
-                {
-                    System.Diagnostics.Debug.WriteLine("Received");
-                    var sharedDb = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
-                    var pairing = sharedDb.Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive);
-                    if (pairing != null)
-                    {
-                        await ServiceLocator.Instance.Get<IBluetoothService>().SendAskForMood();
-                    }
-                });
-            };
-            CrossFirebasePushNotification.Current.OnNotificationError += (source, e) =>
-            {
-                System.Diagnostics.Debug.WriteLine("OnError");
-            };
+            ServiceLocator.Instance.Get<INotificationService>().SetupNotificationHooks();
         }
 
         private static void InitResourceDict()

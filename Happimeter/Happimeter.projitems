@@ -165,7 +165,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Converter\AnyValueConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converter\NotAnyValueConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\UiHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\Main.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\NotificationService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\INotificationService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />

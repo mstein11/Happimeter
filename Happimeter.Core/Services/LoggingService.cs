@@ -26,6 +26,8 @@ namespace Happimeter.Core.Services
         public const string CouldNotUploadSensorOldFormat = "CouldNotUploadSensorOldFormat";
         public const string CouldNotFindCharacteristicsOnConnectedDevice = "CouldNotFindCharacteristicsOnConnectedDevice";
         public const string BluetoothInBadState = "BluetoothInBadState";
+        public const string ReceivedAskMoodNotification = "ReceivedAskMoodNotification";
+        public const string OnNotificationError = "OnNotificationError";
 
         public const string DebugSnapshot = "DebugSnapshot";
 

@@ -15,6 +15,9 @@ using FFImageLoading.Svg.Forms;
 using FFImageLoading.Forms.Droid;
 using Java.Security;
 using Plugin.FirebasePushNotification;
+using Happimeter.Core.Helper;
+using Org.W3c.Dom;
+using Happimeter.Services;
 
 namespace Happimeter.Droid
 {
@@ -106,6 +109,9 @@ namespace Happimeter.Droid
                 FirebasePushNotificationManager.DefaultNotificationChannelName = "General";
             }
 
+            ServiceLocator.Instance.Get<INotificationService>().SetupNotificationHooks();
+            ServiceLocator.Instance.Get<INotificationService>()
+                          .SubscibeToChannel(Happimeter.Services.NotificationService.NotificationChannelAllDevices);
 
             //If debug you should reset the token each time.
 #if DEBUG

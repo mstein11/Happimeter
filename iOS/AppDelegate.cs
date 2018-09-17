@@ -18,6 +18,7 @@ using SuaveControls.FloatingActionButton.iOS.Renderers;
 using FFImageLoading.Forms.Platform;
 using FFImageLoading.Svg.Forms;
 using Plugin.FirebasePushNotification;
+using Happimeter.Services;
 
 namespace Happimeter.iOS
 {
@@ -41,12 +42,31 @@ namespace Happimeter.iOS
             Xamarin.FormsGoogleMaps.Init("AIzaSyAZp2Nj4thfDcS2Jvoy-N-6HgagU13jvuk");
             AppCenter.Start("3119c95f-ca17-4e2d-9ae0-46c5382633f8",
                    typeof(Analytics), typeof(Crashes));
+            /*
+            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
+            {
+                // Ask the user for permission to get notifications on iOS 10.0+
+                UNUserNotificationCenter.Current.RequestAuthorization(
+                        UNAuthorizationOptions.Alert | UNAuthorizationOptions.Badge | UNAuthorizationOptions.Sound,
+                        (approved, error) => { });
 
+                UNUserNotificationCenter.Current.Delegate = new UserNotificationCenterDelegate();
+            }
+            else if (UIDevice.CurrentDevice.CheckSystemVersion(8, 0))
+            {
+                // Ask the user for permission to get notifications on iOS 8.0+
+                var settings = UIUserNotificationSettings.GetSettingsForTypes(
+                        UIUserNotificationType.Alert | UIUserNotificationType.Badge | UIUserNotificationType.Sound,
+                        new NSSet());
+
+                UIApplication.SharedApplication.RegisterUserNotificationSettings(settings);
+            }
+            */
             Happimeter.iOS.DependencyInjection.Container.RegisterElements();
             XfxControls.Init();
             Forms.Init();
             FirebasePushNotificationManager.Initialize(launchOptions, true);
-
+            FirebasePushNotificationManager.CurrentNotificationPresentationOption = UNNotificationPresentationOptions.Alert | UNNotificationPresentationOptions.Badge;
             CachedImageRenderer.Init();
             var ignore = typeof(SvgCachedImage);
             FloatingActionButtonRenderer.InitRenderer();
@@ -74,26 +94,6 @@ namespace Happimeter.iOS
                 Window.MakeKeyAndVisible();
                 //application.KeyWindow.RootViewController = ctrl;
 
-            }
-
-
-            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
-            {
-                // Ask the user for permission to get notifications on iOS 10.0+
-                UNUserNotificationCenter.Current.RequestAuthorization(
-                        UNAuthorizationOptions.Alert | UNAuthorizationOptions.Badge | UNAuthorizationOptions.Sound,
-                        (approved, error) => { });
-
-                UNUserNotificationCenter.Current.Delegate = new UserNotificationCenterDelegate();
-            }
-            else if (UIDevice.CurrentDevice.CheckSystemVersion(8, 0))
-            {
-                // Ask the user for permission to get notifications on iOS 8.0+
-                var settings = UIUserNotificationSettings.GetSettingsForTypes(
-                        UIUserNotificationType.Alert | UIUserNotificationType.Badge | UIUserNotificationType.Sound,
-                        new NSSet());
-
-                UIApplication.SharedApplication.RegisterUserNotificationSettings(settings);
             }
 
             return true;
@@ -142,6 +142,7 @@ namespace Happimeter.iOS
         public override void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
         {
             FirebasePushNotificationManager.DidRegisterRemoteNotifications(deviceToken);
+            ServiceLocator.Instance.Get<INotificationService>().SubscibeToChannel(NotificationService.NotificationChannelAllDevices);
         }
 
         public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)
