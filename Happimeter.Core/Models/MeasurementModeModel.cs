@@ -18,7 +18,7 @@ namespace Happimeter.Core.Models
             return GetModes().FirstOrDefault(x => x.Id == id);
         }
 
-        public static MeasurementModeModel GetDefault() => GetModes().FirstOrDefault();
+        public static MeasurementModeModel GetDefault() => GetModes().LastOrDefault();
 
         public static IList<MeasurementModeModel> GetModes()
         {
