@@ -7,6 +7,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using Happimeter.Controls;
 using Happimeter.Droid.Renderers;
+using Android.OS;
 
 [assembly: ExportRenderer(typeof(Checkbox), typeof(CheckboxRenderer))]
 namespace Happimeter.Droid.Renderers
@@ -85,7 +86,11 @@ namespace Happimeter.Droid.Renderers
                         var backgroundColor = GetBackgroundColorStateList(Element.OutlineColor);
                         checkBox.SupportButtonTintList = backgroundColor;
                         checkBox.BackgroundTintList = GetBackgroundColorStateList(Element.InnerColor);
-                        checkBox.ForegroundTintList = GetBackgroundColorStateList(Element.OutlineColor);
+                        if (Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.M)
+                        {
+                            checkBox.ForegroundTintList = GetBackgroundColorStateList(Element.OutlineColor);
+                        }
+
 
                     }
                     checkBox.SetOnCheckedChangeListener(this);
@@ -109,7 +114,10 @@ namespace Happimeter.Droid.Renderers
                 var backgroundColor = GetBackgroundColorStateList(Element.CheckColor);
                 Control.SupportButtonTintList = backgroundColor;
                 Control.BackgroundTintList = GetBackgroundColorStateList(Element.InnerColor);
-                Control.ForegroundTintList = GetBackgroundColorStateList(Element.OutlineColor);
+                if (Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.M)
+                {
+                    Control.ForegroundTintList = GetBackgroundColorStateList(Element.OutlineColor);
+                }
             }
         }
 
