@@ -41,8 +41,8 @@ namespace Happimeter.Services
                     Id = x.Id,
                     IsAdmin = x.IsAdmin,
                     Name = x.Name,
-                    Activation = x.Activation,
-                    Pleasance = x.Pleasance
+                    Activation = x.Mood.Activation,
+                    Pleasance = x.Mood.Pleasance
                 }).ToList();
 
                 foreach (var team in teams)
