@@ -47,15 +47,6 @@ namespace Happimeter.Watch.Droid.Activities
                 UpdateDataExchangeTime(pairing2.LastDataSync);
             });
 
-            /*var button = FindViewById<Button>(Resource.Id.info_restart_app_button);
-            button.Click += (object sender, EventArgs e) =>
-            {
-                //var i = BaseContext.PackageManager.GetLaunchIntentForPackage(BaseContext.PackageName);
-                //i.AddFlags(Android.Content.ActivityFlags.ClearTop | Android.Content.ActivityFlags.NewTask);
-                //StartActivity(i);
-                Runtime.GetRuntime().Exit(0);
-            };
-            */
             var startsOnBootDeactivated = ServiceLocator.Instance.Get<IConfigService>().GetDeactivateAppStartsOnBoot();
             var startOnBootDeactivatedButton = FindViewById<Button>(Resource.Id.info_toggle_start_on_boot_button);
             if (startsOnBootDeactivated)
@@ -144,7 +135,10 @@ namespace Happimeter.Watch.Droid.Activities
                 return;
             }
             var exchangeDataValue = FindViewById<TextView>(Resource.Id.info_exchange_data_value);
-            exchangeDataValue.Text = $"{timestamp.Value.ToLocalTime()}";
+            RunOnUiThread(() =>
+            {
+                exchangeDataValue.Text = $"{timestamp.Value.ToLocalTime()}";
+            });
         }
     }
 }
