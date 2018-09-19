@@ -73,6 +73,32 @@ namespace Happimeter.Watch.Droid.Activities
             };
 
 
+            var saveMeasurementIfNoHeatrate = ServiceLocator.Instance.Get<IConfigService>().GetDeactivateAppStartsOnBoot();
+            var saveMeasurementIfNoHeatrateButton = FindViewById<Button>(Resource.Id.info_toggle_save_measure_if_no_heartrate_button);
+            if (saveMeasurementIfNoHeatrate)
+            {
+                saveMeasurementIfNoHeatrateButton.Text = "Don't save measurement if not worn";
+            }
+            else
+            {
+                saveMeasurementIfNoHeatrateButton.Text = "save measurement if not worn";
+            }
+            saveMeasurementIfNoHeatrateButton.Click += (object sender, EventArgs e) =>
+            {
+                saveMeasurementIfNoHeatrate = !saveMeasurementIfNoHeatrate;
+
+                if (saveMeasurementIfNoHeatrate)
+                {
+                    saveMeasurementIfNoHeatrateButton.Text = "Don't save measurement if not worn";
+                }
+                else
+                {
+                    saveMeasurementIfNoHeatrateButton.Text = "Save measurement if not worn";
+                }
+                ServiceLocator.Instance.Get<IConfigService>().SetSaveMeasurementIfNoHeartrate(saveMeasurementIfNoHeatrate);
+            };
+
+
             /**
              * Audio Feature extraction start/stop button
              */

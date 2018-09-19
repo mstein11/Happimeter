@@ -12,5 +12,7 @@ namespace Happimeter.Core.Services
         bool IsContinousMeasurementMode();
         void SetDeactivateAppStartsOnBoot(bool starts);
         bool GetDeactivateAppStartsOnBoot();
+        bool GetSaveMeasurementIfNoHeartrate();
+        void SetSaveMeasurementIfNoHeartrate(bool saveMeasurementIfNoHeartrate);
     }
 }

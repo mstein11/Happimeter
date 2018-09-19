@@ -12,6 +12,7 @@ namespace Happimeter.Core.Services
         public const string BatterySaferMeasurementIntervalId = "BATTERY_SAFER_MEASUREMENT_INTERVAL_ID";
         public const string DeactivateAppStartsOnBoot = "DEACTIVATE_APP_STARTS_ON_BOOT";
         public const string NotificationDeviceToken = "NOTIFICATION_DEVICE_TOKEN";
+        public const string SaveMeasurementIfNoHeartrate = "SaveMeasurementIfNoHeartrate";
 
         public void AddOrUpdateConfigEntry(string key, string value)
         {
@@ -85,6 +86,16 @@ namespace Happimeter.Core.Services
         public bool GetDeactivateAppStartsOnBoot()
         {
             return GetConfigValueByKey(DeactivateAppStartsOnBoot) == true.ToString();
+        }
+
+        public bool GetSaveMeasurementIfNoHeartrate()
+        {
+            return GetConfigValueByKey(SaveMeasurementIfNoHeartrate) == true.ToString();
+        }
+
+        public void SetSaveMeasurementIfNoHeartrate(bool saveMeasurementIfNoHeartrate)
+        {
+            AddOrUpdateConfigEntry(SaveMeasurementIfNoHeartrate, saveMeasurementIfNoHeartrate.ToString());
         }
     }
 }

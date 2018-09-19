@@ -477,8 +477,15 @@ namespace Happimeter.Watch.Droid.Workers
             }
             BeaconListenerService.ProximityMeasures.Clear();
 
-            //ServiceLocator.Instance.Get<IDatabaseContext>().AddGraph(sensorMeasurement);
-            ServiceLocator.Instance.Get<IMeasurementService>().AddSensorMeasurement(sensorMeasurement);
+            if (hearRateMeasuresToSave.Any(x => Math.Abs(x) > 0.1)
+                || ServiceLocator.Instance.Get<IConfigService>().GetSaveMeasurementIfNoHeartrate())
+            {
+                ServiceLocator.Instance.Get<IMeasurementService>().AddSensorMeasurement(sensorMeasurement);
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("not saving measurement because no heartrate");
+            }
         }
 
         public async void Stop()
