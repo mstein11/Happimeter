@@ -167,6 +167,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\UiHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\NotificationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\INotificationService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ApiResultModels\AuthRegisterApiResponseModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />

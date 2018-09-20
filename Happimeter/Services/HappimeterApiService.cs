@@ -68,6 +68,36 @@ namespace Happimeter.Services
             try
             {
                 result = await _restService.Post(url, data);
+
+
+                if (result.IsSuccessStatusCode)
+                {
+                    var responseString = await result.Content.ReadAsStringAsync();
+                    var apiResult = Newtonsoft.Json.JsonConvert.DeserializeObject<AuthRegisterApiResponseModel>(responseString);
+
+                    //we got the token
+                    if (apiResult.Status == 200)
+                    {
+                        methodResult.ResultType = RegisterUserResultTypes.Success;
+                    }
+                    else if (apiResult.Status == 400)
+                    {
+                        methodResult.ResultType = RegisterUserResultTypes.ErrorPasswordInsufficient;
+                    }
+                    else if (apiResult.Status == 409)
+                    {
+                        methodResult.ResultType = RegisterUserResultTypes.ErrorUserAlreadyTaken;
+                    }
+                    else if (apiResult.Status == 410)
+                    {
+                        methodResult.ResultType = RegisterUserResultTypes.ErrorInvalidEmail;
+                    }
+                    else
+                    {
+                        methodResult.ResultType = RegisterUserResultTypes.ErrorUnknown;
+                    }
+                }
+                return methodResult;
             }
             catch (Exception e) when (
                 e is HttpRequestException
@@ -84,36 +114,6 @@ namespace Happimeter.Services
                 methodResult.ResultType = RegisterUserResultTypes.ErrorUnknown;
                 return methodResult;
             }
-
-            if (result.IsSuccessStatusCode)
-            {
-                var responseString = await result.Content.ReadAsStringAsync();
-                var apiResult = Newtonsoft.Json.JsonConvert.DeserializeObject<AuthApiResponseModel>(responseString);
-
-                //we got the token
-                if (apiResult.Status == 200)
-                {
-                    methodResult.ResultType = RegisterUserResultTypes.Success;
-                }
-                else if (apiResult.Status == 400)
-                {
-                    methodResult.ResultType = RegisterUserResultTypes.ErrorPasswordInsufficient;
-                }
-                else if (apiResult.Status == 409)
-                {
-                    methodResult.ResultType = RegisterUserResultTypes.ErrorUserAlreadyTaken;
-                }
-                else if (apiResult.Status == 410)
-                {
-                    methodResult.ResultType = RegisterUserResultTypes.ErrorInvalidEmail;
-                }
-                else
-                {
-                    methodResult.ResultType = RegisterUserResultTypes.ErrorUnknown;
-                }
-            }
-
-            return methodResult;
         }
 
         public async Task<object> UpdateNotificationDeviceToken(string token)
@@ -138,6 +138,51 @@ namespace Happimeter.Services
             try
             {
                 result = await _restService.Post(url, data);
+
+
+
+                if (result.IsSuccessStatusCode)
+                {
+                    var responseString = await result.Content.ReadAsStringAsync();
+                    var apiResult = Newtonsoft.Json.JsonConvert.DeserializeObject<AuthApiResponseModel>(responseString);
+
+                    //we got the token
+                    if (apiResult.Status == 200)
+                    {
+                        //IsSuccessStatusCode does not work properly because of server
+                        _restService.AddAuthorizationTokenToInstance(apiResult.Token);
+                        var me = await GetMe();
+
+                        _accountStore.SaveAccount(email, apiResult.Token, me.Id, apiResult.Expires);
+                        var authenticated = _accountStore.IsAuthenticated();
+
+                        if (authenticated)
+                        {
+                            methodResult.ResultType = AuthResultTypes.Success;
+                        }
+                        else
+                        {
+                            methodResult.ResultType = AuthResultTypes.ErrorUnknown;
+                        }
+                        //authentication error, probably wrong username/password
+                    }
+                    else if (apiResult.Status == 510)
+                    {
+                        methodResult.ResultType = AuthResultTypes.ErrorWrongCredentials;
+                        //Unknown error
+                    }
+                    else
+                    {
+                        methodResult.ResultType = AuthResultTypes.ErrorUnknown;
+                    }
+                }
+                else
+                {
+                    methodResult.ResultType = AuthResultTypes.ErrorUnknown;
+                }
+
+
+                return methodResult;
             }
             catch (Exception e) when (
                 e is HttpRequestException
@@ -154,50 +199,6 @@ namespace Happimeter.Services
                 methodResult.ResultType = AuthResultTypes.ErrorUnknown;
                 return methodResult;
             }
-
-
-            if (result.IsSuccessStatusCode)
-            {
-                var responseString = await result.Content.ReadAsStringAsync();
-                var apiResult = Newtonsoft.Json.JsonConvert.DeserializeObject<AuthApiResponseModel>(responseString);
-
-                //we got the token
-                if (apiResult.Status == 200)
-                {
-                    //IsSuccessStatusCode does not work properly because of server
-                    _restService.AddAuthorizationTokenToInstance(apiResult.Token);
-                    var me = await GetMe();
-
-                    _accountStore.SaveAccount(email, apiResult.Token, me.Id, apiResult.Expires);
-                    var authenticated = _accountStore.IsAuthenticated();
-
-                    if (authenticated)
-                    {
-                        methodResult.ResultType = AuthResultTypes.Success;
-                    }
-                    else
-                    {
-                        methodResult.ResultType = AuthResultTypes.ErrorUnknown;
-                    }
-                    //authentication error, probably wrong username/password
-                }
-                else if (apiResult.Status == 510)
-                {
-                    methodResult.ResultType = AuthResultTypes.ErrorWrongCredentials;
-                    //Unknown error
-                }
-                else
-                {
-                    methodResult.ResultType = AuthResultTypes.ErrorUnknown;
-                }
-            }
-            else
-            {
-                methodResult.ResultType = AuthResultTypes.ErrorUnknown;
-            }
-
-
-            return methodResult;
         }
 
         public event EventHandler<SynchronizeDataEventArgs> UploadMoodStatusUpdate;
