@@ -60,8 +60,9 @@
                     <local:MyButton  Grid.Row="3" Grid.Column="1" Text="Remove Pairing" Command="{Binding RemovePairingCommand}" Style="{StaticResource ButtonWithoutBackground}" />
 
                     <StackLayout Grid.Row="4" Grid.ColumnSpan="2" HorizontalOptions="CenterAndExpand" VerticalOptions="FillAndExpand" Orientation="Horizontal">
-                        <Label Style="{StaticResource TextOnBackground}" IsVisible="{Binding DataExchangeStatusIsVisible}" FontSize="12" Text="{Binding DataExchangeStatus}"></Label>
-                        <Label Style="{StaticResource TextOnBackground}" IsVisible="{Binding DataExchangeProgressIsVisible}" FontSize="12" Text="{Binding DataExchangeProgress, StringFormat='Got {0} bytes'}"></Label>
+                        <Label Style="{StaticResource TextOnBackground}" IsVisible="{Binding DataExchangeStatusIsVisible}" FontSize="Small" Text="{Binding DataExchangeStatus}"></Label>
+                        <Label Style="{StaticResource TextOnBackground}" IsVisible="{Binding DataExchangeProgressIsVisible}" FontSize="Small" Text="{Binding DataExchangeProgress, StringFormat='Got {0} bytes'}"></Label>
+                        <Label Style="{StaticResource TextOnBackground}" IsVisible="{Binding DataExchangeProgressIsVisible}" FontSize="Small" Text="{Binding DataExchangeBatches, StringFormat='({0} batches)'}"></Label>
                     </StackLayout>
                 </Grid>
             </RelativeLayout>

@@ -12,7 +12,8 @@ namespace Happimeter.Events
         DidWrite,
         ErrorOnExchange,
         ReadUpdate,
-        Complete
+        Complete,
+        CompleteNeedsAnotherBatch
     }
 
     public class AndroidWatchExchangeDataEventArgs : EventArgs
@@ -25,5 +26,7 @@ namespace Happimeter.Events
         public int BytesRead { get; set; }
 
         public int TotalBytes { get; set; }
+
+        public int BatchesTransferred { get; set; }
     }
 }

@@ -63,34 +63,49 @@ namespace Happimeter.ViewModels.Forms
                 switch (e.EventType)
                 {
                     case Events.AndroidWatchExchangeDataStates.SearchingForDevice:
-                        DisplayIndication("Searching for device");
+                        if (e.BatchesTransferred == 0)
+                        {
+                            DisplayIndication("Searching for device", null, e.BatchesTransferred);
+                        }
                         break;
                     case Events.AndroidWatchExchangeDataStates.DeviceConnected:
-                        DisplayIndication("Device Connected");
+                        if (e.BatchesTransferred == 0)
+                        {
+                            DisplayIndication("Device Connected", null, e.BatchesTransferred);
+                        }
                         break;
                     case Events.AndroidWatchExchangeDataStates.CharacteristicDiscovered:
-                        DisplayIndication("Characteristic discovered");
+                        if (e.BatchesTransferred == 0)
+                        {
+                            DisplayIndication("Characteristic discovered", null, e.BatchesTransferred);
+                        }
                         break;
                     case Events.AndroidWatchExchangeDataStates.DidWrite:
-                        DisplayIndication("Did Write.");
+                        if (e.BatchesTransferred == 0)
+                        {
+                            DisplayIndication("Did Write.", null, e.BatchesTransferred);
+                        }
                         break;
                     case Events.AndroidWatchExchangeDataStates.ReadUpdate:
-                        DisplayIndication("Exchanging Data...", e.BytesRead);
+                        DisplayIndication("Exchanging Data...", e.BytesRead, e.BatchesTransferred);
                         break;
                     case Events.AndroidWatchExchangeDataStates.Complete:
-                        DisplayIndication("Data Exchange Complete", e.BytesRead, 2000);
+                        DisplayIndication("Data Exchange Complete", e.BytesRead, e.BatchesTransferred, 2000);
+                        break;
+                    case Events.AndroidWatchExchangeDataStates.CompleteNeedsAnotherBatch:
+                        DisplayIndication("Complete - there is more", e.BytesRead, e.BatchesTransferred);
                         break;
                     case Events.AndroidWatchExchangeDataStates.DeviceNotFound:
-                        DisplayIndication("Device could not be found", e.BytesRead, 2000);
+                        DisplayIndication("Device could not be found", e.BytesRead, e.BatchesTransferred, 2000);
                         break;
                     case Events.AndroidWatchExchangeDataStates.CouldNotConnect:
-                        DisplayIndication("Could not connect to device", e.BytesRead, 2000);
+                        DisplayIndication("Could not connect to device", e.BytesRead, e.BatchesTransferred, 2000);
                         break;
                     case Events.AndroidWatchExchangeDataStates.CouldNotDiscoverCharacteristic:
-                        DisplayIndication("Could not discover characteristic", e.BytesRead, 2000);
+                        DisplayIndication("Could not discover characteristic", e.BytesRead, e.BatchesTransferred, 2000);
                         break;
                     case Events.AndroidWatchExchangeDataStates.ErrorOnExchange:
-                        DisplayIndication("Error while exchanging data", e.BytesRead, 2000);
+                        DisplayIndication("Error while exchanging data", e.BytesRead, e.BatchesTransferred, 200);
                         break;
                 }
             };
@@ -139,6 +154,13 @@ namespace Happimeter.ViewModels.Forms
             set => SetProperty(ref _dataExchangeProgress, value);
         }
 
+        private int _dataExchangeBatches;
+        public int DataExchangeBatches
+        {
+            get => _dataExchangeBatches;
+            set => SetProperty(ref _dataExchangeBatches, value);
+        }
+
         public ObservableCollection<BluetoothMainItemViewModel> Items { get; set; }
 
         public Command RemovePairingCommand { get; set; }
@@ -184,7 +206,7 @@ namespace Happimeter.ViewModels.Forms
             }
         }
 
-        private void DisplayIndication(string text, int? progress = null, int? milliseconds = null)
+        private void DisplayIndication(string text, int? progress = null, int? batchesTransferred = null, int? milliseconds = null)
         {
             DataExchangeStatusIsVisible = true;
             DataExchangeStatus = text;
@@ -195,6 +217,7 @@ namespace Happimeter.ViewModels.Forms
                 DataExchangeProgressIsVisible = true;
                 DataExchangeProgress = progress.Value;
             }
+            DataExchangeBatches = batchesTransferred ?? 0;
 
             if (milliseconds != null)
             {

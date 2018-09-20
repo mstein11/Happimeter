@@ -599,12 +599,14 @@ namespace Happimeter.Services
         }
 
         private Dictionary<Guid, bool> IsBusy = new Dictionary<Guid, bool>();
+        private int BatchesTransferred = 0;
         public async void ExchangeData()
         {
             DataExchangeStatusUpdate?.Invoke(this,
                      new AndroidWatchExchangeDataEventArgs
                      {
-                         EventType = AndroidWatchExchangeDataStates.SearchingForDevice
+                         EventType = AndroidWatchExchangeDataStates.SearchingForDevice,
+                         BatchesTransferred = BatchesTransferred
                      });
             Console.WriteLine("Exchange Data started.");
             var deviceInfoServic = ServiceLocator.Instance.Get<IDeviceInformationService>();
@@ -624,8 +626,10 @@ namespace Happimeter.Services
                     DataExchangeStatusUpdate?.Invoke(this,
                      new AndroidWatchExchangeDataEventArgs
                      {
-                         EventType = AndroidWatchExchangeDataStates.DeviceNotFound
+                         EventType = AndroidWatchExchangeDataStates.DeviceNotFound,
+                         BatchesTransferred = BatchesTransferred
                      });
+                    BatchesTransferred = 0;
                     Console.WriteLine("We couldn't find our characteristic! We have to reinit");
                     Debug.WriteLine("WATCH DOES NOT HAVE CHARACTERISTICS!");
                     //todo: if we don't find the charac, we have to reinit somehow
@@ -656,8 +660,10 @@ namespace Happimeter.Services
                 DataExchangeStatusUpdate?.Invoke(this,
                      new AndroidWatchExchangeDataEventArgs
                      {
-                         EventType = AndroidWatchExchangeDataStates.ErrorOnExchange
+                         EventType = AndroidWatchExchangeDataStates.ErrorOnExchange,
+                         BatchesTransferred = BatchesTransferred
                      });
+                BatchesTransferred = 0;
                 //writing was not successful
                 IsBusy.Remove(characteristic.Service.Device.Uuid);
                 return;
@@ -675,7 +681,8 @@ namespace Happimeter.Services
                              {
                                  EventType = AndroidWatchExchangeDataStates.ReadUpdate,
                                  BytesRead = read,
-                                 TotalBytes = total
+                                 TotalBytes = total,
+                                 BatchesTransferred = BatchesTransferred
                              });
                 });
 
@@ -711,11 +718,6 @@ namespace Happimeter.Services
 
                 Console.WriteLine("Succesfully finished data exchange");
                 IsBusy.Remove(characteristic.Service.Device.Uuid);
-                DataExchangeStatusUpdate?.Invoke(this,
-                        new AndroidWatchExchangeDataEventArgs
-                        {
-                            EventType = AndroidWatchExchangeDataStates.Complete,
-                        });
                 var eventData = new Dictionary<string, string> {
                             {"durationSeconds", stopWatch.Elapsed.TotalSeconds.ToString()},
                             {"bytesTransfered", result.Count().ToString()}
@@ -723,7 +725,24 @@ namespace Happimeter.Services
                 ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.DataExchangeEnd, eventData);
                 if (data.NeedAnotherBatch)
                 {
+                    DataExchangeStatusUpdate?.Invoke(this,
+                        new AndroidWatchExchangeDataEventArgs
+                        {
+                            EventType = AndroidWatchExchangeDataStates.CompleteNeedsAnotherBatch,
+                            BatchesTransferred = BatchesTransferred
+                        });
                     ExchangeData();
+                    BatchesTransferred++;
+                }
+                else
+                {
+                    DataExchangeStatusUpdate?.Invoke(this,
+                        new AndroidWatchExchangeDataEventArgs
+                        {
+                            EventType = AndroidWatchExchangeDataStates.Complete,
+                            BatchesTransferred = BatchesTransferred
+                        });
+                    BatchesTransferred = 0;
                 }
             }
             catch (Exception e)
@@ -732,11 +751,13 @@ namespace Happimeter.Services
                         new AndroidWatchExchangeDataEventArgs
                         {
                             EventType = AndroidWatchExchangeDataStates.ErrorOnExchange,
+                            BatchesTransferred = BatchesTransferred
                         });
                 Console.WriteLine($"Exception on Dataexchange after starting the exchange: {e.Message}");
                 ServiceLocator.Instance.Get<ILoggingService>().LogEvent(LoggingService.DataExchangeFailure);
                 ServiceLocator.Instance.Get<ILoggingService>().LogException(e);
                 IsBusy.Remove(characteristic.Service.Device.Uuid);
+                BatchesTransferred = 0;
             }
         }
 
