@@ -22,6 +22,7 @@ using Happimeter.Core.Database;
 using Xamarin.Forms;
 using Happimeter.ViewModels.Forms;
 using System.Threading;
+using Happimeter.Droid.Fragments;
 
 namespace Happimeter.Droid.Activities
 {
@@ -117,116 +118,14 @@ namespace Happimeter.Droid.Activities
 
         public override Android.Support.V4.App.Fragment GetItem(int position)
         {
+
             if (!FragmentsWithPosition.Any())
             {
-                var initSurvey = new InitializeSurveyView();
-                var overviewPage = new SurveyOverviewListPage();
-                ContentPage btPage = null;
-                var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
-                var hasPairing = context.Get<SharedBluetoothDevicePairing>(x => x.IsPairingActive) != null;
-
-                if (hasPairing)
-                {
-                    btPage = new BluetoothMainPage();
-                }
-                else
-                {
-                    btPage = new BluetoothPairingPage();
-                }
-
-                var fragmentContainer1 = new Fragments.FragmentContainer(initSurvey);
-
-                //var initSurveyFrag = initSurvey.CreateSupportFragment(TabMainActivity.Instance);
-                initSurvey.StartSurveyClickedEvent += (sender, e) =>
-                {
-                    var surveyPage = new SurveyPage();
-                    fragmentContainer1.TransitionToPage(surveyPage, true);
-                    EventHandler finishedSurveyHandler = null;
-                    finishedSurveyHandler = (finSender, finE) =>
-                    {
-                        var finalizeSurveyPage = new FinalizeSurveyPage();
-                        fragmentContainer1.TransitionToPage(finalizeSurveyPage, true);
-                        surveyPage.FinishedSurvey -= finishedSurveyHandler;
-                        Timer timer = null;
-                        timer = new Timer((obj) =>
-                        {
-                            //fragmentContainer1.TransitionToPage(initSurvey);
-                            fragmentContainer1.PopBackStackToRoot();
-                            timer.Dispose();
-                        }, null, 2000, System.Threading.Timeout.Infinite);
-                    };
-                    surveyPage.FinishedSurvey += finishedSurveyHandler;
-                };
-
-                var fragmentContainer2 = new Fragments.FragmentContainer(overviewPage);
-                overviewPage.ItemSelectedEvent += (sender, e) =>
-                {
-                    var vm = sender as SurveyOverviewItemViewModel;
-                    if (vm != null)
-                    {
-                        var detailPage = new SurveyOverviewDetailPage(vm.Date);
-                        fragmentContainer2.TransitionToPage(detailPage, true);
-                    }
-                };
-
-                var fragmentContainer3 = new Fragments.FragmentContainer(btPage);
-
-
-                EventHandler removePairingHandler = null;
-                EventHandler addPairingHandler = null;
-                removePairingHandler = (sender, e) =>
-                {
-                    var oldBtMainPage = fragmentContainer3.ChildPage;
-                    var btPairingPage = new BluetoothPairingPage();
-                    fragmentContainer3.TransitionToPage(btPairingPage);
-
-                    var vm = (btPairingPage.BindingContext as BluetoothPairingPageViewModel);
-                    vm.OnPairedDevice += addPairingHandler;
-
-                    var oldVm = (oldBtMainPage.BindingContext as BluetoothMainPageViewModel);
-                    oldVm.OnRemovedPairing -= removePairingHandler;
-                };
-                addPairingHandler = (sender, e) =>
-                {
-                    var oldBtPairingPage = fragmentContainer3.ChildPage;
-                    var btMainPage = new BluetoothMainPage();
-                    fragmentContainer3.TransitionToPage(btMainPage);
-
-                    var vm = (btMainPage.BindingContext as BluetoothMainPageViewModel);
-                    vm.OnRemovedPairing += removePairingHandler;
-
-                    var oldVm = (oldBtPairingPage.BindingContext as BluetoothPairingPageViewModel);
-                    oldVm.OnPairedDevice -= addPairingHandler;
-                };
-
-                if (hasPairing)
-                {
-                    var vm = ((btPage as BluetoothMainPage).BindingContext as BluetoothMainPageViewModel);
-                    vm.OnRemovedPairing += removePairingHandler;
-                }
-                else
-                {
-                    var vm = ((btPage as BluetoothPairingPage).BindingContext as BluetoothPairingPageViewModel);
-                    vm.OnPairedDevice += addPairingHandler;
-                }
-
-                var settingPage = new SettingsPage();
-                var fragmentContainer4 = new Fragments.FragmentContainer(settingPage);
-                settingPage.ViewModel.ListMenuItemSelected += (sender, e) =>
-                {
-                    var selectedPage = sender as ContentPage;
-                    if (selectedPage != null)
-                    {
-                        fragmentContainer4.TransitionToPage(selectedPage, true);
-                    }
-                };
-
-                FragmentsWithPosition.Add(0, fragmentContainer1);
-                FragmentsWithPosition.Add(1, fragmentContainer2);
-                FragmentsWithPosition.Add(2, fragmentContainer3);
-                FragmentsWithPosition.Add(3, fragmentContainer4);
+                FragmentsWithPosition.Add(0, Fragments.FragmentContainer.NewInstance(0));
+                FragmentsWithPosition.Add(1, Fragments.FragmentContainer.NewInstance(1));
+                FragmentsWithPosition.Add(2, Fragments.FragmentContainer.NewInstance(2));
+                FragmentsWithPosition.Add(3, Fragments.FragmentContainer.NewInstance(3));
             }
-
             switch (position)
             {
                 case 0: return FragmentsWithPosition[position];
