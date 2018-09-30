@@ -328,7 +328,7 @@ namespace Happimeter.Services
         public (List<PostSensorDataServiceModel>, List<SensorMeasurement>) GetSensorDataForServer()
         {
             var context = ServiceLocator.Instance.Get<ISharedDatabaseContext>();
-            var entries = context.GetAllWithChildren<SensorMeasurement>(x => !x.IsUploadedToServer).Take(10).ToList();
+            var entries = context.GetAllWithChildren<SensorMeasurement>(x => !x.IsUploadedToServer).Take(UtilHelper.NumberOfMeasurementToTransferToServer).ToList();
 
             var result = new List<PostSensorDataServiceModel>();
             foreach (var entry in entries)

@@ -131,6 +131,13 @@ namespace Happimeter.Core.Helper
             return (Int32)(datetime.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
         }
 
-        public const int NumberOfMeasurementToTransferPerOperation = 10;
+        /// <summary>
+        ///  For BT-Data Exchange
+        /// </summary>
+        public const int NumberOfMeasurementToTransferPerOperation = 5;
+        /// <summary>
+        ///     For upload to server
+        /// </summary>
+        public const int NumberOfMeasurementToTransferToServer = 5;
     }
 }
