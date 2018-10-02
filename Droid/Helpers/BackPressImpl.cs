@@ -15,19 +15,27 @@ namespace Happimeter.Droid.Helpers
 
         public bool OnBackPressed()
         {
-            if (ParentFragment == null) {
+            if (ParentFragment == null)
+            {
                 return false;
             }
 
+            //https://stackoverflow.com/questions/43562394/fragment-has-not-been-attached-yet
+            if (!ParentFragment.IsAdded)
+            {
+                return false;
+            }
             var childCount = ParentFragment.ChildFragmentManager.BackStackEntryCount;
 
-            if (childCount == 0) {
+            if (childCount == 0)
+            {
                 return false;
             }
             var childFragmentMngr = ParentFragment.ChildFragmentManager;
             var childFrag = childFragmentMngr.Fragments.FirstOrDefault() as OnBackPressListener;
 
-            if (childFrag == null || !childFrag.OnBackPressed()) {
+            if (childFrag == null || !childFrag.OnBackPressed())
+            {
                 childFragmentMngr.PopBackStackImmediate();
             }
 
